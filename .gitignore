@@ -5,3 +5,4 @@ build
 .idea/**/libraries
 .idea/**/tasks.xml
 .idea/dictionaries
+.idea/**/gradle.xml
