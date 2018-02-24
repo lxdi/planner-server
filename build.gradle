@@ -18,6 +18,10 @@ dependencies {
     compile "org.springframework:spring-orm:4.3.7.RELEASE"
     compile "org.springframework:spring-webmvc:4.3.7.RELEASE"
 
+    compile "com.fasterxml.jackson.core:jackson-core:2.8.7"
+    compile "com.fasterxml.jackson.core:jackson-annotations:2.8.7"
+    compile "com.fasterxml.jackson.core:jackson-databind:2.8.7"
+
     def tomcatVersion = '7.0.76'
     tomcat "org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}",
             "org.apache.tomcat.embed:tomcat-embed-logging-juli:${tomcatVersion}",
