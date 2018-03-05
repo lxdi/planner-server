@@ -1,7 +1,7 @@
 package controllers;
 
 import model.ITargetsDAO;
-import model.Target;
+import model.entities.Target;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

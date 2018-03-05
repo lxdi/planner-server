@@ -1,5 +1,7 @@
 package model;
 
+import model.entities.Target;
+
 import java.util.List;
 
 /**
@@ -7,5 +9,6 @@ import java.util.List;
  */
 public interface ITargetsDAO {
     List<Target> firstLevelTargets();
+    Target targetById(long id);
 
 }

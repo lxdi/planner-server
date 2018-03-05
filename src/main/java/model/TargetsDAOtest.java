@@ -1,5 +1,6 @@
 package model;
 
+import model.entities.Target;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -12,13 +13,25 @@ import java.util.List;
 @Component
 public class TargetsDAOtest implements ITargetsDAO {
 
+    List<Target> firstLevelTargets;
 
     @Override
     public List<Target> firstLevelTargets() {
-        List<Target> targets = new ArrayList<>();
-        targets.add(createTarget(1, "Test target 1"));
-        targets.add(createTarget(2, "Test target 2"));
-        return targets;
+        if(this.firstLevelTargets==null){
+            firstLevelTargets = new ArrayList<>();
+            firstLevelTargets.add(createTarget(1, "Test target 1"));
+            firstLevelTargets.add(createTarget(2, "Test target 2"));
+        }
+        return this.firstLevelTargets;
+    }
+
+    @Override
+    public Target targetById(long id) {
+        for(Target target: firstLevelTargets){
+            if(target.getId()==id)
+                return target;
+        }
+        return null;
     }
 
     private Target createTarget(int id, String title){
