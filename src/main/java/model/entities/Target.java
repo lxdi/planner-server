@@ -1,6 +1,7 @@
 package model.entities;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -12,18 +13,33 @@ public class Target {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private long id;
     private String title;
-    @ManyToOne
+    @ManyToOne//(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH})
+    @org.hibernate.annotations.Cascade( {org.hibernate.annotations.CascadeType.SAVE_UPDATE})
     private Target parent;
-    @OneToMany(mappedBy = "parent")
-    private List<Target> children;
+//    @OneToMany(mappedBy = "parent")
+//    private List<Target> children = new ArrayList<>();
 
-    public int getId() {
+    public Target(){
+    }
+
+    public Target(String title){
+        this.setTitle(title);
+    }
+
+    public long getId() {
         return id;
     }
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
+    }
+
+    public Target getParent() {
+        return parent;
+    }
+    public void setParent(Target parent) {
+        this.parent = parent;
     }
 
     public String getTitle() {
@@ -33,10 +49,10 @@ public class Target {
         this.title = title;
     }
 
-    public List<Target> getChildren() {
-        return children;
-    }
-    public void setChildren(List<Target> children) {
-        this.children = children;
-    }
+//    public List<Target> getChildren() {
+//        return children;
+//    }
+//    public void setChildren(List<Target> children) {
+//        this.children = children;
+//    }
 }

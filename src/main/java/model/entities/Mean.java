@@ -12,7 +12,7 @@ public class Mean {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int id;
+    long id;
     String title;
     String criteria;
     @OneToMany
@@ -24,11 +24,18 @@ public class Mean {
     List<Mean> children;
 
 
-    public int getId() {
+    public long getId() {
         return id;
     }
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
+    }
+
+    public Mean getParent() {
+        return parent;
+    }
+    public void setParent(Mean parent) {
+        this.parent = parent;
     }
 
     public String getTitle() {

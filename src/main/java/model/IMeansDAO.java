@@ -7,9 +7,11 @@ import java.util.List;
 /**
  * Created by Alexander on 05.03.2018.
  */
-public interface MeansDAO {
+public interface IMeansDAO {
 
     List<Mean> getAllMeans();
     Mean meanById();
+    void updateOrCreateMean(Mean mean);
+
 
 }

@@ -25,7 +25,10 @@ dependencies {
     compile "org.hibernate:hibernate-core:5.2.8.Final"
     compile "org.postgresql:postgresql:9.4.1212"
 
-
+    testCompile "junit:junit:4.12"
+    testCompile "org.springframework:spring-test:4.3.9.RELEASE"
+    testCompile "org.mockito:mockito-all:1.10.19"
+    testCompile "com.h2database:h2:1.4.196"
 
     def tomcatVersion = '7.0.76'
     tomcat "org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}",
