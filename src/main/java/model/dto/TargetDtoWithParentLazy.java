@@ -5,12 +5,12 @@ package model.dto;
  */
 public class TargetDtoWithParentLazy extends AbstractTargetDto{
 
-    Long parent;
+    Long parentid;
 
-    public Long getParent() {
-        return parent;
+    public Long getParentid() {
+        return parentid;
     }
-    public void setParent(Long parent) {
-        this.parent = parent;
+    public void setParentid(Long parentid) {
+        this.parentid = parentid;
     }
 }

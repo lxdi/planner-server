@@ -61,10 +61,11 @@ public class TargetsControllerWithOrmTests {
 
     @Test
     public void createTest() throws Exception {
-        String content = "{\"id\":0,\"title\":\"new target\",\"parent\":2}";
+        String content = "{\"id\":0,\"title\":\"new target\",\"parentid\":2, \"children\":[]}";
         MvcResult result = mockMvc.perform(put("/target/create")
                 .contentType(MediaType.APPLICATION_JSON).content(content))
                 .andExpect(status().isOk()).andReturn();
+
         assertTrue(targetsDAO.targetById(3)!=null);
         assertTrue(targetsDAO.targetById(3).getTitle().equals("new target"));
         assertTrue(result.getResponse().getContentAsString().contains("\"id\":3"));
@@ -76,16 +77,18 @@ public class TargetsControllerWithOrmTests {
     public void deleteTest() throws Exception {
         MvcResult result = mockMvc.perform(delete("/target/delete/2"))
                 .andExpect(status().isOk()).andReturn();
+
         assertTrue(targetsDAO.targetById(1)!=null);
         assertTrue(targetsDAO.targetById(2)==null);
     }
 
     @Test
     public void updateTest() throws Exception {
-        String content = "{\"id\":2,\"title\":\"default child changed\",\"parent\":1}";
+        String content = "{\"id\":2,\"title\":\"default child changed\",\"parentid\":1}";
         MvcResult result = mockMvc.perform(post("/target/update")
                 .contentType(MediaType.APPLICATION_JSON).content(content))
                 .andExpect(status().isOk()).andReturn();
+
         assertTrue(targetsDAO.targetById(3)==null);
         assertTrue(targetsDAO.targetById(2).getTitle().equals("default child changed"));
         assertTrue(result.getResponse().getContentAsString().contains("\"id\":2"));

@@ -18,7 +18,7 @@ public class TargetsDtoMapper {
     public TargetDtoWithParentLazy targetDtoWithParentLazy(Target target){
         TargetDtoWithParentLazy targetDtoWithParentLazy = new TargetDtoWithParentLazy();
         mapStatic(target, targetDtoWithParentLazy);
-        targetDtoWithParentLazy.setParent(target.getParent()!=null? target.getParent().getId(): null);
+        targetDtoWithParentLazy.setParentid(target.getParent()!=null? target.getParent().getId(): null);
         return targetDtoWithParentLazy;
     }
 
@@ -30,7 +30,7 @@ public class TargetsDtoMapper {
     public Target targetFromDtoWithParentLazy(TargetDtoWithParentLazy targetDtoWithParentLazy){
         Target target = new Target();
         mapStaticFromDto(target, targetDtoWithParentLazy);
-        target.setParent(targetsDAO.targetById(targetDtoWithParentLazy.getParent()));
+        target.setParent(targetsDAO.targetById(targetDtoWithParentLazy.getParentid()));
         return target;
     }
 
