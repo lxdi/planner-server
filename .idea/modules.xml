@@ -5,6 +5,9 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/gradletutorial.iml" filepath="$PROJECT_DIR$/.idea/modules/gradletutorial.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/gradletutorial_main.iml" filepath="$PROJECT_DIR$/.idea/modules/gradletutorial_main.iml" group="gradletutorial" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/gradletutorial_test.iml" filepath="$PROJECT_DIR$/.idea/modules/gradletutorial_test.iml" group="gradletutorial" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/planner-server.iml" filepath="$PROJECT_DIR$/.idea/modules/planner-server.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/planner-server_main.iml" filepath="$PROJECT_DIR$/.idea/modules/planner-server_main.iml" group="planner-server" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/planner-server_test.iml" filepath="$PROJECT_DIR$/.idea/modules/planner-server_test.iml" group="planner-server" />
     </modules>
   </component>
 </project>

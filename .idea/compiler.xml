@@ -4,6 +4,8 @@
     <bytecodeTargetLevel>
       <module name="gradletutorial_main" target="1.8" />
       <module name="gradletutorial_test" target="1.8" />
+      <module name="planner-server_main" target="1.8" />
+      <module name="planner-server_test" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>
