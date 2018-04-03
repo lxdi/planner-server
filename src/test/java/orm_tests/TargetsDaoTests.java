@@ -15,6 +15,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import orm_tests.conf.EmbeddedDBConf;
 
+import java.util.List;
+
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -43,6 +45,12 @@ public class TargetsDaoTests {
 
     @Test
     public void parentSaveCascadingTest(){}
+
+    @Test
+    public void gettingAllTargetsTest(){
+        List<Target> targets = targetsDAO.allTargets();
+        assertTrue(targets.size()==2);
+    }
 
     @Test
     public void saveOrUpdateTest(){

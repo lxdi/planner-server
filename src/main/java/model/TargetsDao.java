@@ -29,9 +29,9 @@ public class TargetsDao implements ITargetsDAO {
 
     @Override
     public List<Target> allTargets() {
-        CriteriaBuilder builder =  sessionFactory.getCurrentSession().getCriteriaBuilder();
-        CriteriaQuery<Target> criteria = builder.createQuery(Target.class);
-        return sessionFactory.getCurrentSession().createQuery(criteria).getResultList();
+//        CriteriaBuilder builder =  sessionFactory.getCurrentSession().getCriteriaBuilder();
+//        CriteriaQuery<Target> criteria = builder.createQuery(Target.class);
+        return sessionFactory.getCurrentSession().createCriteria(Target.class).list();
     }
 
     @Override
