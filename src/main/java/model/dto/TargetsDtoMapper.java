@@ -30,7 +30,8 @@ public class TargetsDtoMapper {
     public Target targetFromDtoWithParentLazy(TargetDtoWithParentLazy targetDtoWithParentLazy){
         Target target = new Target();
         mapStaticFromDto(target, targetDtoWithParentLazy);
-        target.setParent(targetsDAO.targetById(targetDtoWithParentLazy.getParentid()));
+        if(targetDtoWithParentLazy.getParentid()!=null)
+            target.setParent(targetsDAO.targetById(targetDtoWithParentLazy.getParentid()));
         return target;
     }
 

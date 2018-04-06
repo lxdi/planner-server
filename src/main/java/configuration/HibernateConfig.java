@@ -4,7 +4,12 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.util.Properties;
 
@@ -17,22 +22,60 @@ public class HibernateConfig {
 
     @Bean
     @Qualifier("hibernate_properties")
-    public Properties hibernateProperties() {
+    public Properties hibernateProperties() throws NamingException {
         Properties properties = new Properties();
-        properties.put("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
+        Properties extProps = extProps();
+        if(extProps.getProperty("use_database").equals("true")){
+            properties.put("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
+            properties.put("hibernate.show_sql", "false");
+            properties.put("hibernate.hbm2ddl.auto", "update");
+            return properties;
+        }
+        properties.put("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
         properties.put("hibernate.show_sql", "false");
-        properties.put("hibernate.hbm2ddl.auto", "update");
+        properties.put("hibernate.hbm2ddl.auto", "create-drop");
         return properties;
     }
 
     @Bean
-    public DataSource getDataSource() {
-        DriverManagerDataSource ds = new DriverManagerDataSource();
-        ds.setDriverClassName("org.postgresql.Driver");
-        ds.setUrl("jdbc:postgresql://localhost:5432/planner");
-        ds.setUsername("postgres");
-        ds.setPassword("");
-        return ds;
+    public DataSource getDataSource() throws NamingException {
+        Properties extProps = extProps();
+        if(extProps.getProperty("use_database").equals("true")) {
+            DriverManagerDataSource ds = new DriverManagerDataSource();
+            ds.setDriverClassName("org.postgresql.Driver");
+            ds.setUrl(extProps.getProperty("url"));
+            ds.setUsername(extProps.getProperty("username"));
+            ds.setPassword(extProps.getProperty("password"));
+            return ds;
+        }
+        return new EmbeddedDatabaseBuilder()
+                .setType(EmbeddedDatabaseType.H2)
+                .setName("test_embedded_db")
+                .build();
     }
+
+    @Bean
+    @Qualifier("ext_props")
+    public Properties extProps(){
+        Properties properties = new Properties();
+        try {
+            Context initCtx = new InitialContext();
+            Context envCtx = (Context) initCtx.lookup("java:comp/env");
+            properties.put("use_database", envCtx.lookup("use_database"));
+            properties.put("url", envCtx.lookup("url"));
+            properties.put("username", envCtx.lookup("username"));
+            properties.put("password", envCtx.lookup("password"));
+        } catch (NamingException e) {
+            e.printStackTrace();
+            properties.put("use_database", "false");
+        }
+        return properties;
+    }
+
+    // Example for Tomcat - add in context.xml within <Context>
+//    <Environment name="use_database" type="java.lang.String" value="true" />
+//    <Environment name="url" type="java.lang.String" value="jdbc:postgresql://localhost:5432/planner" />
+//    <Environment name="username" type="java.lang.String" value="postgres" />
+//    <Environment name="password" type="java.lang.String" value="" />
 
 }
