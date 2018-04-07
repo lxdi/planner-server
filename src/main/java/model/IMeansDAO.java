@@ -10,8 +10,7 @@ import java.util.List;
 public interface IMeansDAO {
 
     List<Mean> getAllMeans();
-    Mean meanById();
-    void updateOrCreateMean(Mean mean);
-
+    Mean meanById(long id);
+    void saveOrUpdate(Mean mean);
 
 }

@@ -1,25 +1,15 @@
 package orm_tests;
 
-import configuration.HibernateConfigMain;
-import controllers.TargetsController;
-import model.ITargetsDAO;
-import model.TargetsDao;
+import controllers.TargetsRESTController;
 import model.dto.TargetsDtoMapper;
-import model.entities.Target;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import orm_tests.conf.AbstractTests;
-import orm_tests.conf.EmbeddedDBConf;
+import orm_tests.conf.AbstractTestsWithTargets;
 
 import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -31,19 +21,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Created by Alexander on 10.03.2018.
  */
 
-public class TargetsControllerWithOrmTests extends AbstractTests{
+public class TargetsRESTControllerWithOrmTests extends AbstractTestsWithTargets {
 
     @Autowired
     TargetsDtoMapper targetsDtoMapper;
 
     private MockMvc mockMvc;
-    private TargetsController targetsController;
+    private TargetsRESTController targetsRESTController;
 
     @Before
     public void init(){
         super.init();
-        targetsController = new TargetsController(targetsDAO, targetsDtoMapper);
-        mockMvc = MockMvcBuilders.standaloneSetup(targetsController).build();
+        targetsRESTController = new TargetsRESTController(targetsDAO, targetsDtoMapper);
+        mockMvc = MockMvcBuilders.standaloneSetup(targetsRESTController).build();
     }
 
     @Test

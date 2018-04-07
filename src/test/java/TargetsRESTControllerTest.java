@@ -1,4 +1,4 @@
-import controllers.TargetsController;
+import controllers.TargetsRESTController;
 import model.ITargetsDAO;
 import model.dto.TargetsDtoMapper;
 import model.entities.Target;
@@ -21,10 +21,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * Created by Alexander on 10.03.2018.
  */
-public class TargetsControllerTest {
+public class TargetsRESTControllerTest {
 
    private MockMvc mockMvc;
-   private TargetsController targetsController;
+   private TargetsRESTController targetsRESTController;
 
    @Before
    public void init(){
@@ -40,8 +40,8 @@ public class TargetsControllerTest {
       ITargetsDAO targetsDAOtest = Mockito.mock(ITargetsDAO.class);
       when(targetsDAOtest.allTargets()).thenReturn(listoftargets);
 
-      targetsController = new TargetsController(targetsDAOtest, new TargetsDtoMapper());
-      mockMvc = MockMvcBuilders.standaloneSetup(targetsController).build();
+      targetsRESTController = new TargetsRESTController(targetsDAOtest, new TargetsDtoMapper());
+      mockMvc = MockMvcBuilders.standaloneSetup(targetsRESTController).build();
    }
 
 

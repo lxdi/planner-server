@@ -57,4 +57,10 @@ public class TargetsDao implements ITargetsDAO {
     public List<Target> getChildren(Target target){
         return sessionFactory.getCurrentSession().createCriteria(Target.class).add(Restrictions.eq("parent", target)).list();
     }
+
+    @Override
+    public Target getTargetByTitle(String title) {
+        List<Target> result = sessionFactory.getCurrentSession().createCriteria(Target.class).add(Restrictions.eq("title", title)).list();
+        return result.size()>0? result.get(0):null;
+    }
 }

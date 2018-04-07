@@ -18,7 +18,7 @@ import java.util.List;
  */
 
 @Controller
-public class TargetsController {
+public class TargetsRESTController {
 
     @Autowired
     ITargetsDAO targetsDAO;
@@ -26,16 +26,11 @@ public class TargetsController {
     @Autowired
     TargetsDtoMapper targetsDtoMapper;
 
-    public TargetsController(){}
+    public TargetsRESTController(){}
 
-    public TargetsController(ITargetsDAO targetsDAO, TargetsDtoMapper targetsDtoMapper){
+    public TargetsRESTController(ITargetsDAO targetsDAO, TargetsDtoMapper targetsDtoMapper){
         this.targetsDAO = targetsDAO;
         this.targetsDtoMapper = targetsDtoMapper;
-    }
-
-    @RequestMapping(path = "/")
-    public String index(){
-        return "index";
     }
 
     @RequestMapping(path = "/target/all/lazy")

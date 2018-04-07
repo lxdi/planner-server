@@ -1,20 +1,8 @@
 package orm_tests;
 
-import configuration.HibernateConfig;
-import configuration.HibernateConfigMain;
-import model.ITargetsDAO;
-import model.TargetsDao;
 import model.entities.Target;
-import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
-import orm_tests.conf.AbstractTests;
-import orm_tests.conf.EmbeddedDBConf;
+import orm_tests.conf.AbstractTestsWithTargets;
 
 import java.util.List;
 
@@ -24,7 +12,7 @@ import static org.junit.Assert.assertTrue;
  * Created by Alexander on 10.03.2018.
  */
 
-public class TargetsDaoTests extends AbstractTests{
+public class TargetsDaoTests extends AbstractTestsWithTargets {
 
     @Test
     public void gettingAllTargetsTest(){
@@ -55,4 +43,9 @@ public class TargetsDaoTests extends AbstractTests{
         assertTrue(childTargets.get(1).getId()==3);
     }
 
+    @Test
+    public void getByTitleTest(){
+        assertTrue(targetsDAO.getTargetByTitle(defaultChildTarget).getTitle().equals(defaultChildTarget));
+        assertTrue(targetsDAO.getTargetByTitle("100% not existing")==null);
+    }
 }
