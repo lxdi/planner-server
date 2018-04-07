@@ -14,5 +14,6 @@ public interface ITargetsDAO {
     Target targetById(long id);
     void saveOrUpdate(Target target);
     void deleteTarget(long id);
+    List<Target> getChildren(Target target);
 
 }

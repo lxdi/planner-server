@@ -15,9 +15,11 @@ public class Target {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String title;
+
     @ManyToOne//(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH})
-    @org.hibernate.annotations.Cascade( {org.hibernate.annotations.CascadeType.SAVE_UPDATE})
+    //@org.hibernate.annotations.Cascade( {org.hibernate.annotations.CascadeType.SAVE_UPDATE})
     private Target parent;
+
 //    @OneToMany(mappedBy = "parent")
 //    private List<Target> children = new ArrayList<>();
 

@@ -18,6 +18,7 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import orm_tests.conf.AbstractTests;
 import orm_tests.conf.EmbeddedDBConf;
 
 import static org.junit.Assert.assertTrue;
@@ -30,14 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Created by Alexander on 10.03.2018.
  */
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(loader=AnnotationConfigContextLoader.class,
-        classes = {HibernateConfigMain.class, EmbeddedDBConf.class, TargetsDao.class, TargetsDtoMapper.class})
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-public class TargetsControllerWithOrmTests {
-
-    @Autowired
-    ITargetsDAO targetsDAO;
+public class TargetsControllerWithOrmTests extends AbstractTests{
 
     @Autowired
     TargetsDtoMapper targetsDtoMapper;
@@ -47,16 +41,9 @@ public class TargetsControllerWithOrmTests {
 
     @Before
     public void init(){
-        Target parentTarget = new Target("drefault parent");
-        Target target = new Target("default child");
-        target.setParent(parentTarget);
-        targetsDAO.saveOrUpdate(target);
-
+        super.init();
         targetsController = new TargetsController(targetsDAO, targetsDtoMapper);
         mockMvc = MockMvcBuilders.standaloneSetup(targetsController).build();
-
-        assertTrue(parentTarget.getId()==1);
-        assertTrue(target.getId()==2);
     }
 
     @Test
@@ -65,10 +52,10 @@ public class TargetsControllerWithOrmTests {
         MvcResult result = mockMvc.perform(put("/target/create")
                 .contentType(MediaType.APPLICATION_JSON).content(content))
                 .andExpect(status().isOk()).andReturn();
-
-        assertTrue(targetsDAO.targetById(3)!=null);
-        assertTrue(targetsDAO.targetById(3).getTitle().equals("new target"));
-        assertTrue(result.getResponse().getContentAsString().contains("\"id\":3"));
+        int newId = 5;
+        assertTrue(targetsDAO.targetById(newId)!=null);
+        assertTrue(targetsDAO.targetById(newId).getTitle().equals("new target"));
+        assertTrue(result.getResponse().getContentAsString().contains("\"id\":"+newId));
         assertTrue(result.getResponse().getContentAsString().contains("new target"));
         System.out.println(result.getResponse().getContentAsString());
     }
@@ -80,6 +67,19 @@ public class TargetsControllerWithOrmTests {
 
         assertTrue(targetsDAO.targetById(1)!=null);
         assertTrue(targetsDAO.targetById(2)==null);
+        assertTrue(targetsDAO.targetById(3)!=null);
+        assertTrue(targetsDAO.targetById(4)!=null);
+    }
+
+    @Test
+    public void deleteParentTest() throws Exception {
+        MvcResult result = mockMvc.perform(delete("/target/delete/1"))
+                .andExpect(status().isOk()).andReturn();
+
+        assertTrue(targetsDAO.targetById(1)==null);
+        assertTrue(targetsDAO.targetById(2)==null);
+        assertTrue(targetsDAO.targetById(3)==null);
+        assertTrue(targetsDAO.targetById(4)==null);
     }
 
     @Test
@@ -89,7 +89,6 @@ public class TargetsControllerWithOrmTests {
                 .contentType(MediaType.APPLICATION_JSON).content(content))
                 .andExpect(status().isOk()).andReturn();
 
-        assertTrue(targetsDAO.targetById(3)==null);
         assertTrue(targetsDAO.targetById(2).getTitle().equals("default child changed"));
         assertTrue(result.getResponse().getContentAsString().contains("\"id\":2"));
         assertTrue(result.getResponse().getContentAsString().contains("default child changed"));

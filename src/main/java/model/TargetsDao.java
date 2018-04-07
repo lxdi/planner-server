@@ -2,6 +2,7 @@ package model;
 
 import model.entities.Target;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,6 +47,14 @@ public class TargetsDao implements ITargetsDAO {
 
     @Override
     public void deleteTarget(long id) {
-        sessionFactory.getCurrentSession().delete(this.targetById(id));
+        Target targetToDelete = this.targetById(id);
+        for(Target target : this.getChildren(targetToDelete)){
+            this.deleteTarget(target.getId());
+        }
+        sessionFactory.getCurrentSession().delete(targetToDelete);
+    }
+
+    public List<Target> getChildren(Target target){
+        return sessionFactory.getCurrentSession().createCriteria(Target.class).add(Restrictions.eq("parent", target)).list();
     }
 }
