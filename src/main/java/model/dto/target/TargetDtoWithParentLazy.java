@@ -1,4 +1,4 @@
-package model.dto;
+package model.dto.target;
 
 /**
  * Created by Alexander on 10.03.2018.

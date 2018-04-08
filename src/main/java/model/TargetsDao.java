@@ -1,6 +1,8 @@
 package model;
 
+import model.entities.Mean;
 import model.entities.Target;
+import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -22,6 +25,9 @@ public class TargetsDao implements ITargetsDAO {
 
     @Autowired
     SessionFactory sessionFactory;
+
+    @Autowired
+    IMeansDAO meansDAO;
 
     @Override
     public List<Target> topTargets() {
@@ -48,6 +54,26 @@ public class TargetsDao implements ITargetsDAO {
     @Override
     public void deleteTarget(long id) {
         Target targetToDelete = this.targetById(id);
+
+        //List<Mean> means = sessionFactory.getCurrentSession().createCriteria(Mean.class).add(Restrictions.in("targets", targetToDelete)).list();
+        Criteria c = sessionFactory.getCurrentSession().createCriteria(Mean.class, "mean");
+        c.createAlias("mean.targets", "target");
+        c.add(Restrictions.eq("target.id", targetToDelete.getId()));
+        List<Mean> means = c.list();
+        for(Mean mean: means){
+            if(mean.getTargets().size()==1){
+                meansDAO.deleteMean(mean.getId());
+            } else {
+                Iterator iterator = mean.getTargets().iterator();
+                while (iterator.hasNext()){
+                    Target curTarget = (Target) iterator.next();
+                    if(curTarget.getId()==targetToDelete.getId()){
+                        iterator.remove();
+                    }
+                }
+            }
+        }
+
         for(Target target : this.getChildren(targetToDelete)){
             this.deleteTarget(target.getId());
         }

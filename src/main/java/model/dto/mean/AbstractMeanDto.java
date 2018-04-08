@@ -1,16 +1,15 @@
-package model.dto;
+package model.dto.mean;
 
-import model.entities.Target;
-
-import java.util.List;
+import model.entities.Mean;
 
 /**
  * Created by Alexander on 06.03.2018.
  */
-abstract class AbstractTargetDto {
+public abstract class AbstractMeanDto {
 
     long id;
     String title;
+    String criteria;
 
     public long getId() {
         return id;
@@ -26,8 +25,11 @@ abstract class AbstractTargetDto {
         this.title = title;
     }
 
-    public void fill(Target target){
-        this.setId(target.getId());
-        this.setTitle(target.getTitle());
+    public String getCriteria() {
+        return criteria;
     }
+    public void setCriteria(String criteria) {
+        this.criteria = criteria;
+    }
+
 }

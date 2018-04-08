@@ -12,5 +12,7 @@ public interface IMeansDAO {
     List<Mean> getAllMeans();
     Mean meanById(long id);
     void saveOrUpdate(Mean mean);
+    void deleteMean(long id);
+    List<Mean> getChildren(Mean mean);
 
 }

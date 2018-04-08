@@ -1,8 +1,8 @@
 package controllers;
 
 import model.ITargetsDAO;
-import model.dto.TargetDtoWithParentLazy;
-import model.dto.TargetsDtoMapper;
+import model.dto.target.TargetDtoWithParentLazy;
+import model.dto.target.TargetsDtoMapper;
 import model.entities.Target;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

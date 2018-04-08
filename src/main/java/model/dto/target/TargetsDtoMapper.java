@@ -1,4 +1,4 @@
-package model.dto;
+package model.dto.target;
 
 import model.ITargetsDAO;
 import model.entities.Target;

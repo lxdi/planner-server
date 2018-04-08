@@ -3,6 +3,7 @@ package model;
 import model.IMeansDAO;
 import model.entities.Mean;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,5 +34,19 @@ public class MeansDao implements IMeansDAO {
     @Override
     public void saveOrUpdate(Mean mean) {
         sessionFactory.getCurrentSession().saveOrUpdate(mean);
+    }
+
+    @Override
+    public void deleteMean(long id) {
+        Mean meanToDelete = this.meanById(id);
+        for(Mean target : this.getChildren(meanToDelete)){
+            this.deleteMean(target.getId());
+        }
+        sessionFactory.getCurrentSession().delete(meanToDelete);
+    }
+
+    @Override
+    public List<Mean> getChildren(Mean mean){
+        return sessionFactory.getCurrentSession().createCriteria(Mean.class).add(Restrictions.eq("parent", mean)).list();
     }
 }

@@ -1,6 +1,6 @@
 import controllers.TargetsRESTController;
 import model.ITargetsDAO;
-import model.dto.TargetsDtoMapper;
+import model.dto.target.TargetsDtoMapper;
 import model.entities.Target;
 import org.junit.Before;
 import org.junit.Test;

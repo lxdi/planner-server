@@ -1,7 +1,7 @@
 package orm_tests;
 
 import controllers.TargetsRESTController;
-import model.dto.TargetsDtoMapper;
+import model.dto.target.TargetsDtoMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
