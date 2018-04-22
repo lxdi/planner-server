@@ -65,17 +65,26 @@ public class HibernateConfig {
             properties.put("url", envCtx.lookup("url"));
             properties.put("username", envCtx.lookup("username"));
             properties.put("password", envCtx.lookup("password"));
+            properties.put("generate_weeks", envCtx.lookup("generate_weeks"));
+            properties.put("gen_weeks_from", envCtx.lookup("gen_weeks_from"));
+            properties.put("gen_weeks_to", envCtx.lookup("gen_weeks_to"));
         } catch (NamingException e) {
             e.printStackTrace();
             properties.put("use_database", "false");
+            properties.put("generate_weeks", "false");
         }
         return properties;
     }
 
-    // Example for Tomcat - add in context.xml within <Context>
-//    <Environment name="use_database" type="java.lang.String" value="true" />
-//    <Environment name="url" type="java.lang.String" value="jdbc:postgresql://localhost:5432/planner" />
-//    <Environment name="username" type="java.lang.String" value="postgres" />
-//    <Environment name="password" type="java.lang.String" value="" />
+    /**
+    Example for Tomcat - add in context.xml within <Context>
+    <Environment name="use_database" type="java.lang.String" value="true" />
+    <Environment name="url" type="java.lang.String" value="jdbc:postgresql://localhost:5432/planner" />
+    <Environment name="username" type="java.lang.String" value="postgres" />
+    <Environment name="password" type="java.lang.String" value="" />
+    <Environment name="generate_weeks" type="java.lang.String" value="true" />
+    <Environment name="gen_weeks_from" type="java.lang.String" value="2017" />
+    <Environment name="gen_weeks_to" type="java.lang.String" value="2019" />
+     */
 
 }

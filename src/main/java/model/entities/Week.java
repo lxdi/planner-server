@@ -14,10 +14,13 @@ public class Week {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
 
-    Date beginDate;
-    Date endDate;
-    @OneToOne
-    Task task;
+    int year;
+
+    int startMonth;
+    int startDay;
+
+    int endMonth;
+    int endDay;
 
     public long getId() {
         return id;
@@ -26,24 +29,43 @@ public class Week {
         this.id = id;
     }
 
-    public Date getBeginDate() {
-        return beginDate;
-    }
-    public void setBeginDate(Date beginDate) {
-        this.beginDate = beginDate;
+    public int getYear() {
+        return year;
     }
 
-    public Date getEndDate() {
-        return endDate;
-    }
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
+    public void setYear(int year) {
+        this.year = year;
     }
 
-    public Task getTask() {
-        return task;
+    public int getStartMonth() {
+        return startMonth;
     }
-    public void setTask(Task task) {
-        this.task = task;
+
+    public void setStartMonth(int startMonth) {
+        this.startMonth = startMonth;
+    }
+
+    public int getStartDay() {
+        return startDay;
+    }
+
+    public void setStartDay(int startDay) {
+        this.startDay = startDay;
+    }
+
+    public int getEndMonth() {
+        return endMonth;
+    }
+
+    public void setEndMonth(int endMonth) {
+        this.endMonth = endMonth;
+    }
+
+    public int getEndDay() {
+        return endDay;
+    }
+
+    public void setEndDay(int endDay) {
+        this.endDay = endDay;
     }
 }

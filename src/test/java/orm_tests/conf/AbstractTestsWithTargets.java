@@ -1,9 +1,7 @@
 package orm_tests.conf;
 
 import configuration.HibernateConfigMain;
-import model.ITargetsDAO;
-import model.MeansDao;
-import model.TargetsDao;
+import model.*;
 import model.dto.mean.MeansDtoMapper;
 import model.dto.target.TargetsDtoMapper;
 import model.entities.Target;
@@ -23,7 +21,9 @@ import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader=AnnotationConfigContextLoader.class,
-        classes = {HibernateConfigMain.class, EmbeddedDBConf.class, TargetsDao.class, TargetsDtoMapper.class, MeansDao.class, MeansDtoMapper.class})
+        classes = {HibernateConfigMain.class, EmbeddedDBConf.class, TargetsDao.class,
+                TargetsDtoMapper.class, MeansDao.class, MeansDtoMapper.class,
+                WeekDao.class, WeeksGenerator.class})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public abstract class AbstractTestsWithTargets {
 

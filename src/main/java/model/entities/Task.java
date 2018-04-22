@@ -13,9 +13,14 @@ public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
+
     String title;
-    @OneToOne
+
+    @ManyToOne
     Mean mean;
+
+    @ManyToOne
+    Week week;
 
     public long getId() {
         return id;
@@ -36,5 +41,13 @@ public class Task {
     }
     public void setMean(Mean mean) {
         this.mean = mean;
+    }
+
+    public Week getWeek() {
+        return week;
+    }
+
+    public void setWeek(Week week) {
+        this.week = week;
     }
 }
