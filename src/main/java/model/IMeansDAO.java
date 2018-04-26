@@ -14,5 +14,6 @@ public interface IMeansDAO {
     void saveOrUpdate(Mean mean);
     void deleteMean(long id);
     List<Mean> getChildren(Mean mean);
+    Mean meanByTitle(String title);
 
 }

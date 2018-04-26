@@ -49,4 +49,9 @@ public class MeansDao implements IMeansDAO {
     public List<Mean> getChildren(Mean mean){
         return sessionFactory.getCurrentSession().createCriteria(Mean.class).add(Restrictions.eq("parent", mean)).list();
     }
+
+    @Override
+    public Mean meanByTitle(String title) {
+        return (Mean) sessionFactory.getCurrentSession().createCriteria(Mean.class).add(Restrictions.eq("title", title)).uniqueResult();
+    }
 }

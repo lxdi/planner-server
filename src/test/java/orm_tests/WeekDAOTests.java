@@ -33,4 +33,13 @@ public class WeekDAOTests extends ATestsWithTargetsMeansWeeks {
         assertTrue(weekshmap.get(2019).get(0).getYear()==2019);
     }
 
+    @Test
+    public void weekByStartDateTest(){
+        Week week = weekDAO.weekByStartDate(9, 7, 2018);
+        assertTrue(week!=null);
+        assertTrue(week.getYear()==2018);
+        assertTrue(week.getStartDay()==9);
+        assertTrue(week.getStartMonth()==7);
+    }
+
 }

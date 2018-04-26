@@ -59,4 +59,11 @@ public class MeansDaoTests extends AbstractTestsWithTargetsWithMeans {
         assertTrue(targetsDAO.targetById(3)!=null);
         assertTrue(targetsDAO.targetById(4)!=null);
     }
+
+    @Test
+    public void meanByTitleTest(){
+        Mean mean = meansDao.meanByTitle(parentMeanTitle);
+        assertTrue(mean!=null);
+        assertTrue(mean.getTitle().equals(parentMeanTitle));
+    }
 }

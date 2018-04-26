@@ -23,7 +23,8 @@ import static org.junit.Assert.assertTrue;
 @ContextConfiguration(loader=AnnotationConfigContextLoader.class,
         classes = {HibernateConfigMain.class, EmbeddedDBConf.class, TargetsDao.class,
                 TargetsDtoMapper.class, MeansDao.class, MeansDtoMapper.class,
-                WeekDao.class, WeeksGenerator.class})
+                WeekDao.class, WeeksGenerator.class,
+                TasksDao.class})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public abstract class AbstractTestsWithTargets {
 

@@ -24,6 +24,11 @@ public class WeekDao implements IWeekDAO {
     SessionFactory sessionFactory;
 
     @Override
+    public Week getById(long id) {
+        return sessionFactory.getCurrentSession().get(Week.class, id);
+    }
+
+    @Override
     public void createWeek(Week week) {
         sessionFactory.getCurrentSession().saveOrUpdate(week);
     }
@@ -51,5 +56,14 @@ public class WeekDao implements IWeekDAO {
             weeksForYear.add(week);
         }
         return result;
+    }
+
+    @Override
+    public Week weekByStartDate(int day, int month, int year) {
+        return (Week) sessionFactory.getCurrentSession().createCriteria(Week.class)
+                .add(Restrictions.eq("year", year))
+                .add(Restrictions.eq("startDay", day))
+                .add(Restrictions.eq("startMonth", month))
+                .uniqueResult();
     }
 }
