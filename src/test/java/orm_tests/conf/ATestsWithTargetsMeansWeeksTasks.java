@@ -1,6 +1,7 @@
 package orm_tests.conf;
 
 import model.ITasksDAO;
+import model.dto.task.TasksDtoMapper;
 import model.entities.Task;
 import org.junit.Before;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,9 @@ public abstract class ATestsWithTargetsMeansWeeksTasks extends ATestsWithTargets
 
     @Autowired
     protected ITasksDAO tasksDAO;
+
+    @Autowired
+    protected TasksDtoMapper tasksDtoMapper;
 
     protected String task1title = "Task 1 title";
     protected String task2title = "Task 2 title";

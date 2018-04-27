@@ -30,7 +30,7 @@ public class WeeksRESTController {
         this.weekDAO = weekDAO;
     }
 
-    @RequestMapping(path = "/weeks/all")
+    @RequestMapping(path = "/week/all")
     public ResponseEntity<Map<Integer, List<Week>>> getAllWeeks(){
         return new ResponseEntity<Map<Integer, List<Week>>>(weekDAO.getWeeksMap(), HttpStatus.OK);
     }

@@ -32,7 +32,7 @@ public class WeeksRESTControllerTests extends ATestsWithTargetsMeansWeeks {
 
     @Test
     public void getAllWeeksTest() throws Exception {
-        MvcResult result =  mockMvc.perform(get("/weeks/all")).andExpect(status().isOk()).andReturn();
+        MvcResult result =  mockMvc.perform(get("/week/all")).andExpect(status().isOk()).andReturn();
         String resultStr = result.getResponse().getContentAsString();
         assertTrue(resultStr.contains("2017"));
         assertTrue(resultStr.contains("2018"));

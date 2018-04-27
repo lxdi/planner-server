@@ -4,6 +4,7 @@ import configuration.HibernateConfigMain;
 import model.*;
 import model.dto.mean.MeansDtoMapper;
 import model.dto.target.TargetsDtoMapper;
+import model.dto.task.TasksDtoMapper;
 import model.entities.Target;
 import org.junit.Before;
 import org.junit.runner.RunWith;
@@ -24,7 +25,7 @@ import static org.junit.Assert.assertTrue;
         classes = {HibernateConfigMain.class, EmbeddedDBConf.class, TargetsDao.class,
                 TargetsDtoMapper.class, MeansDao.class, MeansDtoMapper.class,
                 WeekDao.class, WeeksGenerator.class,
-                TasksDao.class})
+                TasksDao.class, TasksDtoMapper.class})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public abstract class AbstractTestsWithTargets {
 
