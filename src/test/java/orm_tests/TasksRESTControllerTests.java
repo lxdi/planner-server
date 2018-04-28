@@ -14,6 +14,8 @@ import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 /**
  * Created by Alexander on 23.04.2018.
@@ -36,6 +38,8 @@ public class TasksRESTControllerTests extends ATestsWithTargetsMeansWeeksTasks {
         String resultStr = result.getResponse().getContentAsString();
         assertTrue(resultStr.contains(task1title));
         assertTrue(resultStr.contains(task2title));
+        assertTrue(resultStr.contains(task3title));
+        assertTrue(resultStr.contains(task4title));
     }
 
     @Test
@@ -49,6 +53,24 @@ public class TasksRESTControllerTests extends ATestsWithTargetsMeansWeeksTasks {
 
         Task savedTask = tasksDAO.byTitle(taskTitle);
         assertTrue(savedTask!=null);
+    }
+
+    @Test
+    public void deleteTest() throws Exception {
+        mockMvc.perform(delete("/task/delete/1")).andExpect(status().isOk());
+        assertTrue(tasksDAO.byTitle(task1title)==null);
+    }
+
+    @Test
+    public void updateTest() throws Exception {
+        String taskTitle = "updated 1 task";
+        String updatedTask = "{\"id\":1, \"title\":\""+taskTitle+"\", \"meanid\":1, \"weekid\": 76}";
+
+        MvcResult result =  mockMvc.perform(post("/task/update")
+                .contentType(MediaType.APPLICATION_JSON).content(updatedTask))
+                .andExpect(status().isOk()).andReturn();
+        assertTrue(tasksDAO.byTitle(task1title)==null);
+        assertTrue(tasksDAO.byTitle(taskTitle).getId()==1);
     }
 
 

@@ -24,8 +24,10 @@ public class TasksDtoMapper {
         TaskDtoLazy dto = new TaskDtoLazy();
         dto.setId(task.getId());
         dto.setTitle(task.getTitle());
-        dto.setMeanid(task.getMean().getId());
-        dto.setWeekid(task.getWeek().getId());
+        if(task.getMean()!=null)
+            dto.setMeanid(task.getMean().getId());
+        if(task.getWeek()!=null)
+            dto.setWeekid(task.getWeek().getId());
         return dto;
     }
 
