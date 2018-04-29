@@ -1,5 +1,8 @@
 package model.entities;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -19,6 +22,7 @@ public class Mean {
     String title;
     String criteria;
 
+    @Fetch(FetchMode.SUBSELECT) // TODO duplicates was added in targets
     @ManyToMany(fetch = FetchType.EAGER)//(cascade = CascadeType.PERSIST)
     @JoinTable(
             name = "mean_target",

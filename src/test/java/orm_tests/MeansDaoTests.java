@@ -66,4 +66,18 @@ public class MeansDaoTests extends AbstractTestsWithTargetsWithMeans {
         assertTrue(mean!=null);
         assertTrue(mean.getTitle().equals(parentMeanTitle));
     }
+
+    @Test
+    public void getAllTest(){
+        List<Mean> allMeans = meansDao.getAllMeans();
+
+        boolean find = false;
+        for(Mean mean : allMeans){
+            if(mean.getTitle().equals(parentMeanTitle)){
+                find = true;
+                assertTrue(mean.getTargets().size()==1);
+            }
+        }
+        assertTrue(find);
+    }
 }
