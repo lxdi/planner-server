@@ -13,17 +13,6 @@ repositories {
     maven { url 'http://repo1.maven.org/maven2' }
 }
 
-task copyFront(type: Copy) {
-    from '../frontend/build'
-    into 'src/main/webapp/pages'
-}
-
-task cleanFront(type: Delete) {
-    delete 'src/main/webapp/pages'
-}
-
-clean.dependsOn cleanFront
-
 dependencies {
     //compile project(':frontend')
 
@@ -54,5 +43,17 @@ war {
     //classpath fileTree('additionalLibs') // adds a file-set to the WEB-INF/lib dir.
     //webXml = file('src/main/resources/web-inf/web.xml') // copies a file to WEB-INF/web.xml
 }
+
+task copyFront(type: Copy) {
+    from '../frontend/build'
+    into 'src/main/webapp/pages'
+}
+
+task cleanFront(type: Delete) {
+    delete 'src/main/webapp/pages'
+}
+
+war.dependsOn copyFront
+clean.dependsOn cleanFront
 
 //tomcatRun.outputFile = file('log.txt')

@@ -1,1 +1,1 @@
-tasks.getByPath(':backend:build').dependsOn(':frontend:compile')
+tasks.getByPath(':backend:copyFront').dependsOn(':frontend:compile')
