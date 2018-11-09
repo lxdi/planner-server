@@ -1,0 +1,7 @@
+task compile(type: Exec) {
+    commandLine "npm.cmd", "start"
+}
+
+task clean(type: Delete) { 
+    delete 'build/bundle.js' 
+}
