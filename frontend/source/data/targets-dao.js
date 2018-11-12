@@ -1,4 +1,5 @@
 import $ from 'jquery'
+import {registerEvent, registerReaction, fireEvent} from '../controllers/eventor'
 
 var targetsLoaded = false
 const targets = {}
@@ -51,6 +52,59 @@ const resolveTarget = function(target){
   }
 }
 
+registerEvent('targets-dao', 'create', function(target, parent){
+  target.parentid = parent!=null? parent.id: null
+  $.ajax({
+    url: '/target/create',
+    type: 'PUT',
+    contentType: 'application/json',
+    data: JSON.stringify(target),
+    success: function(data) {
+      targets[""+data.id] = data
+      resolveTargets()
+      fireEvent('targets-dao', 'target-created', [target])
+    }
+  });
+})
+
+registerEvent('targets-dao', 'target-created', function(target){
+  return target
+})
+
+registerEvent('targets-dao', 'delete', function(id){
+  $.ajax({
+    url: '/target/delete/'+id,
+    type: 'DELETE',
+    success: function() {
+      delete targets[id]
+      resolveTargets()
+      fireEvent('targets-dao', 'target-deleted', [id])
+    }
+  });
+})
+
+registerEvent('targets-dao', 'target-deleted', function(id){
+  return id
+})
+
+registerEvent('targets-dao', 'modify', function(target){
+  $.ajax({
+    url: '/target/update',
+    type: 'POST',
+    contentType: 'application/json',
+    data: JSON.stringify(target),
+    success: function(data) {
+      targets[""+data.id] = data
+      resolveTargets()
+      fireEvent('targets-dao', 'target-modified', [target])
+    }
+  });
+})
+
+registerEvent('targets-dao', 'target-modified', function(target){
+  return target
+})
+
 export var AllTargets = function(callback){
   if(!targetsLoaded){
       $.ajax({url: "/target/all/lazy"}).then(function(data) {
@@ -62,22 +116,6 @@ export var AllTargets = function(callback){
     targetsLoaded = true
   }
   return targets
-}
-
-export var AddTarget = function(target, parent, callback){
-  //target.id = idcount++;
-  target.parentid = parent!=null? parent.id: null
-  $.ajax({
-    url: '/target/create',
-    type: 'PUT',
-    contentType: 'application/json',
-    data: JSON.stringify(target),
-    success: function(data) {
-      targets[""+data.id] = data
-      resolveTargets()
-      callback()
-    }
-  });
 }
 
 export var GetTargetById = function(id){
@@ -94,21 +132,6 @@ export var CreateTarget =  function(id, title, children){
       return this.title;
     }
   }
-}
-
-export var DeleteTargetById = function(id, callback){
-  $.ajax({
-    url: '/target/delete/'+id,
-    type: 'DELETE',
-    success: function() {
-      delete targets[id]
-      resolveTargets()
-      callback()
-      for(var i in ObserversDeleteTarget){
-        ObserversDeleteTarget[i](id)
-      }
-    }
-  });
 }
 
 export var UpdateTarget = function(target, callback){
