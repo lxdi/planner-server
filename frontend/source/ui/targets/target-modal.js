@@ -5,30 +5,22 @@ import {CommonModal} from './../common-modal'
 import {CommonCrudeTemplate} from './../common-crud-template'
 import {registerEvent, registerReaction, fireEvent} from '../../controllers/eventor'
 
-import {AddTarget, CreateTarget, CreateTargetWithIncrementedId} from './../../data/targets-dao'
+import {CreateTarget} from './../../data/targets-dao'
 import {Button, ButtonToolbar,  DropdownButton, MenuItem,  FormGroup, ControlLabel, FormControl, Alert} from 'react-bootstrap'
 
 const dumbTarget = CreateTarget(0, '')
 
-const createState = function(){
+const createState = function(isOpen, isStatic, isEdit, currentTarget, parent){
   return {
-    isOpen: false,
-    isTargetModalOpen:false,
-    mode: {isStatic: true, isEdit: false},
-    parent: null,
-    currentTarget: dumbTarget,
-
+    isOpen: isOpen,
+    mode: {isStatic: isStatic, isEdit: isEdit},
+    currentTarget: currentTarget,
+    parent: parent
   }
 }
 
 const defaultState = function(){
-  return {
-    isOpen: false,
-    isTargetModalOpen:false,
-    parent: null,
-    currentTarget: dumbTarget,
-    mode: {isStatic: true, isEdit: false}
-  }
+  return createState(false, true, false, dumbTarget, null)
 }
 
 export class TargetModal extends React.Component {
@@ -39,14 +31,7 @@ export class TargetModal extends React.Component {
     this.handleNameVal = this.handleNameVal.bind(this);
 
     registerEvent('target-modal', 'open', function(currentTarget, parent){
-      this.setState({
-        isOpen:true,
-        mode: {
-          isStatic:currentTarget.id==0,
-          isEdit:currentTarget.id==0
-        },
-        currentTarget: currentTarget,
-        parent: parent})
+      this.setState(createState(true, currentTarget.id==0, currentTarget.id==0, currentTarget, parent))
     }.bind(this))
 
     registerEvent('target-modal', 'close', function(){

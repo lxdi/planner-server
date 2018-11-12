@@ -1,5 +1,6 @@
 import {AllTargets} from './targets-dao'
 import $ from 'jquery'
+import {registerEvent, registerReaction, fireEvent} from '../controllers/eventor'
 
 var meansLoaded = false
 const means = {}
@@ -93,7 +94,7 @@ export var CreateMean = function(id, title, targets, children){
   return newMean;
 }
 
-export var AddMean = function(mean, parent, callback){
+registerEvent('means-dao', 'create', function(mean, parent){
   mean.parentid = parent!=null? parent.id: null
   mean.targetsIds = []
   for(var i in mean.targets){
@@ -107,26 +108,34 @@ export var AddMean = function(mean, parent, callback){
     success: function(data) {
       means[""+data.id] = data
       ResolveMeans()
-      callback()
+      fireEvent('means-dao', 'mean-created', [mean])
     }
   });
-}
+})
 
-export var DeleteMeanById = function(id, callback){
+registerEvent('means-dao', 'mean-created', function(mean){
+  return mean
+})
+
+registerEvent('means-dao', 'delete', function(id, targetid){
   $.ajax({
     url: '/mean/delete/'+id,
     type: 'DELETE',
     success: function() {
       delete means[id]
       ResolveMeans()
-      callback()
+      fireEvent('means-dao', 'mean-deleted', [id])
     }
   });
-}
+})
+
+registerEvent('means-dao', 'mean-deleted', function(id){
+  return id
+})
 
 // Remove mean that has only one target and that target has id = targetid
 // Removing is only in UI because on server-side mean is removed automatically when target is removed
-export var DeleteMeanWithTarget = function(targetid, callback){
+registerEvent('means-dao', 'delete-depended-means', function(targetid){
   for(var i in means){
     if(means.hasOwnProperty(i)){
       if(means[i].targets.length == 1 && means[i].targets[0].id == targetid){
@@ -144,22 +153,9 @@ export var DeleteMeanWithTarget = function(targetid, callback){
     }
   }
   ResolveMeans()
-  if(callback!=null)
-    callback()
-}
+})
 
-//delete Mean only form UI
-var deleteMeanUI = function(mean){
-  delete means[mean.id]
-  var parent = means[mean.parentid]
-  if(parent != null){
-    parent.children = parent.children.filter(function(e){
-      e.id!=mean.id
-    })
-  }
-}
-
-export var UpdateMean = function(mean, callback){
+registerEvent('means-dao', 'modify', function(mean){
   mean.targetsIds = []
   for(var i in mean.targets){
     mean.targetsIds.push(mean.targets[i].id)
@@ -172,9 +168,24 @@ export var UpdateMean = function(mean, callback){
     success: function(data) {
       means[""+data.id] = data
       ResolveMeans()
-      callback()
+      fireEvent('means-dao', 'mean-modified', [mean])
     }
   });
+})
+
+registerEvent('means-dao', 'mean-modified', function(mean){
+  return mean
+})
+
+//delete Mean only form UI
+var deleteMeanUI = function(mean){
+  delete means[mean.id]
+  var parent = means[mean.parentid]
+  if(parent != null){
+    parent.children = parent.children.filter(function(e){
+      e.id!=mean.id
+    })
+  }
 }
 
 export var MeanById = function(id){

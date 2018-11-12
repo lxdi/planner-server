@@ -2,32 +2,21 @@ import {createNewTargetButtonTitle, addNewTargetTitle} from './../../titles'
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {Button, FormGroup, ControlLabel, FormControl, ListGroup, ListGroupItem} from 'react-bootstrap'
-import {AllTargets, AddTarget, DeleteTargetById, UpdateTarget, CreateTarget} from './../../data/targets-dao'
+import {AllTargets, CreateTarget} from './../../data/targets-dao'
 import {TargetModal} from './target-modal'
 import {registerEvent, registerReaction, fireEvent} from '../../controllers/eventor'
-
-const defaultState = function(){
-  return {
-    isTargetModalOpen:false,
-    parent: null,
-    currentTarget: CreateTarget(0, ''),
-    modalMode: {isStatic: true, isEdit: false}
-  }
-}
 
 export class TargetsFrame extends React.Component{
   constructor(props){
     super(props)
-    this.state = defaultState()
+    this.state = {}
 
     registerReaction('targets-frame', 'targets-dao', ['target-created', 'target-deleted', 'target-modified'], function(){
       fireEvent('target-modal', 'close')
       this.setState({})
     }.bind(this))
 
-    //this.state.targets = []
     AllTargets(function(){
-      //this.state.targets = fullfilled;
       this.setState({});
     }.bind(this))
   }
@@ -43,7 +32,7 @@ export class TargetsFrame extends React.Component{
         </div>
         <div>
           <ListGroup>
-            {targetsUIlist(this.state.targets)}
+            {targetsUIlist()}
           </ListGroup>
         </div>
       </div>
@@ -51,7 +40,7 @@ export class TargetsFrame extends React.Component{
   }
 }
 
-const targetsUIlist = function(targets){
+const targetsUIlist = function(){
   return AllTargets().map(function(target){
         return <ListGroupItem>
           {targetUI(target, 20)}

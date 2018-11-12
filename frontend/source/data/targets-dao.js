@@ -150,6 +150,3 @@ export var UpdateTarget = function(target, callback){
     }
   });
 }
-
-export var ObserversDeleteTarget = [];
-export var ObserversUpdateTarget = [];
