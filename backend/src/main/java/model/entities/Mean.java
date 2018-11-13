@@ -34,6 +34,9 @@ public class Mean {
 //    @OneToMany(mappedBy = "parent")
 //    List<Mean> children;
 
+    @ManyToOne
+    Quartal quartal;
+
     public Mean(){}
 
     public Mean(String title){
@@ -75,7 +78,14 @@ public class Mean {
         this.targets = targets;
     }
 
-//    public List<Mean> getChildren() {
+    public Quartal getQuartal() {
+        return quartal;
+    }
+    public void setQuartal(Quartal quartal) {
+        this.quartal = quartal;
+    }
+
+    //    public List<Mean> getChildren() {
 //        return children;
 //    }
 //    public void setChildren(List<Mean> children) {

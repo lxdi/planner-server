@@ -1,0 +1,40 @@
+package controllers;
+
+import model.IRealmDAO;
+import model.entities.Realm;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Controller
+public class RealmsRESTController {
+
+    @Autowired
+    IRealmDAO realmDAO;
+
+    public RealmsRESTController(){}
+
+    public RealmsRESTController(IRealmDAO realmDAO){
+        this.realmDAO = realmDAO;
+    }
+
+    @RequestMapping(path = "/realm/all")
+    public ResponseEntity<List<Realm>> getAllTargets(){
+        List<Realm> result = realmDAO.getAllRealms();
+        return new ResponseEntity<List<Realm>>(result, HttpStatus.OK);
+    }
+
+    @RequestMapping(path = "/realm/create" , method = RequestMethod.PUT)
+    public ResponseEntity<Realm> createTarget(@RequestBody Realm realm){
+        realmDAO.saveOrUpdate(realm);
+        return new ResponseEntity<Realm>(realm, HttpStatus.OK);
+    }
+
+}

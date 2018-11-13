@@ -24,7 +24,7 @@ public class TargetsDaoTests extends AbstractTestsWithTargets {
     public void saveOrUpdateTest(){
 //        Target parentTarget = new Target("new parent");
 //        parentTarget.setId(10);
-        Target target = new Target("new child");
+        Target target = new Target("new child", realm);
         //target.setParent(parentTarget);
         target.setId(2);
 

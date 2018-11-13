@@ -1,5 +1,3 @@
-package orm_tests;
-
 import controllers.TasksRESTController;
 import model.entities.Task;
 import org.junit.Before;

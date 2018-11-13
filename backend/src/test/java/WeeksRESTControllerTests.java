@@ -1,5 +1,3 @@
-package orm_tests;
-
 import controllers.WeeksRESTController;
 import org.junit.Before;
 import org.junit.Test;

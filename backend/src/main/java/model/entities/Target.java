@@ -21,11 +21,15 @@ public class Target {
 //    @OneToMany(mappedBy = "parent")
 //    private List<Target> children = new ArrayList<>();
 
+    @ManyToOne
+    Realm realm;
+
     public Target(){
     }
 
-    public Target(String title){
+    public Target(String title, Realm realm){
         this.setTitle(title);
+        this.setRealm(realm);
     }
 
     public long getId() {
@@ -49,7 +53,14 @@ public class Target {
         this.title = title;
     }
 
-//    public List<Target> getChildren() {
+    public Realm getRealm() {
+        return realm;
+    }
+    public void setRealm(Realm realm) {
+        this.realm = realm;
+    }
+
+    //    public List<Target> getChildren() {
 //        return children;
 //    }
 //    public void setChildren(List<Target> children) {

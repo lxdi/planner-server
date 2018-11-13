@@ -1,5 +1,3 @@
-package orm_tests;
-
 import controllers.TargetsRESTController;
 import model.dto.target.TargetsDtoMapper;
 import org.junit.Before;
@@ -9,7 +7,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.util.NestedServletException;
 import orm_tests.conf.AbstractTestsWithTargets;
+
+import javax.xml.bind.ValidationException;
 
 import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -38,7 +39,7 @@ public class TargetsRESTControllerWithOrmTests extends AbstractTestsWithTargets 
 
     @Test
     public void createTest() throws Exception {
-        String content = "{\"id\":0,\"title\":\"new target\",\"parentid\":2, \"children\":[]}";
+        String content = "{\"id\":0,\"title\":\"new target\",\"parentid\":2, \"realmid\":1, \"children\":[]}";
         MvcResult result = mockMvc.perform(put("/target/create")
                 .contentType(MediaType.APPLICATION_JSON).content(content))
                 .andExpect(status().isOk()).andReturn();
@@ -74,7 +75,7 @@ public class TargetsRESTControllerWithOrmTests extends AbstractTestsWithTargets 
 
     @Test
     public void updateTest() throws Exception {
-        String content = "{\"id\":2,\"title\":\"default child changed\",\"parentid\":1}";
+        String content = "{\"id\":2,\"title\":\"default child changed\",\"parentid\":1, \"realmid\":1}";
         MvcResult result = mockMvc.perform(post("/target/update")
                 .contentType(MediaType.APPLICATION_JSON).content(content))
                 .andExpect(status().isOk()).andReturn();
@@ -85,6 +86,15 @@ public class TargetsRESTControllerWithOrmTests extends AbstractTestsWithTargets 
         System.out.println(result.getResponse().getContentAsString());
     }
 
+    @Test(expected = NestedServletException.class)
+    public void creatingTargetWithoutRealm() throws Exception {
+        String content = "{\"id\":2,\"title\":\"default child changed\",\"parentid\":1}";
+        MvcResult result = mockMvc.perform(post("/target/update")
+                .contentType(MediaType.APPLICATION_JSON).content(content))
+                .andExpect(status().isOk()).andReturn();
+
+        //assertTrue(result.getResponse().getContentAsString().contains("realmid is empty"));
+    }
 
 
 

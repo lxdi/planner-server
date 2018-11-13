@@ -1,6 +1,7 @@
 import controllers.TargetsRESTController;
 import model.ITargetsDAO;
 import model.dto.target.TargetsDtoMapper;
+import model.entities.Realm;
 import model.entities.Target;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,12 +29,13 @@ public class TargetsRESTControllerTest {
 
    @Before
    public void init(){
-      Target target1  = new Target("target-1");
+      Realm realm = new Realm("test realm");
+      Target target1  = new Target("target-1", realm);
       target1.setId(1);
-      Target target2 = new Target("target-1-2");
+      Target target2 = new Target("target-1-2", realm);
       target2.setId(2);
       target2.setParent(target1);
-      Target target3 = new Target("target-2");
+      Target target3 = new Target("target-2", realm);
       target3.setId(3);
       List<Target> listoftargets = new ArrayList<>(Arrays.asList(target1, target2 , target3));
 
