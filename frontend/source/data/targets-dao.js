@@ -1,9 +1,15 @@
 import $ from 'jquery'
 import {registerEvent, registerReaction, fireEvent} from '../controllers/eventor'
+import {RealmsState} from './realms-dao'
 
-var targetsLoaded = false
-const targets = {}
-targets.__proto__ = {
+export const targetsState = {
+  targets: {},
+  targetsLoaded: false
+}
+
+// var targetsLoaded = false
+// const targets = {}
+targetsState.targets.__proto__ = {
   map: function(callback, filter){
     var result = []
     for (var i in this){
@@ -29,15 +35,15 @@ const targetsuper = {
 
 const importTargetsDto = function(targetsDto){
   for(var i in targetsDto){
-    targets[""+targetsDto[i].id] = targetsDto[i]
+    targetsState.targets[""+targetsDto[i].id] = targetsDto[i]
   }
   resolveTargets();
 }
 
 const resolveTargets = function(){
-  for(var i in targets){
-    if(targets.hasOwnProperty(i)){
-      resolveTarget(targets[i])
+  for(var i in targetsState.targets){
+    if(targetsState.targets.hasOwnProperty(i)){
+      resolveTarget(targetsState.targets[i])
     }
   }
 }
@@ -45,9 +51,9 @@ const resolveTargets = function(){
 const resolveTarget = function(target){
   target.children = []
   target.__proto__ = targetsuper
-  for(var j in targets){
-    if(targets[j].parentid == target.id){
-      target.children.push(targets[j])
+  for(var j in targetsState.targets){
+    if(targetsState.targets[j].parentid == target.id){
+      target.children.push(targetsState.targets[j])
     }
   }
 }
@@ -60,7 +66,7 @@ registerEvent('targets-dao', 'create', function(target, parent){
     contentType: 'application/json',
     data: JSON.stringify(target),
     success: function(data) {
-      targets[""+data.id] = data
+      targetsState.targets[""+data.id] = data
       resolveTargets()
       fireEvent('targets-dao', 'target-created', [target])
     }
@@ -76,7 +82,7 @@ registerEvent('targets-dao', 'delete', function(id){
     url: '/target/delete/'+id,
     type: 'DELETE',
     success: function() {
-      delete targets[id]
+      delete targetsState.targets[id]
       resolveTargets()
       fireEvent('targets-dao', 'target-deleted', [id])
     }
@@ -94,7 +100,7 @@ registerEvent('targets-dao', 'modify', function(target){
     contentType: 'application/json',
     data: JSON.stringify(target),
     success: function(data) {
-      targets[""+data.id] = data
+      targetsState.targets[""+data.id] = data
       resolveTargets()
       fireEvent('targets-dao', 'target-modified', [target])
     }
@@ -105,21 +111,41 @@ registerEvent('targets-dao', 'target-modified', function(target){
   return target
 })
 
-export var AllTargets = function(callback){
-  if(!targetsLoaded){
-      $.ajax({url: "/target/all/lazy"}).then(function(data) {
-                var receivedData = typeof data == 'string'? JSON.parse(data): data
-                importTargetsDto(receivedData)
-                if(callback != null)
-                  callback()
-              });
-    targetsLoaded = true
+registerEvent('targets-dao', 'targets-request', function(){
+  if(RealmsState.realmsLoaded){
+    $.ajax({url: "/target/all/lazy"}).then(function(data) {
+              var receivedData = typeof data == 'string'? JSON.parse(data): data
+              importTargetsDto(receivedData)
+              targetsState.targetsLoaded = true
+              fireEvent('targets-dao', 'targets-received', [])
+            });
+  } else {
+    fireEvent('realms-dao', 'realms-request', [])
   }
-  return targets
-}
+})
+
+registerEvent('targets-dao', 'targets-received', function(){
+
+})
+
+registerReaction('targets-dao', 'realms-dao', 'realms-received' , function(){
+  fireEvent('targets-dao', 'targets-request', [])
+})
+
+// export var AllTargets = function(callback){
+//   if(!targetsLoaded){
+//     $.ajax({url: "/target/all/lazy"}).then(function(data) {
+//               var receivedData = typeof data == 'string'? JSON.parse(data): data
+//               importTargetsDto(receivedData)
+//               targetsLoaded = true
+//               fireEvent('targets-dao', 'targets-received', [])
+//             });
+//   }
+//   return targetsState.targets
+// }
 
 export var GetTargetById = function(id){
-  return targets.id
+  return targetsState.targets.id
 }
 
 export var CreateTarget =  function(id, title, children){
@@ -134,19 +160,19 @@ export var CreateTarget =  function(id, title, children){
   }
 }
 
-export var UpdateTarget = function(target, callback){
-  $.ajax({
-    url: '/target/update',
-    type: 'POST',
-    contentType: 'application/json',
-    data: JSON.stringify(target),
-    success: function(data) {
-      targets[""+data.id] = data
-      resolveTargets()
-      callback()
-      for(var i in ObserversUpdateTarget){
-        ObserversUpdateTarget[i](target)
-      }
-    }
-  });
-}
+// export var UpdateTarget = function(target, callback){
+//   $.ajax({
+//     url: '/target/update',
+//     type: 'POST',
+//     contentType: 'application/json',
+//     data: JSON.stringify(target),
+//     success: function(data) {
+//       targetsState.targets[""+data.id] = data
+//       resolveTargets()
+//       callback()
+//       for(var i in ObserversUpdateTarget){
+//         ObserversUpdateTarget[i](target)
+//       }
+//     }
+//   });
+// }

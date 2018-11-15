@@ -2,7 +2,7 @@ import {createNewTargetButtonTitle, addNewTargetTitle} from './../../titles'
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {Button, FormGroup, ControlLabel, FormControl, ListGroup, ListGroupItem} from 'react-bootstrap'
-import {AllTargets, CreateTarget} from './../../data/targets-dao'
+import {CreateTarget, targetsState} from './../../data/targets-dao'
 import {TargetModal} from './target-modal'
 import {registerEvent, registerReaction, fireEvent} from '../../controllers/eventor'
 
@@ -16,9 +16,11 @@ export class TargetsFrame extends React.Component{
       this.setState({})
     }.bind(this))
 
-    AllTargets(function(){
-      this.setState({});
-    }.bind(this))
+    registerReaction('targets-frame', 'targets-dao', 'targets-received', ()=>this.setState({}))
+
+    // AllTargets(function(){
+    //   this.setState({});
+    // }.bind(this))
   }
 
   render(){
@@ -41,13 +43,18 @@ export class TargetsFrame extends React.Component{
 }
 
 const targetsUIlist = function(){
-  return AllTargets().map(function(target){
-        return <ListGroupItem>
-          {targetUI(target, 20)}
-        </ListGroupItem>
-  }, function(target){
-    return target.parentid == null
-  })
+  if(targetsState.targetsLoaded){
+    return targetsState.targets.map(function(target){
+          return <ListGroupItem>
+            {targetUI(target, 20)}
+          </ListGroupItem>
+    }, function(target){
+      return target.parentid == null
+    })
+  } else {
+    fireEvent('targets-dao', 'targets-request', [])
+    return null
+  }
 }
 
 const targetUI = function(target, offset){
