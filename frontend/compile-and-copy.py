@@ -3,7 +3,7 @@ import shutil
 import subprocess
 import sys
 
-tomcatPath = 'c:\\Users\\11014535\\apache-tomcat-7.0.91'
+tomcatPath = 'c:\\Users\\Alexander\\Projects\\tomcats\\apache-tomcat-7.0.91'
 destination = tomcatPath + '\\webapps\\ROOT\\pages'
 source = 'build'
 onlyCopy = False
