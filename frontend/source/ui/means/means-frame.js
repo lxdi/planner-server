@@ -1,7 +1,9 @@
 import {createNewMeanButtonTitle, addNewMeanTitle} from './../../titles'
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {AllMeans, CreateMean} from './../../data/means-dao'
+import {MeansState, CreateMean} from './../../data/means-dao'
+import {TargetsState} from './../../data/targets-dao'
+import {RealmsState} from './../../data/realms-dao'
 import {Button, ButtonToolbar,  DropdownButton, MenuItem, ListGroup, ListGroupItem} from 'react-bootstrap'
 import {MeanModal} from './mean-modal'
 import {registerEvent, registerReaction, fireEvent} from '../../controllers/eventor'
@@ -25,7 +27,11 @@ export class MeansFrame extends React.Component{
       this.setState({})
     })
 
-    AllMeans(uiUpdate);
+    registerReaction('means-frame', 'realms-dao', 'change-current-realm', ()=>this.setState({}))
+    registerReaction('means-frame', 'targets-dao', 'targets-received', ()=>this.setState({}))
+    registerReaction('means-frame', 'means-dao', 'means-received', ()=>this.setState({}))
+
+    //AllMeans(uiUpdate);
   }
 
   render(){
@@ -48,13 +54,29 @@ export class MeansFrame extends React.Component{
 }
 
 const meansUIlist = function(){
-  return AllMeans().map(function(mean){
-      return <ListGroupItem>
-        {meanUI(mean, 20)}
-      </ListGroupItem>
-  }, function(mean){
-    return mean.parentid==null
-  })
+  if(TargetsState.targetsLoaded){
+    if(MeansState.meansLoaded){
+      return MeansState.means.map(function(mean){
+          return <ListGroupItem>
+            {meanUI(mean, 20)}
+          </ListGroupItem>
+      }, function(mean){
+        return mean.parentid==null && isMeanFromCurrentRealm(mean)
+      })
+    } else {
+      fireEvent('means-dao', 'means-request', [])
+      return null
+    }
+  }
+}
+
+const isMeanFromCurrentRealm = function(mean){
+  for(var i in mean.targets){
+    if(mean.targets[i].realmid == RealmsState.currentRealm.id){
+      return true;
+    }
+  }
+  return false
 }
 
 const meanUI = function(mean, offset){

@@ -1,10 +1,13 @@
-import {AllTargets} from './targets-dao'
+import {TargetsState} from './targets-dao'
 import $ from 'jquery'
 import {registerEvent, registerReaction, fireEvent} from '../controllers/eventor'
 
-var meansLoaded = false
-const means = {}
-means.__proto__ = {
+export const MeansState = {
+  means: {},
+  meansLoaded: false
+}
+
+MeansState.means.__proto__ = {
   map: function(callback, filter){
     var result = []
     for (var i in this){
@@ -38,15 +41,15 @@ const protomean = {
 
 const importMeansDto = function(meansDto){
   for(var i in meansDto){
-    means[""+meansDto[i].id] = meansDto[i]
+    MeansState.means[""+meansDto[i].id] = meansDto[i]
   }
   ResolveMeans();
 }
 
 export var ResolveMeans = function(){
-  for(var i in means){
-    if(means.hasOwnProperty(i)){
-      resolveMean(means[i])
+  for(var i in MeansState.means){
+    if(MeansState.means.hasOwnProperty(i)){
+      resolveMean(MeansState.means[i])
     }
   }
 }
@@ -55,32 +58,31 @@ const resolveMean = function(mean){
   mean.children = []
   mean.targets = []
   mean.__proto__ = protomean
-  for(var j in means){
-    if(means[j].parentid == mean.id){
-      mean.children.push(means[j])
+  for(var j in MeansState.means){
+    if(MeansState.means[j].parentid == mean.id){
+      mean.children.push(MeansState.means[j])
     }
   }
-  var alltargets = AllTargets()
   for(var tid in mean.targetsIds){
-      var target = alltargets[mean.targetsIds[tid]]
+      var target = TargetsState.targets[mean.targetsIds[tid]]
       if(target!=null){
         mean.targets.push(target)
       }
   }
 }
 
-export var AllMeans = function(callback){
-  if(!meansLoaded){
-      $.ajax({url: "/mean/all/lazy"}).then(function(data) {
-                var receivedData = typeof data == 'string'? JSON.parse(data): data
-                importMeansDto(receivedData)
-                if(callback != null)
-                  callback()
-              });
-    meansLoaded = true
-  }
-  return means
-}
+// export var AllMeans = function(callback){
+//   if(!MeansState.meansLoaded){
+//       $.ajax({url: "/mean/all/lazy"}).then(function(data) {
+//                 var receivedData = typeof data == 'string'? JSON.parse(data): data
+//                 importMeansDto(receivedData)
+//                 if(callback != null)
+//                   callback()
+//               });
+//     MeansState.meansLoaded = true
+//   }
+//   return MeansState.means
+// }
 
 export var CreateMean = function(id, title, targets, children){
   var childrenToAdd = children!=null? children: []
@@ -94,6 +96,19 @@ export var CreateMean = function(id, title, targets, children){
   return newMean;
 }
 
+registerEvent('means-dao', 'means-request', function(){
+    $.ajax({url: "/mean/all/lazy"}).then(function(data) {
+              var receivedData = typeof data == 'string'? JSON.parse(data): data
+              importMeansDto(receivedData)
+              MeansState.meansLoaded = true
+              fireEvent('means-dao', 'means-received', [])
+            });
+})
+
+registerEvent('means-dao', 'means-received', function(){
+
+})
+
 registerEvent('means-dao', 'create', function(mean, parent){
   mean.parentid = parent!=null? parent.id: null
   mean.targetsIds = []
@@ -106,7 +121,7 @@ registerEvent('means-dao', 'create', function(mean, parent){
     contentType: 'application/json',
     data: JSON.stringify(mean),
     success: function(data) {
-      means[""+data.id] = data
+      MeansState.means[""+data.id] = data
       ResolveMeans()
       fireEvent('means-dao', 'mean-created', [mean])
     }
@@ -122,7 +137,7 @@ registerEvent('means-dao', 'delete', function(id, targetid){
     url: '/mean/delete/'+id,
     type: 'DELETE',
     success: function() {
-      delete means[id]
+      delete MeansState.means[id]
       ResolveMeans()
       fireEvent('means-dao', 'mean-deleted', [id])
     }
@@ -136,16 +151,16 @@ registerEvent('means-dao', 'mean-deleted', function(id){
 // Remove mean that has only one target and that target has id = targetid
 // Removing is only in UI because on server-side mean is removed automatically when target is removed
 registerEvent('means-dao', 'delete-depended-means', function(targetid){
-  for(var i in means){
-    if(means.hasOwnProperty(i)){
-      if(means[i].targets.length == 1 && means[i].targets[0].id == targetid){
+  for(var i in MeansState.means){
+    if(MeansState.means.hasOwnProperty(i)){
+      if(MeansState.means[i].targets.length == 1 && MeansState.means[i].targets[0].id == targetid){
         //delete means[i]
-        deleteMeanUI(means[i])
+        deleteMeanUI(MeansState.means[i])
       } else {
-        if(means[i].targets.length>1){
-          for(var j in means[i].targets){
-            if(means[i].targets[j].id == targetid){
-              delete means[i].targets[j]
+        if(MeansState.means[i].targets.length>1){
+          for(var j in MeansState.means[i].targets){
+            if(MeansState.means[i].targets[j].id == targetid){
+              delete MeansState.means[i].targets[j]
             }
           }
         }
@@ -166,7 +181,7 @@ registerEvent('means-dao', 'modify', function(mean){
     contentType: 'application/json',
     data: JSON.stringify(mean),
     success: function(data) {
-      means[""+data.id] = data
+      MeansState.means[""+data.id] = data
       ResolveMeans()
       fireEvent('means-dao', 'mean-modified', [mean])
     }
@@ -179,8 +194,8 @@ registerEvent('means-dao', 'mean-modified', function(mean){
 
 //delete Mean only form UI
 var deleteMeanUI = function(mean){
-  delete means[mean.id]
-  var parent = means[mean.parentid]
+  delete MeansState.means[mean.id]
+  var parent = MeansState.means[mean.parentid]
   if(parent != null){
     parent.children = parent.children.filter(function(e){
       e.id!=mean.id
@@ -189,5 +204,5 @@ var deleteMeanUI = function(mean){
 }
 
 export var MeanById = function(id){
-  return means[id];
+  return MeansState.means[id];
 }

@@ -56,10 +56,9 @@ const realmsUI = function(){
         const isCurrentRealm = RealmsState.realms[realmidConst]==RealmsState.currentRealm
         result.push(<ListGroupItem key={"realm_"+realmidConst+(RealmsState.realms[realmidConst]==RealmsState.currentRealm?"_current":"_notcurrent")}>
             <div>
-              <h4>
+              <h4 onClick={()=>fireEvent('realms-dao', 'change-current-realm', [RealmsState.realms[realmidConst]])}>
                 <input type="radio" autocomplete="off"
-                  checked={isCurrentRealm?"checked":null}
-                  onClick={()=>fireEvent('realms-dao', 'change-current-realm', [RealmsState.realms[realmidConst]])}/>
+                  checked={isCurrentRealm?"checked":null}/>
                 {RealmsState.realms[realmId].title}
               </h4>
             </div>

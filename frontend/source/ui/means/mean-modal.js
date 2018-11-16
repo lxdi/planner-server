@@ -2,7 +2,8 @@ import {meanModalHeaderTitle, targetsDropDownTitle} from './../../titles'
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {CommonModal} from './../common-modal'
-import {AllTargets} from './../../data/targets-dao'
+import {RealmsState} from './../../data/realms-dao'
+import {TargetsState} from './../../data/targets-dao'
 import {CreateMean} from './../../data/means-dao'
 import {CommonCrudeTemplate} from './../common-crud-template'
 import {Button, ButtonToolbar,  DropdownButton, MenuItem,  FormGroup, ControlLabel, FormControl} from 'react-bootstrap'
@@ -92,9 +93,9 @@ export class MeanModal extends React.Component {
 }
 
 const availableTargetsUI = function(){
-  return AllTargets().map(function(target){
+  return TargetsState.targets.map(function(target){
     return <MenuItem eventKey={target}>{target.toString()}</MenuItem>
-  })
+  }, (target)=>target.realmid==RealmsState.currentRealm.id)
 }
 
 const relatedTargetsUI = function(targets){
