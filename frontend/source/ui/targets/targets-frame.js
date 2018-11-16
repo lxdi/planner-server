@@ -30,10 +30,8 @@ export class TargetsFrame extends React.Component{
   render(){
     return(
       <div>
-        <div style={{'margin-bottom': '3px'}}>
-          <TargetModal/>
-          <RealmModal/>
-        </div>
+        <TargetModal/>
+        <RealmModal/>
         <div>
           <Button bsStyle="success" bsSize="xsmall" onClick={()=>fireEvent('realm-modal', 'open', [CreateRealm(0, '')])}>
             Create New Realm

@@ -31,14 +31,13 @@ export class MeansFrame extends React.Component{
     registerReaction('means-frame', 'targets-dao', 'targets-received', ()=>this.setState({}))
     registerReaction('means-frame', 'means-dao', 'means-received', ()=>this.setState({}))
 
-    //AllMeans(uiUpdate);
   }
 
   render(){
     return(
       <div>
         <div style={{'margin-bottom': '3px'}}>
-          <Button bsStyle="primary" bsSize="xsmall" onClick={()=>fireEvent('mean-modal', 'open', [CreateMean(0, '', [])])}>
+          <Button bsStyle="primary" bsSize="xsmall" onClick={()=>fireEvent('mean-modal', 'open', [CreateMean(0, '', RealmsState.currentRealm.id, [])])}>
             {createNewMeanButtonTitle}
           </Button>
           <MeanModal/>
@@ -61,22 +60,13 @@ const meansUIlist = function(){
             {meanUI(mean, 20)}
           </ListGroupItem>
       }, function(mean){
-        return mean.parentid==null && isMeanFromCurrentRealm(mean)
+        return mean.parentid==null && mean.realmid == RealmsState.currentRealm.id
       })
     } else {
       fireEvent('means-dao', 'means-request', [])
       return null
     }
   }
-}
-
-const isMeanFromCurrentRealm = function(mean){
-  for(var i in mean.targets){
-    if(mean.targets[i].realmid == RealmsState.currentRealm.id){
-      return true;
-    }
-  }
-  return false
 }
 
 const meanUI = function(mean, offset){
@@ -89,7 +79,7 @@ const meanUI = function(mean, offset){
               :mean.title}
          </a>
           <span style={{color: 'green'}}> {mean.targetsString()}</span>  <span/>
-      <a href="#" onClick={()=>fireEvent('mean-modal', 'open', [CreateMean(0, '', []), mean])}>
+        <a href="#" onClick={()=>fireEvent('mean-modal', 'open', [CreateMean(0, '', RealmsState.currentRealm.id, []), mean])}>
           {addNewMeanTitle}
         </a>
       </div>

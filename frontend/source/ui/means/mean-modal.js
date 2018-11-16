@@ -10,7 +10,7 @@ import {Button, ButtonToolbar,  DropdownButton, MenuItem,  FormGroup, ControlLab
 import {registerEvent, registerReaction, fireEvent} from '../../controllers/eventor'
 
 
-const dumbMean = CreateMean(0, '', [])
+const dumbMean = CreateMean(0, '', null, [])
 
 const createState = function(isOpen, isStatic, isEdit, currentMean, parent){
   return {

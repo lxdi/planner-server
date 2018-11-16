@@ -84,11 +84,12 @@ const resolveMean = function(mean){
 //   return MeansState.means
 // }
 
-export var CreateMean = function(id, title, targets, children){
+export var CreateMean = function(id, title, realmid, targets, children){
   var childrenToAdd = children!=null? children: []
   var newMean = {
     'id': id,
     'title': title,
+    'realmid': realmid,
     'targets': targets,
     'children': childrenToAdd,
   }
