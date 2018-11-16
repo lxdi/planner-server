@@ -1,8 +1,10 @@
 package model.dto.mean;
 
 import model.IMeansDAO;
+import model.IRealmDAO;
 import model.ITargetsDAO;
 import model.entities.Mean;
+import model.entities.Realm;
 import model.entities.Target;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -20,6 +22,9 @@ public class MeansDtoMapper {
     @Autowired
     ITargetsDAO targetsDAO;
 
+    @Autowired
+    IRealmDAO realmDAO;
+
     public MeanDtoLazy meanToDtoLazy(Mean mean){
         MeanDtoLazy meanDtoLazy = new MeanDtoLazy();
         mapStatic(mean, meanDtoLazy);
@@ -27,6 +32,7 @@ public class MeansDtoMapper {
         for(Target target : mean.getTargets()){
             meanDtoLazy.getTargetsIds().add(target.getId());
         }
+        meanDtoLazy.setRealmid(mean.getRealm().getId());
         return meanDtoLazy;
     }
 
@@ -44,6 +50,16 @@ public class MeansDtoMapper {
         //TODO optimize in one call
         for(Long id : meanDto.getTargetsIds()){
             mean.getTargets().add(targetsDAO.targetById(id));
+        }
+
+        if(meanDto.getRealmid()!=null){
+            Realm realm = realmDAO.realmById(meanDto.getRealmid());
+            if(realm==null){
+                throw new RuntimeException("Realm doesn't exist with id = " + meanDto.getRealmid());
+            }
+            mean.setRealm(realm);
+        } else {
+            throw new RuntimeException("No realm in mean");
         }
         return mean;
     }

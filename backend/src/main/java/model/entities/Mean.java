@@ -35,11 +35,15 @@ public class Mean {
 //    List<Mean> children;
 
     @ManyToOne
+    Realm realm;
+
+    @ManyToOne
     Quartal quartal;
 
     public Mean(){}
 
-    public Mean(String title){
+    public Mean(String title, Realm realm){
+        this.realm = realm;
         this.title = title;
     }
 
@@ -83,6 +87,13 @@ public class Mean {
     }
     public void setQuartal(Quartal quartal) {
         this.quartal = quartal;
+    }
+
+    public Realm getRealm() {
+        return realm;
+    }
+    public void setRealm(Realm realm) {
+        this.realm = realm;
     }
 
     //    public List<Mean> getChildren() {
