@@ -9,7 +9,7 @@ export var deleteButton = 'Delete'
 export var editButton = 'Edit'
 export var viewButtonTitle = 'View'
 
-export var createNewTargetButtonTitle = 'Create New'
+export var createNewTargetButtonTitle = 'Create New Target'
 export var targetModalHeaderTitle = 'Create new target'
 export var addNewTargetTitle = '+'
 

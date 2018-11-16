@@ -12,7 +12,10 @@ registerEvent('realms-dao', 'realms-request', function(){
             var receivedData = typeof data == 'string'? JSON.parse(data): data
             importRealms(receivedData)
             RealmsState.realmsLoaded = true
-            RealmsState.currentRealm = RealmsState.realms[1]
+            for(var i in RealmsState.realms){
+              RealmsState.currentRealm = RealmsState.realms[i]
+              break
+            }
             fireEvent('realms-dao', 'realms-received', [])
           });
 })
@@ -37,6 +40,10 @@ registerEvent('realms-dao', 'create', function(realm){
 
 registerEvent('realms-dao', 'realms-created', function(realm){
   return realm
+})
+
+registerEvent('realms-dao', 'change-current-realm', function(realm){
+  RealmsState.currentRealm = realm
 })
 
 const importRealms = function(data){

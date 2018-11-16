@@ -24,11 +24,7 @@ export class TargetsFrame extends React.Component{
     }.bind(this))
 
     registerReaction('targets-frame', 'targets-dao', 'targets-received', ()=>this.setState({}))
-    registerReaction('targets-frame', 'realms-dao', 'realms-received', ()=>this.setState({}))
-
-    // AllTargets(function(){
-    //   this.setState({});
-    // }.bind(this))
+    registerReaction('targets-frame', 'realms-dao', ['realms-received', 'change-current-realm'], ()=>this.setState({}))
   }
 
   render(){
@@ -40,7 +36,7 @@ export class TargetsFrame extends React.Component{
         </div>
         <div>
           <Button bsStyle="success" bsSize="xsmall" onClick={()=>fireEvent('realm-modal', 'open', [CreateRealm(0, '')])}>
-            Create Realm
+            Create New Realm
           </Button>
           <ListGroup>
             {realmsUI()}
@@ -53,28 +49,46 @@ export class TargetsFrame extends React.Component{
 
 const realmsUI = function(){
   if(RealmsState.realmsLoaded){
-    const result = []
-    for(var realmId in RealmsState.realms){
-      const realmidConst = realmId
-      result.push(<ListGroupItem>
-          <div>
-            {RealmsState.realms[realmId].title}
-            <Button bsStyle="success" bsSize="xsmall" onClick={()=>fireEvent('target-modal', 'open', [CreateTarget(0, '', RealmsState.realms[realmidConst].id)])}>
-              {createNewTargetButtonTitle}
-            </Button>
-          </div>
-          <div>{targetsUIlist(realmId)}</div>
-        </ListGroupItem>)
+    if(TargetsState.targetsLoaded){
+      const result = []
+      for(var realmId in RealmsState.realms){
+        const realmidConst = realmId
+        const isCurrentRealm = RealmsState.realms[realmidConst]==RealmsState.currentRealm
+        result.push(<ListGroupItem key={"realm_"+realmidConst+(RealmsState.realms[realmidConst]==RealmsState.currentRealm?"_current":"_notcurrent")}>
+            <div>
+              <h4>
+                <input type="radio" autocomplete="off"
+                  checked={isCurrentRealm?"checked":null}
+                  onClick={()=>fireEvent('realms-dao', 'change-current-realm', [RealmsState.realms[realmidConst]])}/>
+                {RealmsState.realms[realmId].title}
+              </h4>
+            </div>
+            <div>
+              {isCurrentRealm?targetsUI(realmidConst):null}
+            </div>
+          </ListGroupItem>)
+      }
+      return result
+    } else {
+      fireEvent('targets-dao', 'targets-request', [])
+      return null
     }
-    return result
   } else {
     fireEvent('realms-dao', 'realms-request', [])
     return null
   }
 }
 
+const targetsUI = function(realmId){
+  return <div>
+      <Button bsStyle="success" bsSize="xsmall" onClick={()=>fireEvent('target-modal', 'open', [CreateTarget(0, '', RealmsState.realms[realmId].id)])}>
+                  {createNewTargetButtonTitle}
+                </Button>
+              <div>{targetsUIlist(realmId)}</div>
+    </div>
+}
+
 const targetsUIlist = function(realmId){
-  if(TargetsState.targetsLoaded){
     return TargetsState.targets.map(function(target){
           return <ListGroupItem>
             {targetUI(target, realmId, 20)}
@@ -82,10 +96,6 @@ const targetsUIlist = function(realmId){
     }, function(target){
       return target.parentid == null && target.realmid == realmId
     })
-  } else {
-    fireEvent('targets-dao', 'targets-request', [])
-    return null
-  }
 }
 
 const targetUI = function(target, realmId, offset){

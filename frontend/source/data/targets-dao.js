@@ -112,25 +112,21 @@ registerEvent('targets-dao', 'target-modified', function(target){
 })
 
 registerEvent('targets-dao', 'targets-request', function(){
-  if(RealmsState.realmsLoaded){
     $.ajax({url: "/target/all/lazy"}).then(function(data) {
               var receivedData = typeof data == 'string'? JSON.parse(data): data
               importTargetsDto(receivedData)
               TargetsState.targetsLoaded = true
               fireEvent('targets-dao', 'targets-received', [])
             });
-  } else {
-    fireEvent('realms-dao', 'realms-request', [])
-  }
 })
 
 registerEvent('targets-dao', 'targets-received', function(){
 
 })
 
-registerReaction('targets-dao', 'realms-dao', 'realms-received' , function(){
-  fireEvent('targets-dao', 'targets-request', [])
-})
+// registerReaction('targets-dao', 'realms-dao', 'realms-received' , function(){
+//   fireEvent('targets-dao', 'targets-request', [])
+// })
 
 // export var AllTargets = function(callback){
 //   if(!targetsLoaded){
