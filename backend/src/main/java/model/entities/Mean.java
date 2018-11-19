@@ -38,7 +38,7 @@ public class Mean {
     Realm realm;
 
     @ManyToOne
-    Quartal quartal;
+    Quarter quarter;
 
     public Mean(){}
 
@@ -82,11 +82,11 @@ public class Mean {
         this.targets = targets;
     }
 
-    public Quartal getQuartal() {
-        return quartal;
+    public Quarter getQuarter() {
+        return quarter;
     }
-    public void setQuartal(Quartal quartal) {
-        this.quartal = quartal;
+    public void setQuarter(Quarter quarter) {
+        this.quarter = quarter;
     }
 
     public Realm getRealm() {

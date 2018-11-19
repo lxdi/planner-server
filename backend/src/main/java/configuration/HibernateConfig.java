@@ -65,9 +65,15 @@ public class HibernateConfig {
             properties.put("url", envCtx.lookup("url"));
             properties.put("username", envCtx.lookup("username"));
             properties.put("password", envCtx.lookup("password"));
+
             properties.put("generate_weeks", envCtx.lookup("generate_weeks"));
             properties.put("gen_weeks_from", envCtx.lookup("gen_weeks_from"));
             properties.put("gen_weeks_to", envCtx.lookup("gen_weeks_to"));
+
+            properties.put("generate_quarters", envCtx.lookup("generate_quarters"));
+            properties.put("gen_quarters_from", envCtx.lookup("gen_quarters_from"));
+            properties.put("gen_quarters_to", envCtx.lookup("gen_quarters_to"));
+
         } catch (NamingException e) {
             e.printStackTrace();
             properties.put("use_database", "false");

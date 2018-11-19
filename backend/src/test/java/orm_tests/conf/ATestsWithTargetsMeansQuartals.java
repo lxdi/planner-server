@@ -1,8 +1,7 @@
 package orm_tests.conf;
 
-import model.IQuartalDAO;
-import model.entities.Mean;
-import model.entities.Quartal;
+import model.IQuarterDAO;
+import model.entities.Quarter;
 import org.junit.Before;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -12,28 +11,28 @@ import static junit.framework.TestCase.assertTrue;
 public abstract class ATestsWithTargetsMeansQuartals extends AbstractTestsWithTargetsWithMeans {
 
     @Autowired
-    protected IQuartalDAO quartalDAO;
+    protected IQuarterDAO quartalDAO;
 
-    protected Quartal emptyQuartal;
-    protected Quartal halfEmptyQuartal;
-    protected Quartal fullQuartal;
+    protected Quarter emptyQuarter;
+    protected Quarter halfEmptyQuarter;
+    protected Quarter fullQuarter;
 
     @Before
     @Override
     public void init(){
         super.init();
-        emptyQuartal = new Quartal();
-        quartalDAO.saveOrUpdate(emptyQuartal);
+        emptyQuarter = new Quarter();
+        quartalDAO.saveOrUpdate(emptyQuarter);
 
-        halfEmptyQuartal = new Quartal();
-        quartalDAO.saveOrUpdate(halfEmptyQuartal);
+        halfEmptyQuarter = new Quarter();
+        quartalDAO.saveOrUpdate(halfEmptyQuarter);
 
-        fullQuartal = new Quartal();
-        quartalDAO.saveOrUpdate(fullQuartal);
+        fullQuarter = new Quarter();
+        quartalDAO.saveOrUpdate(fullQuarter);
 
-        assertTrue(emptyQuartal.getId()>0);
-        assertTrue(halfEmptyQuartal.getId()>0);
-        assertTrue(fullQuartal.getId()>0);
+        assertTrue(emptyQuarter.getId()>0);
+        assertTrue(halfEmptyQuarter.getId()>0);
+        assertTrue(fullQuarter.getId()>0);
 
     }
 

@@ -1,6 +1,7 @@
 package configuration;
 
-import model.WeeksGenerator;
+import services.QuarterGenerator;
+import services.WeeksGenerator;
 import org.springframework.beans.factory.annotation.BeanFactoryAnnotationUtils;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
@@ -43,16 +44,28 @@ public class SpringWebInit implements WebApplicationInitializer {
 						generateWeeks(extprops.getProperty("gen_weeks_from"), extprops.getProperty("gen_weeks_to"),
 								(WeeksGenerator) ctx.getBean("weeksGenerator"));
 					}
+                    if (extprops.getProperty("generate_quarters").toLowerCase().equals("true")) {
+                        generateQuarters(extprops.getProperty("gen_quarters_from"), extprops.getProperty("gen_quarters_to"),
+                                (QuarterGenerator) ctx.getBean("quarterGenerator"));
+                    }
 				}
 			}
 		});
 	}
 
 	private void generateWeeks(String from, String to, WeeksGenerator generator){
-		List<Integer> years = new ArrayList<>();
-		for(int i = Integer.parseInt(from); i<=Integer.parseInt(to); i++){
-			years.add(i);
-		}
-		generator.generate(years);
-	}
+        List<Integer> years = new ArrayList<>();
+        for(int i = Integer.parseInt(from); i<=Integer.parseInt(to); i++){
+            years.add(i);
+        }
+        generator.generate(years);
+    }
+
+    private void generateQuarters(String from, String to, QuarterGenerator generator){
+        List<Integer> years = new ArrayList<>();
+        for(int i = Integer.parseInt(from); i<=Integer.parseInt(to); i++){
+            years.add(i);
+        }
+        generator.generate(years);
+    }
 }

@@ -1,5 +1,6 @@
-package model;
+package services;
 
+import model.IWeekDAO;
 import model.entities.Week;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

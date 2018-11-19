@@ -14,6 +14,8 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
+import services.QuarterGenerator;
+import services.WeeksGenerator;
 
 import static org.junit.Assert.assertTrue;
 
@@ -28,7 +30,7 @@ import static org.junit.Assert.assertTrue;
                 MeansDao.class, MeansDtoMapper.class,
                 WeekDao.class, WeeksGenerator.class,
                 TasksDao.class, TasksDtoMapper.class,
-                QuartalDao.class})
+                QuarterDao.class, QuarterGenerator.class})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public abstract class AbstractTestsWithTargets {
 

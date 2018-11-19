@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Controller
+@RequestMapping(path = "/realm")
 public class RealmsRESTController {
 
     @Autowired
@@ -25,13 +26,13 @@ public class RealmsRESTController {
         this.realmDAO = realmDAO;
     }
 
-    @RequestMapping(path = "/realm/all")
+    @RequestMapping(path = "/all")
     public ResponseEntity<List<Realm>> getAllTargets(){
         List<Realm> result = realmDAO.getAllRealms();
         return new ResponseEntity<List<Realm>>(result, HttpStatus.OK);
     }
 
-    @RequestMapping(path = "/realm/create" , method = RequestMethod.PUT)
+    @RequestMapping(path = "/create" , method = RequestMethod.PUT)
     public ResponseEntity<Realm> createTarget(@RequestBody Realm realm){
         realmDAO.saveOrUpdate(realm);
         return new ResponseEntity<Realm>(realm, HttpStatus.OK);
