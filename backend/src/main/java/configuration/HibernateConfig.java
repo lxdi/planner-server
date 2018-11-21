@@ -91,6 +91,9 @@ public class HibernateConfig {
     <Environment name="generate_weeks" type="java.lang.String" value="true" />
     <Environment name="gen_weeks_from" type="java.lang.String" value="2017" />
     <Environment name="gen_weeks_to" type="java.lang.String" value="2019" />
+     <Environment name="generate_quarters" type="java.lang.String" value="true" />
+     <Environment name="gen_quarters_from" type="java.lang.String" value="2017" />
+     <Environment name="gen_quarters_to" type="java.lang.String" value="2019" />
      */
 
 }
