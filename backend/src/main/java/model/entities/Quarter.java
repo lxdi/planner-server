@@ -16,8 +16,8 @@ public class Quarter {
     int startMonth;
     int startDay;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "quarter")
-    List<Mean> means = new ArrayList<>();
+//    @OneToMany(fetch = FetchType.EAGER, mappedBy = "quarter")
+//    List<Mean> means = new ArrayList<>();
 
     public long getId() {
         return id;
@@ -26,12 +26,12 @@ public class Quarter {
         this.id = id;
     }
 
-    public List<Mean> getMeans() {
-        return means;
-    }
-    public void setMeans(List<Mean> means) {
-        this.means = means;
-    }
+//    public List<Mean> getMeans() {
+//        return means;
+//    }
+//    public void setMeans(List<Mean> means) {
+//        this.means = means;
+//    }
 
     public int getYear() {
         return year;

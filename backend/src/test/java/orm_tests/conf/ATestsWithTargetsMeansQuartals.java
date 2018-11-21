@@ -13,26 +13,26 @@ public abstract class ATestsWithTargetsMeansQuartals extends AbstractTestsWithTa
     @Autowired
     protected IQuarterDAO quartalDAO;
 
-    protected Quarter emptyQuarter;
-    protected Quarter halfEmptyQuarter;
-    protected Quarter fullQuarter;
+    protected Quarter firstQuarter;
+    protected Quarter secondQuarter;
+    protected Quarter thirdQuarter;
 
     @Before
     @Override
     public void init(){
         super.init();
-        emptyQuarter = new Quarter();
-        quartalDAO.saveOrUpdate(emptyQuarter);
+        firstQuarter = new Quarter();
+        quartalDAO.saveOrUpdate(firstQuarter);
 
-        halfEmptyQuarter = new Quarter();
-        quartalDAO.saveOrUpdate(halfEmptyQuarter);
+        secondQuarter = new Quarter();
+        quartalDAO.saveOrUpdate(secondQuarter);
 
-        fullQuarter = new Quarter();
-        quartalDAO.saveOrUpdate(fullQuarter);
+        thirdQuarter = new Quarter();
+        quartalDAO.saveOrUpdate(thirdQuarter);
 
-        assertTrue(emptyQuarter.getId()>0);
-        assertTrue(halfEmptyQuarter.getId()>0);
-        assertTrue(fullQuarter.getId()>0);
+        assertTrue(firstQuarter.getId()>0);
+        assertTrue(secondQuarter.getId()>0);
+        assertTrue(thirdQuarter.getId()>0);
 
     }
 

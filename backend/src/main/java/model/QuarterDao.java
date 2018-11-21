@@ -15,9 +15,6 @@ import java.util.List;
 public class QuarterDao implements IQuarterDAO {
 
     @Autowired
-    IMeansDAO meansDAO;
-
-    @Autowired
     SessionFactory sessionFactory;
 
     @Override
@@ -36,28 +33,8 @@ public class QuarterDao implements IQuarterDAO {
     }
 
     @Override
-    public Quarter getWithMean(Mean mean) {
-        return (Quarter) sessionFactory.getCurrentSession().createCriteria(Quarter.class)
-                .add(Restrictions.eq("means", mean)).uniqueResult();
-    }
-
-
-    @Override
-    public void assignMean(Quarter quarter, Mean mean) {
-        if(mean!=null && !isContainsMean(quarter, mean)){
-            mean.setQuarter(quarter);
-            quarter.getMeans().add(mean);
-            meansDAO.saveOrUpdate(mean);
-            this.saveOrUpdate(quarter);
-        }
-    }
-
-    private boolean isContainsMean(Quarter quarter, Mean mean){
-        for(Mean m : quarter.getMeans()){
-            if(mean.getId()==m.getId() || mean == m){
-                return true;
-            }
-        }
-        return false;
+    public List<Mean> getMeansOfQuarter(Quarter quarter) {
+         return sessionFactory.getCurrentSession().createCriteria(Mean.class)
+                .add(Restrictions.eq("quarter", quarter)).list();
     }
 }

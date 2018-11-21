@@ -1,5 +1,6 @@
 import controllers.MeansRESTController;
 import model.dto.mean.MeansDtoMapper;
+import model.entities.Mean;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.util.NestedServletException;
+import orm_tests.conf.ATestsWithTargetsMeansQuartalsGenerated;
 import orm_tests.conf.AbstractTestsWithTargetsWithMeans;
 
 import static org.junit.Assert.assertTrue;
@@ -18,7 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * Created by Alexander on 08.04.2018.
  */
-public class MeansRESTControllerTests extends AbstractTestsWithTargetsWithMeans {
+public class MeansRESTControllerTests extends ATestsWithTargetsMeansQuartalsGenerated {
 
     @Autowired
     MeansDtoMapper meansDtoMapper;
@@ -89,4 +91,16 @@ public class MeansRESTControllerTests extends AbstractTestsWithTargetsWithMeans 
         }
         throw new AssertionError();
     }
+
+//    @Test
+//    public void updateMeanByAssigningMean() throws Exception {
+//        Mean mean = new Mean("test mean", realm);
+//        meansDao.saveOrUpdate(mean);
+//
+//        String content = "{\"id\":"+ mean.getId()+",\"title\":\"test mean\", \"realmid\":"+realm.getId()+", \"quarter\":"++"}";
+//        MvcResult result = mockMvc.perform(post("/mean/update")
+//                .contentType(MediaType.APPLICATION_JSON).content(content))
+//                .andExpect(status().isOk()).andReturn();
+//
+//    }
 }

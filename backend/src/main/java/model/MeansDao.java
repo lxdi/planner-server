@@ -1,6 +1,9 @@
 package model;
 
+import com.sun.istack.internal.NotNull;
 import model.entities.Mean;
+import model.entities.Quarter;
+import model.entities.Realm;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,5 +55,23 @@ public class MeansDao implements IMeansDAO {
     @Override
     public Mean meanByTitle(String title) {
         return (Mean) sessionFactory.getCurrentSession().createCriteria(Mean.class).add(Restrictions.eq("title", title)).uniqueResult();
+    }
+
+    @Override
+    public void assignQuarter(@NotNull Quarter quarter, @NotNull Mean mean, @NotNull Integer position) {
+        if (mean.getQuarter() == null || mean.getQuarter().getId() != quarter.getId()) {
+            int meansAlreadyAssigned = sessionFactory.getCurrentSession().createCriteria(Mean.class)
+                    .add(Restrictions.eq("realm", mean.getRealm()))
+                    .add(Restrictions.eq("quarter", quarter))
+                    .add(Restrictions.eq("position", position))
+                    .list().size();
+            if (meansAlreadyAssigned == 0) {
+                mean.setQuarter(quarter);
+                mean.setPosition(position);
+                this.saveOrUpdate(mean);
+            } else {
+                throw new RuntimeException("Cannot assign mean to quarter, position is already occupied");
+            }
+        }
     }
 }

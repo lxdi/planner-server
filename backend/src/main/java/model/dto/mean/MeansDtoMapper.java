@@ -1,6 +1,7 @@
 package model.dto.mean;
 
 import model.IMeansDAO;
+import model.IQuarterDAO;
 import model.IRealmDAO;
 import model.ITargetsDAO;
 import model.entities.Mean;
@@ -25,6 +26,9 @@ public class MeansDtoMapper {
     @Autowired
     IRealmDAO realmDAO;
 
+    @Autowired
+    IQuarterDAO quarterDAO;
+
     public MeanDtoLazy meanToDtoLazy(Mean mean){
         MeanDtoLazy meanDtoLazy = new MeanDtoLazy();
         mapStatic(mean, meanDtoLazy);
@@ -33,6 +37,8 @@ public class MeansDtoMapper {
             meanDtoLazy.getTargetsIds().add(target.getId());
         }
         meanDtoLazy.setRealmid(mean.getRealm().getId());
+        if(mean.getQuarter()!=null)
+            meanDtoLazy.setQuarterid(mean.getQuarter().getId());
         return meanDtoLazy;
     }
 
@@ -60,6 +66,10 @@ public class MeansDtoMapper {
             mean.setRealm(realm);
         } else {
             throw new RuntimeException("No realm in mean");
+        }
+
+        if(meanDto.getQuarterid()!=null){
+            mean.setQuarter(quarterDAO.getById(meanDto.getQuarterid()));
         }
         return mean;
     }

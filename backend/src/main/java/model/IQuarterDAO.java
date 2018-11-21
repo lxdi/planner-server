@@ -10,7 +10,6 @@ public interface IQuarterDAO {
     void saveOrUpdate(Quarter quarter);
     Quarter getById(long id);
     List<Quarter> getAllQuartals();
-    Quarter getWithMean(Mean mean);
-    void assignMean(Quarter quarter, Mean mean);
+    List<Mean> getMeansOfQuarter(Quarter quarter);
 
 }

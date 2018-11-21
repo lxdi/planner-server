@@ -39,6 +39,7 @@ public class Mean {
 
     @ManyToOne
     Quarter quarter;
+    private Integer position;
 
     public Mean(){}
 
@@ -94,6 +95,13 @@ public class Mean {
     }
     public void setRealm(Realm realm) {
         this.realm = realm;
+    }
+
+    public Integer getPosition() {
+        return position;
+    }
+    public void setPosition(Integer position) {
+        this.position = position;
     }
 
     //    public List<Mean> getChildren() {

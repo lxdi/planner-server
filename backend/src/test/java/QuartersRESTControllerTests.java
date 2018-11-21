@@ -25,7 +25,7 @@ public class QuartersRESTControllerTests  extends ATestsWithTargetsMeansQuartals
     }
 
     @Test
-    public void getAllWeeksTest() throws Exception {
+    public void getAllQuartersTest() throws Exception {
         MvcResult result =  mockMvc.perform(get("/quarter/all")).andExpect(status().isOk()).andReturn();
         String resultStr = result.getResponse().getContentAsString();
         assertTrue(resultStr.contains("2018"));
