@@ -17,5 +17,8 @@ public interface IMeansDAO {
     List<Mean> getChildren(Mean mean);
     Mean meanByTitle(String title);
     void assignQuarter(Quarter quarter, Mean mean, Integer position);
+    void validateMean(Mean mean);
+
+
 
 }

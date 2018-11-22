@@ -1,6 +1,7 @@
 import controllers.MeansRESTController;
 import model.dto.mean.MeansDtoMapper;
 import model.entities.Mean;
+import model.entities.Quarter;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,15 +93,55 @@ public class MeansRESTControllerTests extends ATestsWithTargetsMeansQuartalsGene
         throw new AssertionError();
     }
 
-//    @Test
-//    public void updateMeanByAssigningMean() throws Exception {
-//        Mean mean = new Mean("test mean", realm);
-//        meansDao.saveOrUpdate(mean);
-//
-//        String content = "{\"id\":"+ mean.getId()+",\"title\":\"test mean\", \"realmid\":"+realm.getId()+", \"quarter\":"++"}";
-//        MvcResult result = mockMvc.perform(post("/mean/update")
-//                .contentType(MediaType.APPLICATION_JSON).content(content))
-//                .andExpect(status().isOk()).andReturn();
-//
-//    }
+    @Test
+    public void updateMeanByAssigningMean() throws Exception {
+        Mean mean = new Mean("test mean", realm);
+        meansDao.saveOrUpdate(mean);
+
+        Quarter quarter = quarterDAO.getAllQuartals().get(0);
+
+        String content = "{\"id\":"+ mean.getId()+
+                ",\"title\":\"test mean\", \"realmid\":"+realm.getId()+
+                ", \"quarterid\":"+quarter.getId()+
+                ", \"position\":1}";
+        MvcResult result = mockMvc.perform(post("/mean/update")
+                .contentType(MediaType.APPLICATION_JSON).content(content))
+                .andExpect(status().isOk()).andReturn();
+
+        assertTrue(meansDao.meanById(mean.getId()).getQuarter().getId()==quarter.getId());
+        assertTrue(meansDao.meanById(mean.getId()).getPosition()==1);
+
+    }
+
+    @Test(expected = NestedServletException.class)
+    public void updateMeanWithQuarterWithoutPosition() throws Exception {
+        Mean mean = new Mean("test mean", realm);
+        meansDao.saveOrUpdate(mean);
+
+        Quarter quarter = quarterDAO.getAllQuartals().get(0);
+
+        String content = "{\"id\":"+ mean.getId()+
+                ",\"title\":\"test mean\", \"realmid\":"+realm.getId()+
+                ", \"quarterid\":"+quarter.getId()+
+                "}";
+        MvcResult result = mockMvc.perform(post("/mean/update")
+                .contentType(MediaType.APPLICATION_JSON).content(content))
+                .andExpect(status().isOk()).andReturn();
+    }
+
+    @Test(expected = NestedServletException.class)
+    public void updateMeanWithoutQuarterWithPosition() throws Exception {
+        Mean mean = new Mean("test mean", realm);
+        meansDao.saveOrUpdate(mean);
+
+        Quarter quarter = quarterDAO.getAllQuartals().get(0);
+
+        String content = "{\"id\":"+ mean.getId()+
+                ",\"title\":\"test mean\", \"realmid\":"+realm.getId()+
+                ", \"position\":1}";
+        MvcResult result = mockMvc.perform(post("/mean/update")
+                .contentType(MediaType.APPLICATION_JSON).content(content))
+                .andExpect(status().isOk()).andReturn();
+    }
+
 }

@@ -46,6 +46,7 @@ public class MeansRESTController {
     @RequestMapping(path = "/mean/create" , method = RequestMethod.PUT)
     public ResponseEntity<MeanDtoLazy> createTarget(@RequestBody MeanDtoLazy meanDtoLazy){
         Mean mean = meansDtoMapper.meanFromDto(meanDtoLazy);
+        meansDAO.validateMean(mean);
         meansDAO.saveOrUpdate(mean);
         return new ResponseEntity<MeanDtoLazy>(meansDtoMapper.meanToDtoLazy(mean), HttpStatus.OK);
     }
@@ -64,6 +65,7 @@ public class MeansRESTController {
     @RequestMapping(path = "/mean/update" , method = RequestMethod.POST)
     public ResponseEntity<MeanDtoLazy> update(@RequestBody MeanDtoLazy meanDtoLazy){
         Mean mean = meansDtoMapper.meanFromDto(meanDtoLazy);
+        meansDAO.validateMean(mean);
         meansDAO.saveOrUpdate(mean);
         return new ResponseEntity<MeanDtoLazy>(meansDtoMapper.meanToDtoLazy(mean), HttpStatus.OK);
     }

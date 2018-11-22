@@ -12,6 +12,7 @@ public class MeanDtoLazy extends AbstractMeanDto {
     List<Long> targetsIds = new ArrayList<>();
     Long realmid;
     Long quarterid;
+    Integer position;
 
     public Long getParentid() {
         return parentid;
@@ -39,5 +40,12 @@ public class MeanDtoLazy extends AbstractMeanDto {
     }
     public void setQuarterid(Long quarterid) {
         this.quarterid = quarterid;
+    }
+
+    public Integer getPosition() {
+        return position;
+    }
+    public void setPosition(Integer position) {
+        this.position = position;
     }
 }

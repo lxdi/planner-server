@@ -39,6 +39,9 @@ public class MeansDtoMapper {
         meanDtoLazy.setRealmid(mean.getRealm().getId());
         if(mean.getQuarter()!=null)
             meanDtoLazy.setQuarterid(mean.getQuarter().getId());
+        if(mean.getPosition()!=null && mean.getPosition()>0){
+            meanDtoLazy.setPosition(mean.getPosition());
+        }
         return meanDtoLazy;
     }
 
@@ -70,6 +73,9 @@ public class MeansDtoMapper {
 
         if(meanDto.getQuarterid()!=null){
             mean.setQuarter(quarterDAO.getById(meanDto.getQuarterid()));
+        }
+        if(meanDto.getPosition()!=null){
+            mean.setPosition(meanDto.getPosition());
         }
         return mean;
     }
