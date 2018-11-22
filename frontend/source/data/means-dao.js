@@ -4,7 +4,8 @@ import {registerEvent, registerReaction, fireEvent} from '../controllers/eventor
 
 export const MeansState = {
   means: {},
-  meansLoaded: false
+  meansLoaded: false,
+  draggableMean: null
 }
 
 MeansState.means.__proto__ = {
@@ -191,6 +192,18 @@ registerEvent('means-dao', 'modify', function(mean){
 
 registerEvent('means-dao', 'mean-modified', function(mean){
   return mean
+})
+
+registerEvent('means-dao', 'add-draggable', function(mean){
+  MeansState.draggableMean = mean
+})
+registerEvent('means-dao', 'remove-draggable', function(){
+  MeansState.draggableMean = null
+})
+registerEvent('means-dao', 'assign-quarter-to-draggable', function(quarter, position){
+  MeansState.draggableMean.quarterid = quarter.id
+  MeansState.draggableMean.position = position
+  fireEvent('means-dao', 'modify', [MeansState.draggableMean])
 })
 
 //delete Mean only form UI

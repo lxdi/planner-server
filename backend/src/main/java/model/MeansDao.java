@@ -1,6 +1,5 @@
 package model;
 
-import com.sun.istack.internal.NotNull;
 import model.entities.Mean;
 import model.entities.Quarter;
 import org.hibernate.SessionFactory;
@@ -85,7 +84,7 @@ public class MeansDao implements IMeansDAO {
 //    }
 
     @Override
-    public void validateMean(@NotNull Mean mean){
+    public void validateMean(Mean mean){
         validateByQuarter(mean);
     }
 
