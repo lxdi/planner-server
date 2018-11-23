@@ -15,6 +15,7 @@ export class ScheduleFrame extends React.Component{
     this.state = {};
     registerReaction('schedule-frame', 'quarters-dao', 'quarters-received', ()=>this.setState({}))
     registerReaction('schedule-frame', 'means-dao', ['means-received', 'modify'], ()=>this.setState({}))
+    registerReaction('schedule-frame', 'realms-dao', 'change-current-realm', ()=>this.setState({}))
   }
 
   allowDrop(ev) {
@@ -65,7 +66,10 @@ const getMeanSlotUI = function(quarter, position){
   if(mean==null){
     return 'Slot ' + position
   } else {
-    return <a href='#'>{mean.title}</a>
+    return <div>
+              <a href='#'>{mean.title}</a>
+              <a href='#' onClick={()=>fireEvent('means-dao', 'unassign-quarter', [mean])}> X</a>
+          </div>
   }
 }
 

@@ -72,7 +72,7 @@ const meansUIlist = function(){
 const meanUI = function(mean, offset){
   return (
     <div>
-      <div onDragStart={()=>fireEvent('means-dao', 'add-draggable', [mean])} style={{'margin-bottom': '5px'}}>
+      <div onDragStart={()=>fireEvent('means-dao', 'add-draggable', [mean])} onDragEnd={()=>fireEvent('means-dao', 'remove-draggable', [])} style={{'margin-bottom': '5px'}}>
         <a href="#" onClick={()=>fireEvent('mean-modal', 'open', [mean])}>
            {mean.children.length==0?
               <span style={{'font-weight': 'bold'}}>{mean.title}</span>

@@ -205,6 +205,11 @@ registerEvent('means-dao', 'assign-quarter-to-draggable', function(quarter, posi
   MeansState.draggableMean.position = position
   fireEvent('means-dao', 'modify', [MeansState.draggableMean])
 })
+registerEvent('means-dao', 'unassign-quarter', function(mean){
+  mean.quarterid = null
+  mean.position = null
+  fireEvent('means-dao', 'modify', [mean])
+})
 
 //delete Mean only form UI
 var deleteMeanUI = function(mean){
