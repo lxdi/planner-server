@@ -4,6 +4,7 @@ import model.IMeansDAO;
 import model.IQuarterDAO;
 import model.IRealmDAO;
 import model.ITargetsDAO;
+import model.dto.IMapper;
 import model.entities.Mean;
 import model.entities.Realm;
 import model.entities.Target;
@@ -15,7 +16,7 @@ import org.springframework.stereotype.Component;
  */
 
 @Component
-public class MeansDtoMapper {
+public class MeansDtoMapper implements IMapper<MeanDtoLazy, Mean> {
 
     @Autowired
     IMeansDAO meansDAO;
@@ -29,7 +30,7 @@ public class MeansDtoMapper {
     @Autowired
     IQuarterDAO quarterDAO;
 
-    public MeanDtoLazy meanToDtoLazy(Mean mean){
+    public MeanDtoLazy mapToDto(Mean mean){
         MeanDtoLazy meanDtoLazy = new MeanDtoLazy();
         mapStatic(mean, meanDtoLazy);
         meanDtoLazy.setParentid(mean.getParent()!=null? mean.getParent().getId(): null);
@@ -50,7 +51,7 @@ public class MeansDtoMapper {
         abstractMeanDto.setTitle(mean.getTitle());
     }
 
-    public Mean meanFromDto(MeanDtoLazy meanDto){
+    public Mean mapToEntity(MeanDtoLazy meanDto){
         Mean mean = new Mean();
         mapStaticFromDto(mean, meanDto);
         if(meanDto.getParentid()!=null)

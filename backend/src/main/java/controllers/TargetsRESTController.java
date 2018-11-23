@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import javax.xml.bind.ValidationException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,15 +36,15 @@ public class TargetsRESTController {
     @RequestMapping(path = "/target/all/lazy")
     public ResponseEntity<List<TargetDtoLazy>> getAllTargets(){
         List<TargetDtoLazy> result = new ArrayList<>();
-        targetsDAO.allTargets().forEach(t -> result.add(targetsDtoMapper.targetDtoWithParentLazy(t)));
+        targetsDAO.allTargets().forEach(t -> result.add(targetsDtoMapper.mapToDto(t)));
         return new ResponseEntity<List<TargetDtoLazy>>(result, HttpStatus.OK);
     }
 
     @RequestMapping(path = "/target/create" , method = RequestMethod.PUT)
     public ResponseEntity<TargetDtoLazy> createTarget(@RequestBody TargetDtoLazy targetDto) {
-        Target target = targetsDtoMapper.targetFromDtoWithParentLazy(targetDto);
+        Target target = targetsDtoMapper.mapToEntity(targetDto);
         targetsDAO.saveOrUpdate(target);
-        return new ResponseEntity<TargetDtoLazy>(targetsDtoMapper.targetDtoWithParentLazy(target), HttpStatus.OK);
+        return new ResponseEntity<TargetDtoLazy>(targetsDtoMapper.mapToDto(target), HttpStatus.OK);
     }
 
     @RequestMapping(path = "/target/delete/{targetId}" , method = RequestMethod.DELETE)
@@ -61,9 +60,9 @@ public class TargetsRESTController {
 
     @RequestMapping(path = "/target/update" , method = RequestMethod.POST)
     public ResponseEntity<TargetDtoLazy> update(@RequestBody TargetDtoLazy targetDto) {
-        Target target = targetsDtoMapper.targetFromDtoWithParentLazy(targetDto);
+        Target target = targetsDtoMapper.mapToEntity(targetDto);
         targetsDAO.saveOrUpdate(target);
-        return new ResponseEntity<TargetDtoLazy>(targetsDtoMapper.targetDtoWithParentLazy(target), HttpStatus.OK);
+        return new ResponseEntity<TargetDtoLazy>(targetsDtoMapper.mapToDto(target), HttpStatus.OK);
     }
 
 }

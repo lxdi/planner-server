@@ -30,7 +30,8 @@ import static org.junit.Assert.assertTrue;
                 MeansDao.class, MeansDtoMapper.class,
                 WeekDao.class, WeeksGenerator.class,
                 TasksDao.class, TasksDtoMapper.class,
-                QuarterDao.class, QuarterGenerator.class})
+                QuarterDao.class, QuarterGenerator.class,
+                LayerDao.class})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public abstract class AbstractTestsWithTargets {
 

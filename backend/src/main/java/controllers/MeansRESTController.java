@@ -39,16 +39,16 @@ public class MeansRESTController {
     @RequestMapping(path = "/mean/all/lazy")
     public ResponseEntity<List<MeanDtoLazy>> getAllTargets(){
         List<MeanDtoLazy> result = new ArrayList<>();
-        meansDAO.getAllMeans().forEach(m -> result.add(meansDtoMapper.meanToDtoLazy(m)));
+        meansDAO.getAllMeans().forEach(m -> result.add(meansDtoMapper.mapToDto(m)));
         return new ResponseEntity<List<MeanDtoLazy>>(result, HttpStatus.OK);
     }
 
     @RequestMapping(path = "/mean/create" , method = RequestMethod.PUT)
     public ResponseEntity<MeanDtoLazy> createTarget(@RequestBody MeanDtoLazy meanDtoLazy){
-        Mean mean = meansDtoMapper.meanFromDto(meanDtoLazy);
+        Mean mean = meansDtoMapper.mapToEntity(meanDtoLazy);
         meansDAO.validateMean(mean);
         meansDAO.saveOrUpdate(mean);
-        return new ResponseEntity<MeanDtoLazy>(meansDtoMapper.meanToDtoLazy(mean), HttpStatus.OK);
+        return new ResponseEntity<MeanDtoLazy>(meansDtoMapper.mapToDto(mean), HttpStatus.OK);
     }
 
     @RequestMapping(path = "/mean/delete/{meanId}" , method = RequestMethod.DELETE)
@@ -64,10 +64,10 @@ public class MeansRESTController {
 
     @RequestMapping(path = "/mean/update" , method = RequestMethod.POST)
     public ResponseEntity<MeanDtoLazy> update(@RequestBody MeanDtoLazy meanDtoLazy){
-        Mean mean = meansDtoMapper.meanFromDto(meanDtoLazy);
+        Mean mean = meansDtoMapper.mapToEntity(meanDtoLazy);
         meansDAO.validateMean(mean);
         meansDAO.saveOrUpdate(mean);
-        return new ResponseEntity<MeanDtoLazy>(meansDtoMapper.meanToDtoLazy(mean), HttpStatus.OK);
+        return new ResponseEntity<MeanDtoLazy>(meansDtoMapper.mapToDto(mean), HttpStatus.OK);
     }
 
 }

@@ -44,6 +44,7 @@ public class Mean {
     public Mean(){}
 
     public Mean(String title, Realm realm){
+        assert title!=null && !title.trim().equals("") && realm!=null;
         this.realm = realm;
         this.title = title;
     }

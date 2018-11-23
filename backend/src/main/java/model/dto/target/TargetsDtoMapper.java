@@ -2,6 +2,7 @@ package model.dto.target;
 
 import model.IRealmDAO;
 import model.ITargetsDAO;
+import model.dto.IMapper;
 import model.entities.Target;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -13,7 +14,7 @@ import javax.xml.bind.ValidationException;
  */
 
 @Component
-public class TargetsDtoMapper {
+public class TargetsDtoMapper implements IMapper<TargetDtoLazy, Target> {
 
     @Autowired
     ITargetsDAO targetsDAO;
@@ -21,7 +22,7 @@ public class TargetsDtoMapper {
     @Autowired
     IRealmDAO realmDTO;
 
-    public TargetDtoLazy targetDtoWithParentLazy(Target target){
+    public TargetDtoLazy mapToDto(Target target){
         TargetDtoLazy targetDtoLazy = new TargetDtoLazy();
         mapStatic(target, targetDtoLazy);
         targetDtoLazy.setParentid(target.getParent()!=null? target.getParent().getId(): null);
@@ -34,7 +35,7 @@ public class TargetsDtoMapper {
         abstractTargetDto.setTitle(target.getTitle());
     }
 
-    public Target targetFromDtoWithParentLazy(TargetDtoLazy targetDtoLazy) {
+    public Target mapToEntity(TargetDtoLazy targetDtoLazy) {
         Target target = new Target();
         mapStaticFromDto(target, targetDtoLazy);
         if(targetDtoLazy.getParentid()!=null)
