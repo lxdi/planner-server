@@ -2,6 +2,7 @@ package orm_tests.conf;
 
 import configuration.HibernateConfigMain;
 import model.*;
+import model.dto.layer.LayersDtoMapper;
 import model.dto.mean.MeansDtoMapper;
 import model.dto.target.TargetsDtoMapper;
 import model.dto.task.TasksDtoMapper;
@@ -31,7 +32,7 @@ import static org.junit.Assert.assertTrue;
                 WeekDao.class, WeeksGenerator.class,
                 TasksDao.class, TasksDtoMapper.class,
                 QuarterDao.class, QuarterGenerator.class,
-                LayerDao.class})
+                LayerDao.class, LayersDtoMapper.class})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public abstract class AbstractTestsWithTargets {
 

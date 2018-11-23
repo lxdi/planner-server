@@ -56,23 +56,10 @@ public class MeansRESTControllerTests extends ATestsWithTargetsMeansQuartalsGene
         System.out.println(result.getResponse().getContentAsString());
     }
 
-    @Test
-    public void updateTest() throws Exception {
-        String content = "{\"id\":1,\"title\":\"Parent mean changed\",\"parentid\":0, \"targetsIds\":[1], \"realmid\":1}";
-        MvcResult result = mockMvc.perform(post("/mean/update")
-                .contentType(MediaType.APPLICATION_JSON).content(content))
-                .andExpect(status().isOk()).andReturn();
-
-        assertTrue(meansDao.meanById(1).getTitle().equals("Parent mean changed"));
-        assertTrue(result.getResponse().getContentAsString().contains("\"id\":1"));
-        assertTrue(result.getResponse().getContentAsString().contains("Parent mean changed"));
-        System.out.println(result.getResponse().getContentAsString());
-    }
-
     @Test(expected = NestedServletException.class)
     public void createMeanWithoutRealm() throws Exception {
-        String content = "{\"id\":1,\"title\":\"Parent mean changed\",\"parentid\":0, \"targetsIds\":[1]}";
-        MvcResult result = mockMvc.perform(post("/mean/update")
+        String content = "{\"title\":\"Parent mean changed\",\"parentid\":0, \"targetsIds\":[1]}";
+        MvcResult result = mockMvc.perform(put("/mean/create")
                 .contentType(MediaType.APPLICATION_JSON).content(content))
                 .andExpect(status().isOk()).andReturn();
     }
@@ -91,6 +78,27 @@ public class MeansRESTControllerTests extends ATestsWithTargetsMeansQuartalsGene
             }
         }
         throw new AssertionError();
+    }
+
+    @Test(expected = NestedServletException.class)
+    public void createMeanWithIdGtThanZero() throws Exception {
+        String content = "{\"id\":1,\"title\":\"new mean\",\"parentid\":2, \"targetsIds\":[1, 4] ,\"children\":[], \"realmid\":1}";
+        MvcResult result = mockMvc.perform(put("/mean/create")
+                .contentType(MediaType.APPLICATION_JSON).content(content))
+                .andExpect(status().isOk()).andReturn();
+    }
+
+    @Test
+    public void updateTest() throws Exception {
+        String content = "{\"id\":1,\"title\":\"Parent mean changed\",\"parentid\":0, \"targetsIds\":[1], \"realmid\":1}";
+        MvcResult result = mockMvc.perform(post("/mean/update")
+                .contentType(MediaType.APPLICATION_JSON).content(content))
+                .andExpect(status().isOk()).andReturn();
+
+        assertTrue(meansDao.meanById(1).getTitle().equals("Parent mean changed"));
+        assertTrue(result.getResponse().getContentAsString().contains("\"id\":1"));
+        assertTrue(result.getResponse().getContentAsString().contains("Parent mean changed"));
+        System.out.println(result.getResponse().getContentAsString());
     }
 
     @Test
@@ -112,6 +120,15 @@ public class MeansRESTControllerTests extends ATestsWithTargetsMeansQuartalsGene
         assertTrue(meansDao.meanById(mean.getId()).getPosition()==1);
 
     }
+
+    @Test(expected = NestedServletException.class)
+    public void updateMeanWithoutExistingId() throws Exception {
+        String content = "{\"id\":0,\"title\":\"Parent mean changed\",\"parentid\":0, \"targetsIds\":[1], \"realmid\":1}";
+        MvcResult result = mockMvc.perform(post("/mean/update")
+                .contentType(MediaType.APPLICATION_JSON).content(content))
+                .andExpect(status().isOk()).andReturn();
+    }
+
 
     @Test(expected = NestedServletException.class)
     public void updateMeanWithQuarterWithoutPosition() throws Exception {

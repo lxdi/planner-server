@@ -10,6 +10,7 @@ public class Layer {
     long id;
 
     int priority;
+    boolean done;
 
     @OneToOne
     @JoinColumn(name="mean")
@@ -42,5 +43,12 @@ public class Layer {
     }
     public void setMean(Mean mean) {
         this.mean = mean;
+    }
+
+    public boolean isDone() {
+        return done;
+    }
+    public void setDone(boolean done) {
+        this.done = done;
     }
 }
