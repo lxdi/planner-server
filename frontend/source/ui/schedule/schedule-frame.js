@@ -3,10 +3,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {Button, Table} from 'react-bootstrap'
 import {CurrentDate} from './../../state'
-import {QuartersState} from '../../data/quarters-dao'
-import {MeansState} from '../../data/means-dao'
-import {RealmsState} from '../../data/realms-dao'
-import {registerEvent, registerReaction, fireEvent} from '../../controllers/eventor'
+import {registerEvent, registerReaction, fireEvent, getStateVal} from '../../controllers/eventor'
 
 
 export class ScheduleFrame extends React.Component{
@@ -26,7 +23,7 @@ export class ScheduleFrame extends React.Component{
     return(
       <div>
         <div>
-          {MeansState.meansLoaded?quartersUI():null}
+          {getStateVal('means-dao', 'meansLoaded')?quartersUI():null}
         </div>
       </div>
     )
@@ -34,8 +31,8 @@ export class ScheduleFrame extends React.Component{
 }
 
 const quartersUI = function(){
-  if(QuartersState.quarters != null){
-    return QuartersState.quarters.map((quarter)=>
+  if(getStateVal('quarters-dao', 'quarters') != null){
+    return getStateVal('quarters-dao', 'quarters').map((quarter)=>
     <Table striped bordered condensed hover width={'100px'}>
       <tbody>
         <tr>
@@ -64,7 +61,7 @@ const quartersUI = function(){
 const getMeanSlotUI = function(quarter, position){
   const mean = getMean(quarter, position)
   if(mean==null){
-    return 'Slot ' + position
+    return <span style={{color: 'lightgrey'}}>slot {position}</span>
   } else {
     return <div>
               <a href='#'>{mean.title}</a>
@@ -74,9 +71,10 @@ const getMeanSlotUI = function(quarter, position){
 }
 
 const getMean = function(quarter, position){
-  for(var meanid in MeansState.means){
-    const currentMean = MeansState.means[meanid]
-    if(currentMean.realmid == RealmsState.currentRealm.id
+  const means = getStateVal('means-dao', 'means')
+  for(var meanid in means){
+    const currentMean = means[meanid]
+    if(currentMean.realmid == getStateVal('realms-dao', 'currentRealm').id
         && currentMean.quarterid == quarter.id
         && currentMean.position == position){
         return currentMean

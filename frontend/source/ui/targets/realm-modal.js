@@ -3,9 +3,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {CommonModal} from './../common-modal'
 import {CommonCrudeTemplate} from './../common-crud-template'
-import {registerEvent, registerReaction, fireEvent} from '../../controllers/eventor'
-
-import {CreateRealm} from './../../data/realms-dao'
+import {registerEvent, registerReaction, fireEvent, getStateVal} from '../../controllers/eventor'
+import {CreateRealm} from './../../data/creators'
 import {Button, ButtonToolbar,  DropdownButton, MenuItem,  FormGroup, ControlLabel, FormControl, Alert} from 'react-bootstrap'
 
 const dumbRealm = CreateRealm(0, '')
@@ -29,7 +28,7 @@ export class RealmModal extends React.Component {
     this.okHandler = this.okHandler.bind(this);
     this.handleNameVal = this.handleNameVal.bind(this);
 
-    registerEvent('realm-modal', 'open', function(currentRealm){
+    registerEvent('realm-modal', 'open', function(state, currentRealm){
       this.setState(createState(true, currentRealm.id==0, currentRealm.id==0, currentRealm))
     }.bind(this))
 

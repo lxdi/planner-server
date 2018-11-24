@@ -2,12 +2,10 @@ import {meanModalHeaderTitle, targetsDropDownTitle} from './../../titles'
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {CommonModal} from './../common-modal'
-import {RealmsState} from './../../data/realms-dao'
-import {TargetsState} from './../../data/targets-dao'
-import {CreateMean} from './../../data/means-dao'
+import {CreateMean} from './../../data/creators'
 import {CommonCrudeTemplate} from './../common-crud-template'
 import {Button, ButtonToolbar,  DropdownButton, MenuItem,  FormGroup, ControlLabel, FormControl} from 'react-bootstrap'
-import {registerEvent, registerReaction, fireEvent} from '../../controllers/eventor'
+import {registerEvent, registerReaction, fireEvent, getStateVal} from '../../controllers/eventor'
 
 
 const dumbMean = CreateMean(0, '', null, [])
@@ -33,7 +31,7 @@ export class MeanModal extends React.Component {
     this.handleNameVal = this.handleNameVal.bind(this);
     this.selectTargetHandler = this.selectTargetHandler.bind(this);
 
-    registerEvent('mean-modal', 'open', function(currentMean, parent){
+    registerEvent('mean-modal', 'open', function(state, currentMean, parent){
       this.setState(createState(true, currentMean.id==0, currentMean.id==0, currentMean, parent))
     }.bind(this))
 
@@ -93,9 +91,9 @@ export class MeanModal extends React.Component {
 }
 
 const availableTargetsUI = function(){
-  return TargetsState.targets.map(function(target){
+  return getStateVal('targets-dao', 'targets').map(function(target){
     return <MenuItem eventKey={target}>{target.toString()}</MenuItem>
-  }, (target)=>target.realmid==RealmsState.currentRealm.id)
+  }, (target)=>target.realmid==getStateVal('realms-dao', 'currentRealm').id)
 }
 
 const relatedTargetsUI = function(targets){

@@ -6,6 +6,11 @@ import {SwitchButton} from './ui/changebutton';
 import {state} from './state';
 import {Button} from 'react-bootstrap'
 
+import './data/realms-dao'
+import './data/targets-dao'
+import './data/means-dao'
+import './data/quarters-dao'
+
 ReactDOM.render(<div id="app" />, document.body);
 const app = document.getElementById("app");
 

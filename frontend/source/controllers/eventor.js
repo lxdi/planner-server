@@ -2,13 +2,25 @@
 
 const objects = []
 
-export const registerObject = function(objName){
+export const registerObject = function(objName, initState){
   objects[objName] = {
     name: objName,
     events: [],
-    reactions: []
+    reactions: [],
+    state:initState!=null?initState:{}
   }
   return objects[objName]
+}
+
+export const getStateVal = function(objName, valName){
+  if(objects[objName]==null){
+    throw new Exception('No such object', objName, 'getStateVal')
+  }
+  return objects[objName].state[valName]
+}
+
+const stateSetter = function(objName, valName, value){
+  objects[objName].state[valName] = value
 }
 
 export const registerEvent = function(objName, evName, ev){
@@ -41,6 +53,12 @@ export const fireEvent = function(objName, evName, args){
   if(objects[objName].events[evName]==null){
     throw new Exception('No such event', objName, evName)
   }
+  if(args!=null){
+    //args.unshift(objects[objName].state)
+    args.unshift(stateSetter.bind(null, objName))
+  } else {
+    args = [stateSetter.bind(null, objName)]
+  }
   const product = objects[objName].events[evName].apply(null, args)
   for(var reactObjName in objects){
     if(reactObjName!=objName && objects[reactObjName].reactions[objName]!=null){
@@ -48,7 +66,7 @@ export const fireEvent = function(objName, evName, args){
       //   objects[reactObjName].reactions[objName]['any'](product)
       // }
       if(objects[reactObjName].reactions[objName][evName]!=null){
-        objects[reactObjName].reactions[objName][evName](product)
+        objects[reactObjName].reactions[objName][evName](stateSetter.bind(null, reactObjName), product)
       }
     }
   }

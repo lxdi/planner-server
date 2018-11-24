@@ -3,9 +3,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {CommonModal} from './../common-modal'
 import {CommonCrudeTemplate} from './../common-crud-template'
-import {registerEvent, registerReaction, fireEvent} from '../../controllers/eventor'
-
-import {CreateTarget} from './../../data/targets-dao'
+import {registerEvent, registerReaction, fireEvent, getStateVal} from '../../controllers/eventor'
+import {CreateTarget} from './../../data/creators'
 import {Button, ButtonToolbar,  DropdownButton, MenuItem,  FormGroup, ControlLabel, FormControl, Alert} from 'react-bootstrap'
 
 const dumbTarget = CreateTarget(0, '')
@@ -30,7 +29,7 @@ export class TargetModal extends React.Component {
     this.okHandler = this.okHandler.bind(this);
     this.handleNameVal = this.handleNameVal.bind(this);
 
-    registerEvent('target-modal', 'open', function(currentTarget, parent){
+    registerEvent('target-modal', 'open', function(state, currentTarget, parent){
       this.setState(createState(true, currentTarget.id==0, currentTarget.id==0, currentTarget, parent))
     }.bind(this))
 

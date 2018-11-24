@@ -1,9 +1,28 @@
 import $ from 'jquery'
-import {registerEvent, registerReaction, fireEvent} from '../controllers/eventor'
+import {registerEvent, registerReaction, fireEvent, getStateVal} from '../controllers/eventor'
 
 
-export const QuartersState = {
-  quarters: null
+// export const QuartersState = {
+//   quarters: null
+// }
+
+registerEvent('quarters-dao', 'quarters-request', function(stateSetter){
+  $.ajax({url: "/quarter/all"}).then(function(data) {
+            var receivedData = typeof data == 'string'? JSON.parse(data): data
+            importQuarters(stateSetter, receivedData)
+            fireEvent('quarters-dao', 'quarters-received', [])
+          });
+})
+
+registerEvent('quarters-dao', 'quarters-received', function(){})
+
+const importQuarters = function(stateSetter, quartersDto){
+  const quarters = {}
+  quarters.__proto__ = quartersProto
+  stateSetter('quarters', quarters)
+  for(var i in quartersDto){
+    quarters[""+quartersDto[i].id] = quartersDto[i]
+  }
 }
 
 const quartersProto = {
@@ -21,25 +40,5 @@ const quartersProto = {
       }
     }
     return result
-  }
-}
-
-registerEvent('quarters-dao', 'quarters-request', function(){
-  $.ajax({url: "/quarter/all"}).then(function(data) {
-            var receivedData = typeof data == 'string'? JSON.parse(data): data
-            importQuarters(receivedData)
-            fireEvent('quarters-dao', 'quarters-received', [])
-          });
-})
-
-registerEvent('quarters-dao', 'quarters-received', function(){
-
-})
-
-const importQuarters = function(quarters){
-  QuartersState.quarters = {}
-  QuartersState.quarters.__proto__ = quartersProto
-  for(var i in quarters){
-    QuartersState.quarters[""+quarters[i].id] = quarters[i]
   }
 }

@@ -1,30 +1,21 @@
 import $ from 'jquery'
-import {registerEvent, registerReaction, fireEvent} from '../controllers/eventor'
+import {registerEvent, registerReaction, fireEvent, getStateVal} from '../controllers/eventor'
 
-export const RealmsState = {
-  realms: {},
-  currentRealm: null,
-  realmsLoaded: false
-}
-
-registerEvent('realms-dao', 'realms-request', function(){
+registerEvent('realms-dao', 'realms-request', function(stateSetter){
   $.ajax({url: "/realm/all"}).then(function(data) {
             var receivedData = typeof data == 'string'? JSON.parse(data): data
-            importRealms(receivedData)
-            RealmsState.realmsLoaded = true
-            for(var i in RealmsState.realms){
-              RealmsState.currentRealm = RealmsState.realms[i]
+            importRealms(stateSetter, receivedData)
+            for(var i in getStateVal('realms-dao', 'realms')){
+              stateSetter('currentRealm', getStateVal('realms-dao', 'realms')[i])
               break
             }
             fireEvent('realms-dao', 'realms-received', [])
           });
 })
 
-registerEvent('realms-dao', 'realms-received', function(){
+registerEvent('realms-dao', 'realms-received', ()=>{})
 
-})
-
-registerEvent('realms-dao', 'create', function(realm){
+registerEvent('realms-dao', 'create', function(stateSetter, realm){
   $.ajax({
     url: '/realm/create',
     type: 'PUT',
@@ -32,29 +23,25 @@ registerEvent('realms-dao', 'create', function(realm){
     data: JSON.stringify(realm),
     success: function(data) {
       var receivedData = typeof data == 'string'? JSON.parse(data): data
-      RealmsState.realms[""+receivedData.id] = receivedData
+      getStateVal('realms-dao', 'realms')[""+receivedData.id] = receivedData
       fireEvent('realms-dao', 'realms-created', [realm])
     }
   });
 })
 
-registerEvent('realms-dao', 'realms-created', function(realm){
+registerEvent('realms-dao', 'realms-created', function(stateSetter, realm){
   return realm
 })
 
-registerEvent('realms-dao', 'change-current-realm', function(realm){
-  RealmsState.currentRealm = realm
+registerEvent('realms-dao', 'change-current-realm', function(stateSetter, realm){
+  stateSetter('currentRealm', realm)
 })
 
-const importRealms = function(data){
-  for(var i in data){
-    RealmsState.realms[""+data[i].id] = data[i]
+const importRealms = function(stateSetter, data){
+  if(getStateVal('realms-dao', 'realms')==null){
+    stateSetter('realms', [])
   }
-}
-
-export var CreateRealm =  function(id, title){
-  return {
-    'id': id,
-    'title': title
+  for(var i in data){
+    getStateVal('realms-dao', 'realms')[""+data[i].id] = data[i]
   }
 }

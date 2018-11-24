@@ -1,12 +1,10 @@
 import {createNewMeanButtonTitle, addNewMeanTitle} from './../../titles'
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {MeansState, CreateMean} from './../../data/means-dao'
-import {TargetsState} from './../../data/targets-dao'
-import {RealmsState} from './../../data/realms-dao'
+import {CreateMean} from './../../data/creators'
 import {Button, ButtonToolbar,  DropdownButton, MenuItem, ListGroup, ListGroupItem} from 'react-bootstrap'
 import {MeanModal} from './mean-modal'
-import {registerEvent, registerReaction, fireEvent} from '../../controllers/eventor'
+import {registerEvent, registerReaction, fireEvent, getStateVal} from '../../controllers/eventor'
 
 export class MeansFrame extends React.Component{
   constructor(props){
@@ -22,7 +20,7 @@ export class MeansFrame extends React.Component{
       this.setState({})
     }.bind(this))
 
-    registerReaction('means-frame', 'targets-dao', 'target-deleted', (targetid)=>{
+    registerReaction('means-frame', 'targets-dao', 'target-deleted', (state, targetid)=>{
       fireEvent('means-dao', 'delete-depended-means', [targetid])
       this.setState({})
     })
@@ -37,7 +35,7 @@ export class MeansFrame extends React.Component{
     return(
       <div>
         <div style={{'margin-bottom': '3px'}}>
-          <Button bsStyle="primary" bsSize="xsmall" onClick={()=>fireEvent('mean-modal', 'open', [CreateMean(0, '', RealmsState.currentRealm.id, [])])}>
+          <Button bsStyle="primary" bsSize="xsmall" onClick={()=>fireEvent('mean-modal', 'open', [CreateMean(0, '', getStateVal('realms-dao', 'currentRealm').id, [])])}>
             {createNewMeanButtonTitle}
           </Button>
           <MeanModal/>
@@ -53,14 +51,14 @@ export class MeansFrame extends React.Component{
 }
 
 const meansUIlist = function(){
-  if(TargetsState.targetsLoaded){
-    if(MeansState.meansLoaded){
-      return MeansState.means.map(function(mean){
+  if(getStateVal('targets-dao', 'targetsLoaded')){
+    if(getStateVal('means-dao', 'meansLoaded')){
+      return getStateVal('means-dao', 'means').map(function(mean){
           return <ListGroupItem>
             {meanUI(mean, 20)}
           </ListGroupItem>
       }, function(mean){
-        return mean.parentid==null && mean.realmid == RealmsState.currentRealm.id
+        return mean.parentid==null && mean.realmid == getStateVal('realms-dao', 'currentRealm').id
       })
     } else {
       fireEvent('means-dao', 'means-request', [])
@@ -79,7 +77,7 @@ const meanUI = function(mean, offset){
               :mean.title}
          </a>
           <span style={{color: 'green'}}> {mean.targetsString()}</span>  <span/>
-        <a href="#" onClick={()=>fireEvent('mean-modal', 'open', [CreateMean(0, '', RealmsState.currentRealm.id, []), mean])}>
+        <a href="#" onClick={()=>fireEvent('mean-modal', 'open', [CreateMean(0, '', getStateVal('realms-dao', 'currentRealm').id, []), mean])}>
           {addNewMeanTitle}
         </a>
       </div>
