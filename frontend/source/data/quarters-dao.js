@@ -1,5 +1,5 @@
 import $ from 'jquery'
-import {registerEvent, registerReaction, fireEvent, getStateVal} from '../controllers/eventor'
+import {registerEvent, registerReaction, fireEvent, viewStateVal} from '../controllers/eventor'
 
 registerEvent('quarters-dao', 'quarters-request', function(stateSetter){
   $.ajax({url: "/quarter/all"}).then(function(data) {

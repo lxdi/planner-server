@@ -5,7 +5,7 @@ import {Button, FormGroup, ControlLabel, FormControl, ListGroup, ListGroupItem} 
 import {CreateTarget, CreateRealm} from './../../data/creators'
 import {TargetModal} from './target-modal'
 import {RealmModal} from './realm-modal'
-import {registerEvent, registerReaction, fireEvent, getStateVal} from '../../controllers/eventor'
+import {registerEvent, registerReaction, fireEvent, viewStateVal} from '../../controllers/eventor'
 
 export class TargetsFrame extends React.Component{
   constructor(props){
@@ -45,14 +45,14 @@ export class TargetsFrame extends React.Component{
 }
 
 const realmsUI = function(){
-  if(getStateVal('realms-dao', 'realms')!=null){
-    if(getStateVal('targets-dao', 'targets')!=null){
+  if(viewStateVal('realms-dao', 'realms')!=null){
+    if(viewStateVal('targets-dao', 'targets')!=null){
       const result = []
-      const realms = getStateVal('realms-dao','realms')
+      const realms = viewStateVal('realms-dao','realms')
       for(var realmId in realms){
         const realmidConst = realmId
-        const isCurrentRealm = realms[realmidConst]==getStateVal('realms-dao','currentRealm')
-        result.push(<ListGroupItem key={"realm_"+realmidConst+(realms[realmidConst]==getStateVal('realms-dao','currentRealm')?"_current":"_notcurrent")}>
+        const isCurrentRealm = realms[realmidConst]==viewStateVal('realms-dao','currentRealm')
+        result.push(<ListGroupItem key={"realm_"+realmidConst+(realms[realmidConst]==viewStateVal('realms-dao','currentRealm')?"_current":"_notcurrent")}>
             <div>
               <h4 onClick={()=>fireEvent('realms-dao', 'change-current-realm', [realms[realmidConst]])}>
                 <input type="radio" autocomplete="off"
@@ -78,7 +78,7 @@ const realmsUI = function(){
 
 const targetsUI = function(realmId){
   return <div>
-      <Button bsStyle="success" bsSize="xsmall" onClick={()=>fireEvent('target-modal', 'open', [CreateTarget(0, '', getStateVal('realms-dao','realms')[realmId].id)])}>
+      <Button bsStyle="success" bsSize="xsmall" onClick={()=>fireEvent('target-modal', 'open', [CreateTarget(0, '', viewStateVal('realms-dao','realms')[realmId].id)])}>
                   {createNewTargetButtonTitle}
                 </Button>
               <div>{targetsUIlist(realmId)}</div>
@@ -86,7 +86,7 @@ const targetsUI = function(realmId){
 }
 
 const targetsUIlist = function(realmId){
-    return getStateVal('targets-dao', 'targets').map(function(target){
+    return viewStateVal('targets-dao', 'targets').map(function(target){
           return <ListGroupItem>
             {targetUI(target, realmId, 20)}
           </ListGroupItem>
@@ -100,7 +100,7 @@ const targetUI = function(target, realmId, offset){
     <div>
       <div style={{'margin-bottom': '5px'}}>
         <a href="#" onClick={()=>fireEvent('target-modal', 'open', [target])}> {target.toString()} </a><span/>
-        <a href="#" onClick={()=>fireEvent('target-modal', 'open', [CreateTarget(0, '', getStateVal('realms-dao','realms')[realmId].id), target])}>
+        <a href="#" onClick={()=>fireEvent('target-modal', 'open', [CreateTarget(0, '', viewStateVal('realms-dao','realms')[realmId].id), target])}>
             {addNewTargetTitle}
         </a>
       </div>

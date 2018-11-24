@@ -1,5 +1,5 @@
 import $ from 'jquery'
-import {registerEvent, registerReaction, fireEvent, getStateVal} from '../controllers/eventor'
+import {registerEvent, registerReaction, fireEvent, viewStateVal} from '../controllers/eventor'
 
 registerEvent('targets-dao', 'create', function(stateSetter, target, parent){
   target.parentid = parent!=null? parent.id: null
@@ -9,7 +9,7 @@ registerEvent('targets-dao', 'create', function(stateSetter, target, parent){
     contentType: 'application/json',
     data: JSON.stringify(target),
     success: function(data) {
-      getStateVal('targets-dao', 'targets')[""+data.id] = data
+      viewStateVal('targets-dao', 'targets')[""+data.id] = data
       resolveTargets()
       fireEvent('targets-dao', 'target-created', [target])
     }
@@ -23,7 +23,7 @@ registerEvent('targets-dao', 'delete', function(stateSetter, id){
     url: '/target/delete/'+id,
     type: 'DELETE',
     success: function() {
-      delete getStateVal('targets-dao', 'targets')[id]
+      delete viewStateVal('targets-dao', 'targets')[id]
       resolveTargets()
       fireEvent('targets-dao', 'target-deleted', [id])
     }
@@ -39,7 +39,7 @@ registerEvent('targets-dao', 'modify', function(stateSetter, target){
     contentType: 'application/json',
     data: JSON.stringify(target),
     success: function(data) {
-      getStateVal('targets-dao', 'targets')[""+data.id] = data
+      viewStateVal('targets-dao', 'targets')[""+data.id] = data
       resolveTargets()
       fireEvent('targets-dao', 'target-modified', [target])
     }
@@ -83,19 +83,19 @@ const targetsuper = {
 }
 
 const importTargetsDto = function(stateSetter, targetsDto){
-  if(getStateVal('targets-dao', 'targets')==null){
+  if(viewStateVal('targets-dao', 'targets')==null){
     const targets = []
     targets.__proto__ = targetsProto
     stateSetter('targets', targets)
   }
   for(var i in targetsDto){
-    getStateVal('targets-dao', 'targets')[""+targetsDto[i].id] = targetsDto[i]
+    viewStateVal('targets-dao', 'targets')[""+targetsDto[i].id] = targetsDto[i]
   }
   resolveTargets();
 }
 
 const resolveTargets = function(){
-  const targets = getStateVal('targets-dao', 'targets')
+  const targets = viewStateVal('targets-dao', 'targets')
   for(var i in targets){
     if(targets.hasOwnProperty(i)){
       resolveTarget(targets[i])
@@ -106,7 +106,7 @@ const resolveTargets = function(){
 const resolveTarget = function(target){
   target.children = []
   target.__proto__ = targetsuper
-  const targets = getStateVal('targets-dao', 'targets')
+  const targets = viewStateVal('targets-dao', 'targets')
   for(var j in targets){
     if(targets[j].parentid == target.id){
       target.children.push(targets[j])
@@ -115,5 +115,5 @@ const resolveTarget = function(target){
 }
 
 export var GetTargetById = function(id){
-  return getStateVal('targets-dao', 'targets').id
+  return viewStateVal('targets-dao', 'targets').id
 }
