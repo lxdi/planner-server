@@ -23,7 +23,7 @@ export class ScheduleFrame extends React.Component{
     return(
       <div>
         <div>
-          {getStateVal('means-dao', 'meansLoaded')?quartersUI():null}
+          {getStateVal('means-dao', 'means')!=null?quartersUI():null}
         </div>
       </div>
     )
@@ -33,25 +33,25 @@ export class ScheduleFrame extends React.Component{
 const quartersUI = function(){
   if(getStateVal('quarters-dao', 'quarters') != null){
     return getStateVal('quarters-dao', 'quarters').map((quarter)=>
-    <Table striped bordered condensed hover width={'100px'}>
-      <tbody>
-        <tr>
-          <td>
-            {quarter.year +'.'+formatDateNumber(quarter.startDay) + '.' + formatDateNumber(quarter.startMonth)}
-          </td>
-        </tr>
-        <tr onDragOver={(e)=>{e.preventDefault()}} onDrop={(e)=>fireEvent('means-dao', 'assign-quarter-to-draggable', [quarter, 1])}>
-          <td>
-            {getMeanSlotUI(quarter, 1)}
-          </td>
-        </tr>
-        <tr onDragOver={(e)=>{e.preventDefault()}} onDrop={(e)=>fireEvent('means-dao', 'assign-quarter-to-draggable', [quarter, 2])}>
-          <td>
-            {getMeanSlotUI(quarter, 2)}
-          </td>
-        </tr>
-      </tbody>
-    </Table>
+          <Table striped bordered condensed hover width={'100px'}>
+            <tbody>
+              <tr>
+                <td>
+                  {quarter.year +'.'+formatDateNumber(quarter.startDay) + '.' + formatDateNumber(quarter.startMonth)}
+                </td>
+              </tr>
+              <tr onDragOver={(e)=>{e.preventDefault()}} onDrop={(e)=>fireEvent('means-dao', 'assign-quarter-to-draggable', [quarter, 1])}>
+                <td>
+                  {getMeanSlotUI(quarter, 1)}
+                </td>
+              </tr>
+              <tr onDragOver={(e)=>{e.preventDefault()}} onDrop={(e)=>fireEvent('means-dao', 'assign-quarter-to-draggable', [quarter, 2])}>
+                <td>
+                  {getMeanSlotUI(quarter, 2)}
+                </td>
+              </tr>
+            </tbody>
+          </Table>
       )
   } else {
     fireEvent('quarters-dao', 'quarters-request', [])

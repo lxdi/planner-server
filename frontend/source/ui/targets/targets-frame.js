@@ -45,9 +45,8 @@ export class TargetsFrame extends React.Component{
 }
 
 const realmsUI = function(){
-  //if(RealmsState.realmsLoaded){
   if(getStateVal('realms-dao', 'realms')!=null){
-    if(getStateVal('targets-dao', 'targetsLoaded')){
+    if(getStateVal('targets-dao', 'targets')!=null){
       const result = []
       const realms = getStateVal('realms-dao','realms')
       for(var realmId in realms){

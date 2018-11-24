@@ -51,8 +51,8 @@ export class MeansFrame extends React.Component{
 }
 
 const meansUIlist = function(){
-  if(getStateVal('targets-dao', 'targetsLoaded')){
-    if(getStateVal('means-dao', 'meansLoaded')){
+  if(getStateVal('targets-dao', 'targets')!=null){
+    if(getStateVal('means-dao', 'means')!=null){
       return getStateVal('means-dao', 'means').map(function(mean){
           return <ListGroupItem>
             {meanUI(mean, 20)}

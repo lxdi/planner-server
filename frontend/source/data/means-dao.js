@@ -7,7 +7,6 @@ registerEvent('means-dao', 'means-request', function(stateSetter){
     $.ajax({url: "/mean/all/lazy"}).then(function(data) {
               var receivedData = typeof data == 'string'? JSON.parse(data): data
               importMeansDto(stateSetter, receivedData)
-              stateSetter('meansLoaded', true)
               fireEvent('means-dao', 'means-received', [])
             });
 })

@@ -52,7 +52,6 @@ registerEvent('targets-dao', 'targets-request', function(stateSetter){
     $.ajax({url: "/target/all/lazy"}).then(function(data) {
               var receivedData = typeof data == 'string'? JSON.parse(data): data
               importTargetsDto(stateSetter, receivedData)
-              stateSetter('targetsLoaded', true)
               fireEvent('targets-dao', 'targets-received', [])
             });
 })
