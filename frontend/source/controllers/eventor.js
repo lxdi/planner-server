@@ -1,6 +1,7 @@
 
 const debugMode = {
   on: false,
+  //on: true,
   depth: ['stateSetter', 'event', 'reaction'] // viewStateVal, registerObject
 }
 const debugConsole = function(msg){

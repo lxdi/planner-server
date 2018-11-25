@@ -73,11 +73,12 @@ const getMeanSlotUI = function(quarter, position){
 const getMean = function(quarter, position){
   const means = viewStateVal('means-dao', 'means')
   for(var meanid in means){
-    const currentMean = means[meanid]
-    if(currentMean.realmid == viewStateVal('realms-dao', 'currentRealm').id
-        && currentMean.quarterid == quarter.id
-        && currentMean.position == position){
-        return currentMean
+    const mean = means[meanid]
+    const currentRealm = viewStateVal('realms-dao', 'currentRealm')
+    if(currentRealm!=null && mean.realmid == currentRealm.id
+        && mean.quarterid == quarter.id
+        && mean.position == position){
+        return mean
       }
   }
   return null
