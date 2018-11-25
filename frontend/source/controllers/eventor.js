@@ -2,7 +2,7 @@
 const debugMode = {
   on: false,
   //on: true,
-  depth: ['stateSetter', 'event', 'reaction'] // viewStateVal, registerObject
+  depth: ['stateSetter', 'event', 'reaction', 'reactionComb'] // viewStateVal, registerObject
 }
 const debugConsole = function(msg){
   if(debugMode.on){
@@ -21,6 +21,7 @@ export const registerObject = function(objName, initState){
     name: objName,
     events: [],
     reactions: [],
+    reactionsComb:[],
     state:initState!=null?initState:{}
   }
   return objects[objName]
@@ -62,6 +63,21 @@ export const registerReaction = function(objName, depObjName, depEventName, reac
   }
 }
 
+export const registerReactionCombo = function(objName, combInit, reaction){
+  if(objects[objName]==null){
+    registerObject(objName)
+  }
+  objects[objName].reactionsComb.push(new createCombination(combInit, reaction))
+}
+
+function createCombination(combInit, reaction){
+  for(var objName in combInit){
+    this[objName] = {}
+    this[objName][combInit[objName]] = false
+  }
+  this['reactionComb'] = reaction
+}
+
 export const fireEvent = function(objName, evName, args){
   validation(objName, evName)
   if(args!=null){
@@ -72,6 +88,12 @@ export const fireEvent = function(objName, evName, args){
   }
   debugConsole({event:'event', objName:objName, evName: evName, args: args})
   const product = objects[objName].events[evName].apply(null, args)
+  fireReactions(objName, evName, product)
+  fireComboReactions(objName, evName)
+  releaseFromCycle(objName, evName)
+}
+
+const fireReactions = function(objName, evName, product){
   for(var reactObjName in objects){
     if(reactObjName!=objName && objects[reactObjName].reactions[objName]!=null){
       // if(objects[reactObjName].reactions[objName]['any']!=null){
@@ -83,7 +105,46 @@ export const fireEvent = function(objName, evName, args){
       }
     }
   }
-  releaseFromCycle(objName, evName)
+}
+
+const fireComboReactions = function(objName, evName){
+  for(var reactObjName in objects){
+    for(var reactCombId in objects[reactObjName].reactionsComb){
+      const reactComb = objects[reactObjName].reactionsComb[reactCombId]
+      if(reactComb[objName]!=null && reactComb[objName][evName]!=null){
+        reactComb[objName][evName] = true
+        if(checkReactComb(reactComb)){
+          debugConsole({event:'reactionComb', reactObjName: reactObjName, objName:objName, evName: evName, reactComb: reactComb})
+          reactComb['reactionComb'](stateSetter.bind(null, reactObjName))
+          reactCombReset(reactComb)
+        }
+      }
+    }
+  }
+}
+
+const checkReactComb = function(reactComb){
+  var check = true
+  for(var objNameToReact in reactComb){
+    if(objNameToReact != 'reactionComb'){
+      for(var evName in reactComb[objNameToReact]){
+        if(reactComb[objNameToReact][evName]==false){
+          check = false
+        }
+      }
+    }
+  }
+  return check
+}
+
+const reactCombReset = function(reactComb){
+  for(var objNameToReact in reactComb){
+    if(objNameToReact != 'reactionComb'){
+      for(var evName in reactComb[objNameToReact]){
+        reactComb[objNameToReact][evName] = false
+      }
+    }
+  }
 }
 
 const validation = function(objName, evName){

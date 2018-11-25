@@ -1,6 +1,6 @@
 import $ from 'jquery'
 import {Protomean} from './creators'
-import {registerEvent, registerReaction, fireEvent, viewStateVal} from '../controllers/eventor'
+import {registerEvent, registerReaction, fireEvent, viewStateVal, registerReactionCombo} from '../controllers/eventor'
 
 
 registerEvent('means-dao', 'means-request', function(stateSetter){
@@ -11,7 +11,9 @@ registerEvent('means-dao', 'means-request', function(stateSetter){
             });
 })
 
-registerReaction('means-dao', 'targets-dao', 'targets-received', ()=>fireEvent('means-dao', 'means-request'))
+//registerReaction('means-dao', 'targets-dao', 'targets-received', ()=>fireEvent('means-dao', 'means-request'))
+
+registerReactionCombo('means-dao', {'realms-dao':'realms-received', 'targets-dao': 'targets-received'}, ()=>fireEvent('means-dao', 'means-request'))
 
 registerEvent('means-dao', 'means-received', ()=>{})
 
