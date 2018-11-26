@@ -46,7 +46,7 @@ public class LayersRESTController {
     }
 
     @RequestMapping(path = "/get/bymean/{meanid}" , method = RequestMethod.GET)
-    public ResponseEntity<List<LayerDtoLazy>> layersOfMean(@PathVariable("meanId") long meanid){
+    public ResponseEntity<List<LayerDtoLazy>> layersOfMean(@PathVariable("meanid") long meanid){
         List<LayerDtoLazy> result = new ArrayList<>();
         for(Layer layer : layerDAO.getLyersOfMean(meansDAO.meanById(meanid))){
             result.add(mapper.mapToDto(layer));

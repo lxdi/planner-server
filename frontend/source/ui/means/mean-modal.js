@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom';
 import {CommonModal} from './../common-modal'
 import {CreateMean} from './../../data/creators'
 import {CommonCrudeTemplate} from './../common-crud-template'
-import {Button, ButtonToolbar,  DropdownButton, MenuItem,  FormGroup, ControlLabel, FormControl} from 'react-bootstrap'
+import {Button, ButtonToolbar,  DropdownButton, MenuItem,  FormGroup, ControlLabel, FormControl,  ListGroup, ListGroupItem} from 'react-bootstrap'
 import {registerEvent, registerReaction, fireEvent, viewStateVal} from '../../controllers/eventor'
 
 
@@ -33,11 +33,16 @@ export class MeanModal extends React.Component {
 
     registerEvent('mean-modal', 'open', function(state, currentMean, parent){
       this.setState(createState(true, currentMean.id==0, currentMean.id==0, currentMean, parent))
+      return currentMean
     }.bind(this))
 
     registerEvent('mean-modal', 'close', function(){
       this.setState(defaultState())
     }.bind(this))
+
+    registerReaction('mean-modal', 'layers-dao', 'layers-received', ()=>{
+      this.setState({})
+    })
   }
 
   okHandler(){
@@ -84,6 +89,7 @@ export class MeanModal extends React.Component {
             <div>
               {relatedTargetsUI(this.state.currentMean.targets)}
             </div>
+            {layersUI(this.state.currentMean)}
         </CommonCrudeTemplate>
       </CommonModal>
     )
@@ -100,4 +106,13 @@ const relatedTargetsUI = function(targets){
   return targets.map((target) =>
     <li>{target.toString()}</li>
   );
+}
+
+const layersUI = function(mean){
+  return <div>
+          <div>Layers</div>
+          <ListGroup>
+            <ListGroupItem>Layer1</ListGroupItem>
+          </ListGroup>
+          </div>
 }

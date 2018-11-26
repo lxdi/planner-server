@@ -33,12 +33,12 @@ export class MeansFrame extends React.Component{
   render(){
     return(
       <div>
-        <div style={{'margin-bottom': '3px'}}>
+        {viewStateVal('realms-dao', 'currentRealm')!=null? <div style={{'margin-bottom': '3px'}}>
           <Button bsStyle="primary" bsSize="xsmall" onClick={()=>fireEvent('mean-modal', 'open', [CreateMean(0, '', viewStateVal('realms-dao', 'currentRealm').id, [])])}>
             {createNewMeanButtonTitle}
           </Button>
           <MeanModal/>
-        </div>
+        </div>:null}
         <div>
           <ListGroup>
             {meansUIlist()}

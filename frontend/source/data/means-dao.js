@@ -29,7 +29,7 @@ registerEvent('means-dao', 'create', function(stateSetter, mean, parent){
     contentType: 'application/json',
     data: JSON.stringify(mean),
     success: function(data) {
-      viewStateVal('means-dao', 'means')[""+data.id] = data
+      viewStateVal('means-dao', 'means')[data.id] = data
       resolveMeans(viewStateVal('means-dao', 'means'))
       fireEvent('means-dao', 'mean-created', [data])
     }
@@ -86,7 +86,7 @@ registerEvent('means-dao', 'modify', function(stateSetter, mean){
     contentType: 'application/json',
     data: JSON.stringify(mean),
     success: function(data) {
-      viewStateVal('means-dao', 'means')[""+data.id] = data
+      viewStateVal('means-dao', 'means')[data.id] = data
       resolveMeans(viewStateVal('means-dao', 'means'))
       fireEvent('means-dao', 'mean-modified', [mean])
     }
@@ -136,7 +136,7 @@ const importMeansDto = function(stateSetter, meansDto){
     stateSetter('means', means)
   }
   for(var i in meansDto){
-    viewStateVal('means-dao', 'means')[""+meansDto[i].id] = meansDto[i]
+    viewStateVal('means-dao', 'means')[meansDto[i].id] = meansDto[i]
   }
   resolveMeans(viewStateVal('means-dao', 'means'));
 }
