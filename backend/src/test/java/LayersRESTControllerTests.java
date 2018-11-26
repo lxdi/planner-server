@@ -34,14 +34,10 @@ public class LayersRESTControllerTests extends ATestsWithTargetsWithMeansWithLay
 
     @Test
     public void createNewLayerTest() throws Exception {
-        String rquest = "{\"meanid\":"+meansDao.meanByTitle(child2MeanTitle).getId()
-                +",\"priority\":1"
-                +"}";
 
         assertTrue(layerDAO.getLyersOfMean(meansDao.meanByTitle(child2MeanTitle)).size()==0);
 
-        MvcResult result = mockMvc.perform(put("/layer/create")
-                .contentType(MediaType.APPLICATION_JSON).content(rquest))
+        MvcResult result = mockMvc.perform(get("/layer/create/"+meansDao.meanByTitle(child2MeanTitle).getId()))
                 .andExpect(status().isOk()).andReturn();
 
         String resultStr = result.getResponse().getContentAsString();

@@ -27,6 +27,28 @@ public class LayerDao implements ILayerDAO {
     }
 
     @Override
+    public Layer create(Mean mean) {
+        Layer layer = new Layer(mean, getNextPriority(mean));
+        return layer;
+    }
+
+    @Override
+    public void delete(Layer layer) {
+        sessionFactory.getCurrentSession().delete(layer);
+    }
+
+    private int getNextPriority(Mean mean){
+        //TODO optimize
+        int max = 0;
+        for(Layer layer : this.getLyersOfMean(mean)){
+            if(layer.getPriority()>max){
+                max = layer.getPriority();
+            }
+        }
+        return max+1;
+    }
+
+    @Override
     public void saveOrUpdate(Layer layer) {
         sessionFactory.getCurrentSession().saveOrUpdate(layer);
     }

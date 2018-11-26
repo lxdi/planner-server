@@ -11,6 +11,7 @@ const defaultState = function(){
 }
 
 // editing{isStatic isEdit} changeEditHandler deleteHandler
+//isStatic means a view only mode
 export class CommonCrudeTemplate extends React.Component {
   constructor(props){
     super(props)

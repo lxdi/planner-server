@@ -1,5 +1,6 @@
 package model;
 
+import model.entities.Layer;
 import model.entities.Mean;
 import model.entities.Quarter;
 import org.hibernate.SessionFactory;
@@ -21,6 +22,9 @@ public class MeansDao implements IMeansDAO {
     @Autowired
     SessionFactory sessionFactory;
 
+    @Autowired
+    ILayerDAO layerDAO;
+
     @Override
     public List<Mean> getAllMeans() {
         return sessionFactory.getCurrentSession().createCriteria(Mean.class).list();
@@ -39,8 +43,11 @@ public class MeansDao implements IMeansDAO {
     @Override
     public void deleteMean(long id) {
         Mean meanToDelete = this.meanById(id);
-        for(Mean target : this.getChildren(meanToDelete)){
-            this.deleteMean(target.getId());
+        for(Layer dependedLayer : layerDAO.getLyersOfMean(meanToDelete)){
+            layerDAO.delete(dependedLayer);
+        }
+        for(Mean childMean : this.getChildren(meanToDelete)){
+            this.deleteMean(childMean.getId());
         }
         sessionFactory.getCurrentSession().delete(meanToDelete);
     }

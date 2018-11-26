@@ -7,7 +7,8 @@ import java.util.List;
 
 public interface ILayerDAO {
 
-    List<Layer> getLyersOfMean(Mean mean);
     void saveOrUpdate(Layer layer);
-
+    List<Layer> getLyersOfMean(Mean mean);
+    Layer create(Mean mean);
+    void delete(Layer layer);
 }

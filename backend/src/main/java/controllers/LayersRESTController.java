@@ -38,9 +38,9 @@ public class LayersRESTController {
         this.mapper = layersDtoMapper;
     }
 
-    @RequestMapping(path = "/create" , method = RequestMethod.PUT)
-    public ResponseEntity<LayerDtoLazy> createLayer(@RequestBody LayerDtoLazy layerDto){
-        Layer layer = mapper.mapToEntity(layerDto);
+    @RequestMapping(path = "/create/{meanid}" , method = RequestMethod.GET)
+    public ResponseEntity<LayerDtoLazy> createLayer(@PathVariable("meanid") long meanid){
+        Layer layer = layerDAO.create(meansDAO.meanById(meanid));
         layerDAO.saveOrUpdate(layer);
         return new ResponseEntity<LayerDtoLazy>(mapper.mapToDto(layer), HttpStatus.OK);
     }

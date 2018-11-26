@@ -31,7 +31,7 @@ export class MeanModal extends React.Component {
     this.handleNameVal = this.handleNameVal.bind(this);
     this.selectTargetHandler = this.selectTargetHandler.bind(this);
 
-    registerEvent('mean-modal', 'open', function(state, currentMean, parent){
+    registerEvent('mean-modal', 'open', function(stateSetter, currentMean, parent){
       this.setState(createState(true, currentMean.id==0, currentMean.id==0, currentMean, parent))
       return currentMean
     }.bind(this))
@@ -40,9 +40,7 @@ export class MeanModal extends React.Component {
       this.setState(defaultState())
     }.bind(this))
 
-    registerReaction('mean-modal', 'layers-dao', 'layers-received', ()=>{
-      this.setState({})
-    })
+    registerReaction('mean-modal', 'layers-dao', ['layers-received', 'layer-created'], ()=>this.setState({}))
   }
 
   okHandler(){
@@ -64,35 +62,37 @@ export class MeanModal extends React.Component {
   }
 
   render(){
-    return (
-      <CommonModal isOpen = {this.state.isOpen} okHandler = {this.okHandler} cancelHandler = {()=>fireEvent('mean-modal', 'close', [])} title={meanModalHeaderTitle} >
-        <CommonCrudeTemplate editing = {this.state.mode} changeEditHandler = {this.forceUpdate.bind(this)} deleteHandler={()=>fireEvent('means-dao', 'delete', [this.state.currentMean.id])}>
-            <form>
-              <FormGroup controlId="formBasicText">
-                <ControlLabel>Title</ControlLabel>
-              {this.state.mode.isEdit? <FormControl
-                                type="text"
-                                value={this.state.currentMean.title}
-                                placeholder="Enter title"
-                                onChange={this.handleNameVal}/>
-                              : <FormControl.Static>{this.state.currentMean.title}</FormControl.Static>}
-              </FormGroup>
-            </form>
-            {this.state.mode.isEdit? <div>
-                        <ButtonToolbar>
-                          <DropdownButton bsSize="small" title={targetsDropDownTitle} id="dropdown-size-small" onSelect={this.selectTargetHandler}>
-                            {availableTargetsUI()}
-                          </DropdownButton>
-                        </ButtonToolbar>
-                    </div>
-              : null}
-            <div>
-              {relatedTargetsUI(this.state.currentMean.targets)}
-            </div>
-            {layersUI(this.state.currentMean)}
-        </CommonCrudeTemplate>
-      </CommonModal>
-    )
+    if(this.state.isOpen){
+        return <CommonModal isOpen = {this.state.isOpen} okHandler = {this.okHandler} cancelHandler = {()=>fireEvent('mean-modal', 'close', [])} title={meanModalHeaderTitle} >
+            <CommonCrudeTemplate editing = {this.state.mode} changeEditHandler = {this.forceUpdate.bind(this)} deleteHandler={()=>fireEvent('means-dao', 'delete', [this.state.currentMean.id])}>
+                <form>
+                  <FormGroup controlId="formBasicText">
+                    <ControlLabel>Title</ControlLabel>
+                  {this.state.mode.isEdit? <FormControl
+                                    type="text"
+                                    value={this.state.currentMean.title}
+                                    placeholder="Enter title"
+                                    onChange={this.handleNameVal}/>
+                                  : <FormControl.Static>{this.state.currentMean.title}</FormControl.Static>}
+                  </FormGroup>
+                </form>
+                {this.state.mode.isEdit? <div>
+                            <ButtonToolbar>
+                              <DropdownButton bsSize="small" title={targetsDropDownTitle} id="dropdown-size-small" onSelect={this.selectTargetHandler}>
+                                {availableTargetsUI()}
+                              </DropdownButton>
+                            </ButtonToolbar>
+                        </div>
+                  : null}
+                <div>
+                  {relatedTargetsUI(this.state.currentMean.targets)}
+                </div>
+                {layersBlock(this.state.currentMean, this.state.mode.isEdit)}
+            </CommonCrudeTemplate>
+          </CommonModal>
+    } else {
+      return null
+    }
   }
 }
 
@@ -108,11 +108,26 @@ const relatedTargetsUI = function(targets){
   );
 }
 
-const layersUI = function(mean){
-  return <div>
-          <div>Layers</div>
-          <ListGroup>
-            <ListGroupItem>Layer1</ListGroupItem>
+const layersBlock = function(mean, isEdit){
+  return <ListGroup>
+            <div>
+              <h4>Layers</h4> {isEdit?<a href='#' onClick={()=>fireEvent('layers-dao', 'create', [mean])}> Create Layer</a>:null}
+            </div>
+            <ListGroup>
+              {layersUI(mean)}
+            </ListGroup>
           </ListGroup>
-          </div>
+}
+
+const layersUI = function(mean){
+  if(viewStateVal('layers-dao', 'layers')!=null){
+    const layersHTML = []
+    const rawLayers = viewStateVal('layers-dao', 'layers')[mean.id]
+    for(var layerid in rawLayers){
+      layersHTML.push(<ListGroupItem key={'layer_'+layerid}>Layer {rawLayers[layerid].priority}</ListGroupItem>)
+    }
+    return layersHTML
+  } else {
+    return null
+  }
 }
