@@ -38,12 +38,26 @@ public class LayersRESTController {
         this.mapper = layersDtoMapper;
     }
 
-    @RequestMapping(path = "/create/{meanid}" , method = RequestMethod.GET)
-    public ResponseEntity<LayerDtoLazy> createLayer(@PathVariable("meanid") long meanid){
-        Layer layer = layerDAO.create(meansDAO.meanById(meanid));
+    @RequestMapping(path = "/create" , method = RequestMethod.PUT)
+    public ResponseEntity<LayerDtoLazy> createLayer(@RequestBody LayerDtoLazy layerDto){
+        //Layer layer = layerDAO.create(meansDAO.meanById(meanid));
+        Layer layer = mapper.mapToEntity(layerDto);
         layerDAO.saveOrUpdate(layer);
         return new ResponseEntity<LayerDtoLazy>(mapper.mapToDto(layer), HttpStatus.OK);
     }
+
+    @RequestMapping(path = "/create/list" , method = RequestMethod.PUT)
+    public ResponseEntity<List<LayerDtoLazy>> createLayers(@RequestBody List<LayerDtoLazy> layersDto){
+        List<LayerDtoLazy> result = new ArrayList<>();
+        for(LayerDtoLazy layerDto : layersDto){
+            Layer layer = mapper.mapToEntity(layerDto);
+            layerDAO.saveOrUpdate(layer);
+            result.add(mapper.mapToDto(layer));
+        }
+        //TODO return all layers of a mean, not only created ones
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
 
     @RequestMapping(path = "/get/bymean/{meanid}" , method = RequestMethod.GET)
     public ResponseEntity<List<LayerDtoLazy>> layersOfMean(@PathVariable("meanid") long meanid){

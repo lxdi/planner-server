@@ -40,7 +40,16 @@ export class MeanModal extends React.Component {
       this.setState(defaultState())
     }.bind(this))
 
-    registerReaction('mean-modal', 'layers-dao', ['layers-received', 'layer-created'], ()=>this.setState({}))
+    registerReaction('means-modal', 'means-dao', ['mean-deleted'], function(){
+      fireEvent('mean-modal', 'close')
+      this.setState({})
+    }.bind(this))
+    registerReaction('mean-modal', 'layers-dao', ['layers-received', 'create-candidate'], ()=>this.setState({}))
+    registerReaction('means-modal', 'layers-dao', 'layers-many-created', ()=>{
+      fireEvent('mean-modal', 'close')
+      this.setState({})
+    })
+
   }
 
   okHandler(){
@@ -111,7 +120,8 @@ const relatedTargetsUI = function(targets){
 const layersBlock = function(mean, isEdit){
   return <ListGroup>
             <div>
-              <h4>Layers</h4> {isEdit?<a href='#' onClick={()=>fireEvent('layers-dao', 'create', [mean])}> Create Layer</a>:null}
+              <h4>Layers</h4>
+              {isEdit?<a href='#' onClick={()=>fireEvent('layers-dao', 'create-candidate', [mean, {}])}> Create Layer</a>:null}
             </div>
             <ListGroup>
               {layersUI(mean)}
@@ -120,14 +130,20 @@ const layersBlock = function(mean, isEdit){
 }
 
 const layersUI = function(mean){
-  if(viewStateVal('layers-dao', 'layers')!=null){
     const layersHTML = []
-    const rawLayers = viewStateVal('layers-dao', 'layers')[mean.id]
-    for(var layerid in rawLayers){
-      layersHTML.push(<ListGroupItem key={'layer_'+layerid}>Layer {rawLayers[layerid].priority}</ListGroupItem>)
+    if(viewStateVal('layers-dao', 'layers')!=null){
+      const rawLayers = viewStateVal('layers-dao', 'layers')[mean.id]
+      if(rawLayers!=null){
+        for(var layerid in rawLayers){
+          layersHTML.push(<ListGroupItem key={'layer_'+layerid}>Layer {rawLayers[layerid].priority}</ListGroupItem>)
+        }
+      }
+    }
+    const rawLayersCandidates = viewStateVal('layers-dao', 'layers-candidates')
+    if(rawLayersCandidates!=null){
+      for(var layerid in rawLayersCandidates){
+        layersHTML.push(<ListGroupItem key={'layerCandidate_'+rawLayersCandidates[layerid].priority}>Layer {rawLayersCandidates[layerid].priority}</ListGroupItem>)
+      }
     }
     return layersHTML
-  } else {
-    return null
-  }
 }

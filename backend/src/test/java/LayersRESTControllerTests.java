@@ -37,12 +37,39 @@ public class LayersRESTControllerTests extends ATestsWithTargetsWithMeansWithLay
 
         assertTrue(layerDAO.getLyersOfMean(meansDao.meanByTitle(child2MeanTitle)).size()==0);
 
-        MvcResult result = mockMvc.perform(get("/layer/create/"+meansDao.meanByTitle(child2MeanTitle).getId()))
+        String content = "{"+
+                "\"priority\":1,"+
+                "\"meanid\":"+meansDao.meanByTitle(child2MeanTitle).getId()+
+                "}";
+        MvcResult result = mockMvc.perform(put("/layer/create")
+                .contentType(MediaType.APPLICATION_JSON).content(content))
                 .andExpect(status().isOk()).andReturn();
 
         String resultStr = result.getResponse().getContentAsString();
 
         assertTrue(layerDAO.getLyersOfMean(meansDao.meanByTitle(child2MeanTitle)).size()==1);
+    }
+
+    @Test
+    public void createLayersTest() throws Exception{
+        assertTrue(layerDAO.getLyersOfMean(meansDao.meanByTitle(child2MeanTitle)).size()==0);
+
+        String content = "[{"+
+                "\"priority\":1,"+
+                "\"meanid\":"+meansDao.meanByTitle(child2MeanTitle).getId()+
+                "},"+
+                "{"+
+                "\"priority\":2,"+
+                "\"meanid\":"+meansDao.meanByTitle(child2MeanTitle).getId()+
+                "}]";
+
+        MvcResult result = mockMvc.perform(put("/layer/create/list")
+                .contentType(MediaType.APPLICATION_JSON).content(content))
+                .andExpect(status().isOk()).andReturn();
+
+        String resultStr = result.getResponse().getContentAsString();
+
+        assertTrue(layerDAO.getLyersOfMean(meansDao.meanByTitle(child2MeanTitle)).size()==2);
     }
 
 

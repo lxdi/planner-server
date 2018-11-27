@@ -16,7 +16,6 @@ export class MeansFrame extends React.Component{
     }.bind(this)
 
     registerReaction('means-frame', 'means-dao', ['mean-created', 'mean-deleted', 'mean-modified'], function(){
-      fireEvent('mean-modal', 'close')
       this.setState({})
     }.bind(this))
 
