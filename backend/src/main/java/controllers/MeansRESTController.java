@@ -1,6 +1,9 @@
 package controllers;
 
+import model.ILayerDAO;
 import model.IMeansDAO;
+import model.dto.layer.LayerDtoLazy;
+import model.dto.layer.LayersDtoMapper;
 import model.dto.mean.MeanDtoLazy;
 import model.dto.mean.MeansDtoMapper;
 import model.entities.Mean;
@@ -27,7 +30,14 @@ public class MeansRESTController {
     IMeansDAO meansDAO;
 
     @Autowired
+    ILayerDAO layerDAO;
+
+    @Autowired
+    LayersDtoMapper layersDtoMapper;
+
+    @Autowired
     MeansDtoMapper meansDtoMapper;
+
 
     public MeansRESTController(){}
 
@@ -49,6 +59,13 @@ public class MeansRESTController {
         Mean mean = meansDtoMapper.mapToEntity(meanDtoLazy);
         meansDAO.validateMean(mean);
         meansDAO.saveOrUpdate(mean);
+
+        if(meanDtoLazy.getLayers()!=null){
+            for(LayerDtoLazy layerDto : meanDtoLazy.getLayers()){
+                layerDAO.saveOrUpdate(layersDtoMapper.mapToEntity(layerDto));
+            }
+        }
+
         return new ResponseEntity<MeanDtoLazy>(meansDtoMapper.mapToDto(mean), HttpStatus.OK);
     }
 
@@ -69,6 +86,13 @@ public class MeansRESTController {
         Mean mean = meansDtoMapper.mapToEntity(meanDtoLazy);
         meansDAO.validateMean(mean);
         meansDAO.saveOrUpdate(mean);
+
+        if(meanDtoLazy.getLayers()!=null){
+            for(LayerDtoLazy layerDto : meanDtoLazy.getLayers()){
+                layerDAO.saveOrUpdate(layersDtoMapper.mapToEntity(layerDto));
+            }
+        }
+
         return new ResponseEntity<MeanDtoLazy>(meansDtoMapper.mapToDto(mean), HttpStatus.OK);
     }
 

@@ -40,15 +40,15 @@ export class MeanModal extends React.Component {
       this.setState(defaultState())
     }.bind(this))
 
-    registerReaction('means-modal', 'means-dao', ['mean-deleted'], function(){
+    registerReaction('means-modal', 'means-dao', ['mean-deleted', 'mean-modified', 'mean-created'], function(){
       fireEvent('mean-modal', 'close')
       this.setState({})
     }.bind(this))
-    registerReaction('mean-modal', 'layers-dao', ['layers-received', 'create-candidate'], ()=>this.setState({}))
-    registerReaction('means-modal', 'layers-dao', 'layers-many-created', ()=>{
-      fireEvent('mean-modal', 'close')
-      this.setState({})
-    })
+    registerReaction('mean-modal', 'layers-dao', ['layers-received', 'add-layer'], ()=>this.setState({}))
+    // registerReaction('means-modal', 'layers-dao', ['layers-many-created'], ()=>{
+    //   fireEvent('mean-modal', 'close')
+    //   this.setState({})
+    // })
 
   }
 
@@ -121,7 +121,7 @@ const layersBlock = function(mean, isEdit){
   return <ListGroup>
             <div>
               <h4>Layers</h4>
-              {isEdit?<a href='#' onClick={()=>fireEvent('layers-dao', 'create-candidate', [mean, {}])}> Create Layer</a>:null}
+              {isEdit?<a href='#' onClick={()=>fireEvent('layers-dao', 'add-layer', [mean])}> Create Layer</a>:null}
             </div>
             <ListGroup>
               {layersUI(mean)}
@@ -131,19 +131,21 @@ const layersBlock = function(mean, isEdit){
 
 const layersUI = function(mean){
     const layersHTML = []
-    if(viewStateVal('layers-dao', 'layers')!=null){
-      const rawLayers = viewStateVal('layers-dao', 'layers')[mean.id]
+    //if(viewStateVal('layers-dao', 'layers')!=null){
+    if(mean.layers!=null && mean.layers.length>0){
+      //const rawLayers = viewStateVal('layers-dao', 'layers')[mean.id]
+      const rawLayers = mean.layers
       if(rawLayers!=null){
         for(var layerid in rawLayers){
           layersHTML.push(<ListGroupItem key={'layer_'+layerid}>Layer {rawLayers[layerid].priority}</ListGroupItem>)
         }
       }
     }
-    const rawLayersCandidates = viewStateVal('layers-dao', 'layers-candidates')
-    if(rawLayersCandidates!=null){
-      for(var layerid in rawLayersCandidates){
-        layersHTML.push(<ListGroupItem key={'layerCandidate_'+rawLayersCandidates[layerid].priority}>Layer {rawLayersCandidates[layerid].priority}</ListGroupItem>)
-      }
-    }
+    // const rawLayersCandidates = viewStateVal('layers-dao', 'layers-candidates')
+    // if(rawLayersCandidates!=null){
+    //   for(var layerid in rawLayersCandidates){
+    //     layersHTML.push(<ListGroupItem key={'layerCandidate_'+rawLayersCandidates[layerid].priority}>Layer {rawLayersCandidates[layerid].priority}</ListGroupItem>)
+    //   }
+    // }
     return layersHTML
 }

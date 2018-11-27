@@ -5,15 +5,30 @@ registerEvent('layers-dao', 'layers-request', (stateSetter, mean)=>{
   if(mean.id!=null && mean.id>0){
     $.ajax({url: "layer/get/bymean/"+mean.id}).then(function(data) {
               var receivedData = typeof data == 'string'? JSON.parse(data): data
-              importLayers(stateSetter, mean, data)
+              //importLayers(stateSetter, mean, data)
+              mean.layers = []
+              for(var layerindx in data){
+                mean.layers[data[layerindx].id] = data[layerindx]
+              }
               errorCatcherForAsync(()=>fireEvent('layers-dao', 'layers-received', [mean, data]))
             });
   } else {
+    mean.layers = []
     fireEvent('layers-dao', 'layers-received', [mean])
   }
 })
 
 registerEvent('layers-dao', 'layers-received', (stateSetter, mean, layers)=>[mean, layers])
+
+registerEvent('layers-dao', 'add-layer', (stateSetter, mean)=>{
+  const layer = {
+    priority: getMaxLayerPriorityOfLayers(mean.layers)+1
+  }
+  if(mean.id>0){
+    layer.meanid = mean.id
+  }
+  mean.layers[layer.priority] = layer
+})
 
 // registerEvent('layers-dao', 'create', (stateSetter, mean)=>{
 //   $.ajax({url: "/layer/create/"+mean.id}).then(function(data) {
@@ -58,7 +73,7 @@ registerEvent('layers-dao', 'save-candidates', (stateSetter, mean)=>{
 
 registerEvent('layers-dao', 'layers-many-created', (stateSetter, mean, layer)=>[mean, layer])
 
-registerReaction('layers-dao', 'mean-modal', 'close', (stateSetter)=>stateSetter('layers-candidates', null))
+//registerReaction('layers-dao', 'mean-modal', 'close', (stateSetter)=>stateSetter('layers-candidates', null))
 registerReaction('layers-dao', 'mean-modal', 'open', (stateSetter, mean)=>fireEvent('layers-dao', 'layers-request', [mean]))
 
 const importLayers = function(stateSetter, mean, layers){
