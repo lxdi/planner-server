@@ -59,13 +59,7 @@ public class MeansRESTController {
         Mean mean = meansDtoMapper.mapToEntity(meanDtoLazy);
         meansDAO.validateMean(mean);
         meansDAO.saveOrUpdate(mean);
-
-        if(meanDtoLazy.getLayers()!=null){
-            for(LayerDtoLazy layerDto : meanDtoLazy.getLayers()){
-                layerDAO.saveOrUpdate(layersDtoMapper.mapToEntity(layerDto));
-            }
-        }
-
+        saveLayers(meanDtoLazy.getLayers(), mean.getId());
         return new ResponseEntity<MeanDtoLazy>(meansDtoMapper.mapToDto(mean), HttpStatus.OK);
     }
 
@@ -86,14 +80,19 @@ public class MeansRESTController {
         Mean mean = meansDtoMapper.mapToEntity(meanDtoLazy);
         meansDAO.validateMean(mean);
         meansDAO.saveOrUpdate(mean);
+        saveLayers(meanDtoLazy.getLayers(), mean.getId());
+        return new ResponseEntity<MeanDtoLazy>(meansDtoMapper.mapToDto(mean), HttpStatus.OK);
+    }
 
-        if(meanDtoLazy.getLayers()!=null){
-            for(LayerDtoLazy layerDto : meanDtoLazy.getLayers()){
-                layerDAO.saveOrUpdate(layersDtoMapper.mapToEntity(layerDto));
+    private void saveLayers(List<LayerDtoLazy> layersDto, long meanId){
+        if(layersDto!=null){
+            for(LayerDtoLazy layerDto : layersDto){
+                if(layerDto!=null) {
+                    layerDto.setMeanid(meanId);
+                    layerDAO.saveOrUpdate(layersDtoMapper.mapToEntity(layerDto));
+                }
             }
         }
-
-        return new ResponseEntity<MeanDtoLazy>(meansDtoMapper.mapToDto(mean), HttpStatus.OK);
     }
 
 }

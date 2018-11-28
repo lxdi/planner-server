@@ -7,8 +7,10 @@ registerEvent('layers-dao', 'layers-request', (stateSetter, mean)=>{
               var receivedData = typeof data == 'string'? JSON.parse(data): data
               //importLayers(stateSetter, mean, data)
               mean.layers = []
-              for(var layerindx in data){
-                mean.layers[data[layerindx].id] = data[layerindx]
+              if(data.length>0){
+                for(var layerindx in data){
+                  mean.layers[data[layerindx].priority] = data[layerindx]
+                }
               }
               errorCatcherForAsync(()=>fireEvent('layers-dao', 'layers-received', [mean, data]))
             });
@@ -24,9 +26,9 @@ registerEvent('layers-dao', 'add-layer', (stateSetter, mean)=>{
   const layer = {
     priority: getMaxLayerPriorityOfLayers(mean.layers)+1
   }
-  if(mean.id>0){
-    layer.meanid = mean.id
-  }
+  // if(mean.id>0){
+  //   layer.meanid = mean.id
+  // }
   mean.layers[layer.priority] = layer
 })
 

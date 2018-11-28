@@ -1,7 +1,7 @@
 
 const debugMode = {
-  //on: false,
-  on: true,
+  on: false,
+  //on: true,
   depth: ['stateSetter', 'event', 'reaction', 'reactionComb'] // viewStateVal, registerObject
 }
 const debugConsole = function(msg){
