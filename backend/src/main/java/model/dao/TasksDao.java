@@ -1,4 +1,4 @@
-package model;
+package model.dao;
 
 import model.entities.Task;
 import org.hibernate.SessionFactory;

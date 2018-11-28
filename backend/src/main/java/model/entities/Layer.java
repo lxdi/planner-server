@@ -12,7 +12,7 @@ public class Layer {
     int priority;
     boolean done;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name="mean")
     Mean mean;
 

@@ -1,9 +1,9 @@
 package model.dto.mean;
 
-import model.IMeansDAO;
-import model.IQuarterDAO;
-import model.IRealmDAO;
-import model.ITargetsDAO;
+import model.dao.IMeansDAO;
+import model.dao.IQuarterDAO;
+import model.dao.IRealmDAO;
+import model.dao.ITargetsDAO;
 import model.dto.IMapper;
 import model.entities.Mean;
 import model.entities.Realm;

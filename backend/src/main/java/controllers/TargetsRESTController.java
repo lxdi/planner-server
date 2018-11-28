@@ -1,6 +1,6 @@
 package controllers;
 
-import model.ITargetsDAO;
+import model.dao.ITargetsDAO;
 import model.dto.target.TargetDtoLazy;
 import model.dto.target.TargetsDtoMapper;
 import model.entities.Target;

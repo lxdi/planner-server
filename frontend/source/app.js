@@ -11,6 +11,7 @@ import './data/targets-dao'
 import './data/means-dao'
 import './data/quarters-dao'
 import './data/layers-dao'
+import './data/subjects-dao'
 
 ReactDOM.render(<div id="app" />, document.body);
 const app = document.getElementById("app");

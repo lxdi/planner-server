@@ -1,6 +1,6 @@
 package controllers;
 
-import model.IWeekDAO;
+import model.dao.IWeekDAO;
 import model.entities.Week;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

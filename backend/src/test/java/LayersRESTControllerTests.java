@@ -1,6 +1,8 @@
 import controllers.LayersRESTController;
 import controllers.QuartersRESTController;
 import model.dto.layer.LayersDtoMapper;
+import model.entities.Layer;
+import model.entities.Mean;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +32,24 @@ public class LayersRESTControllerTests extends ATestsWithTargetsWithMeansWithLay
         super.init();
         layersRESTController = new LayersRESTController(layerDAO, meansDao, layersDtoMapper);
         mockMvc = MockMvcBuilders.standaloneSetup(layersRESTController).build();
+    }
+
+    @Test
+    public void gettingLayersByMean() throws Exception {
+        Mean mean = meansDao.meanByTitle(child2MeanTitle);
+        Layer layer1 = new Layer(mean, 1);
+        Layer layer2 = new Layer(mean, 2);
+        layerDAO.saveOrUpdate(layer1);
+        layerDAO.saveOrUpdate(layer2);
+        assertTrue(layerDAO.getLyersOfMean(meansDao.meanByTitle(child2MeanTitle)).size()==2);
+
+        MvcResult result = mockMvc.perform(get("/layer/get/bymean/"+mean.getId()))
+                .andExpect(status().isOk()).andReturn();
+
+        String resultStr = result.getResponse().getContentAsString();
+        assertTrue(resultStr.contains("\"priority\":1"));
+        assertTrue(resultStr.contains("\"priority\":2"));
+
     }
 
     @Test

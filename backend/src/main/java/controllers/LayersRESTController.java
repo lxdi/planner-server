@@ -1,7 +1,7 @@
 package controllers;
 
-import model.ILayerDAO;
-import model.IMeansDAO;
+import model.dao.ILayerDAO;
+import model.dao.IMeansDAO;
 import model.dto.layer.LayerDtoLazy;
 import model.dto.layer.LayersDtoMapper;
 import model.entities.Layer;
@@ -38,6 +38,7 @@ public class LayersRESTController {
         this.mapper = layersDtoMapper;
     }
 
+    @Deprecated
     @RequestMapping(path = "/create" , method = RequestMethod.PUT)
     public ResponseEntity<LayerDtoLazy> createLayer(@RequestBody LayerDtoLazy layerDto){
         //Layer layer = layerDAO.create(meansDAO.meanById(meanid));
@@ -46,6 +47,7 @@ public class LayersRESTController {
         return new ResponseEntity<LayerDtoLazy>(mapper.mapToDto(layer), HttpStatus.OK);
     }
 
+    @Deprecated
     @RequestMapping(path = "/create/list" , method = RequestMethod.PUT)
     public ResponseEntity<List<LayerDtoLazy>> createLayers(@RequestBody List<LayerDtoLazy> layersDto){
         List<LayerDtoLazy> result = new ArrayList<>();

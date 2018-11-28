@@ -1,6 +1,6 @@
 package services;
 
-import model.IQuarterDAO;
+import model.dao.IQuarterDAO;
 import model.entities.Quarter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

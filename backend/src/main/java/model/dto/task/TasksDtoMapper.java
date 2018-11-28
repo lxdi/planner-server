@@ -1,7 +1,7 @@
 package model.dto.task;
 
-import model.IMeansDAO;
-import model.IWeekDAO;
+import model.dao.IMeansDAO;
+import model.dao.IWeekDAO;
 import model.entities.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

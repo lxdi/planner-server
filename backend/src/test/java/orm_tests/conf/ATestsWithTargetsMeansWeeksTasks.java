@@ -1,6 +1,6 @@
 package orm_tests.conf;
 
-import model.ITasksDAO;
+import model.dao.ITasksDAO;
 import model.dto.task.TasksDtoMapper;
 import model.entities.Task;
 import org.junit.Before;

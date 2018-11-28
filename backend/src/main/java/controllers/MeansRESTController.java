@@ -1,11 +1,15 @@
 package controllers;
 
-import model.ILayerDAO;
-import model.IMeansDAO;
+import model.dao.ILayerDAO;
+import model.dao.IMeansDAO;
+import model.dao.ISubjectDAO;
 import model.dto.layer.LayerDtoLazy;
 import model.dto.layer.LayersDtoMapper;
 import model.dto.mean.MeanDtoLazy;
 import model.dto.mean.MeansDtoMapper;
+import model.dto.subject.SubjectDtoLazy;
+import model.dto.subject.SubjectDtoMapper;
+import model.entities.Layer;
 import model.entities.Mean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -38,6 +42,12 @@ public class MeansRESTController {
     @Autowired
     MeansDtoMapper meansDtoMapper;
 
+    @Autowired
+    ISubjectDAO subjectDAO;
+
+    @Autowired
+    SubjectDtoMapper subjectDtoMapper;
+
 
     public MeansRESTController(){}
 
@@ -58,6 +68,7 @@ public class MeansRESTController {
         assert meanDtoLazy.getId()==0;
         Mean mean = meansDtoMapper.mapToEntity(meanDtoLazy);
         meansDAO.validateMean(mean);
+        //TODO do not save the mean if layers are not valid
         meansDAO.saveOrUpdate(mean);
         saveLayers(meanDtoLazy.getLayers(), mean.getId());
         return new ResponseEntity<MeanDtoLazy>(meansDtoMapper.mapToDto(mean), HttpStatus.OK);
@@ -89,7 +100,20 @@ public class MeansRESTController {
             for(LayerDtoLazy layerDto : layersDto){
                 if(layerDto!=null) {
                     layerDto.setMeanid(meanId);
-                    layerDAO.saveOrUpdate(layersDtoMapper.mapToEntity(layerDto));
+                    Layer layer = layersDtoMapper.mapToEntity(layerDto);
+                    layerDAO.saveOrUpdate(layer);
+                    saveSubjects(layerDto.getSubjects(), layer.getId());
+                }
+            }
+        }
+    }
+
+    private void saveSubjects(List<SubjectDtoLazy> subjectsDto, long layerid){
+        if(subjectsDto!=null){
+            for(SubjectDtoLazy subjectDto : subjectsDto){
+                if(subjectDto!=null) {
+                    subjectDto.setLayerid(layerid);
+                    subjectDAO.saveOrUpdate(subjectDtoMapper.mapToEntity(subjectDto));
                 }
             }
         }

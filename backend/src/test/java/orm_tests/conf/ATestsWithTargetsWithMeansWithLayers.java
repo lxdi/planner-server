@@ -1,6 +1,6 @@
 package orm_tests.conf;
 
-import model.ILayerDAO;
+import model.dao.ILayerDAO;
 import model.entities.Layer;
 import org.junit.Before;
 import org.springframework.beans.factory.annotation.Autowired;

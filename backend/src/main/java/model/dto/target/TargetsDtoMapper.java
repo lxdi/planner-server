@@ -1,13 +1,11 @@
 package model.dto.target;
 
-import model.IRealmDAO;
-import model.ITargetsDAO;
+import model.dao.IRealmDAO;
+import model.dao.ITargetsDAO;
 import model.dto.IMapper;
 import model.entities.Target;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import javax.xml.bind.ValidationException;
 
 /**
  * Created by Alexander on 10.03.2018.
