@@ -1,6 +1,6 @@
 package orm_tests.conf;
 
-import model.IQuarterDAO;
+import model.dao.IQuarterDAO;
 import model.entities.Quarter;
 import org.junit.Before;
 import org.springframework.beans.factory.annotation.Autowired;

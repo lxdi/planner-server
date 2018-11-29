@@ -40,15 +40,13 @@ export class MeanModal extends React.Component {
       this.setState(defaultState())
     }.bind(this))
 
-    registerReaction('means-modal', 'means-dao', ['mean-deleted'], function(){
+    registerReaction('means-modal', 'means-dao', ['mean-deleted', 'mean-modified', 'mean-created'], function(){
       fireEvent('mean-modal', 'close')
       this.setState({})
     }.bind(this))
-    registerReaction('mean-modal', 'layers-dao', ['layers-received', 'create-candidate'], ()=>this.setState({}))
-    registerReaction('means-modal', 'layers-dao', 'layers-many-created', ()=>{
-      fireEvent('mean-modal', 'close')
-      this.setState({})
-    })
+    registerReaction('mean-modal', 'layers-dao', ['layers-received', 'add-layer'], ()=>this.setState({}))
+    registerReaction('mean-modal', 'subjects-dao', ['add-subject'], ()=>this.setState({}))
+    registerReaction('mean-modal', 'tasks-dao', ['add-task'], ()=>this.setState({}))
 
   }
 
@@ -71,12 +69,11 @@ export class MeanModal extends React.Component {
   }
 
   render(){
-    if(this.state.isOpen){
         return <CommonModal isOpen = {this.state.isOpen} okHandler = {this.okHandler} cancelHandler = {()=>fireEvent('mean-modal', 'close', [])} title={meanModalHeaderTitle} >
             <CommonCrudeTemplate editing = {this.state.mode} changeEditHandler = {this.forceUpdate.bind(this)} deleteHandler={()=>fireEvent('means-dao', 'delete', [this.state.currentMean.id])}>
                 <form>
                   <FormGroup controlId="formBasicText">
-                    <ControlLabel>Title</ControlLabel>
+                  <ControlLabel>Title</ControlLabel>
                   {this.state.mode.isEdit? <FormControl
                                     type="text"
                                     value={this.state.currentMean.title}
@@ -85,23 +82,25 @@ export class MeanModal extends React.Component {
                                   : <FormControl.Static>{this.state.currentMean.title}</FormControl.Static>}
                   </FormGroup>
                 </form>
-                {this.state.mode.isEdit? <div>
-                            <ButtonToolbar>
-                              <DropdownButton bsSize="small" title={targetsDropDownTitle} id="dropdown-size-small" onSelect={this.selectTargetHandler}>
-                                {availableTargetsUI()}
-                              </DropdownButton>
-                            </ButtonToolbar>
-                        </div>
-                  : null}
+                {targetsChooser(this)}
                 <div>
                   {relatedTargetsUI(this.state.currentMean.targets)}
                 </div>
                 {layersBlock(this.state.currentMean, this.state.mode.isEdit)}
             </CommonCrudeTemplate>
           </CommonModal>
-    } else {
-      return null
-    }
+  }
+}
+
+const targetsChooser = function(component){
+  if(component.state.mode.isEdit){
+    return <div>
+                <ButtonToolbar>
+                  <DropdownButton bsSize="small" title={targetsDropDownTitle} id="dropdown-size-small" onSelect={component.selectTargetHandler}>
+                    {availableTargetsUI()}
+                  </DropdownButton>
+                </ButtonToolbar>
+            </div>
   }
 }
 
@@ -121,7 +120,7 @@ const layersBlock = function(mean, isEdit){
   return <ListGroup>
             <div>
               <h4>Layers</h4>
-              {isEdit?<a href='#' onClick={()=>fireEvent('layers-dao', 'create-candidate', [mean, {}])}> Create Layer</a>:null}
+              {isEdit?<a href='#' onClick={()=>fireEvent('layers-dao', 'add-layer', [mean])}> Create Layer</a>:null}
             </div>
             <ListGroup>
               {layersUI(mean)}
@@ -131,19 +130,47 @@ const layersBlock = function(mean, isEdit){
 
 const layersUI = function(mean){
     const layersHTML = []
-    if(viewStateVal('layers-dao', 'layers')!=null){
-      const rawLayers = viewStateVal('layers-dao', 'layers')[mean.id]
-      if(rawLayers!=null){
-        for(var layerid in rawLayers){
-          layersHTML.push(<ListGroupItem key={'layer_'+layerid}>Layer {rawLayers[layerid].priority}</ListGroupItem>)
+    if(mean.layers!=null && mean.layers.length>0){
+        for(var layerPriority in mean.layers){
+          const layer = mean.layers[layerPriority]
+          layersHTML.push(<ListGroupItem key={'layer_'+layerPriority}>
+                              <div>Layer {layer.priority}</div>
+                              <div><a href='#' onClick={()=>fireEvent('subjects-dao', 'add-subject', [layer])}>Add subject</a></div>
+                              <div>{subjectsUI(layer)}</div>
+                            </ListGroupItem>)
         }
-      }
-    }
-    const rawLayersCandidates = viewStateVal('layers-dao', 'layers-candidates')
-    if(rawLayersCandidates!=null){
-      for(var layerid in rawLayersCandidates){
-        layersHTML.push(<ListGroupItem key={'layerCandidate_'+rawLayersCandidates[layerid].priority}>Layer {rawLayersCandidates[layerid].priority}</ListGroupItem>)
-      }
     }
     return layersHTML
+}
+
+const subjectsUI = function(layer){
+  const subjectsHTML = []
+  if(layer.subjects!=null && layer.subjects.length>0){
+    for(var subjectPos in layer.subjects){
+      const subject = layer.subjects[subjectPos]
+      subjectsHTML.push(<ListGroupItem key={'layer_'+layer.priority+'_subject_'+subjectPos}>
+                          Subject {subject.position}
+                          <a href='#' onClick={()=>fireEvent('tasks-dao', 'add-task', [subject])}> Add task</a>
+                          {tasksUI(subject)}
+                        </ListGroupItem>)
+    }
+  }
+  return <ListGroup>
+          {subjectsHTML}
+        </ListGroup>
+}
+
+const tasksUI = function(subject){
+  const tasksHTML = []
+  if(subject.tasks!=null && subject.tasks.length>0){
+    for(var taskPos in subject.tasks){
+      const task = subject.tasks[taskPos]
+      tasksHTML.push(<ListGroupItem key={'subject_'+subject.priority+'_task_'+taskPos}>
+                          Task {task.position}
+                        </ListGroupItem>)
+    }
+  }
+  return <ListGroup>
+          {tasksHTML}
+        </ListGroup>
 }

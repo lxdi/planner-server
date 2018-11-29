@@ -1,5 +1,5 @@
 import controllers.TargetsRESTController;
-import model.ITargetsDAO;
+import model.dao.ITargetsDAO;
 import model.dto.target.TargetsDtoMapper;
 import model.entities.Realm;
 import model.entities.Target;

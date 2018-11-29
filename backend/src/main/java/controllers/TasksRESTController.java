@@ -1,6 +1,6 @@
 package controllers;
 
-import model.ITasksDAO;
+import model.dao.ITasksDAO;
 import model.dto.task.TaskDtoLazy;
 import model.dto.task.TasksDtoMapper;
 import model.entities.Task;

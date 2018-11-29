@@ -31,7 +31,7 @@ registerEvent('means-dao', 'create', function(stateSetter, mean, parent){
     success: function(data) {
       viewStateVal('means-dao', 'means')[data.id] = data
       resolveMeans(viewStateVal('means-dao', 'means'))
-      fireEvent('layers-dao', 'save-candidates', [data])
+      //fireEvent('layers-dao', 'save-candidates', [data])
       fireEvent('means-dao', 'mean-created', [data])
     }
   });
@@ -89,7 +89,7 @@ registerEvent('means-dao', 'modify', function(stateSetter, mean){
     success: function(data) {
       viewStateVal('means-dao', 'means')[data.id] = data
       resolveMeans(viewStateVal('means-dao', 'means'))
-      fireEvent('layers-dao', 'save-candidates', [data])
+      //fireEvent('layers-dao', 'save-candidates', [data])
       fireEvent('means-dao', 'mean-modified', [mean])
     }
   });

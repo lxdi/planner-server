@@ -1,9 +1,20 @@
 package controllers;
 
-import model.IMeansDAO;
+import model.dao.ILayerDAO;
+import model.dao.IMeansDAO;
+import model.dao.ISubjectDAO;
+import model.dao.ITasksDAO;
+import model.dto.layer.LayerDtoLazy;
+import model.dto.layer.LayersDtoMapper;
 import model.dto.mean.MeanDtoLazy;
 import model.dto.mean.MeansDtoMapper;
+import model.dto.subject.SubjectDtoLazy;
+import model.dto.subject.SubjectDtoMapper;
+import model.dto.task.TaskDtoLazy;
+import model.dto.task.TasksDtoMapper;
+import model.entities.Layer;
 import model.entities.Mean;
+import model.entities.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +38,26 @@ public class MeansRESTController {
     IMeansDAO meansDAO;
 
     @Autowired
+    ILayerDAO layerDAO;
+
+    @Autowired
+    LayersDtoMapper layersDtoMapper;
+
+    @Autowired
     MeansDtoMapper meansDtoMapper;
+
+    @Autowired
+    ISubjectDAO subjectDAO;
+
+    @Autowired
+    SubjectDtoMapper subjectDtoMapper;
+
+    @Autowired
+    ITasksDAO tasksDAO;
+
+    @Autowired
+    TasksDtoMapper tasksDtoMapper;
+
 
     public MeansRESTController(){}
 
@@ -48,7 +78,9 @@ public class MeansRESTController {
         assert meanDtoLazy.getId()==0;
         Mean mean = meansDtoMapper.mapToEntity(meanDtoLazy);
         meansDAO.validateMean(mean);
+        //TODO do not save the mean if layers are not valid
         meansDAO.saveOrUpdate(mean);
+        saveLayers(meanDtoLazy.getLayers(), mean.getId());
         return new ResponseEntity<MeanDtoLazy>(meansDtoMapper.mapToDto(mean), HttpStatus.OK);
     }
 
@@ -69,7 +101,45 @@ public class MeansRESTController {
         Mean mean = meansDtoMapper.mapToEntity(meanDtoLazy);
         meansDAO.validateMean(mean);
         meansDAO.saveOrUpdate(mean);
+        saveLayers(meanDtoLazy.getLayers(), mean.getId());
         return new ResponseEntity<MeanDtoLazy>(meansDtoMapper.mapToDto(mean), HttpStatus.OK);
+    }
+
+    private void saveLayers(List<LayerDtoLazy> layersDto, long meanId){
+        if(layersDto!=null){
+            for(LayerDtoLazy layerDto : layersDto){
+                if(layerDto!=null) {
+                    layerDto.setMeanid(meanId);
+                    Layer layer = layersDtoMapper.mapToEntity(layerDto);
+                    layerDAO.saveOrUpdate(layer);
+                    saveSubjects(layerDto.getSubjects(), layer.getId());
+                }
+            }
+        }
+    }
+
+    private void saveSubjects(List<SubjectDtoLazy> subjectsDto, long layerid){
+        if(subjectsDto!=null){
+            for(SubjectDtoLazy subjectDto : subjectsDto){
+                if(subjectDto!=null) {
+                    subjectDto.setLayerid(layerid);
+                    Subject subject = subjectDtoMapper.mapToEntity(subjectDto);
+                    subjectDAO.saveOrUpdate(subject);
+                    saveTasks(subjectDto.getTasks(), subject.getId());
+                }
+            }
+        }
+    }
+
+    private void saveTasks(List<TaskDtoLazy> tasksDto, long subjectid){
+        if(tasksDto!=null){
+            for(TaskDtoLazy taskDto : tasksDto){
+                if(taskDto!=null) {
+                    taskDto.setSubjectid(subjectid);
+                    tasksDAO.saveOrUpdate(tasksDtoMapper.mapToEntity(taskDto));
+                }
+            }
+        }
     }
 
 }

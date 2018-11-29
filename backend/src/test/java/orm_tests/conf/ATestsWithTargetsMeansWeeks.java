@@ -1,6 +1,6 @@
 package orm_tests.conf;
 
-import model.IWeekDAO;
+import model.dao.IWeekDAO;
 import services.WeeksGenerator;
 import org.junit.Before;
 import org.springframework.beans.factory.annotation.Autowired;

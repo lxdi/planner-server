@@ -1,10 +1,17 @@
 package model.dto.layer;
 
+import model.dto.subject.SubjectDtoLazy;
+import model.entities.Subject;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class LayerDtoLazy {
     long id;
     Long meanid;
     Integer priority;
     boolean done = false;
+    List<SubjectDtoLazy> subjects = new ArrayList<>();
 
     public long getId() {
         return id;
@@ -32,5 +39,12 @@ public class LayerDtoLazy {
     }
     public void setDone(boolean done) {
         this.done = done;
+    }
+
+    public List<SubjectDtoLazy> getSubjects() {
+        return subjects;
+    }
+    public void setSubjects(List<SubjectDtoLazy> subjects) {
+        this.subjects = subjects;
     }
 }

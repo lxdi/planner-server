@@ -1,5 +1,6 @@
-package model;
+package model.dao;
 
+import model.entities.Subject;
 import model.entities.Task;
 
 import java.util.List;
@@ -14,5 +15,6 @@ public interface ITasksDAO {
     void saveOrUpdate(Task task);
     void delete(long id);
     List<Task> allTasks();
+    List<Task> tasksBySubject(Subject subject);
 
 }

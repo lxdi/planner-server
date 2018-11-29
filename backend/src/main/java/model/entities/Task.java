@@ -12,14 +12,12 @@ public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
-
     String title;
 
-    @ManyToOne
-    Mean mean;
 
     @ManyToOne
-    Week week;
+    Subject subject;
+    int position;
 
     public long getId() {
         return id;
@@ -35,18 +33,17 @@ public class Task {
         this.title = title;
     }
 
-    public Mean getMean() {
-        return mean;
+    public Subject getSubject() {
+        return subject;
     }
-    public void setMean(Mean mean) {
-        this.mean = mean;
-    }
-
-    public Week getWeek() {
-        return week;
+    public void setSubject(Subject subject) {
+        this.subject = subject;
     }
 
-    public void setWeek(Week week) {
-        this.week = week;
+    public int getPosition() {
+        return position;
+    }
+    public void setPosition(int position) {
+        this.position = position;
     }
 }

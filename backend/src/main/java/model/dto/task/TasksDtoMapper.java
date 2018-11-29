@@ -1,7 +1,7 @@
 package model.dto.task;
 
-import model.IMeansDAO;
-import model.IWeekDAO;
+import model.dao.ISubjectDAO;
+import model.dto.IMapper;
 import model.entities.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,22 +11,19 @@ import org.springframework.stereotype.Service;
  */
 
 @Service
-public class TasksDtoMapper {
+public class TasksDtoMapper implements IMapper<TaskDtoLazy, Task> {
 
     @Autowired
-    IWeekDAO weekDAO;
-
-    @Autowired
-    IMeansDAO meansDAO;
+    ISubjectDAO subjectDAO;
 
     public TaskDtoLazy mapToDto(Task task){
         TaskDtoLazy dto = new TaskDtoLazy();
         dto.setId(task.getId());
         dto.setTitle(task.getTitle());
-        if(task.getMean()!=null)
-            dto.setMeanid(task.getMean().getId());
-        if(task.getWeek()!=null)
-            dto.setWeekid(task.getWeek().getId());
+        dto.setPosition(task.getPosition());
+        if(task.getSubject()!=null){
+            dto.setSubjectid(task.getSubject().getId());
+        }
         return dto;
     }
 
@@ -34,11 +31,9 @@ public class TasksDtoMapper {
         Task task = new Task();
         task.setId(dto.getId());
         task.setTitle(dto.getTitle());
-        if(dto.getMeanid()!=null){
-            task.setMean(meansDAO.meanById(dto.getMeanid()));
-        }
-        if(dto.getWeekid()!=null){
-            task.setWeek(weekDAO.getById(dto.getWeekid()));
+        task.setPosition(dto.getPosition());
+        if(dto.getSubjectid()!=null){
+            task.setSubject(subjectDAO.getById(dto.getSubjectid()));
         }
         return task;
     }

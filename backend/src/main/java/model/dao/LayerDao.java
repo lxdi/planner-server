@@ -1,12 +1,10 @@
-package model;
+package model.dao;
 
 import model.entities.Layer;
 import model.entities.Mean;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,6 +44,11 @@ public class LayerDao implements ILayerDAO {
             }
         }
         return max+1;
+    }
+
+    @Override
+    public Layer layerById(long id) {
+        return sessionFactory.getCurrentSession().get(Layer.class, id);
     }
 
     @Override

@@ -1,4 +1,4 @@
-package model;
+package model.dao;
 
 import model.entities.Layer;
 import model.entities.Mean;

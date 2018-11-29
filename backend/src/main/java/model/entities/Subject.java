@@ -1,15 +1,18 @@
-package model.dto.task;
+package model.entities;
 
-/**
- * Created by Alexander on 26.04.2018.
- */
-public class TaskDtoLazy {
+import javax.persistence.*;
 
+@Entity
+public class Subject {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
     String title;
-    Long subjectid;
-
     int position;
+
+    @ManyToOne
+    Layer layer;
 
     public long getId() {
         return id;
@@ -25,11 +28,11 @@ public class TaskDtoLazy {
         this.title = title;
     }
 
-    public Long getSubjectid() {
-        return subjectid;
+    public Layer getLayer() {
+        return layer;
     }
-    public void setSubjectid(Long subjectid) {
-        this.subjectid = subjectid;
+    public void setLayer(Layer layer) {
+        this.layer = layer;
     }
 
     public int getPosition() {

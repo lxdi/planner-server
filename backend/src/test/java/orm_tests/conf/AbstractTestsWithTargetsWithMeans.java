@@ -1,6 +1,6 @@
 package orm_tests.conf;
 
-import model.IMeansDAO;
+import model.dao.IMeansDAO;
 import model.entities.Mean;
 import org.junit.Before;
 import org.springframework.beans.factory.annotation.Autowired;
