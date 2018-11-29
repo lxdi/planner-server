@@ -3,24 +3,39 @@ package model.dto.task;
 /**
  * Created by Alexander on 26.04.2018.
  */
-public class TaskDtoLazy extends AbstractTaskDto {
+public class TaskDtoLazy {
 
-    Long meanid;
-    Long weekid;
+    long id;
+    String title;
+    Long subjectid;
 
-    public Long getMeanid() {
-        return meanid;
+    int position;
+
+    public long getId() {
+        return id;
+    }
+    public void setId(long id) {
+        this.id = id;
     }
 
-    public void setMeanid(Long meanid) {
-        this.meanid = meanid;
+    public String getTitle() {
+        return title;
+    }
+    public void setTitle(String title) {
+        this.title = title;
     }
 
-    public Long getWeekid() {
-        return weekid;
+    public Long getSubjectid() {
+        return subjectid;
+    }
+    public void setSubjectid(Long subjectid) {
+        this.subjectid = subjectid;
     }
 
-    public void setWeekid(Long weekid) {
-        this.weekid = weekid;
+    public int getPosition() {
+        return position;
+    }
+    public void setPosition(int position) {
+        this.position = position;
     }
 }

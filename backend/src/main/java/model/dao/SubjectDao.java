@@ -28,4 +28,9 @@ public class SubjectDao implements ISubjectDAO {
                 .add(Restrictions.eq("layer", layer))
                 .list();
     }
+
+    @Override
+    public Subject getById(long id) {
+        return sessionFactory.getCurrentSession().get(Subject.class, id);
+    }
 }

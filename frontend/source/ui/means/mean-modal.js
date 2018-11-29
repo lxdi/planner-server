@@ -46,6 +46,7 @@ export class MeanModal extends React.Component {
     }.bind(this))
     registerReaction('mean-modal', 'layers-dao', ['layers-received', 'add-layer'], ()=>this.setState({}))
     registerReaction('mean-modal', 'subjects-dao', ['add-subject'], ()=>this.setState({}))
+    registerReaction('mean-modal', 'tasks-dao', ['add-task'], ()=>this.setState({}))
 
   }
 
@@ -146,12 +147,30 @@ const subjectsUI = function(layer){
   const subjectsHTML = []
   if(layer.subjects!=null && layer.subjects.length>0){
     for(var subjectPos in layer.subjects){
+      const subject = layer.subjects[subjectPos]
       subjectsHTML.push(<ListGroupItem key={'layer_'+layer.priority+'_subject_'+subjectPos}>
-                          Subject {layer.subjects[subjectPos].position}
+                          Subject {subject.position}
+                          <a href='#' onClick={()=>fireEvent('tasks-dao', 'add-task', [subject])}> Add task</a>
+                          {tasksUI(subject)}
                         </ListGroupItem>)
     }
   }
   return <ListGroup>
           {subjectsHTML}
+        </ListGroup>
+}
+
+const tasksUI = function(subject){
+  const tasksHTML = []
+  if(subject.tasks!=null && subject.tasks.length>0){
+    for(var taskPos in subject.tasks){
+      const task = subject.tasks[taskPos]
+      tasksHTML.push(<ListGroupItem key={'subject_'+subject.priority+'_task_'+taskPos}>
+                          Task {task.position}
+                        </ListGroupItem>)
+    }
+  }
+  return <ListGroup>
+          {tasksHTML}
         </ListGroup>
 }

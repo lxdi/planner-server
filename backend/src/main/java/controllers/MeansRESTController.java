@@ -3,14 +3,18 @@ package controllers;
 import model.dao.ILayerDAO;
 import model.dao.IMeansDAO;
 import model.dao.ISubjectDAO;
+import model.dao.ITasksDAO;
 import model.dto.layer.LayerDtoLazy;
 import model.dto.layer.LayersDtoMapper;
 import model.dto.mean.MeanDtoLazy;
 import model.dto.mean.MeansDtoMapper;
 import model.dto.subject.SubjectDtoLazy;
 import model.dto.subject.SubjectDtoMapper;
+import model.dto.task.TaskDtoLazy;
+import model.dto.task.TasksDtoMapper;
 import model.entities.Layer;
 import model.entities.Mean;
+import model.entities.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -47,6 +51,12 @@ public class MeansRESTController {
 
     @Autowired
     SubjectDtoMapper subjectDtoMapper;
+
+    @Autowired
+    ITasksDAO tasksDAO;
+
+    @Autowired
+    TasksDtoMapper tasksDtoMapper;
 
 
     public MeansRESTController(){}
@@ -113,7 +123,20 @@ public class MeansRESTController {
             for(SubjectDtoLazy subjectDto : subjectsDto){
                 if(subjectDto!=null) {
                     subjectDto.setLayerid(layerid);
-                    subjectDAO.saveOrUpdate(subjectDtoMapper.mapToEntity(subjectDto));
+                    Subject subject = subjectDtoMapper.mapToEntity(subjectDto);
+                    subjectDAO.saveOrUpdate(subject);
+                    saveTasks(subjectDto.getTasks(), subject.getId());
+                }
+            }
+        }
+    }
+
+    private void saveTasks(List<TaskDtoLazy> tasksDto, long subjectid){
+        if(tasksDto!=null){
+            for(TaskDtoLazy taskDto : tasksDto){
+                if(taskDto!=null) {
+                    taskDto.setSubjectid(subjectid);
+                    tasksDAO.saveOrUpdate(tasksDtoMapper.mapToEntity(taskDto));
                 }
             }
         }

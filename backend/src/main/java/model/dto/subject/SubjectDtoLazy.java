@@ -1,11 +1,19 @@
 package model.dto.subject;
 
+import model.dto.task.TaskDtoLazy;
+import model.entities.Task;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class SubjectDtoLazy {
 
     private long id;
     private String title;
     private Long layerid;
     private int position;
+
+    List<TaskDtoLazy> tasks = new ArrayList<>();
 
     public long getId() {
         return id;
@@ -33,5 +41,12 @@ public class SubjectDtoLazy {
     }
     public void setPosition(int position) {
         this.position = position;
+    }
+
+    public List<TaskDtoLazy> getTasks() {
+        return tasks;
+    }
+    public void setTasks(List<TaskDtoLazy> tasks) {
+        this.tasks = tasks;
     }
 }

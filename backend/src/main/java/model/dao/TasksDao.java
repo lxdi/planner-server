@@ -1,5 +1,7 @@
 package model.dao;
 
+import model.entities.Layer;
+import model.entities.Subject;
 import model.entities.Task;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
@@ -44,4 +46,12 @@ public class TasksDao implements ITasksDAO {
     public List<Task> allTasks() {
         return sessionFactory.getCurrentSession().createCriteria(Task.class).list();
     }
+
+    @Override
+    public List<Task> tasksBySubject(Subject subject) {
+        return sessionFactory.getCurrentSession().createCriteria(Task.class)
+                .add(Restrictions.eq("subject", subject))
+                .list();
+    }
+
 }
