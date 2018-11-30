@@ -22,9 +22,8 @@ export class SubjectModal extends React.Component {
 }
 
 const modalContent = function(component){
-  //component.state.currentSubject.title = e.target.value;
   if(component.state.currentSubject.title == null){
-    component.state.currentSubject.title
+    component.state.currentSubject.title = ''
   }
   return   <form>
                     <FormGroup controlId="formBasicText">

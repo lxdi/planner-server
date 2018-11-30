@@ -150,7 +150,7 @@ const subjectsUI = function(layer){
       const subject = layer.subjects[subjectPos]
       subjectsHTML.push(<ListGroupItem key={'layer_'+layer.priority+'_subject_'+subjectPos}>
                           {subject.title}
-                          <a href='#' onClick={()=>fireEvent('tasks-dao', 'add-task', [subject])}> Add task</a>
+                          <a href='#' onClick={()=>fireEvent('task-modal', 'open', [subject, {}])}> Add task</a>
                           {tasksUI(subject)}
                         </ListGroupItem>)
     }
@@ -166,7 +166,7 @@ const tasksUI = function(subject){
     for(var taskPos in subject.tasks){
       const task = subject.tasks[taskPos]
       tasksHTML.push(<ListGroupItem key={'subject_'+subject.priority+'_task_'+taskPos}>
-                          Task {task.position}
+                          {task.title}
                         </ListGroupItem>)
     }
   }
