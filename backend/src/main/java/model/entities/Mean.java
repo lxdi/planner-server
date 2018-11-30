@@ -41,6 +41,9 @@ public class Mean {
     Quarter quarter;
     private Integer position;
 
+    @OneToMany(mappedBy = "mean", cascade = CascadeType.REMOVE)
+    private List<Layer> layers = new ArrayList();
+
     public Mean(){}
 
     public Mean(String title, Realm realm){
@@ -103,6 +106,13 @@ public class Mean {
     }
     public void setPosition(Integer position) {
         this.position = position;
+    }
+
+    public List<Layer> getLayers() {
+        return layers;
+    }
+    public void setLayers(List<Layer> layers) {
+        this.layers = layers;
     }
 
     //    public List<Mean> getChildren() {

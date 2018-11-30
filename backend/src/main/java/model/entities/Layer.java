@@ -1,6 +1,8 @@
 package model.entities;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Layer {
@@ -15,6 +17,9 @@ public class Layer {
     @ManyToOne
     @JoinColumn(name="mean")
     Mean mean;
+
+    @OneToMany(mappedBy = "layer", cascade = CascadeType.REMOVE)
+    private List<Subject> subjects = new ArrayList();
 
     public Layer(){}
 
@@ -50,5 +55,12 @@ public class Layer {
     }
     public void setDone(boolean done) {
         this.done = done;
+    }
+
+    public List<Subject> getSubjects() {
+        return subjects;
+    }
+    public void setSubjects(List<Subject> subjects) {
+        this.subjects = subjects;
     }
 }
