@@ -14,10 +14,14 @@ export class TaskModal extends React.Component {
   }
 
   render(){
-    return <CommonModal isOpen={this.state.isOpen} okHandler={()=>okHandler(this.state.subject, this.state.task)}>
+    return <CommonModal isOpen={this.state.isOpen} okHandler={isTaskValid(this.state.task)?()=>okHandler(this.state.subject, this.state.task):null}>
               {this.state.task!=null? modalContent(this): null}
             </CommonModal>
   }
+}
+
+const isTaskValid = function(task){
+  return task!=null && task.title!=null && task.title!=''
 }
 
 const okHandler = function(subject, task){

@@ -4,11 +4,11 @@ import ReactDOM from 'react-dom';
 // import Modal from 'react-modal';
 import {Modal, Button} from 'react-bootstrap'
 
-//props: isOpen, okHandler, cancelHandler
+//props: isOpen, okHandler, cancelHandler, styleClass
 export class CommonModal extends React.Component{
   render(){
     return (
-      <Modal show={this.props.isOpen}>
+      <Modal show={this.props.isOpen} dialogClassName={this.props.styleClass}>
             <Modal.Header>
               <Modal.Title>{this.props.title}</Modal.Title>
             </Modal.Header>

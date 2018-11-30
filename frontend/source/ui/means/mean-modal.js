@@ -6,6 +6,8 @@ import {CreateMean} from './../../data/creators'
 import {CommonCrudeTemplate} from './../common-crud-template'
 import {Button, ButtonToolbar,  DropdownButton, MenuItem,  FormGroup, ControlLabel, FormControl,  ListGroup, ListGroupItem} from 'react-bootstrap'
 import {registerEvent, registerReaction, fireEvent, viewStateVal} from '../../controllers/eventor'
+import {SubjectModal} from './subject-modal'
+import {TaskModal} from './task-modal'
 
 
 const dumbMean = CreateMean(0, '', null, [])
@@ -69,7 +71,12 @@ export class MeanModal extends React.Component {
   }
 
   render(){
-        return <CommonModal isOpen = {this.state.isOpen} okHandler = {this.okHandler} cancelHandler = {()=>fireEvent('mean-modal', 'close', [])} title={meanModalHeaderTitle} >
+        return <CommonModal
+                  isOpen = {this.state.isOpen}
+                  okHandler = {this.okHandler}
+                  cancelHandler = {()=>fireEvent('mean-modal', 'close', [])}
+                  title={meanModalHeaderTitle}
+                  styleClass='mean-modal-style'>
             <CommonCrudeTemplate editing = {this.state.mode} changeEditHandler = {this.forceUpdate.bind(this)} deleteHandler={()=>fireEvent('means-dao', 'delete', [this.state.currentMean.id])}>
                 <form>
                   <FormGroup controlId="formBasicText">
@@ -87,6 +94,8 @@ export class MeanModal extends React.Component {
                   {relatedTargetsUI(this.state.currentMean.targets)}
                 </div>
                 {layersBlock(this.state.currentMean, this.state.mode.isEdit)}
+                <SubjectModal/>
+                <TaskModal/>
             </CommonCrudeTemplate>
           </CommonModal>
   }

@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Modal from 'react-modal';
+//import Modal from 'react-modal';
 import {Frame} from './ui/frame';
 import {SwitchButton} from './ui/changebutton';
 import {state} from './state';

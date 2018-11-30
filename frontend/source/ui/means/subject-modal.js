@@ -14,9 +14,17 @@ export class SubjectModal extends React.Component {
   }
 
   render(){
-    return <CommonModal isOpen={this.state.isOpen} okHandler={()=>okHandler(this.state.layer, this.state.currentSubject)}>
+    return <CommonModal isOpen={this.state.isOpen} okHandler={isSubjectValid(this.state.currentSubject)?()=>okHandler(this.state.layer, this.state.currentSubject):null}>
               {this.state.currentSubject!=null? modalContent(this): null}
             </CommonModal>
+  }
+}
+
+const isSubjectValid = function(subject){
+  if(subject!=null && subject.title!=null && subject.title!=''){
+    return true
+  } else {
+    return false
   }
 }
 
