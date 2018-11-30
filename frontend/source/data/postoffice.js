@@ -1,7 +1,7 @@
-import $ from 'jquery'
+import axios from 'axios'
 
 export const sendGet = function(url, callback){
-  $.ajax({url: url}).then((data)=>callback(data));
+  axios.get(url).then((data)=>callback(data.data))
 }
 
 export const sendPut = function(url, sendData, callback){
@@ -13,19 +13,20 @@ export const sendPost = function(url, sendData, callback){
 }
 
 export const sendDelete = function(url, callback){
-  $.ajax({
+  axios({
+    method: 'DELETE',
     url: url,
-    type: 'DELETE',
-    success: (data)=>callback(data)
-  });
+  }).then((data)=>callback(data.data));
 }
 
 const sendWithData = function(url, sendData, callback, type){
-  $.ajax({
-    url: url,
-    type: type,
+  axios({
     contentType: 'application/json',
+    headers: {
+      'Content-type': 'application/json'
+    },
+    method: type,
+    url: url,
     data: sendData,
-    success: (data)=>callback(data)
-  });
+  }).then((data)=>callback(data.data));
 }
