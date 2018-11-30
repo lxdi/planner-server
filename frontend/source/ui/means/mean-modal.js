@@ -45,8 +45,8 @@ export class MeanModal extends React.Component {
       this.setState({})
     }.bind(this))
     registerReaction('mean-modal', 'layers-dao', ['layers-received', 'add-layer'], ()=>this.setState({}))
-    registerReaction('mean-modal', 'subjects-dao', ['add-subject'], ()=>this.setState({}))
-    registerReaction('mean-modal', 'tasks-dao', ['add-task'], ()=>this.setState({}))
+    registerReaction('mean-modal', 'subject-modal', 'close', ()=>this.setState({}))
+    registerReaction('mean-modal', 'task-modal', 'close', ()=>this.setState({}))
 
   }
 
@@ -149,7 +149,7 @@ const subjectsUI = function(layer){
     for(var subjectPos in layer.subjects){
       const subject = layer.subjects[subjectPos]
       subjectsHTML.push(<ListGroupItem key={'layer_'+layer.priority+'_subject_'+subjectPos}>
-                          {subject.title}
+                          <a href='#' onClick={()=>fireEvent('subject-modal', 'open', [layer, subject])}>{subject.title}</a>
                           <a href='#' onClick={()=>fireEvent('task-modal', 'open', [subject, {}])}> Add task</a>
                           {tasksUI(subject)}
                         </ListGroupItem>)
@@ -166,7 +166,7 @@ const tasksUI = function(subject){
     for(var taskPos in subject.tasks){
       const task = subject.tasks[taskPos]
       tasksHTML.push(<ListGroupItem key={'subject_'+subject.priority+'_task_'+taskPos}>
-                          {task.title}
+                          <a href='#' onClick={()=>fireEvent('task-modal', 'open', [subject, task])}>{task.title}</a>
                         </ListGroupItem>)
     }
   }

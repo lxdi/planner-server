@@ -14,11 +14,18 @@ export class SubjectModal extends React.Component {
   }
 
   render(){
-    return <CommonModal isOpen={this.state.isOpen}
-            okHandler={()=>{fireEvent('subjects-dao', 'add-subject', [this.state.layer, this.state.currentSubject]); fireEvent('subject-modal', 'close')}}>
+    return <CommonModal isOpen={this.state.isOpen} okHandler={()=>okHandler(this.state.layer, this.state.currentSubject)}>
               {this.state.currentSubject!=null? modalContent(this): null}
             </CommonModal>
   }
+}
+
+const okHandler = function(layer, subject){
+  if(subject.id==null){
+    fireEvent('subjects-dao', 'add-subject', [layer, subject])
+    subject.id = 0
+  }
+  fireEvent('subject-modal', 'close')
 }
 
 const modalContent = function(component){

@@ -14,11 +14,18 @@ export class TaskModal extends React.Component {
   }
 
   render(){
-    return <CommonModal isOpen={this.state.isOpen}
-            okHandler={()=>{fireEvent('tasks-dao', 'add-task', [this.state.subject, this.state.task]); fireEvent('task-modal', 'close')}}>
+    return <CommonModal isOpen={this.state.isOpen} okHandler={()=>okHandler(this.state.subject, this.state.task)}>
               {this.state.task!=null? modalContent(this): null}
             </CommonModal>
   }
+}
+
+const okHandler = function(subject, task){
+  if(task.id==null){
+    fireEvent('tasks-dao', 'add-task', [subject, task])
+    task.id = 0
+  }
+  fireEvent('task-modal', 'close')
 }
 
 const modalContent = function(component){

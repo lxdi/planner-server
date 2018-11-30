@@ -13,7 +13,6 @@
     "react": "^16.6.3",
     "react-dom": "^16.6.3",
     "react-bootstrap": "^0.32.4",
-    "react-modal": "^3.2.1",
     "axios": "0.18.0"
   },
   "devDependencies": {
