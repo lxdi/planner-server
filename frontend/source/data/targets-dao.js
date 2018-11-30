@@ -1,59 +1,44 @@
-import $ from 'jquery'
+//import $ from 'jquery'
+import {sendGet, sendPut, sendPost, sendDelete} from './postoffice'
 import {registerEvent, registerReaction, fireEvent, viewStateVal} from '../controllers/eventor'
 
 registerEvent('targets-dao', 'create', function(stateSetter, target, parent){
   target.parentid = parent!=null? parent.id: null
-  $.ajax({
-    url: '/target/create',
-    type: 'PUT',
-    contentType: 'application/json',
-    data: JSON.stringify(target),
-    success: function(data) {
-      viewStateVal('targets-dao', 'targets')[""+data.id] = data
-      resolveTargets()
-      fireEvent('targets-dao', 'target-created', [target])
-    }
-  });
+  sendPut('/target/create', JSON.stringify(target), function(data) {
+    viewStateVal('targets-dao', 'targets')[""+data.id] = data
+    resolveTargets()
+    fireEvent('targets-dao', 'target-created', [target])
+  })
 })
 
 registerEvent('targets-dao', 'target-created', (stateSetter, target)=>target)
 
 registerEvent('targets-dao', 'delete', function(stateSetter, id){
-  $.ajax({
-    url: '/target/delete/'+id,
-    type: 'DELETE',
-    success: function() {
-      delete viewStateVal('targets-dao', 'targets')[id]
-      resolveTargets()
-      fireEvent('targets-dao', 'target-deleted', [id])
-    }
-  });
+  sendDelete('/target/delete/'+id, function() {
+    delete viewStateVal('targets-dao', 'targets')[id]
+    resolveTargets()
+    fireEvent('targets-dao', 'target-deleted', [id])
+  })
 })
 
 registerEvent('targets-dao', 'target-deleted', (stateSetter, id)=>id)
 
 registerEvent('targets-dao', 'modify', function(stateSetter, target){
-  $.ajax({
-    url: '/target/update',
-    type: 'POST',
-    contentType: 'application/json',
-    data: JSON.stringify(target),
-    success: function(data) {
-      viewStateVal('targets-dao', 'targets')[""+data.id] = data
-      resolveTargets()
-      fireEvent('targets-dao', 'target-modified', [target])
-    }
-  });
+  sendPost('/target/update', JSON.stringify(target), function(data) {
+    viewStateVal('targets-dao', 'targets')[""+data.id] = data
+    resolveTargets()
+    fireEvent('targets-dao', 'target-modified', [target])
+  })
 })
 
 registerEvent('targets-dao', 'target-modified', (stateSetter, target)=>target)
 
 registerEvent('targets-dao', 'targets-request', function(stateSetter){
-    $.ajax({url: "/target/all/lazy"}).then(function(data) {
-              var receivedData = typeof data == 'string'? JSON.parse(data): data
-              importTargetsDto(stateSetter, receivedData)
-              fireEvent('targets-dao', 'targets-received', [])
-            });
+  sendGet("/target/all/lazy", function(data) {
+            var receivedData = typeof data == 'string'? JSON.parse(data): data
+            importTargetsDto(stateSetter, receivedData)
+            fireEvent('targets-dao', 'targets-received', [])
+          })
 })
 
 registerEvent('targets-dao', 'targets-received', ()=>{})

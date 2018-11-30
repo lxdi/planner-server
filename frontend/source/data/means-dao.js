@@ -1,14 +1,14 @@
-import $ from 'jquery'
+import {sendGet, sendPut, sendPost, sendDelete} from './postoffice'
 import {Protomean} from './creators'
 import {registerEvent, registerReaction, fireEvent, viewStateVal, registerReactionCombo} from '../controllers/eventor'
 
 
 registerEvent('means-dao', 'means-request', function(stateSetter){
-    $.ajax({url: "/mean/all/lazy"}).then(function(data) {
+    sendGet("/mean/all/lazy", function(data) {
               var receivedData = typeof data == 'string'? JSON.parse(data): data
               importMeansDto(stateSetter, receivedData)
               fireEvent('means-dao', 'means-received', [])
-            });
+            })
 })
 
 //registerReaction('means-dao', 'targets-dao', 'targets-received', ()=>fireEvent('means-dao', 'means-request'))
@@ -23,32 +23,21 @@ registerEvent('means-dao', 'create', function(stateSetter, mean, parent){
   for(var i in mean.targets){
     mean.targetsIds.push(mean.targets[i].id)
   }
-  $.ajax({
-    url: '/mean/create',
-    type: 'PUT',
-    contentType: 'application/json',
-    data: JSON.stringify(mean),
-    success: function(data) {
-      viewStateVal('means-dao', 'means')[data.id] = data
-      resolveMeans(viewStateVal('means-dao', 'means'))
-      //fireEvent('layers-dao', 'save-candidates', [data])
-      fireEvent('means-dao', 'mean-created', [data])
-    }
-  });
+  sendPut('/mean/create', JSON.stringify(mean), function(data) {
+    viewStateVal('means-dao', 'means')[data.id] = data
+    resolveMeans(viewStateVal('means-dao', 'means'))
+    fireEvent('means-dao', 'mean-created', [data])
+  })
 })
 
 registerEvent('means-dao', 'mean-created', (stateSetter, mean)=>mean)
 
 registerEvent('means-dao', 'delete', function(stateSetter, id, targetid){
-  $.ajax({
-    url: '/mean/delete/'+id,
-    type: 'DELETE',
-    success: function() {
-      delete viewStateVal('means-dao', 'means')[id]
-      resolveMeans(viewStateVal('means-dao', 'means'))
-      fireEvent('means-dao', 'mean-deleted', [id])
-    }
-  });
+  sendDelete('/mean/delete/'+id, function() {
+    delete viewStateVal('means-dao', 'means')[id]
+    resolveMeans(viewStateVal('means-dao', 'means'))
+    fireEvent('means-dao', 'mean-deleted', [id])
+  })
 })
 
 registerEvent('means-dao', 'mean-deleted', (stateSetter, id)=>id)
@@ -81,18 +70,12 @@ registerEvent('means-dao', 'modify', function(stateSetter, mean){
   for(var i in mean.targets){
     mean.targetsIds.push(mean.targets[i].id)
   }
-  $.ajax({
-    url: '/mean/update',
-    type: 'POST',
-    contentType: 'application/json',
-    data: JSON.stringify(mean),
-    success: function(data) {
-      viewStateVal('means-dao', 'means')[data.id] = data
-      resolveMeans(viewStateVal('means-dao', 'means'))
-      //fireEvent('layers-dao', 'save-candidates', [data])
-      fireEvent('means-dao', 'mean-modified', [mean])
-    }
-  });
+  sendPost('/mean/update', JSON.stringify(mean), function(data) {
+    viewStateVal('means-dao', 'means')[data.id] = data
+    resolveMeans(viewStateVal('means-dao', 'means'))
+    //fireEvent('layers-dao', 'save-candidates', [data])
+    fireEvent('means-dao', 'mean-modified', [mean])
+  })
 })
 
 registerEvent('means-dao', 'mean-modified', (stateSetter, mean)=>mean)

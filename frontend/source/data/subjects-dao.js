@@ -1,4 +1,3 @@
-import $ from 'jquery'
 import {registerEvent, registerReaction, fireEvent, viewStateVal} from '../controllers/eventor'
 
 registerEvent('subjects-dao', 'add-subject', (stateSetter, layer, subject)=>{

@@ -1,32 +1,27 @@
-import $ from 'jquery'
+//import $ from 'jquery'
+import {sendGet, sendPut} from './postoffice'
 import {registerEvent, registerReaction, fireEvent, viewStateVal} from '../controllers/eventor'
 
 registerEvent('realms-dao', 'realms-request', function(stateSetter){
-  $.ajax({url: "/realm/all"}).then(function(data) {
-            var receivedData = typeof data == 'string'? JSON.parse(data): data
-            importRealms(stateSetter, receivedData)
-            for(var i in viewStateVal('realms-dao', 'realms')){
-              stateSetter('currentRealm', viewStateVal('realms-dao', 'realms')[i])
-              break
-            }
-            fireEvent('realms-dao', 'realms-received', [])
-          });
+  sendGet("/realm/all", (data)=>{
+    var receivedData = typeof data == 'string'? JSON.parse(data): data
+    importRealms(stateSetter, receivedData)
+    for(var i in viewStateVal('realms-dao', 'realms')){
+      stateSetter('currentRealm', viewStateVal('realms-dao', 'realms')[i])
+      break
+    }
+    fireEvent('realms-dao', 'realms-received', [])
+  })
 })
 
 registerEvent('realms-dao', 'realms-received', ()=>{})
 
 registerEvent('realms-dao', 'create', function(stateSetter, realm){
-  $.ajax({
-    url: '/realm/create',
-    type: 'PUT',
-    contentType: 'application/json',
-    data: JSON.stringify(realm),
-    success: function(data) {
-      var receivedData = typeof data == 'string'? JSON.parse(data): data
-      viewStateVal('realms-dao', 'realms')[""+receivedData.id] = receivedData
-      fireEvent('realms-dao', 'realms-created', [realm])
-    }
-  });
+  sendPut('/realm/create', JSON.stringify(realm), function(data) {
+    var receivedData = typeof data == 'string'? JSON.parse(data): data
+    viewStateVal('realms-dao', 'realms')[""+receivedData.id] = receivedData
+    fireEvent('realms-dao', 'realms-created', [realm])
+  })
 })
 
 registerEvent('realms-dao', 'realms-created', function(stateSetter, realm){

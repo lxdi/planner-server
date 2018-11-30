@@ -1,4 +1,4 @@
-import $ from 'jquery'
+//import $ from 'jquery'
 
 //HashMap year -> array of weeks
 var weeks = {}

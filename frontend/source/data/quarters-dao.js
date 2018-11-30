@@ -1,12 +1,13 @@
-import $ from 'jquery'
+//import $ from 'jquery'
+import {sendGet} from './postoffice'
 import {registerEvent, registerReaction, fireEvent, viewStateVal} from '../controllers/eventor'
 
 registerEvent('quarters-dao', 'quarters-request', function(stateSetter){
-  $.ajax({url: "/quarter/all"}).then(function(data) {
+  sendGet("/quarter/all", function(data) {
             var receivedData = typeof data == 'string'? JSON.parse(data): data
             importQuarters(stateSetter, receivedData)
             fireEvent('quarters-dao', 'quarters-received', [])
-          });
+          })
 })
 
 registerEvent('quarters-dao', 'quarters-received', function(){})

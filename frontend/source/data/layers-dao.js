@@ -1,9 +1,10 @@
-import $ from 'jquery'
+//import $ from 'jquery'
+import {sendGet} from './postoffice'
 import {registerEvent, registerReaction, fireEvent, viewStateVal} from '../controllers/eventor'
 
 registerEvent('layers-dao', 'layers-request', (stateSetter, mean)=>{
   if(mean.id!=null && mean.id>0){
-    $.ajax({url: "layer/get/bymean/"+mean.id}).then(function(data) {
+    sendGet("layer/get/bymean/"+mean.id, function(data) {
               var receivedData = typeof data == 'string'? JSON.parse(data): data
               //importLayers(stateSetter, mean, data)
               mean.layers = []
@@ -13,7 +14,7 @@ registerEvent('layers-dao', 'layers-request', (stateSetter, mean)=>{
                 }
               }
               errorCatcherForAsync(()=>fireEvent('layers-dao', 'layers-received', [mean, data]))
-            });
+            })
   } else {
     mean.layers = []
     fireEvent('layers-dao', 'layers-received', [mean])
