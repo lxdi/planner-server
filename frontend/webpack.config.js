@@ -1,19 +1,23 @@
 var webpack = require('webpack');
-//var HtmlWebpackPlugin = require('html-webpack-plugin');
 module.exports = {
-	entry: './source/app.js',
+	entry:{
+		main: './source/app.js'
+	},
 	output: {
 		path: __dirname + '/build',
 		filename: 'bundle.js'
 	},
 	module: {
-		loaders: [
-		{
+		rules: [
+			{
         test: /.js?$/,
-        loader: 'babel-loader',
+				use: {
+					loader: 'babel-loader'
+				},
         exclude: /node_modules/
-		}
-    ]
-  }//,
-  //plugins: [new HtmlWebpackPlugin()]
+		}]
+  },
+	optimization: {
+    minimize: true
+  }
 };
