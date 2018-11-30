@@ -1,14 +1,18 @@
 import $ from 'jquery'
 import {registerEvent, registerReaction, fireEvent, viewStateVal} from '../controllers/eventor'
 
-registerEvent('subjects-dao', 'add-subject', (stateSetter, layer)=>{
+registerEvent('subjects-dao', 'add-subject', (stateSetter, layer, subject)=>{
   if(layer.subjects==null){
     layer.subjects = []
   }
-  const subject = {
-    position: getMaxSubjectPosition(layer.subjects)+1
+  var subjectToCreate = null
+  if(subject==null){
+    subjectToCreate = {position: getMaxSubjectPosition(layer.subjects)+1}
+  } else {
+    subjectToCreate = subject
+    subjectToCreate.position = getMaxSubjectPosition(layer.subjects)+1
   }
-  layer.subjects[subject.position] = subject
+  layer.subjects[subjectToCreate.position] = subjectToCreate
 })
 
 const getMaxSubjectPosition = function(subjects){

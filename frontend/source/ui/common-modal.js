@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom';
 // import Modal from 'react-modal';
 import {Modal, Button} from 'react-bootstrap'
 
+//props: isOpen, okHandler, cancelHandler
 export class CommonModal extends React.Component{
   render(){
     return (
@@ -15,8 +16,8 @@ export class CommonModal extends React.Component{
               {this.props.children}
             </div>
             <Modal.Footer>
-              <Button onClick={this.props.cancelHandler}>{modalCancelTitle}</Button>
-              <Button bsStyle="primary" onClick={this.props.okHandler} >{modalOkTitle}</Button>
+              {this.props.cancelHandler!=null?<Button onClick={this.props.cancelHandler}>{modalCancelTitle}</Button>:null}
+              {this.props.okHandler!=null?<Button bsStyle="primary" onClick={this.props.okHandler} >{modalOkTitle}</Button>:null}
             </Modal.Footer>
       </Modal>
     )

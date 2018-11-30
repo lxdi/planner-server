@@ -135,7 +135,7 @@ const layersUI = function(mean){
           const layer = mean.layers[layerPriority]
           layersHTML.push(<ListGroupItem key={'layer_'+layerPriority}>
                               <div>Layer {layer.priority}</div>
-                              <div><a href='#' onClick={()=>fireEvent('subjects-dao', 'add-subject', [layer])}>Add subject</a></div>
+                              <div><a href='#' onClick={()=>fireEvent('subject-modal', 'open', [layer, {}])}>Add subject</a></div>
                               <div>{subjectsUI(layer)}</div>
                             </ListGroupItem>)
         }
@@ -149,7 +149,7 @@ const subjectsUI = function(layer){
     for(var subjectPos in layer.subjects){
       const subject = layer.subjects[subjectPos]
       subjectsHTML.push(<ListGroupItem key={'layer_'+layer.priority+'_subject_'+subjectPos}>
-                          Subject {subject.position}
+                          {subject.title}
                           <a href='#' onClick={()=>fireEvent('tasks-dao', 'add-task', [subject])}> Add task</a>
                           {tasksUI(subject)}
                         </ListGroupItem>)

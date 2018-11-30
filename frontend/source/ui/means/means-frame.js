@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom';
 import {CreateMean} from './../../data/creators'
 import {Button, ButtonToolbar,  DropdownButton, MenuItem, ListGroup, ListGroupItem} from 'react-bootstrap'
 import {MeanModal} from './mean-modal'
+import {SubjectModal} from './subject-modal'
 import {registerEvent, registerReaction, fireEvent, viewStateVal} from '../../controllers/eventor'
 
 export class MeansFrame extends React.Component{
@@ -37,6 +38,7 @@ export class MeansFrame extends React.Component{
             {createNewMeanButtonTitle}
           </Button>
           <MeanModal/>
+          <SubjectModal/>
         </div>:null}
         <div>
           <ListGroup>
