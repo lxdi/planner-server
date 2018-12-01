@@ -10,6 +10,7 @@ registerEvent('layers-dao', 'layers-request', (stateSetter, mean)=>{
               mean.layers = []
               if(data.length>0){
                 for(var layerindx in data){
+                  layerAlign(data[layerindx])
                   mean.layers[data[layerindx].priority] = data[layerindx]
                 }
               }
@@ -43,6 +44,20 @@ const getMaxLayerPriorityOfLayers = function(layers){
       }
     }
     return result
+}
+
+const layerAlign = function(layer){
+  for(var subjId in layer.subjects){
+    subjectAlign(layer.subjects[subjId])
+  }
+}
+
+const subjectAlign = function(subject){
+  const tasksAligned = []
+  for(var taskId in subject.tasks){
+    tasksAligned[subject.tasks[taskId].position] = subject.tasks[taskId]
+  }
+  subject.tasks = tasksAligned
 }
 
 const errorCatcherForAsync = function(callback){
