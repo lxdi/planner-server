@@ -49,6 +49,10 @@
     margin: 10px;
 }
 
+.mean-modal-style {
+  width:80%
+}
+
 #Targets {
   border: 1px solid green;
 }

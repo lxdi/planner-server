@@ -126,60 +126,87 @@ const relatedTargetsUI = function(targets){
 }
 
 const layersBlock = function(mean, isEdit){
+  var createLayerButton = null
+  if(isEdit){
+    createLayerButton = <Button bsStyle="primary" bsSize="xsmall"  onClick={()=>fireEvent('layers-dao', 'add-layer', [mean])}>
+                                Create layer
+                            </Button>
+  }
+  //{isEdit?<a href='#' onClick={()=>fireEvent('layers-dao', 'add-layer', [mean])}> Create Layer</a>:null}
   return <ListGroup>
             <div>
               <h4>Layers</h4>
-              {isEdit?<a href='#' onClick={()=>fireEvent('layers-dao', 'add-layer', [mean])}> Create Layer</a>:null}
+              {createLayerButton}
             </div>
             <ListGroup>
-              {layersUI(mean)}
+              {layersUI(mean, isEdit)}
             </ListGroup>
           </ListGroup>
 }
 
-const layersUI = function(mean){
+const layersUI = function(mean, isEdit){
     const layersHTML = []
     if(mean.layers!=null && mean.layers.length>0){
         for(var layerPriority in mean.layers){
           const layer = mean.layers[layerPriority]
           layersHTML.push(<ListGroupItem key={'layer_'+layerPriority}>
                               <div>Layer {layer.priority}</div>
-                              <div><a href='#' onClick={()=>fireEvent('subject-modal', 'open', [layer, {}])}>Add subject</a></div>
-                              <div>{subjectsUI(layer)}</div>
+                              <div>{subjectsUI(layer, isEdit)}</div>
                             </ListGroupItem>)
         }
     }
     return layersHTML
 }
 
-const subjectsUI = function(layer){
+const subjectAndTaskStyle = {
+  display: 'table-cell',
+  padding: '5px',
+  border: '1px solid lightgrey',
+  'vertical-align':'top'}
+
+const subjectsUI = function(layer, isEdit){
   const subjectsHTML = []
   if(layer.subjects!=null && layer.subjects.length>0){
     for(var subjectPos in layer.subjects){
       const subject = layer.subjects[subjectPos]
-      subjectsHTML.push(<ListGroupItem key={'layer_'+layer.priority+'_subject_'+subjectPos}>
-                          <a href='#' onClick={()=>fireEvent('subject-modal', 'open', [layer, subject])}>{subject.title}</a>
-                          <a href='#' onClick={()=>fireEvent('task-modal', 'open', [subject, {}])}> Add task</a>
-                          {tasksUI(subject)}
-                        </ListGroupItem>)
+      subjectsHTML.push(<div key={'layer_'+layer.priority+'_subject_'+subjectPos}>
+                            <div style={subjectAndTaskStyle}>
+                              <div><a href='#' onClick={()=>fireEvent('subject-modal', 'open', [layer, subject])}>{subject.title}</a></div>
+                            </div>
+                            {tasksUI(subject, isEdit)}
+                          </div>)
     }
   }
-  return <ListGroup>
-          {subjectsHTML}
-        </ListGroup>
+  if(isEdit){
+    //<div><a href='#' onClick={()=>fireEvent('subject-modal', 'open', [layer, {}])}>+Add subject</a></div>
+    subjectsHTML.push(<div key={'layer_'+layer.priority+'_subject_forAdd'}>
+                          <div style={subjectAndTaskStyle}>
+                            <Button bsStyle="primary" bsSize="xsmall" onClick={()=>fireEvent('subject-modal', 'open', [layer, {}])}>
+                                +Add subject
+                            </Button>
+                          </div>
+                        </div>)
+  }
+  return subjectsHTML
 }
 
-const tasksUI = function(subject){
+const tasksUI = function(subject, isEdit){
   const tasksHTML = []
   if(subject.tasks!=null && subject.tasks.length>0){
     for(var taskPos in subject.tasks){
       const task = subject.tasks[taskPos]
-      tasksHTML.push(<ListGroupItem key={'subject_'+subject.priority+'_task_'+taskPos}>
+      tasksHTML.push(<div key={'subject_'+subject.priority+'_task_'+taskPos} style={subjectAndTaskStyle}>
                           <a href='#' onClick={()=>fireEvent('task-modal', 'open', [subject, task])}>{task.title}</a>
-                        </ListGroupItem>)
+                        </div>)
     }
   }
-  return <ListGroup>
-          {tasksHTML}
-        </ListGroup>
+  if(isEdit){
+    //<a href='#' onClick={()=>fireEvent('task-modal', 'open', [subject, {}])}>+Add task</a>
+    tasksHTML.push(<div key={'subject_'+subject.priority+'_task_toAdd'} style={subjectAndTaskStyle}>
+                        <Button bsStyle="success" bsSize="xsmall"  onClick={()=>fireEvent('task-modal', 'open', [subject, {}])}>
+                            +Add task
+                        </Button>
+                      </div>)
+  }
+  return tasksHTML
 }
