@@ -19,13 +19,26 @@ registerEvent('tasks-dao', 'release-draggable-task', (stateSetter)=>stateSetter(
 registerEvent('tasks-dao', 'move-task', (stateSetter, targetSubject, targetTask)=>{
   const sourceSubject = viewStateVal('tasks-dao', 'draggable-task').subject
   const sourceTask = viewStateVal('tasks-dao', 'draggable-task').task
-  if(sourceTask!=targetTask){
+  if(targetTask!=null){
+    if(sourceTask!=targetTask){
+      if(sourceSubject!=targetSubject){
+        deleteTask(sourceSubject, sourceTask)
+        insertTask(targetSubject, sourceTask, targetTask.position)
+        stateSetter('draggable-task', {subject: targetSubject, task: sourceTask})
+      } else {
+        swapTasks(targetSubject, targetTask.position, sourceTask.position)
+      }
+    }
+  } else {
     if(sourceSubject!=targetSubject){
       deleteTask(sourceSubject, sourceTask)
-      insertTask(targetSubject, sourceTask, targetTask.position)
+      const nextPos = getMaxTaskPosition(targetSubject.tasks)+1
+      sourceTask.position = nextPos
+      if(targetSubject.tasks==null){
+        targetSubject.tasks = []
+      }
+      targetSubject.tasks[nextPos] = sourceTask
       stateSetter('draggable-task', {subject: targetSubject, task: sourceTask})
-    } else {
-      swapTasks(targetSubject, targetTask.position, sourceTask.position)
     }
   }
 })

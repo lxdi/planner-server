@@ -205,6 +205,13 @@ const tasksUI = function(subject, isEdit){
                       </div>)
     }
   }
+  tasksHTML.push(<div key={'subject_'+subject.priority+'_task_phantom'}
+                      style={subjectAndTaskStyle}
+                      draggable="true"
+                      onDragOver={(e)=>moveTask(e, subject, null)}
+                      onDrop={(e)=>console.log('task-on-drop')}>
+                      <span style={{width:'50px'}} />
+                  </div>)
   if(isEdit){
     tasksHTML.push(<div key={'subject_'+subject.priority+'_task_toAdd'} style={subjectAndTaskStyle}>
                         <Button bsStyle="success" bsSize="xsmall"  onClick={()=>fireEvent('task-modal', 'open', [subject, {}])}>
