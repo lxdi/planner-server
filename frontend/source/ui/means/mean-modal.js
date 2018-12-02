@@ -50,6 +50,7 @@ export class MeanModal extends React.Component {
     registerReaction('mean-modal', 'subject-modal', 'close', ()=>this.setState({}))
     registerReaction('mean-modal', 'task-modal', 'close', ()=>this.setState({}))
     registerReaction('mean-modal', 'tasks-dao', 'move-task', ()=>this.setState({}))
+    registerReaction('mean-modal', 'subjects-dao', 'move-subject', ()=>this.setState({}))
 
   }
 
@@ -170,13 +171,24 @@ const subjectsUI = function(layer, isEdit){
     for(var subjectPos in layer.subjects){
       const subject = layer.subjects[subjectPos]
       subjectsHTML.push(<div key={'layer_'+layer.priority+'_subject_'+subjectPos}>
-                            <div style={subjectAndTaskStyle}>
+                            <div style={subjectAndTaskStyle}
+                              draggable="true"
+                              onDragStart={()=>fireEvent('subjects-dao', 'add-subject-to-drag', [layer, subject])}
+                              onDragEnd={()=>fireEvent('subjects-dao', 'release-draggable-subject')}
+                              onDragOver={(e)=>moveEvent(e, layer, subject, 'subject')}>
                               <div><a href='#' onClick={()=>fireEvent('subject-modal', 'open', [layer, subject])}>{subject.title}</a></div>
                             </div>
                             {tasksUI(subject, isEdit)}
                           </div>)
     }
   }
+  subjectsHTML.push(<div key={'layer_'+layer.priority+'_subject_phantom'}
+                        draggable="true"
+                        onDragOver={(e)=>moveEvent(e, layer, null, 'subject')}>
+                      <div style={subjectAndTaskStyle}>
+                        <div style={{width: '50px', height: '10px'}}/>
+                      </div>
+                    </div>)
   if(isEdit){
     subjectsHTML.push(<div key={'layer_'+layer.priority+'_subject_forAdd'}>
                           <div style={subjectAndTaskStyle}>
@@ -199,8 +211,7 @@ const tasksUI = function(subject, isEdit){
                           draggable="true"
                           onDragStart={()=>fireEvent('tasks-dao', 'add-task-to-drag', [subject, task])}
                           onDragEnd={()=>fireEvent('tasks-dao', 'release-draggable-task')}
-                          onDragOver={(e)=>moveTask(e, subject, task)}
-                          onDrop={(e)=>console.log('task-on-drop')}>
+                          onDragOver={(e)=>moveEvent(e, subject, task, 'task')}>
                           <a href='#' onClick={()=>fireEvent('task-modal', 'open', [subject, task])}>{task.title}</a>
                       </div>)
     }
@@ -208,8 +219,7 @@ const tasksUI = function(subject, isEdit){
   tasksHTML.push(<div key={'subject_'+subject.priority+'_task_phantom'}
                       style={subjectAndTaskStyle}
                       draggable="true"
-                      onDragOver={(e)=>moveTask(e, subject, null)}
-                      onDrop={(e)=>console.log('task-on-drop')}>
+                      onDragOver={(e)=>moveEvent(e, subject, null, 'task')}>
                       <span style={{width:'50px'}} />
                   </div>)
   if(isEdit){
@@ -222,10 +232,18 @@ const tasksUI = function(subject, isEdit){
   return tasksHTML
 }
 
-const moveTask = function(e, subject, task){
+const moveEvent = function(e, parentObj, obj, type){
   e.preventDefault()
-  const draggableTask = viewStateVal('tasks-dao', 'draggable-task')
-  if(draggableTask!=null && draggableTask.task != task){
-    fireEvent('tasks-dao', 'move-task', [subject, task])
+  if(type == 'task'){
+    const draggableTask = viewStateVal('tasks-dao', 'draggable-task')
+    if(draggableTask!=null && draggableTask.task != obj){
+      fireEvent('tasks-dao', 'move-task', [parentObj, obj])
+    }
+  }
+  if(type == 'subject'){
+    const draggableSubject = viewStateVal('subjects-dao', 'draggable-subject')
+    if(draggableSubject!=null && draggableSubject.subject){
+      fireEvent('subjects-dao', 'move-subject', [parentObj, obj])
+    }
   }
 }

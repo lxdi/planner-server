@@ -47,9 +47,12 @@ const getMaxLayerPriorityOfLayers = function(layers){
 }
 
 const layerAlign = function(layer){
+  const subjectsAligned = []
   for(var subjId in layer.subjects){
     subjectAlign(layer.subjects[subjId])
+    subjectsAligned[layer.subjects[subjId].position] = layer.subjects[subjId]
   }
+  layer.subjects = subjectsAligned
 }
 
 const subjectAlign = function(subject){
