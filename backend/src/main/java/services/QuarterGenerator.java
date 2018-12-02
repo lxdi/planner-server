@@ -1,7 +1,7 @@
 package services;
 
-import model.dao.IQuarterDAO;
-import model.entities.Quarter;
+import model.dao.IHQuarterDAO;
+import model.entities.HQuarter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.threeten.extra.YearWeek;
@@ -17,7 +17,7 @@ import java.util.List;
 public class QuarterGenerator {
 
     @Autowired
-    IQuarterDAO quartalDAO;
+    IHQuarterDAO quartalDAO;
 
     public void generate(List<Integer> years){
         for(int year : years){
@@ -32,13 +32,13 @@ public class QuarterGenerator {
         YearWeek yw = start ;
         for(int i = 1; i < numberOfWeeks; i++){
             if(i==1 || i == (1+12) || i == (1+12*2) || i==(1+12*3)) {
-                Quarter quarter = new Quarter();
-                quarter.setYear(year);
-                quarter.setStartDay(yw.atDay(DayOfWeek.MONDAY).getDayOfMonth());
-                quarter.setStartMonth(yw.atDay(DayOfWeek.MONDAY).getMonthValue());
-                quartalDAO.saveOrUpdate(quarter);
+                HQuarter HQuarter = new HQuarter();
+                HQuarter.setYear(year);
+                HQuarter.setStartDay(yw.atDay(DayOfWeek.MONDAY).getDayOfMonth());
+                HQuarter.setStartMonth(yw.atDay(DayOfWeek.MONDAY).getMonthValue());
+                quartalDAO.saveOrUpdate(HQuarter);
 
-                String message = "Quarter: " + yw + " | start: " + yw.atDay(DayOfWeek.MONDAY);
+                String message = "HQuarter: " + yw + " | start: " + yw.atDay(DayOfWeek.MONDAY);
                 System.out.println(message);
             }
             // Prepare for next loop.

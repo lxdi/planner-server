@@ -1,7 +1,7 @@
 package model.dto.mean;
 
 import model.dao.IMeansDAO;
-import model.dao.IQuarterDAO;
+import model.dao.IHQuarterDAO;
 import model.dao.IRealmDAO;
 import model.dao.ITargetsDAO;
 import model.dto.IMapper;
@@ -28,7 +28,7 @@ public class MeansDtoMapper implements IMapper<MeanDtoLazy, Mean> {
     IRealmDAO realmDAO;
 
     @Autowired
-    IQuarterDAO quarterDAO;
+    IHQuarterDAO quarterDAO;
 
     public MeanDtoLazy mapToDto(Mean mean){
         MeanDtoLazy meanDtoLazy = new MeanDtoLazy();
@@ -38,11 +38,11 @@ public class MeansDtoMapper implements IMapper<MeanDtoLazy, Mean> {
             meanDtoLazy.getTargetsIds().add(target.getId());
         }
         meanDtoLazy.setRealmid(mean.getRealm().getId());
-        if(mean.getQuarter()!=null)
-            meanDtoLazy.setQuarterid(mean.getQuarter().getId());
-        if(mean.getPosition()!=null && mean.getPosition()>0){
-            meanDtoLazy.setPosition(mean.getPosition());
-        }
+//        if(mean.getHquarter()!=null)
+//            meanDtoLazy.setQuarterid(mean.getHquarter().getId());
+//        if(mean.getPosition()!=null && mean.getPosition()>0){
+//            meanDtoLazy.setPosition(mean.getPosition());
+//        }
         return meanDtoLazy;
     }
 
@@ -72,12 +72,12 @@ public class MeansDtoMapper implements IMapper<MeanDtoLazy, Mean> {
             throw new RuntimeException("No realm in mean");
         }
 
-        if(meanDto.getQuarterid()!=null){
-            mean.setQuarter(quarterDAO.getById(meanDto.getQuarterid()));
-        }
-        if(meanDto.getPosition()!=null){
-            mean.setPosition(meanDto.getPosition());
-        }
+//        if(meanDto.getQuarterid()!=null){
+//            mean.setHquarter(quarterDAO.getById(meanDto.getQuarterid()));
+//        }
+//        if(meanDto.getPosition()!=null){
+//            mean.setPosition(meanDto.getPosition());
+//        }
         return mean;
     }
 

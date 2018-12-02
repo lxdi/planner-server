@@ -2,7 +2,7 @@ package model.dao;
 
 import model.entities.Layer;
 import model.entities.Mean;
-import model.entities.Quarter;
+import model.entities.HQuarter;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,26 +62,26 @@ public class MeansDao implements IMeansDAO {
         return (Mean) sessionFactory.getCurrentSession().createCriteria(Mean.class).add(Restrictions.eq("title", title)).uniqueResult();
     }
 
-    @Override
-    public void assignQuarter(Quarter quarter, Mean mean, Integer position) {
-        if(mean.getQuarter()==null || mean.getQuarter().getId()!=quarter.getId()) {
-            mean.setQuarter(quarter);
-            mean.setPosition(position);
-            validateByQuarter(mean);
-            this.saveOrUpdate(mean);
-        }
-    }
+//    @Override
+//    public void assignQuarter(HQuarter HQuarter, Mean mean, Integer position) {
+//        if(mean.getHquarter()==null || mean.getHquarter().getId()!= HQuarter.getId()) {
+//            mean.setHquarter(HQuarter);
+//            mean.setPosition(position);
+//            validateByQuarter(mean);
+//            this.saveOrUpdate(mean);
+//        }
+//    }
 
 //    @Override
-//    public void assignQuarter(@NotNull Quarter quarter, @NotNull Mean mean, @NotNull Integer position) {
-//        if (mean.getQuarter() == null || mean.getQuarter().getId() != quarter.getId()) {
+//    public void assignQuarter(@NotNull HQuarter quarter, @NotNull Mean mean, @NotNull Integer position) {
+//        if (mean.getHquarter() == null || mean.getHquarter().getId() != quarter.getId()) {
 //            int meansAlreadyAssigned = sessionFactory.getCurrentSession().createCriteria(Mean.class)
 //                    .add(Restrictions.eq("realm", mean.getRealm()))
 //                    .add(Restrictions.eq("quarter", quarter))
 //                    .add(Restrictions.eq("position", position))
 //                    .list().size();
 //            if (meansAlreadyAssigned == 0) {
-//                mean.setQuarter(quarter);
+//                mean.setHquarter(quarter);
 //                mean.setPosition(position);
 //                this.saveOrUpdate(mean);
 //            } else {
@@ -92,37 +92,37 @@ public class MeansDao implements IMeansDAO {
 
     @Override
     public void validateMean(Mean mean){
-        validateByQuarter(mean);
+        //validateByQuarter(mean);
     }
 
-    private void validateByQuarter(Mean mean){
-        if(mean.getQuarter()!=null){
-            if(mean.getPosition()==null){
-                throw new RuntimeException("Mean must contain position along with quarter");
-            }
-            List<Mean> meansAlreadyAssigned = sessionFactory.getCurrentSession().createCriteria(Mean.class)
-                    .add(Restrictions.eq("realm", mean.getRealm()))
-                    .add(Restrictions.eq("quarter", mean.getQuarter()))
-                    .add(Restrictions.eq("position", mean.getPosition()))
-                    .list();
-            if(meansAlreadyAssigned.size()==0){
-                return;
-            }
-            if(meansAlreadyAssigned.size()==1) {
-                if(mean.getId()<1){
-                    throw new RuntimeException("Cannot assign mean to quarter, position is already occupied");
-                }
-                if (meansAlreadyAssigned.get(0).getId() != mean.getId()) {
-                    throw new RuntimeException("Cannot assign mean to quarter, position is already occupied");
-                }
-            }
-            if(meansAlreadyAssigned.size()>1){
-                throw new RuntimeException("Cannot assign mean to quarter, position is already occupied");
-            }
-        } else {
-            if(mean.getPosition()!=null){
-                throw new RuntimeException("Mean must contain position along with quarter");
-            }
-        }
-    }
+//    private void validateByQuarter(Mean mean){
+//        if(mean.getHquarter()!=null){
+//            if(mean.getPosition()==null){
+//                throw new RuntimeException("Mean must contain position along with quarter");
+//            }
+//            List<Mean> meansAlreadyAssigned = sessionFactory.getCurrentSession().createCriteria(Mean.class)
+//                    .add(Restrictions.eq("realm", mean.getRealm()))
+//                    .add(Restrictions.eq("hquarter", mean.getHquarter()))
+//                    .add(Restrictions.eq("position", mean.getPosition()))
+//                    .list();
+//            if(meansAlreadyAssigned.size()==0){
+//                return;
+//            }
+//            if(meansAlreadyAssigned.size()==1) {
+//                if(mean.getId()<1){
+//                    throw new RuntimeException("Cannot assign mean to quarter, position is already occupied");
+//                }
+//                if (meansAlreadyAssigned.get(0).getId() != mean.getId()) {
+//                    throw new RuntimeException("Cannot assign mean to quarter, position is already occupied");
+//                }
+//            }
+//            if(meansAlreadyAssigned.size()>1){
+//                throw new RuntimeException("Cannot assign mean to quarter, position is already occupied");
+//            }
+//        } else {
+//            if(mean.getPosition()!=null){
+//                throw new RuntimeException("Mean must contain position along with quarter");
+//            }
+//        }
+//    }
 }

@@ -1,4 +1,3 @@
-import controllers.MeansRESTController;
 import controllers.QuartersRESTController;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,7 +19,7 @@ public class QuartersRESTControllerTests  extends ATestsWithTargetsMeansQuartals
     @Before
     public void init(){
         super.init();
-        quartersRESTController = new QuartersRESTController(quarterDAO);
+        quartersRESTController = new QuartersRESTController(hquarterDAO);
         mockMvc = MockMvcBuilders.standaloneSetup(quartersRESTController).build();
     }
 

@@ -1,38 +1,38 @@
 package orm_tests.conf;
 
-import model.dao.IQuarterDAO;
-import model.entities.Quarter;
+import model.dao.IHQuarterDAO;
+import model.entities.HQuarter;
 import org.junit.Before;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static junit.framework.TestCase.assertTrue;
 
-
+@Deprecated
 public abstract class ATestsWithTargetsMeansQuartals extends AbstractTestsWithTargetsWithMeans {
 
     @Autowired
-    protected IQuarterDAO quartalDAO;
+    protected IHQuarterDAO hquartalDAO;
 
-    protected Quarter firstQuarter;
-    protected Quarter secondQuarter;
-    protected Quarter thirdQuarter;
+    protected HQuarter firstHQuarter;
+    protected HQuarter secondHQuarter;
+    protected HQuarter thirdHQuarter;
 
     @Before
     @Override
     public void init(){
         super.init();
-        firstQuarter = new Quarter();
-        quartalDAO.saveOrUpdate(firstQuarter);
+        firstHQuarter = new HQuarter();
+        hquartalDAO.saveOrUpdate(firstHQuarter);
 
-        secondQuarter = new Quarter();
-        quartalDAO.saveOrUpdate(secondQuarter);
+        secondHQuarter = new HQuarter();
+        hquartalDAO.saveOrUpdate(secondHQuarter);
 
-        thirdQuarter = new Quarter();
-        quartalDAO.saveOrUpdate(thirdQuarter);
+        thirdHQuarter = new HQuarter();
+        hquartalDAO.saveOrUpdate(thirdHQuarter);
 
-        assertTrue(firstQuarter.getId()>0);
-        assertTrue(secondQuarter.getId()>0);
-        assertTrue(thirdQuarter.getId()>0);
+        assertTrue(firstHQuarter.getId()>0);
+        assertTrue(secondHQuarter.getId()>0);
+        assertTrue(thirdHQuarter.getId()>0);
 
     }
 

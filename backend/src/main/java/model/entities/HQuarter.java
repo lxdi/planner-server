@@ -5,19 +5,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-public class Quarter {
+public class HQuarter {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
 
     int year;
-
     int startMonth;
     int startDay;
-
-//    @OneToMany(fetch = FetchType.EAGER, mappedBy = "quarter")
-//    List<Mean> means = new ArrayList<>();
 
     public long getId() {
         return id;
@@ -26,12 +22,6 @@ public class Quarter {
         this.id = id;
     }
 
-//    public List<Mean> getMeans() {
-//        return means;
-//    }
-//    public void setMeans(List<Mean> means) {
-//        this.means = means;
-//    }
 
     public int getYear() {
         return year;

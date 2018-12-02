@@ -32,7 +32,7 @@ import static org.junit.Assert.assertTrue;
                 MeansDao.class, MeansDtoMapper.class,
                 WeekDao.class, WeeksGenerator.class,
                 TasksDao.class, TasksDtoMapper.class,
-                QuarterDao.class, QuarterGenerator.class,
+                HQuarterDao.class, QuarterGenerator.class,
                 LayerDao.class, LayersDtoMapper.class,
                 SubjectDao.class, SubjectDtoMapper.class})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
