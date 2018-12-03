@@ -6,7 +6,7 @@ public class SlotDtoLazy {
     long id;
     long meanid;
     long hquarterid;
-    List<SlotPositionLazy> slotPositions;
+    List<SlotPositionDtoLazy> slotPositions;
 
     public long getId() {
         return id;
@@ -22,10 +22,10 @@ public class SlotDtoLazy {
         this.meanid = meanid;
     }
 
-    public List<SlotPositionLazy> getSlotPositions() {
+    public List<SlotPositionDtoLazy> getSlotPositions() {
         return slotPositions;
     }
-    public void setSlotPositions(List<SlotPositionLazy> slotPositions) {
+    public void setSlotPositions(List<SlotPositionDtoLazy> slotPositions) {
         this.slotPositions = slotPositions;
     }
 
