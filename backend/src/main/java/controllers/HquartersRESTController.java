@@ -12,15 +12,15 @@ import java.util.List;
 
 @Controller
 @RequestMapping(path = "/quarter")
-public class QuartersRESTController {
+public class HquartersRESTController {
 
 
     @Autowired
     IHQuarterDAO quarterDAO;
 
-    public QuartersRESTController(){}
+    public HquartersRESTController(){}
 
-    public QuartersRESTController(IHQuarterDAO quarterDAO){
+    public HquartersRESTController(IHQuarterDAO quarterDAO){
         this.quarterDAO = quarterDAO;
     }
 

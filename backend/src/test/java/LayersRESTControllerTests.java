@@ -1,5 +1,4 @@
 import controllers.LayersRESTController;
-import controllers.QuartersRESTController;
 import model.dto.layer.LayersDtoMapper;
 import model.entities.Layer;
 import model.entities.Mean;
@@ -10,7 +9,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import orm_tests.conf.ATestsWithTargetsMeansQuartalsGenerated;
 import orm_tests.conf.ATestsWithTargetsWithMeansWithLayers;
 
 import static org.junit.Assert.assertTrue;

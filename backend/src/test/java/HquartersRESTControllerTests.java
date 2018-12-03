@@ -1,4 +1,4 @@
-import controllers.QuartersRESTController;
+import controllers.HquartersRESTController;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.test.web.servlet.MockMvc;
@@ -11,16 +11,16 @@ import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class QuartersRESTControllerTests  extends ATestsWithTargetsMeansQuartalsGenerated {
+public class HquartersRESTControllerTests extends ATestsWithTargetsMeansQuartalsGenerated {
 
     private MockMvc mockMvc;
-    private QuartersRESTController quartersRESTController;
+    private HquartersRESTController hquartersRESTController;
 
     @Before
     public void init(){
         super.init();
-        quartersRESTController = new QuartersRESTController(hquarterDAO);
-        mockMvc = MockMvcBuilders.standaloneSetup(quartersRESTController).build();
+        hquartersRESTController = new HquartersRESTController(hquarterDAO);
+        mockMvc = MockMvcBuilders.standaloneSetup(hquartersRESTController).build();
     }
 
     @Test
