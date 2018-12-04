@@ -11,6 +11,7 @@ public interface ISlotDAO {
     void saveOrUpdate(Slot slot);
     void saveOrUpdate(SlotPosition slotPosition);
     Slot getById(long id);
+    SlotPosition getSlotPositionById(long id);
     List<Slot> getSlotsForHquarter(HQuarter hquarter);
     List<SlotPosition> getSlotPositionsForSlot(Slot slot);
 

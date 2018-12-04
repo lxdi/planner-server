@@ -30,13 +30,13 @@ public class SlotMapper implements IMapper<SlotDtoLazy, Slot> {
     public SlotDtoLazy mapToDto(Slot entity) {
         SlotDtoLazy dto = new SlotDtoLazy();
         dto.setId(entity.getId());
+        dto.setPosition(entity.getPosition());
         if(entity.getHquarter()!=null){
             dto.setHquarterid(entity.getHquarter().getId());
         }
         if(entity.getMean()!=null){
             dto.setMeanid(entity.getMean().getId());
         }
-
         List<SlotPosition> slotPositionList = slotDAO.getSlotPositionsForSlot(entity);
         if(slotPositionList.size()>0){
             for(SlotPosition slotPosition : slotPositionList){
@@ -49,11 +49,14 @@ public class SlotMapper implements IMapper<SlotDtoLazy, Slot> {
     @Override
     public Slot mapToEntity(SlotDtoLazy dto) {
         Slot entity = new Slot();
-        entity.setId(dto.getId());
-        if(dto.getMeanid()>0){
+        entity.setPosition(dto.getPosition());
+        if(dto.getId()!=null){
+            entity.setId(dto.getId());
+        }
+        if(dto.getMeanid()!=null){
             entity.setMean(meansDAO.meanById(dto.meanid));
         }
-        if(dto.getHquarterid()>0){
+        if(dto.getHquarterid()!=null){
             entity.setHquarter(hquarterDAO.getById(dto.getHquarterid()));
         }
         return entity;

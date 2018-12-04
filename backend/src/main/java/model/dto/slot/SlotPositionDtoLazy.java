@@ -3,23 +3,16 @@ package model.dto.slot;
 import model.entities.DaysOfWeek;
 
 public class SlotPositionDtoLazy {
-    long id;
+    Long id;
     DaysOfWeek dayOfWeek;
     int position;
-    long slotid;
+    Long slotid;
 
-    public long getSlotid() {
-        return slotid;
-    }
-    public void setSlotid(long slotid) {
-        this.slotid = slotid;
-    }
-
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -37,5 +30,13 @@ public class SlotPositionDtoLazy {
 
     public void setPosition(int position) {
         this.position = position;
+    }
+
+    public Long getSlotid() {
+        return slotid;
+    }
+
+    public void setSlotid(Long slotid) {
+        this.slotid = slotid;
     }
 }

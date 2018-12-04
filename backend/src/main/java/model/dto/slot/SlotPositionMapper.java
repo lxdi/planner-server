@@ -27,12 +27,14 @@ public class SlotPositionMapper implements IMapper<SlotPositionDtoLazy, SlotPosi
     @Override
     public SlotPosition mapToEntity(SlotPositionDtoLazy dto) {
         SlotPosition entity = new SlotPosition();
-        entity.setId(dto.getId());
+        if(dto.getId()!=null) {
+            entity.setId(dto.getId());
+        }
         entity.setDaysOfWeek(dto.getDayOfWeek());
         entity.setPosition(dto.getPosition());
         if(dto.getSlotid()>0){
             entity.setSlot(slotDAO.getById(dto.getSlotid()));
         }
-        return null;
+        return entity;
     }
 }
