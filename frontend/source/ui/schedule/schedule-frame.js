@@ -10,7 +10,7 @@ export class ScheduleFrame extends React.Component{
   constructor(props){
     super(props)
     this.state = {};
-    registerReaction('schedule-frame', 'quarters-dao', 'quarters-received', ()=>this.setState({}))
+    registerReaction('schedule-frame', 'hquarters-dao', 'hquarters-received', ()=>this.setState({}))
     registerReaction('schedule-frame', 'means-dao', ['means-received', 'mean-modified'], ()=>this.setState({}))
     registerReaction('schedule-frame', 'realms-dao', 'change-current-realm', ()=>this.setState({}))
   }
@@ -23,38 +23,38 @@ export class ScheduleFrame extends React.Component{
     return(
       <div>
         <div>
-          {viewStateVal('means-dao', 'means')!=null?quartersUI():null}
+          {viewStateVal('means-dao', 'means')!=null?hquartersUI():null}
         </div>
       </div>
     )
   }
 }
 
-const quartersUI = function(){
-  if(viewStateVal('quarters-dao', 'quarters') != null){
-    return viewStateVal('quarters-dao', 'quarters').map((quarter)=>
-          <Table striped bordered condensed hover width={'100px'} key={quarter.year +'.'+formatDateNumber(quarter.startDay) + '.' + formatDateNumber(quarter.startMonth)}>
+const hquartersUI = function(){
+  if(viewStateVal('hquarters-dao', 'hquarters') != null){
+    return viewStateVal('hquarters-dao', 'hquarters').map((hquarter)=>
+          <Table striped bordered condensed hover width={'100px'} key={quarter.year +'.'+formatDateNumber(hquarter.startDay) + '.' + formatDateNumber(hquarter.startMonth)}>
             <tbody>
               <tr>
                 <td>
-                  {quarter.year +'.'+formatDateNumber(quarter.startDay) + '.' + formatDateNumber(quarter.startMonth)}
+                  {hquarter.year +'.'+formatDateNumber(hquarter.startDay) + '.' + formatDateNumber(hquarter.startMonth)}
                 </td>
               </tr>
-              <tr onDragOver={(e)=>{e.preventDefault()}} onDrop={(e)=>fireEvent('means-dao', 'assign-quarter-to-draggable', [quarter, 1])}>
+              <tr onDragOver={(e)=>{e.preventDefault()}} onDrop={(e)=>fireEvent('means-dao', 'assign-quarter-to-draggable', [hquarter, 1])}>
                 <td>
-                  {getMeanSlotUI(quarter, 1)}
+                  {getMeanSlotUI(hquarter, 1)}
                 </td>
               </tr>
-              <tr onDragOver={(e)=>{e.preventDefault()}} onDrop={(e)=>fireEvent('means-dao', 'assign-quarter-to-draggable', [quarter, 2])}>
+              <tr onDragOver={(e)=>{e.preventDefault()}} onDrop={(e)=>fireEvent('means-dao', 'assign-quarter-to-draggable', [hquarter, 2])}>
                 <td>
-                  {getMeanSlotUI(quarter, 2)}
+                  {getMeanSlotUI(hquarter, 2)}
                 </td>
               </tr>
             </tbody>
           </Table>
       )
   } else {
-    fireEvent('quarters-dao', 'quarters-request', [])
+    fireEvent('hquarters-dao', 'hquarters-request', [])
   }
 }
 

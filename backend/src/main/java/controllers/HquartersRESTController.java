@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import java.util.List;
 
 @Controller
-@RequestMapping(path = "/quarter")
+@RequestMapping(path = "/hquarter")
 public class HquartersRESTController {
 
     @Autowired

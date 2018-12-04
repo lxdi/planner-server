@@ -63,7 +63,7 @@ public class HquartersRESTControllerTests extends AbstractTestsWithTargets {
 
     @Test
     public void getAllQuartersTest() throws Exception {
-        MvcResult result =  mockMvc.perform(get("/quarter/all")).andExpect(status().isOk()).andReturn();
+        MvcResult result =  mockMvc.perform(get("/hquarter/all")).andExpect(status().isOk()).andReturn();
         String resultStr = result.getResponse().getContentAsString();
         Assert.assertTrue(resultStr.contains("2018"));
     }
@@ -89,7 +89,7 @@ public class HquartersRESTControllerTests extends AbstractTestsWithTargets {
                     +"}]"
                 +"}";
 
-        MvcResult result = mockMvc.perform(post("/quarter/update")
+        MvcResult result = mockMvc.perform(post("/hquarter/update")
                 .contentType(MediaType.APPLICATION_JSON).content(content))
                 .andExpect(status().isOk()).andReturn();
 
@@ -118,7 +118,7 @@ public class HquartersRESTControllerTests extends AbstractTestsWithTargets {
         slotPosition.setSlot(slot);
         slotDAO.saveOrUpdate(slotPosition);
 
-        MvcResult result = mockMvc.perform(post("/quarter/assignmean/"+mean.getId()+"/toslot/"+slot.getId()))
+        MvcResult result = mockMvc.perform(post("/hquarter/assignmean/"+mean.getId()+"/toslot/"+slot.getId()))
                 .andExpect(status().isOk()).andReturn();
 
         assertTrue(slotDAO.getById(slot.getId()).getMean()!=null);

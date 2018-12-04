@@ -84,15 +84,11 @@ registerEvent('means-dao', 'add-draggable', (stateSetter, mean)=>stateSetter('dr
 
 registerEvent('means-dao', 'remove-draggable', (stateSetter)=>stateSetter('draggableMean', null))
 
-registerEvent('means-dao', 'assign-quarter-to-draggable', function(stateSetter, quarter, position){
+registerEvent('means-dao', 'assign-hquarter-to-draggable', function(stateSetter, hquarter, position){
   const draggableMean = viewStateVal('means-dao', 'draggableMean')
-  draggableMean.quarterid = quarter.id
-  draggableMean.position = position
   fireEvent('means-dao', 'modify', [draggableMean])
 })
-registerEvent('means-dao', 'unassign-quarter', function(stateSetter, mean){
-  mean.quarterid = null
-  mean.position = null
+registerEvent('means-dao', 'unassign-hquarter', function(stateSetter, mean){
   fireEvent('means-dao', 'modify', [mean])
 })
 
