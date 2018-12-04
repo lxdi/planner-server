@@ -85,14 +85,15 @@ public class HquartersRESTControllerTests extends AbstractTestsWithTargets {
                         "\"position\":1},"+
                         "{\"dayOfWeek\": \"tue\","+
                         "\"position\":2}"
-                        +"]"
-                    +"}]"
+                        +", null]"
+                    +"}, null]"
                 +"}";
 
         MvcResult result = mockMvc.perform(post("/hquarter/update")
                 .contentType(MediaType.APPLICATION_JSON).content(content))
                 .andExpect(status().isOk()).andReturn();
 
+        hQuarter = quarterDAO.getById(hQuarter.getId());
         Slot slot = slotDAO.getSlotsForHquarter(hQuarter).get(0);
         List<SlotPosition> slotPositions = slotDAO.getSlotPositionsForSlot(slot);
 
@@ -100,6 +101,8 @@ public class HquartersRESTControllerTests extends AbstractTestsWithTargets {
         assertTrue(slot!=null);
         assertTrue(slot.getPosition()==1);
         assertTrue(slotPositions.size()==2);
+        assertTrue(hQuarter.getStartMonth()==1);
+        assertTrue(hQuarter.getStartDay()==2);
     }
 
     @Test

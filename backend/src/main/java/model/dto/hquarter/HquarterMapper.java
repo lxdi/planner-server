@@ -25,7 +25,7 @@ public class HquarterMapper implements IMapper<HquarterDtoLazy, HQuarter> {
         dto.setId(entity.getId());
         dto.setYear(entity.getYear());
         dto.setStartmonth(entity.getStartMonth());
-        dto.setStartmonth(entity.getStartMonth());
+        dto.setStartday(entity.getStartDay());
 
         List<Slot> slotList = slotDAO.getSlotsForHquarter(entity);
         if(slotList.size()>0){

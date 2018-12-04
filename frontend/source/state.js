@@ -1,7 +1,7 @@
 
 export var state = {
    currState: "Targets",
-   threeFrames: false
+   threeFrames: true
  }
 
 var today = new Date();

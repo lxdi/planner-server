@@ -12,3 +12,16 @@ export const normalizeInnerArrays = function(obj, configsArr, idx){
       configsArr.obj[configsArr.arrName] = newArr
     }
 }
+
+
+export const getMaxVal = function(objects, fieldName){
+    var result = 0
+    if(objects!=null){
+      for(var objid in objects){
+        if(objects[objid][fieldName]>result){
+          result = objects[objid][fieldName]
+        }
+      }
+    }
+    return result
+}

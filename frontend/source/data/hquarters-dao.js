@@ -1,7 +1,7 @@
 //import $ from 'jquery'
-import {sendGet} from './postoffice'
+import {sendGet, sendPost} from './postoffice'
 import {registerEvent, registerReaction, fireEvent, viewStateVal} from '../controllers/eventor'
-import {normalizeInnerArrays} from './import-utils'
+import {normalizeInnerArrays, getMaxVal} from './import-utils'
 
 registerEvent('hquarters-dao', 'hquarters-request', function(stateSetter){
   sendGet("/hquarter/all", function(data) {
@@ -12,6 +12,21 @@ registerEvent('hquarters-dao', 'hquarters-request', function(stateSetter){
 })
 
 registerEvent('hquarters-dao', 'hquarters-received', function(){})
+
+registerEvent('hquarters-dao', 'update', (stateSetter, hquarter)=>{
+  sendPost('/hquarter/update', hquarter, (data)=>{
+    //var receivedData = typeof data == 'string'? JSON.parse(data): data
+    viewStateVal('hquarters-dao', 'hquarters')[data.id] = data
+    fireEvent('hquarters-dao', 'hquarter-modified', [data])
+  })
+})
+registerEvent('hquarters-dao', 'hquarter-modified', (stateSetter, hquarter)=>hquarter)
+
+registerEvent('hquarters-dao', 'add-slot', (stateSetter, hquarter)=>{
+  //const nextPos = 
+  const slot = {position: getMaxVal(hquarter.slots, 'position')+1}
+  hquarter.slots[slot.position] = slot
+})
 
 const importHquarters = function(stateSetter, hquartersDto){
   const hquarters = []

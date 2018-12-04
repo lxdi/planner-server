@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -63,9 +64,12 @@ public class HquartersRESTController {
     }
 
     @RequestMapping(path = "/all")
-    public ResponseEntity<List<HQuarter>> getAllQuarters(){
-        List<HQuarter> result = quarterDAO.getAllHQuartals();
-        return new ResponseEntity<List<HQuarter>>(result, HttpStatus.OK);
+    public ResponseEntity<List<HquarterDtoLazy>> getAllQuarters(){
+        List<HquarterDtoLazy> result = new ArrayList<>();
+        for(HQuarter hQuarter : quarterDAO.getAllHQuartals()){
+            result.add(hquarterMapper.mapToDto(hQuarter));
+        }
+        return new ResponseEntity<List<HquarterDtoLazy>>(result, HttpStatus.OK);
     }
 
     @RequestMapping(path = "/update", method = RequestMethod.POST)
@@ -90,11 +94,13 @@ public class HquartersRESTController {
     private void saveSlots(List<SlotDtoLazy> slotsDto, long hquarterid){
         if(slotsDto!=null){
             for(SlotDtoLazy slotDto : slotsDto){
-                slotDto.setHquarterid(hquarterid);
-                Slot slot = slotMapper.mapToEntity(slotDto);
-                //TODO validate before saving
-                slotDAO.saveOrUpdate(slot);
-                saveSlotPositions(slotDto.getSlotPositions(), slot.getId());
+                if(slotDto!=null) {
+                    slotDto.setHquarterid(hquarterid);
+                    Slot slot = slotMapper.mapToEntity(slotDto);
+                    //TODO validate before saving
+                    slotDAO.saveOrUpdate(slot);
+                    saveSlotPositions(slotDto.getSlotPositions(), slot.getId());
+                }
             }
         }
     }
@@ -102,9 +108,11 @@ public class HquartersRESTController {
     private void saveSlotPositions(List<SlotPositionDtoLazy> slotsPosDto, long slotid){
         if(slotsPosDto!=null && slotsPosDto.size()>0){
             for(SlotPositionDtoLazy slotPosDto : slotsPosDto){
-                slotPosDto.setSlotid(slotid);
-                //TODO validate before saving
-                slotDAO.saveOrUpdate(slotPositionMapper.mapToEntity(slotPosDto));
+                if(slotPosDto!=null) {
+                    slotPosDto.setSlotid(slotid);
+                    //TODO validate before saving
+                    slotDAO.saveOrUpdate(slotPositionMapper.mapToEntity(slotPosDto));
+                }
             }
         }
     }

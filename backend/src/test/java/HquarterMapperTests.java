@@ -34,6 +34,8 @@ public class HquarterMapperTests extends AbstractTestsWithTargets {
         super.init();
 
         hQuarter = new HQuarter();
+        hQuarter.setStartDay(1);
+        hQuarter.setStartMonth(2);
         hQuarterDao.saveOrUpdate(hQuarter);
 
         slot = new Slot();
@@ -52,7 +54,8 @@ public class HquarterMapperTests extends AbstractTestsWithTargets {
     @Test
     public void mapToDtoWithDependenciesTest(){
         HquarterDtoLazy dtoLazy = hquarterMapper.mapToDto(hQuarter);
-
+        assertTrue(dtoLazy.getStartday()==1);
+        assertTrue(dtoLazy.getStartmonth()==2);
         assertTrue(dtoLazy.getSlots().size()==1);
         assertTrue(dtoLazy.getSlots().get(0).getId() == slot.getId());
         assertTrue(dtoLazy.getSlots().get(0).getSlotPositions().size()==1);
