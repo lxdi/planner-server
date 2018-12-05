@@ -3,6 +3,8 @@ import {sendGet, sendPost} from './postoffice'
 import {registerEvent, registerReaction, fireEvent, viewStateVal} from '../controllers/eventor'
 import {normalizeInnerArrays, getMaxVal} from './import-utils'
 
+import {findSlotInPosition} from '../utils/hquarters-utils'
+
 registerEvent('hquarters-dao', 'hquarters-request', function(stateSetter){
   sendGet("/hquarter/all", function(data) {
             var receivedData = typeof data == 'string'? JSON.parse(data): data
@@ -27,12 +29,13 @@ registerEvent('hquarters-dao', 'add-slot', (stateSetter, hquarter)=>{
   hquarter.slots[slot.position] = slot
 })
 
-registerEvent('hquarters-dao', 'add-draggable', (stateSetter, slot)=>stateSetter('draggableSlot', slot))
+registerEvent('hquarters-dao', 'add-draggable', (stateSetter, hquarter, slot)=>stateSetter('draggableSlot', {hquarter: hquarter, slot:slot}))
 registerEvent('hquarters-dao', 'remove-draggable', (stateSetter)=>stateSetter('draggableSlot', null))
 
 registerEvent('hquarters-dao', 'assign-slot', (stateSetter, day, position)=>{
-  const draggableSlot = viewStateVal('hquarters-dao', 'draggableSlot')
-  if(draggableSlot!=null){
+  const hquarter = viewStateVal('hquarters-dao', 'draggableSlot').hquarter
+  const draggableSlot = viewStateVal('hquarters-dao', 'draggableSlot').slot
+  if(draggableSlot!=null && findSlotInPosition(hquarter, day, position)==null && draggableSlot.slotPositions.length<3){
     const slotPosition = {dayOfWeek: day, position: position}
     if(draggableSlot.slotPositions == null){
       draggableSlot.slotPositions = []

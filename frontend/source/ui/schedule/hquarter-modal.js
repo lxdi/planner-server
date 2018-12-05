@@ -4,6 +4,8 @@ import {CommonModal} from './../common-modal'
 import {CommonCrudeTemplate} from './../common-crud-template'
 import {registerEvent, registerReaction, fireEvent, viewStateVal} from '../../controllers/eventor'
 
+import {findSlotInPosition} from '../../utils/hquarters-utils'
+
 const dumbHquarter = {}
 
 const createState = function(isOpen, isStatic, isEdit, hquarter){
@@ -56,7 +58,7 @@ const getSlotsUI = function(hquarter){
       const slot = hquarter.slots[slotpos]
       result.push(<div
                   draggable='true'
-                  onDragStart={()=>fireEvent('hquarters-dao', 'add-draggable', [slot])}
+                  onDragStart={()=>fireEvent('hquarters-dao', 'add-draggable', [hquarter, slot])}
                   onDragEnd={()=>fireEvent('hquarters-dao', 'remove-draggable')}>
                     Slot {slot.position}
                   </div>)
@@ -91,20 +93,6 @@ const slotInCellUI = function(hquarter, day, position){
   const pos = findSlotInPosition(hquarter, day, position)
   if(pos!=null){
     return pos.slot.position
-  }
-}
-
-const findSlotInPosition = function(hquarter, day, position){
-  for(var slotpos in hquarter.slots){
-    const slot = hquarter.slots[slotpos]
-    if(slot != null){
-      for(var j in slot.slotPositions){
-        const slotPosition = slot.slotPositions[j]
-        if(slotPosition.dayOfWeek==day && slotPosition.position == position){
-          return {slot:slot, slotPosition: slotPosition}
-        }
-      }
-    }
   }
 }
 
