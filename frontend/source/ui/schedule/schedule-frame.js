@@ -11,7 +11,7 @@ export class ScheduleFrame extends React.Component{
   constructor(props){
     super(props)
     this.state = {};
-    registerReaction('schedule-frame', 'hquarters-dao', ['hquarters-received', 'hquarter-modified'], ()=>this.setState({}))
+    registerReaction('schedule-frame', 'hquarters-dao', ['hquarters-received', 'hquarter-modified', 'mean-assigned-to-slot'], ()=>this.setState({}))
     registerReaction('schedule-frame', 'means-dao', ['means-received', 'mean-modified'], ()=>this.setState({}))
     registerReaction('schedule-frame', 'realms-dao', 'change-current-realm', ()=>this.setState({}))
   }
@@ -57,41 +57,28 @@ const getSlotsUI = function(hquarter){
   const result = []
   for(var slotpos in hquarter.slots){
     const slot = hquarter.slots[slotpos]
-    result.push(<tr onDragOver={(e)=>{e.preventDefault()}} onDrop={(e)=>fireEvent('means-dao', 'assign-quarter-to-draggable', [hquarter, 1])}>
-                    <td>
-                      Slot {slot.position}
-                    </td>
-                  </tr>)
+    result.push(getSlotView(slot))
   }
   return result
 }
 
-// const getMeanSlotUI = function(quarter, position){
-//   const mean = getMean(quarter, position)
-//   if(mean==null){
-//     return <span style={{color: 'lightgrey'}}>slot {position}</span>
-//   } else {
-//     return <div>
-//               <a href='#'>{mean.title}</a>
-//               <a href='#' onClick={()=>fireEvent('means-dao', 'unassign-quarter', [mean])}> X</a>
-//           </div>
-//   }
-// }
-//
-// const getMean = function(quarter, position){
-//   const means = viewStateVal('means-dao', 'means')
-//   for(var meanid in means){
-//     const mean = means[meanid]
-//     const currentRealm = viewStateVal('realms-dao', 'currentRealm')
-//     if(currentRealm!=null && mean.realmid == currentRealm.id
-//         && mean.quarterid == quarter.id
-//         && mean.position == position){
-//         return mean
-//       }
-//   }
-//   return null
-// }
-
+const getSlotView = function(slot){
+  if(slot.meanid!=null){
+    return <tr>
+                    <td>
+                      <a href='#'>{viewStateVal('means-dao', 'means')[slot.meanid].title}</a>
+                    </td>
+                  </tr>
+  } else {
+    return <tr
+                  onDragOver={(e)=>{e.preventDefault()}}
+                  onDrop={(e)=>fireEvent('hquarters-dao', 'assign-mean-to-slot', [viewStateVal('means-dao', 'draggableMean'), slot])}>
+                    <td>
+                      <span style={{color:'lightgrey'}}>Slot {slot.position}</span>
+                    </td>
+                  </tr>
+  }
+}
 
 const formatDateNumber = function(num){
   if(num<10){

@@ -81,16 +81,7 @@ registerEvent('means-dao', 'modify', function(stateSetter, mean){
 registerEvent('means-dao', 'mean-modified', (stateSetter, mean)=>mean)
 
 registerEvent('means-dao', 'add-draggable', (stateSetter, mean)=>stateSetter('draggableMean', mean))
-
 registerEvent('means-dao', 'remove-draggable', (stateSetter)=>stateSetter('draggableMean', null))
-
-registerEvent('means-dao', 'assign-hquarter-to-draggable', function(stateSetter, hquarter, position){
-  const draggableMean = viewStateVal('means-dao', 'draggableMean')
-  fireEvent('means-dao', 'modify', [draggableMean])
-})
-registerEvent('means-dao', 'unassign-hquarter', function(stateSetter, mean){
-  fireEvent('means-dao', 'modify', [mean])
-})
 
 const meansProto = {
   map: function(callback, filter){

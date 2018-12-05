@@ -23,7 +23,6 @@ registerEvent('hquarters-dao', 'update', (stateSetter, hquarter)=>{
 registerEvent('hquarters-dao', 'hquarter-modified', (stateSetter, hquarter)=>hquarter)
 
 registerEvent('hquarters-dao', 'add-slot', (stateSetter, hquarter)=>{
-  //const nextPos =
   const slot = {position: getMaxVal(hquarter.slots, 'position')+1}
   hquarter.slots[slot.position] = slot
 })
@@ -42,9 +41,16 @@ registerEvent('hquarters-dao', 'assign-slot', (stateSetter, day, position)=>{
   }
 })
 
+registerEvent('hquarters-dao', 'assign-mean-to-slot', (stateSetter, mean, slot)=>{
+  sendPost('/hquarter/assignmean/'+mean.id+'/toslot/'+slot.id, null, ()=>{
+    slot.meanid = mean.id
+    fireEvent('hquarters-dao', 'mean-assigned-to-slot')
+  })
+})
+registerEvent('hquarters-dao', 'mean-assigned-to-slot', (stateSetter)=>{})
+
 const importHquarters = function(stateSetter, hquartersDto){
   const hquarters = []
-  //quarters.__proto__ = quartersProto
   stateSetter('hquarters', hquarters)
   for(var i in hquartersDto){
     normalizeInnerArrays(hquartersDto[i], [{
