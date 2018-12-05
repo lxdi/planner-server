@@ -29,18 +29,24 @@ registerEvent('hquarters-dao', 'add-slot', (stateSetter, hquarter)=>{
   hquarter.slots[slot.position] = slot
 })
 
-registerEvent('hquarters-dao', 'add-draggable', (stateSetter, hquarter, slot)=>stateSetter('draggableSlot', {hquarter: hquarter, slot:slot}))
+registerEvent('hquarters-dao', 'add-draggable', (stateSetter, hquarter, slot, slotPosition)=>stateSetter('draggableSlot', {hquarter: hquarter, slot:slot, slotPosition: slotPosition}))
 registerEvent('hquarters-dao', 'remove-draggable', (stateSetter)=>stateSetter('draggableSlot', null))
 
 registerEvent('hquarters-dao', 'assign-slot', (stateSetter, day, position)=>{
-  const hquarter = viewStateVal('hquarters-dao', 'draggableSlot').hquarter
-  const draggableSlot = viewStateVal('hquarters-dao', 'draggableSlot').slot
-  if(draggableSlot!=null && findSlotInPosition(hquarter, day, position)==null && draggableSlot.slotPositions.length<3){
-    const slotPosition = {dayOfWeek: day, position: position}
-    if(draggableSlot.slotPositions == null){
-      draggableSlot.slotPositions = []
+  const slotPosition = viewStateVal('hquarters-dao', 'draggableSlot').slotPosition
+  if(slotPosition!=null){
+    slotPosition.dayOfWeek = day
+    slotPosition.position = position
+  } else {
+    const hquarter = viewStateVal('hquarters-dao', 'draggableSlot').hquarter
+    const draggableSlot = viewStateVal('hquarters-dao', 'draggableSlot').slot
+    if(draggableSlot!=null && findSlotInPosition(hquarter, day, position)==null && draggableSlot.slotPositions.length<3){
+      const slotPosition = {dayOfWeek: day, position: position}
+      if(draggableSlot.slotPositions == null){
+        draggableSlot.slotPositions = []
+      }
+      draggableSlot.slotPositions.push(slotPosition)
     }
-    draggableSlot.slotPositions.push(slotPosition)
   }
 })
 

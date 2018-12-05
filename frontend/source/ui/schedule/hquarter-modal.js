@@ -44,7 +44,7 @@ export class HquarterModal extends React.Component {
               {getSlotsUI(this.state.hquarter)}
             </div>
             <div style={{display:'table-cell', padding:'10px'}}>
-              {weekMapping(this.state.hquarter)}
+              {weekMappingTable(this.state.hquarter)}
             </div>
           </div>
         </CommonCrudeTemplate>
@@ -69,7 +69,7 @@ const getSlotsUI = function(hquarter){
 const week = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']
 const tasksSlots = [1,2,3]
 
-const weekMapping = function(hquarter){
+const weekMappingTable = function(hquarter){
   const days = []
   const daystyle = {display: 'table-cell', width:'80px', textAlign:'right', paddingRight:'5px'}
   for(var i in week){
@@ -78,10 +78,14 @@ const weekMapping = function(hquarter){
     dayUI.push(<div key={day} style={daystyle}>{day}</div>)
     for(var j in tasksSlots){
       const taskSlot = tasksSlots[j]
+      const pos = findSlotInPosition(hquarter, day, taskSlot)
       dayUI.push(<div key={day + '_'+taskSlot} style={{display: 'table-cell', width: '40px', border: '1px solid lightgrey'}}
                   onDrop={()=>fireEvent('hquarters-dao', 'assign-slot', [day, taskSlot])}
-                  onDragOver={(e)=>e.preventDefault()}>
-                    {slotInCellUI(hquarter, day, taskSlot)}
+                  onDragOver={(e)=>e.preventDefault()}
+                  draggable='true'
+                  onDragStart={()=>{if(pos!=null)fireEvent('hquarters-dao', 'add-draggable', [hquarter, pos.slot, pos.slotPosition])}}
+                  onDragEnd={()=>fireEvent('hquarters-dao', 'remove-draggable')}>
+                    {pos!=null?pos.slot.position:null}
                   </div>)
     }
     days.push(<div>{dayUI}</div>)
@@ -89,12 +93,12 @@ const weekMapping = function(hquarter){
   return days
 }
 
-const slotInCellUI = function(hquarter, day, position){
-  const pos = findSlotInPosition(hquarter, day, position)
-  if(pos!=null){
-    return pos.slot.position
-  }
-}
+// const slotInCellUI = function(hquarter, day, position){
+//   const pos =
+//   if(pos!=null){
+//     return pos.slot.position
+//   }
+// }
 
 const formatDateNumber = function(num){
   if(num<10){
