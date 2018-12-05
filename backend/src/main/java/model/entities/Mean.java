@@ -37,10 +37,6 @@ public class Mean {
     @ManyToOne
     Realm realm;
 
-    @ManyToOne
-    Quarter quarter;
-    private Integer position;
-
     @OneToMany(mappedBy = "mean", cascade = CascadeType.REMOVE)
     private List<Layer> layers = new ArrayList();
 
@@ -87,25 +83,11 @@ public class Mean {
         this.targets = targets;
     }
 
-    public Quarter getQuarter() {
-        return quarter;
-    }
-    public void setQuarter(Quarter quarter) {
-        this.quarter = quarter;
-    }
-
     public Realm getRealm() {
         return realm;
     }
     public void setRealm(Realm realm) {
         this.realm = realm;
-    }
-
-    public Integer getPosition() {
-        return position;
-    }
-    public void setPosition(Integer position) {
-        this.position = position;
     }
 
     public List<Layer> getLayers() {
@@ -115,10 +97,4 @@ public class Mean {
         this.layers = layers;
     }
 
-    //    public List<Mean> getChildren() {
-//        return children;
-//    }
-//    public void setChildren(List<Mean> children) {
-//        this.children = children;
-//    }
 }

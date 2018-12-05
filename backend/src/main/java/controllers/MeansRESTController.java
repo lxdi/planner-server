@@ -100,6 +100,7 @@ public class MeansRESTController {
         assert meanDtoLazy.getId()>0;
         Mean mean = meansDtoMapper.mapToEntity(meanDtoLazy);
         meansDAO.validateMean(mean);
+        //TODO validate before saving
         meansDAO.saveOrUpdate(mean);
         saveLayers(meanDtoLazy.getLayers(), mean.getId());
         return new ResponseEntity<MeanDtoLazy>(meansDtoMapper.mapToDto(mean), HttpStatus.OK);
@@ -111,6 +112,7 @@ public class MeansRESTController {
                 if(layerDto!=null) {
                     layerDto.setMeanid(meanId);
                     Layer layer = layersDtoMapper.mapToEntity(layerDto);
+                    //TODO validate before saving
                     layerDAO.saveOrUpdate(layer);
                     saveSubjects(layerDto.getSubjects(), layer.getId());
                 }
@@ -124,6 +126,7 @@ public class MeansRESTController {
                 if(subjectDto!=null) {
                     subjectDto.setLayerid(layerid);
                     Subject subject = subjectDtoMapper.mapToEntity(subjectDto);
+                    //TODO validate before saving
                     subjectDAO.saveOrUpdate(subject);
                     saveTasks(subjectDto.getTasks(), subject.getId());
                 }

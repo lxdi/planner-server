@@ -1,7 +1,7 @@
 package model.dao;
 
 import model.entities.Mean;
-import model.entities.Quarter;
+import model.entities.HQuarter;
 
 import java.util.List;
 
@@ -16,7 +16,7 @@ public interface IMeansDAO {
     void deleteMean(long id);
     List<Mean> getChildren(Mean mean);
     Mean meanByTitle(String title);
-    void assignQuarter(Quarter quarter, Mean mean, Integer position);
+    //void assignQuarter(HQuarter HQuarter, Mean mean, Integer position);
     void validateMean(Mean mean);
 
 

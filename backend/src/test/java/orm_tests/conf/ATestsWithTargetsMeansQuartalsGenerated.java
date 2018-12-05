@@ -1,7 +1,7 @@
 package orm_tests.conf;
 
-import model.dao.IQuarterDAO;
-import model.entities.Quarter;
+import model.dao.IHQuarterDAO;
+import model.entities.HQuarter;
 import org.junit.Before;
 import org.springframework.beans.factory.annotation.Autowired;
 import services.QuarterGenerator;
@@ -19,7 +19,7 @@ public abstract class ATestsWithTargetsMeansQuartalsGenerated extends AbstractTe
     QuarterGenerator quarterGenerator;
 
     @Autowired
-    protected IQuarterDAO quarterDAO;
+    protected IHQuarterDAO hquarterDAO;
 
     @Before
     @Override
@@ -27,22 +27,22 @@ public abstract class ATestsWithTargetsMeansQuartalsGenerated extends AbstractTe
         super.init();
 
         quarterGenerator.generate(new ArrayList<>(Arrays.asList(2018, 2019)));
-        List<Quarter> quarters = quarterDAO.getAllQuartals();
+        List<HQuarter> HQuarters = hquarterDAO.getAllHQuartals();
 
-        assertTrue(quarters.size()==8);
+        assertTrue(HQuarters.size()==8);
         int checks = 4;
-        for(Quarter quarter : quarters){
-            if(quarter.getYear()==2018){
-                if(quarter.getStartMonth()==1 && quarter.getStartDay()==1){
+        for(HQuarter HQuarter : HQuarters){
+            if(HQuarter.getYear()==2018){
+                if(HQuarter.getStartMonth()==1 && HQuarter.getStartDay()==1){
                     checks--;
                 }
-                if(quarter.getStartMonth()==3 && quarter.getStartDay()==26){
+                if(HQuarter.getStartMonth()==3 && HQuarter.getStartDay()==26){
                     checks--;
                 }
-                if(quarter.getStartMonth()==6 && quarter.getStartDay()==18){
+                if(HQuarter.getStartMonth()==6 && HQuarter.getStartDay()==18){
                     checks--;
                 }
-                if(quarter.getStartMonth()==9 && quarter.getStartDay()==10){
+                if(HQuarter.getStartMonth()==9 && HQuarter.getStartDay()==10){
                     checks--;
                 }
             }
