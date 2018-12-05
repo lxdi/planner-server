@@ -11,7 +11,7 @@ export class ScheduleFrame extends React.Component{
   constructor(props){
     super(props)
     this.state = {};
-    registerReaction('schedule-frame', 'hquarters-dao', ['hquarters-received', 'hquarter-modified', 'mean-assigned-to-slot'], ()=>this.setState({}))
+    registerReaction('schedule-frame', 'hquarters-dao', ['hquarters-received', 'hquarter-modified', 'mean-assigned-to-slot', 'unassigned-mean'], ()=>this.setState({}))
     registerReaction('schedule-frame', 'means-dao', ['means-received', 'mean-modified'], ()=>this.setState({}))
     registerReaction('schedule-frame', 'realms-dao', 'change-current-realm', ()=>this.setState({}))
   }
@@ -67,6 +67,7 @@ const getSlotView = function(slot){
     return <tr>
                     <td>
                       <a href='#'>{viewStateVal('means-dao', 'means')[slot.meanid].title}</a>
+                      <a href='#' onClick={()=>fireEvent('hquarters-dao', 'unassign-mean', [slot])}> X </a>
                     </td>
                   </tr>
   } else {

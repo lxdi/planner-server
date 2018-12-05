@@ -90,6 +90,14 @@ public class HquartersRESTController {
         return new ResponseEntity<>(slotMapper.mapToDto(slot), HttpStatus.OK);
     }
 
+    @RequestMapping(path="/slot/unassign/{slotid}", method = RequestMethod.POST)
+    public ResponseEntity<SlotDtoLazy> unassign(@PathVariable("slotid") long slotid){
+        Slot slot = slotDAO.getById(slotid);
+        slot.setMean(null);
+        slotDAO.saveOrUpdate(slot);
+        return new ResponseEntity<>(slotMapper.mapToDto(slot), HttpStatus.OK);
+    }
+
 
     private void saveSlots(List<SlotDtoLazy> slotsDto, long hquarterid){
         if(slotsDto!=null){

@@ -49,6 +49,14 @@ registerEvent('hquarters-dao', 'assign-mean-to-slot', (stateSetter, mean, slot)=
 })
 registerEvent('hquarters-dao', 'mean-assigned-to-slot', (stateSetter)=>{})
 
+registerEvent('hquarters-dao', 'unassign-mean', (stateSetter, slot)=>{
+  sendPost('/hquarter/slot/unassign/'+slot.id, null, ()=>{
+    slot.meanid = null
+    fireEvent('hquarters-dao', 'unassigned-mean')
+  })
+})
+registerEvent('hquarters-dao', 'unassigned-mean', (stateSetter)=>{})
+
 const importHquarters = function(stateSetter, hquartersDto){
   const hquarters = []
   stateSetter('hquarters', hquarters)

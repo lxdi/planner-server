@@ -130,5 +130,25 @@ public class HquartersRESTControllerTests extends AbstractTestsWithTargets {
 
     }
 
+    @Test
+    public void unassigningTest() throws Exception {
+        Mean mean = new Mean("test Mean", realm);
+        meansDAO.saveOrUpdate(mean);
+
+        HQuarter hQuarter = quarterDAO.getAllHQuartals().get(0);
+        Slot slot =  new Slot();
+        slot.setHquarter(hQuarter);
+        slot.setMean(mean);
+        slotDAO.saveOrUpdate(slot);
+
+        MvcResult result = mockMvc.perform(post("/hquarter/slot/unassign/"+slot.getId()))
+                .andExpect(status().isOk()).andReturn();
+
+        assertTrue(slot.getMean()!=null);
+
+        slot = slotDAO.getById(slot.getId());
+        assertTrue(slot.getMean()==null);
+    }
+
 
 }
