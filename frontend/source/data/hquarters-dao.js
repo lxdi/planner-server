@@ -40,7 +40,8 @@ registerEvent('hquarters-dao', 'assign-slot', (stateSetter, day, position)=>{
   } else {
     const hquarter = viewStateVal('hquarters-dao', 'draggableSlot').hquarter
     const draggableSlot = viewStateVal('hquarters-dao', 'draggableSlot').slot
-    if(draggableSlot!=null && findSlotInPosition(hquarter, day, position)==null && draggableSlot.slotPositions.length<3){
+    if(draggableSlot!=null && findSlotInPosition(hquarter, day, position)==null
+        && (draggableSlot.slotPositions==null || draggableSlot.slotPositions.length<3)){
       const slotPosition = {dayOfWeek: day, position: position}
       if(draggableSlot.slotPositions == null){
         draggableSlot.slotPositions = []
