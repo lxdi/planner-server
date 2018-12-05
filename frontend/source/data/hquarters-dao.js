@@ -23,9 +23,23 @@ registerEvent('hquarters-dao', 'update', (stateSetter, hquarter)=>{
 registerEvent('hquarters-dao', 'hquarter-modified', (stateSetter, hquarter)=>hquarter)
 
 registerEvent('hquarters-dao', 'add-slot', (stateSetter, hquarter)=>{
-  //const nextPos = 
+  //const nextPos =
   const slot = {position: getMaxVal(hquarter.slots, 'position')+1}
   hquarter.slots[slot.position] = slot
+})
+
+registerEvent('hquarters-dao', 'add-draggable', (stateSetter, slot)=>stateSetter('draggableSlot', slot))
+registerEvent('hquarters-dao', 'remove-draggable', (stateSetter)=>stateSetter('draggableSlot', null))
+
+registerEvent('hquarters-dao', 'assign-slot', (stateSetter, day, position)=>{
+  const draggableSlot = viewStateVal('hquarters-dao', 'draggableSlot')
+  if(draggableSlot!=null){
+    const slotPosition = {dayOfWeek: day, position: position}
+    if(draggableSlot.slotPositions == null){
+      draggableSlot.slotPositions = []
+    }
+    draggableSlot.slotPositions.push(slotPosition)
+  }
 })
 
 const importHquarters = function(stateSetter, hquartersDto){
