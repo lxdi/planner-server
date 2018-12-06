@@ -28,7 +28,7 @@ export class MeansFrame extends React.Component{
     })
 
     registerReaction('means-frame', 'realms-dao', 'change-current-realm', ()=>this.setState({}))
-    registerReaction('means-frame', 'means-dao', 'means-received', ()=>this.setState({}))
+    registerReaction('means-frame', 'means-dao', ['means-received', 'replace-mean'], ()=>this.setState({}))
   }
 
   render(){
@@ -41,8 +41,7 @@ export class MeansFrame extends React.Component{
           <MeanModal/>
         </div>:null}
         <div>
-          <div style={{width:'50px', height: '12px', border: '1px dotted lightgrey'}}></div>
-          <ListGroup>
+          <ListGroup style={{marginBottom: '0px'}}>
             {meansUIlist()}
           </ListGroup>
           <div style={{width:'50px', height: '12px', border: '1px dotted lightgrey'}}></div>
@@ -64,9 +63,13 @@ const meansUIlist = function(){
 }
 
 const meanUI = function(mean, offset){
+  const parentMean = mean.parentid!=null?viewStateVal('means-dao', 'means')[mean.parentid]:null
   return (
     <div>
-      <div onDragStart={()=>fireEvent('means-dao', 'add-draggable', [mean])} onDragEnd={()=>fireEvent('means-dao', 'remove-draggable', [])} style={{'margin-bottom': '5px'}}>
+      <div style={{'margin-bottom': '5px'}}
+          onDragStart={()=>fireEvent('means-dao', 'add-draggable', [mean])}
+          onDragEnd={()=>fireEvent('means-dao', 'remove-draggable', [])}
+          onDragOver={(e)=>{e.preventDefault();fireEvent('means-dao', 'replace-mean', [parentMean, mean])}}>
         <a href="#" onClick={()=>fireEvent('mean-modal', 'open', [mean])}>
            {mean.children.length==0?
               <span style={{'font-weight': 'bold'}}>{mean.title}</span>
@@ -79,11 +82,11 @@ const meanUI = function(mean, offset){
       </div>
       <div style={{'margin-left': offset + 'px'}}>
         {mean.children.map(function(childMean){
-            return <li>
+            return <li draggable='true'>
               {meanUI(childMean, offset + offsetVal)}
             </li>
         })}
-        {mean.children==null || mean.children.length>0?<div style={{width:'50px', height: '12px', border: '1px dotted lightgrey'}}></div>:null}
+        {mean.children!=null && mean.children.length==0?<div style={{width:'50px', height: '12px', border: '1px dotted lightgrey'}}></div>:null}
       </div>
     </div>
   )

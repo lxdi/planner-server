@@ -2,6 +2,7 @@ import {sendGet, sendPut, sendPost, sendDelete} from './postoffice'
 import {Protomean} from './creators'
 import {registerEvent, registerReaction, fireEvent, viewStateVal, registerReactionCombo} from '../controllers/eventor'
 import {getMaxVal} from '../utils/import-utils'
+import {insertObj, deleteObj, swapObjs, addObj} from '../utils/drag-utils'
 
 
 registerEvent('means-dao', 'means-request', function(stateSetter){
@@ -86,6 +87,26 @@ registerEvent('means-dao', 'mean-modified', (stateSetter, mean)=>mean)
 registerEvent('means-dao', 'add-draggable', (stateSetter, mean)=>stateSetter('draggableMean', mean))
 registerEvent('means-dao', 'remove-draggable', (stateSetter)=>stateSetter('draggableMean', null))
 
+registerEvent('means-dao', 'replace-mean', (stateSetter, newParent, targetMean)=>{
+  const meanToDrag = viewStateVal('means-dao', 'draggableMean')
+  if(meanToDrag!=null && meanToDrag!=targetMean && !isMeanDescendsFrom(targetMean, meanToDrag)){
+    const oldParent = meanToDrag.parentid!=null? viewStateVal('means-dao', 'means')[meanToDrag.parentid]:null
+    if(oldParent!=null && oldParent==newParent){
+      swapObjs(oldParent, meanToDrag.position, targetMean.position, 'children', 'position')
+    } else {
+      if(newParent!=null){
+        insertObj(newParent, meanToDrag, targetMean.position, 'children', 'position')
+        meanToDrag.parentid = newParent!=null? newParent.id: null
+      } else{
+        const root = generateRootArray(viewStateVal('means-dao', 'means'), 'parentid', 'position')
+        insertObj({children: root}, meanToDrag, targetMean.position, 'children', 'position')
+        meanToDrag.parentid = null
+      }
+    }
+    resolveMeans(viewStateVal('means-dao', 'means'))
+  }
+})
+
 const meansProto = {
   map: function(callback, filter){
     var result = []
@@ -140,6 +161,33 @@ const resolveMean = function(mean){
         mean.targets.push(target)
       }
   }
+}
+
+const isMeanDescendsFrom =function(child, searchParent){
+  if(child==searchParent){
+    return true
+  }
+  const parent = child.parentid!=null? viewStateVal('means-dao', 'means')[child.parentid]: null
+  if(parent!=null){
+    if(parent==searchParent){
+      return true
+    } else {
+      return isMeanDescendsFrom(parent, searchParent)
+    }
+  } else {
+    return false
+  }
+}
+
+const generateRootArray = function(objs, fieldName, positionFieldName){
+  const result = []
+  for(var i in objs){
+    const obj = objs[i]
+    if(obj[fieldName]==null){
+      result[obj[positionFieldName]] = obj
+    }
+  }
+  return result
 }
 
 //delete Mean only form UI

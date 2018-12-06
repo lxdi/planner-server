@@ -1,3 +1,4 @@
+import {getMaxVal} from './import-utils'
 
 export const insertObj = function(targetObjParent, sourceObj, targetPosition, collectionName, positionName){
     const newArrayOfTasks = []
@@ -37,4 +38,10 @@ export const swapObjs = function(objParent, pos1, pos2, collectionName, position
   objParent[collectionName][pos1][positionName] = pos1
   objParent[collectionName][pos2] = tempTask
   objParent[collectionName][pos2][positionName] = pos2
+}
+
+export const addObj = function(objParent, objtoAdd, collectionName, positionName){
+  const nextPos = getMaxVal(objParent[collectionName], positionName)+1
+  objtoAdd[positionName] = nextPos
+  objParent[collectionName][nextPos] = objtoAdd
 }

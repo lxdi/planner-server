@@ -1,5 +1,5 @@
 import {registerEvent, registerReaction, fireEvent, viewStateVal} from '../controllers/eventor'
-import {insertObj, deleteObj, swapObjs} from './drag-utils'
+import {insertObj, deleteObj, swapObjs} from '../utils/drag-utils'
 
 registerEvent('subjects-dao', 'add-subject', (stateSetter, layer, subject)=>{
   if(layer.subjects==null){
