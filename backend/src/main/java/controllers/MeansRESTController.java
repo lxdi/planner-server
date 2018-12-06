@@ -106,6 +106,7 @@ public class MeansRESTController {
         return new ResponseEntity<MeanDtoLazy>(meansDtoMapper.mapToDto(mean), HttpStatus.OK);
     }
 
+    @Deprecated
     @RequestMapping(path = "/mean/replace/{meanid}/{parentid}" , method = RequestMethod.POST)
     public ResponseEntity<MeanDtoLazy> replace(@PathVariable("meanid") long meanid, @PathVariable("parentid") long parentid){
         Mean mean = meansDAO.meanById(meanid);

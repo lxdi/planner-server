@@ -3,6 +3,7 @@ import {Protomean} from './creators'
 import {registerEvent, registerReaction, fireEvent, viewStateVal, registerReactionCombo} from '../controllers/eventor'
 import {getMaxVal} from '../utils/import-utils'
 import {insertObj, deleteObj, swapObjs, addObj} from '../utils/drag-utils'
+import {findHead, findLast, iterateLL} from '../utils/linked-list'
 
 
 registerEvent('means-dao', 'means-request', function(stateSetter){
@@ -25,8 +26,12 @@ registerEvent('means-dao', 'create', function(stateSetter, mean, parent){
   for(var i in mean.targets){
     mean.targetsIds.push(mean.targets[i].id)
   }
-  mean.position = parent!=null? getMaxVal(parent.children, 'position')+1:
-          getMaxVal(viewStateVal('means-dao', 'means').map((mean)=>mean, (mean)=>mean.parentid==null), 'position')+1
+  // mean.position = parent!=null? getMaxVal(parent.children, 'position')+1:
+  //         getMaxVal(viewStateVal('means-dao', 'means').map((mean)=>mean, (mean)=>mean.parentid==null), 'position')+1
+  if(parent!=null){
+    const head = findHead(parent.children, 'next')
+    mean.nextid = head!=null? head.id: null
+  }
   sendPut('/mean/create', JSON.stringify(mean), function(data) {
     viewStateVal('means-dao', 'means')[data.id] = data
     resolveMeans(viewStateVal('means-dao', 'means'))
@@ -92,49 +97,58 @@ registerEvent('means-dao', 'replace-mean', (stateSetter, newParent, targetMean)=
   if(meanToDrag!=null && meanToDrag!=targetMean && !isMeanDescendsFrom(targetMean, meanToDrag)){
     const oldParent = meanToDrag.parentid!=null? viewStateVal('means-dao', 'means')[meanToDrag.parentid]:null
     if(oldParent!=null && oldParent==newParent){
-      swapObjs(oldParent, meanToDrag.position, targetMean.position, 'children', 'position')
+      //swapObjs(oldParent, meanToDrag.position, targetMean.position, 'children', 'position')
     } else {
       if(newParent!=null){
-        insertObj(newParent, meanToDrag, targetMean.position, 'children', 'position')
-        meanToDrag.parentid = newParent!=null? newParent.id: null
+        // insertObj(newParent, meanToDrag, targetMean.position, 'children', 'position')
+        // meanToDrag.parentid = newParent!=null? newParent.id: null
       } else{
-        const root = generateRootArray(viewStateVal('means-dao', 'means'), 'parentid', 'position')
-        insertObj({children: root}, meanToDrag, targetMean.position, 'children', 'position')
-        meanToDrag.parentid = null
+        // const root = generateRootArray(viewStateVal('means-dao', 'means'), 'parentid', 'position')
+        // insertObj({children: root}, meanToDrag, targetMean.position, 'children', 'position')
+        // meanToDrag.parentid = null
       }
     }
-    resolveMeans(viewStateVal('means-dao', 'means'))
+    //resolveMeans(viewStateVal('means-dao', 'means'))
   }
 })
 
-const meansProto = {
-  map: function(callback, filter){
-    var result = []
-    for (var i in this){
-      if(i != 'map'){
-        if(filter!=null){
-          if(filter(this[i])){
-            result.push(callback(this[i]))
-          }
-        } else {
-          result.push(callback(this[i]))
-        }
-      }
-    }
-    return result
-  }
-}
+// const meansProto = {
+//   map: function(callback, filter){
+//     var result = []
+//     for (var i in this){
+//       if(i != 'map'){
+//         if(filter!=null){
+//           if(filter(this[i])){
+//             result.push(callback(this[i]))
+//           }
+//         } else {
+//           result.push(callback(this[i]))
+//         }
+//       }
+//     }
+//     return result
+//   }
+// }
 
 const importMeansDto = function(stateSetter, meansDto){
   if(viewStateVal('means-dao', 'means')==null){
-    const means = []
-    means.__proto__ = meansProto
     stateSetter('means', means)
   }
-  for(var i in meansDto){
-    viewStateVal('means-dao', 'means')[meansDto[i].id] = meansDto[i]
+  if(viewStateVal('means-dao', 'means-by-realm')==null){
+    stateSetter('means-by-realm', means)
   }
-  resolveMeans(viewStateVal('means-dao', 'means'));
+  const means = viewStateVal('means-dao', 'means')
+  for(var i in meansDto){
+    const currentMeanDto = meansDto[i]
+    if(means[currentMeanDto.realmid]==null){
+      means[currentMeanDto.realmid] = []
+    }
+    means[currentMeanDto.realmid][meansDto[i].id] = meansDto[i]
+  }
+  for(var realmid in means){
+    resolveMeans(means[realmid])
+  }
+  //resolveMeans(viewStateVal('means-dao', 'means'));
 }
 
 const resolveMeans = function(means){
@@ -152,7 +166,7 @@ const resolveMean = function(mean){
   const means = viewStateVal('means-dao', 'means')
   for(var j in means){
     if(means[j].parentid == mean.id){
-      mean.children[means[j].position] = means[j]
+      mean.children.push(means[j])
     }
   }
   for(var tid in mean.targetsIds){
@@ -179,16 +193,16 @@ const isMeanDescendsFrom =function(child, searchParent){
   }
 }
 
-const generateRootArray = function(objs, fieldName, positionFieldName){
-  const result = []
-  for(var i in objs){
-    const obj = objs[i]
-    if(obj[fieldName]==null){
-      result[obj[positionFieldName]] = obj
-    }
-  }
-  return result
-}
+// const generateRootArray = function(objs, fieldName, positionFieldName){
+//   const result = []
+//   for(var i in objs){
+//     const obj = objs[i]
+//     if(obj[fieldName]==null){
+//       result[obj[positionFieldName]] = obj
+//     }
+//   }
+//   return result
+// }
 
 //delete Mean only form UI
 var deleteMeanUI = function(mean){

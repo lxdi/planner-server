@@ -13,7 +13,7 @@ public class MeanDtoLazy{
     long id;
     String title;
     String criteria;
-    long position;
+    Long nextid;
 
     Long parentid;
     List<Long> targetsIds = new ArrayList<>();
@@ -63,11 +63,11 @@ public class MeanDtoLazy{
         this.criteria = criteria;
     }
 
-    public long getPosition() {
-        return position;
+    public Long getNextid() {
+        return nextid;
     }
-    public void setPosition(long position) {
-        this.position = position;
+    public void setNextid(Long nextid) {
+        this.nextid = nextid;
     }
 
     public List<LayerDtoLazy> getLayers() {

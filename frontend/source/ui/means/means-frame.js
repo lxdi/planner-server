@@ -53,6 +53,8 @@ export class MeansFrame extends React.Component{
 
 const meansUIlist = function(){
     if(viewStateVal('means-dao', 'means')!=null){
+      const result = []
+      iterateLL(viewStateVal('means-dao', 'means'), )
       return sortByField(
         viewStateVal('means-dao', 'means')
           .map((mean)=>mean, (mean)=>mean.parentid==null && mean.realmid == viewStateVal('realms-dao', 'currentRealm').id), 'position')

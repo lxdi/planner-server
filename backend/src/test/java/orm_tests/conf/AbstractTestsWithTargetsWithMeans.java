@@ -25,17 +25,17 @@ public abstract class AbstractTestsWithTargetsWithMeans extends AbstractTestsWit
     public void init(){
         super.init();
 
-        Mean parentMean = new Mean(parentMeanTitle, realm, 1);
+        Mean parentMean = new Mean(parentMeanTitle, realm);
         parentMean.getTargets().add(targetsDAO.getTargetByTitle(defaultParentTarget));
         meansDao.saveOrUpdate(parentMean);
 
-        Mean childMean = new Mean(childMeanTitle, realm, 1);
+        Mean childMean = new Mean(childMeanTitle, realm);
         childMean.setParent(parentMean);
         childMean.getTargets().add(targetsDAO.getTargetByTitle(defaultChildTarget));
         childMean.getTargets().add(targetsDAO.getTargetByTitle(defaultChild2Target));
         meansDao.saveOrUpdate(childMean);
 
-        Mean childMean2 = new Mean(child2MeanTitle, realm, 2);
+        Mean childMean2 = new Mean(child2MeanTitle, realm);
         childMean2.setParent(parentMean);
         childMean2.getTargets().add(targetsDAO.getTargetByTitle(defaultChildChildTarget));
         meansDao.saveOrUpdate(childMean2);

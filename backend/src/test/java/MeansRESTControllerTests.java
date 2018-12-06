@@ -37,7 +37,7 @@ public class MeansRESTControllerTests extends ATestsWithTargetsMeansQuartalsGene
 
     @Test
     public void createTest() throws Exception {
-        String content = "{\"id\":0,\"title\":\"new mean\",\"parentid\":2, \"targetsIds\":[1, 4] ,\"children\":[], \"realmid\":1, \"position\":10}";
+        String content = "{\"id\":0,\"title\":\"new mean\",\"parentid\":2, \"targetsIds\":[1, 4] ,\"children\":[], \"realmid\":1}";
         MvcResult result = mockMvc.perform(put("/mean/create")
                 .contentType(MediaType.APPLICATION_JSON).content(content))
                 .andExpect(status().isOk()).andReturn();
@@ -89,7 +89,7 @@ public class MeansRESTControllerTests extends ATestsWithTargetsMeansQuartalsGene
 
     @Test
     public void updateTest() throws Exception {
-        String content = "{\"id\":1,\"title\":\"Parent mean changed\",\"parentid\":0, \"targetsIds\":[1], \"realmid\":1, \"position\":10}";
+        String content = "{\"id\":1,\"title\":\"Parent mean changed\",\"parentid\":0, \"targetsIds\":[1], \"realmid\":1}";
         MvcResult result = mockMvc.perform(post("/mean/update")
                 .contentType(MediaType.APPLICATION_JSON).content(content))
                 .andExpect(status().isOk()).andReturn();
@@ -108,41 +108,41 @@ public class MeansRESTControllerTests extends ATestsWithTargetsMeansQuartalsGene
                 .andExpect(status().isOk()).andReturn();
     }
 
-    @Test
-    public void replaceToOtherMeanTest() throws Exception {
-        Mean newParent = new Mean("new parent test", realm, 2);
-        meansDao.saveOrUpdate(newParent);
-        assertTrue(newParent.getId()>0);
+//    @Test
+//    public void replaceToOtherMeanTest() throws Exception {
+//        Mean newParent = new Mean("new parent test", realm);
+//        meansDao.saveOrUpdate(newParent);
+//        assertTrue(newParent.getId()>0);
+//
+//        Mean mean = meansDao.meanByTitle(childMeanTitle);
+//        assertTrue(mean!=null && mean.getId()>0);
+//
+//        MvcResult result = mockMvc.perform(post("/mean/replace/"+mean.getId()+"/"+newParent.getId()))
+//                .andExpect(status().isOk()).andReturn();
+//
+//        mean = meansDao.meanById(mean.getId());
+//        assertTrue(mean.getParent().getId() == newParent.getId());
+//
+//    }
 
-        Mean mean = meansDao.meanByTitle(childMeanTitle);
-        assertTrue(mean!=null && mean.getId()>0);
+//    @Test
+//    public void replaceToRootTest() throws Exception {
+//        Mean mean = meansDao.meanByTitle(childMeanTitle);
+//        assertTrue(mean.getParent()!=null);
+//        assertTrue(mean!=null && mean.getId()>0);
+//
+//        MvcResult result = mockMvc.perform(post("/mean/replace/"+mean.getId()+"/0"))
+//                .andExpect(status().isOk()).andReturn();
+//
+//        mean = meansDao.meanById(mean.getId());
+//        assertTrue(mean.getParent()==null);
+//
+//    }
 
-        MvcResult result = mockMvc.perform(post("/mean/replace/"+mean.getId()+"/"+newParent.getId()))
-                .andExpect(status().isOk()).andReturn();
-
-        mean = meansDao.meanById(mean.getId());
-        assertTrue(mean.getParent().getId() == newParent.getId());
-
-    }
-
-    @Test
-    public void replaceToRootTest() throws Exception {
-        Mean mean = meansDao.meanByTitle(childMeanTitle);
-        assertTrue(mean.getParent()!=null);
-        assertTrue(mean!=null && mean.getId()>0);
-
-        MvcResult result = mockMvc.perform(post("/mean/replace/"+mean.getId()+"/0"))
-                .andExpect(status().isOk()).andReturn();
-
-        mean = meansDao.meanById(mean.getId());
-        assertTrue(mean.getParent()==null);
-
-    }
-
-    @Test(expected = NestedServletException.class)
-    public void replaceNotExistingTest() throws Exception {
-        MvcResult result = mockMvc.perform(post("/mean/replace/100500/0"))
-                .andExpect(status().isOk()).andReturn();
-    }
+//    @Test(expected = NestedServletException.class)
+//    public void replaceNotExistingTest() throws Exception {
+//        MvcResult result = mockMvc.perform(post("/mean/replace/100500/0"))
+//                .andExpect(status().isOk()).andReturn();
+//    }
 
 }
