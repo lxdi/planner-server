@@ -106,6 +106,20 @@ public class MeansRESTController {
         return new ResponseEntity<MeanDtoLazy>(meansDtoMapper.mapToDto(mean), HttpStatus.OK);
     }
 
+    @RequestMapping(path = "/mean/replace/{meanid}/{parentid}" , method = RequestMethod.POST)
+    public ResponseEntity<MeanDtoLazy> replace(@PathVariable("meanid") long meanid, @PathVariable("parentid") long parentid){
+        Mean mean = meansDAO.meanById(meanid);
+        if(mean!=null){
+            Mean newParent = parentid>0?meansDAO.meanById(parentid):null;
+            mean.setParent(newParent);
+            meansDAO.saveOrUpdate(mean);
+            return new ResponseEntity<MeanDtoLazy>(meansDtoMapper.mapToDto(mean), HttpStatus.OK);
+        } else {
+            throw new NullPointerException("Mean with given ID doesn't exist");
+        }
+    }
+
+
     private void saveLayers(List<LayerDtoLazy> layersDto, long meanId){
         if(layersDto!=null){
             for(LayerDtoLazy layerDto : layersDto){

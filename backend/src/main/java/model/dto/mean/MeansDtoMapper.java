@@ -38,6 +38,7 @@ public class MeansDtoMapper implements IMapper<MeanDtoLazy, Mean> {
             meanDtoLazy.getTargetsIds().add(target.getId());
         }
         meanDtoLazy.setRealmid(mean.getRealm().getId());
+        meanDtoLazy.setPosition(mean.getPosition());
 //        if(mean.getHquarter()!=null)
 //            meanDtoLazy.setQuarterid(mean.getHquarter().getId());
 //        if(mean.getPosition()!=null && mean.getPosition()>0){
@@ -46,30 +47,31 @@ public class MeansDtoMapper implements IMapper<MeanDtoLazy, Mean> {
         return meanDtoLazy;
     }
 
-    private void mapStatic(Mean mean, AbstractMeanDto abstractMeanDto){
+    private void mapStatic(Mean mean, MeanDtoLazy abstractMeanDto){
         abstractMeanDto.setId(mean.getId());
         abstractMeanDto.setTitle(mean.getTitle());
     }
 
     public Mean mapToEntity(MeanDtoLazy meanDto){
-        Mean mean = new Mean();
-        mapStaticFromDto(mean, meanDto);
+        Realm realm = null;
+        if(meanDto.getRealmid()!=null){
+            realm = realmDAO.realmById(meanDto.getRealmid());
+            if(realm==null){
+                throw new RuntimeException("Realm doesn't exist with id = " + meanDto.getRealmid());
+            }
+        } else {
+            throw new RuntimeException("No realm in mean");
+        }
+
+        Mean mean = new Mean(meanDto.getTitle(), realm, meanDto.getPosition());
+        mean.setId(meanDto.getId());
+        mean.setCriteria(meanDto.getCriteria());
         if(meanDto.getParentid()!=null)
             mean.setParent(meansDAO.meanById(meanDto.getParentid()));
 
         //TODO optimize in one call
         for(Long id : meanDto.getTargetsIds()){
             mean.getTargets().add(targetsDAO.targetById(id));
-        }
-
-        if(meanDto.getRealmid()!=null){
-            Realm realm = realmDAO.realmById(meanDto.getRealmid());
-            if(realm==null){
-                throw new RuntimeException("Realm doesn't exist with id = " + meanDto.getRealmid());
-            }
-            mean.setRealm(realm);
-        } else {
-            throw new RuntimeException("No realm in mean");
         }
 
 //        if(meanDto.getQuarterid()!=null){
@@ -79,12 +81,6 @@ public class MeansDtoMapper implements IMapper<MeanDtoLazy, Mean> {
 //            mean.setPosition(meanDto.getPosition());
 //        }
         return mean;
-    }
-
-    private void mapStaticFromDto(Mean mean, AbstractMeanDto abstractMeanDto){
-        mean.setId(abstractMeanDto.getId());
-        mean.setTitle(abstractMeanDto.getTitle());
-        mean.setCriteria(abstractMeanDto.getCriteria());
     }
 
 }

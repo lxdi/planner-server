@@ -1,8 +1,8 @@
 //import $ from 'jquery'
 import {sendGet, sendPost} from './postoffice'
 import {registerEvent, registerReaction, fireEvent, viewStateVal} from '../controllers/eventor'
-import {normalizeInnerArrays, getMaxVal} from './import-utils'
 
+import {normalizeInnerArrays, getMaxVal} from '../utils/import-utils'
 import {findSlotInPosition} from '../utils/hquarters-utils'
 
 registerEvent('hquarters-dao', 'hquarters-request', function(stateSetter){

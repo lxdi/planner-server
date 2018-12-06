@@ -1,16 +1,25 @@
 package model.dto.mean;
 
+import model.dto.layer.LayerDtoLazy;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Alexander on 08.04.2018.
  */
-public class MeanDtoLazy extends AbstractMeanDto {
+public class MeanDtoLazy{
+
+    long id;
+    String title;
+    String criteria;
+    long position;
 
     Long parentid;
     List<Long> targetsIds = new ArrayList<>();
     Long realmid;
+
+    List<LayerDtoLazy> layers;
 
     public Long getParentid() {
         return parentid;
@@ -31,5 +40,40 @@ public class MeanDtoLazy extends AbstractMeanDto {
     }
     public void setRealmid(Long realmid) {
         this.realmid = realmid;
+    }
+
+    public long getId() {
+        return id;
+    }
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getCriteria() {
+        return criteria;
+    }
+    public void setCriteria(String criteria) {
+        this.criteria = criteria;
+    }
+
+    public long getPosition() {
+        return position;
+    }
+    public void setPosition(long position) {
+        this.position = position;
+    }
+
+    public List<LayerDtoLazy> getLayers() {
+        return layers;
+    }
+    public void setLayers(List<LayerDtoLazy> layers) {
+        this.layers = layers;
     }
 }

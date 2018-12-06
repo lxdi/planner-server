@@ -1,6 +1,7 @@
 import {sendGet, sendPut, sendPost, sendDelete} from './postoffice'
 import {Protomean} from './creators'
 import {registerEvent, registerReaction, fireEvent, viewStateVal, registerReactionCombo} from '../controllers/eventor'
+import {getMaxVal} from '../utils/import-utils'
 
 
 registerEvent('means-dao', 'means-request', function(stateSetter){
@@ -23,6 +24,8 @@ registerEvent('means-dao', 'create', function(stateSetter, mean, parent){
   for(var i in mean.targets){
     mean.targetsIds.push(mean.targets[i].id)
   }
+  mean.position = parent!=null? getMaxVal(parent.children, 'position')+1:
+          getMaxVal(viewStateVal('means-dao', 'means').map((mean)=>mean, (mean)=>mean.parentid==null), 'position')+1
   sendPut('/mean/create', JSON.stringify(mean), function(data) {
     viewStateVal('means-dao', 'means')[data.id] = data
     resolveMeans(viewStateVal('means-dao', 'means'))
@@ -128,7 +131,7 @@ const resolveMean = function(mean){
   const means = viewStateVal('means-dao', 'means')
   for(var j in means){
     if(means[j].parentid == mean.id){
-      mean.children.push(means[j])
+      mean.children[means[j].position] = means[j]
     }
   }
   for(var tid in mean.targetsIds){

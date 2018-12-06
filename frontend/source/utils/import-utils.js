@@ -25,3 +25,11 @@ export const getMaxVal = function(objects, fieldName){
     }
     return result
 }
+
+export const sortByField = function(objs, fieldName){
+  const result = []
+  for(var i in objs){
+    result[objs[i][fieldName]] = objs[i]
+  }
+  return result
+}

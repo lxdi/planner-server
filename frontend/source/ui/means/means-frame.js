@@ -4,9 +4,10 @@ import ReactDOM from 'react-dom';
 import {CreateMean} from './../../data/creators'
 import {Button, ButtonToolbar,  DropdownButton, MenuItem, ListGroup, ListGroupItem} from 'react-bootstrap'
 import {MeanModal} from './mean-modal'
-// import {SubjectModal} from './subject-modal'
-// import {TaskModal} from './task-modal'
 import {registerEvent, registerReaction, fireEvent, viewStateVal} from '../../controllers/eventor'
+import {sortByField} from '../../utils/import-utils'
+
+const offsetVal = 10
 
 export class MeansFrame extends React.Component{
   constructor(props){
@@ -27,7 +28,6 @@ export class MeansFrame extends React.Component{
     })
 
     registerReaction('means-frame', 'realms-dao', 'change-current-realm', ()=>this.setState({}))
-    //registerReaction('means-frame', 'targets-dao', 'targets-received', ()=>this.setState({}))
     registerReaction('means-frame', 'means-dao', 'means-received', ()=>this.setState({}))
   }
 
@@ -41,9 +41,11 @@ export class MeansFrame extends React.Component{
           <MeanModal/>
         </div>:null}
         <div>
+          <div style={{width:'50px', height: '12px', border: '1px dotted lightgrey'}}></div>
           <ListGroup>
             {meansUIlist()}
           </ListGroup>
+          <div style={{width:'50px', height: '12px', border: '1px dotted lightgrey'}}></div>
         </div>
       </div>
     )
@@ -51,20 +53,14 @@ export class MeansFrame extends React.Component{
 }
 
 const meansUIlist = function(){
-  //if(viewStateVal('targets-dao', 'targets')!=null){
     if(viewStateVal('means-dao', 'means')!=null){
-      return viewStateVal('means-dao', 'means').map(function(mean){
-          return <ListGroupItem>
-            {meanUI(mean, 20)}
-          </ListGroupItem>
-      }, function(mean){
-        return mean.parentid==null && mean.realmid == viewStateVal('realms-dao', 'currentRealm').id
-      })
+      return sortByField(
+        viewStateVal('means-dao', 'means')
+          .map((mean)=>mean, (mean)=>mean.parentid==null && mean.realmid == viewStateVal('realms-dao', 'currentRealm').id), 'position')
+        .map((mean)=><ListGroupItem>{meanUI(mean, 20)}</ListGroupItem>)
     } else {
-      //fireEvent('means-dao', 'means-request', [])
       return "Loading..."
     }
-  //}
 }
 
 const meanUI = function(mean, offset){
@@ -84,9 +80,10 @@ const meanUI = function(mean, offset){
       <div style={{'margin-left': offset + 'px'}}>
         {mean.children.map(function(childMean){
             return <li>
-              {meanUI(childMean, offset + 10)}
+              {meanUI(childMean, offset + offsetVal)}
             </li>
         })}
+        {mean.children==null || mean.children.length>0?<div style={{width:'50px', height: '12px', border: '1px dotted lightgrey'}}></div>:null}
       </div>
     </div>
   )

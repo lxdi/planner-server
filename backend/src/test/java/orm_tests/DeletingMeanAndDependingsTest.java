@@ -37,7 +37,7 @@ public class DeletingMeanAndDependingsTest extends AbstractTestsWithTargets {
     @Before
     public void init(){
         super.init();
-        mean = new Mean("test mean", realm);
+        mean = new Mean("test mean", realm, 1);
         meansDAO.saveOrUpdate(mean);
 
         layer = new Layer();
