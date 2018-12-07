@@ -66,11 +66,11 @@ const meanUI = function(mean, offset){
   const parentMean = mean.parentid!=null?viewStateVal('means-dao', 'means')[mean.parentid]:null
   return (
     <div>
-      <div style={{'margin-bottom': '5px'}}
+      <div style={{'margin-bottom': '5px'}}>
+        <a href="#" onClick={()=>fireEvent('mean-modal', 'open', [mean])}
           onDragStart={()=>fireEvent('means-dao', 'add-draggable', [mean])}
           onDragEnd={()=>fireEvent('means-dao', 'remove-draggable', [])}
           onDragOver={(e)=>{e.preventDefault();fireEvent('means-dao', 'replace-mean', [parentMean, mean])}}>
-        <a href="#" onClick={()=>fireEvent('mean-modal', 'open', [mean])}>
            {mean.children.length==0?
               <span style={{'font-weight': 'bold'}}>{mean.title}</span>
               :mean.title}
