@@ -19,17 +19,13 @@ export class MeansFrame extends React.Component{
       this.setState({})
     }.bind(this)
 
-    registerReaction('means-frame', 'means-dao', ['mean-created', 'mean-deleted', 'mean-modified'], function(){
-      this.setState({})
-    }.bind(this))
-
     registerReaction('means-frame', 'targets-dao', 'target-deleted', (state, targetid)=>{
       fireEvent('means-dao', 'delete-depended-means', [targetid])
       this.setState({})
     })
 
     registerReaction('means-frame', 'realms-dao', 'change-current-realm', ()=>this.setState({}))
-    registerReaction('means-frame', 'means-dao', ['means-received', 'replace-mean'], ()=>this.setState({}))
+    registerReaction('means-frame', 'means-dao', ['means-received', 'replace-mean', 'mean-created', 'mean-deleted', 'mean-modified'], ()=>this.setState({}))
   }
 
   render(){
@@ -57,13 +53,9 @@ const meansUIlist = function(){
       const result = []
       if(viewStateVal('realms-dao', 'currentRealm')!=null){
         iterateLLfull(viewStateVal('means-dao', 'root-means-by-realm')[viewStateVal('realms-dao', 'currentRealm').id], (mean)=>{
-          result.push(<ListGroupItem>{meanUI(mean, 20)}</ListGroupItem>)
+          result.push(<ListGroupItem key={'mean_'+mean.id}>{meanUI(mean, 20)}</ListGroupItem>)
         })
       }
-      // return sortByField(
-      //   viewStateVal('means-dao', 'means')
-      //     .map((mean)=>mean, (mean)=>mean.parentid==null && mean.realmid == viewStateVal('realms-dao', 'currentRealm').id), 'position')
-      //   .map((mean)=><ListGroupItem>{meanUI(mean, 20)}</ListGroupItem>)
       return result
     } else {
       return "Loading..."

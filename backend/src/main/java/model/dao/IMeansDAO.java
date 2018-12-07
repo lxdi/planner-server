@@ -18,6 +18,7 @@ public interface IMeansDAO {
     Mean meanByTitle(String title);
     //void assignQuarter(HQuarter HQuarter, Mean mean, Integer position);
     void validateMean(Mean mean);
+    Mean getPrevMean(Mean mean);
 
 
 

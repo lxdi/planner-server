@@ -12,9 +12,7 @@ import org.springframework.web.util.NestedServletException;
 import orm_tests.conf.ATestsWithTargetsMeansQuartalsGenerated;
 
 import static org.junit.Assert.assertTrue;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -106,6 +104,64 @@ public class MeansRESTControllerTests extends ATestsWithTargetsMeansQuartalsGene
         MvcResult result = mockMvc.perform(post("/mean/update")
                 .contentType(MediaType.APPLICATION_JSON).content(content))
                 .andExpect(status().isOk()).andReturn();
+    }
+
+    @Test
+    public void deletingTest() throws Exception {
+        Mean lastMean = new Mean("last mean", realm);
+        meansDao.saveOrUpdate(lastMean);
+
+        Mean middleMean = new Mean("middle mean", realm);
+        middleMean.setNext(lastMean);
+        meansDao.saveOrUpdate(middleMean);
+
+        Mean firstMean = new Mean("first mean", realm);
+        firstMean.setNext(middleMean);
+        meansDao.saveOrUpdate(firstMean);
+
+        MvcResult result = mockMvc.perform(delete("/mean/delete/"+middleMean.getId()))
+                .andExpect(status().isOk()).andReturn();
+
+        firstMean = meansDao.meanById(firstMean.getId());
+        assertTrue(firstMean.getNext().getId()==lastMean.getId());
+
+        middleMean = meansDao.meanById(middleMean.getId());
+        assertTrue(middleMean==null);
+
+    }
+
+    @Test
+    public void deletingWithChildrenTest() throws Exception {
+        Mean parentMean = new Mean("test parent mean", realm);
+        meansDao.saveOrUpdate(parentMean);
+
+        Mean child1 = new Mean("child 1 mean", realm);
+        child1.setParent(parentMean);
+        meansDao.saveOrUpdate(child1);
+
+        Mean child2 = new Mean("child 2 mean", realm);
+        child2.setNext(child1);
+        child2.setParent(parentMean);
+        meansDao.saveOrUpdate(child2);
+
+        Mean child3 = new Mean("child 3 mean", realm);
+        child3.setNext(child2);
+        child3.setParent(parentMean);
+        meansDao.saveOrUpdate(child3);
+
+        Mean childChild = new Mean("childChild 1 mean", realm);
+        childChild.setParent(child2);
+        meansDao.saveOrUpdate(childChild);
+
+        MvcResult result = mockMvc.perform(delete("/mean/delete/"+parentMean.getId()))
+                .andExpect(status().isOk()).andReturn();
+
+        assertTrue(meansDao.meanById(parentMean.getId())==null);
+        assertTrue(meansDao.meanById(child1.getId())==null);
+        assertTrue(meansDao.meanById(child2.getId())==null);
+        assertTrue(meansDao.meanById(child3.getId())==null);
+        assertTrue(meansDao.meanById(childChild.getId())==null);
+
     }
 
 //    @Test

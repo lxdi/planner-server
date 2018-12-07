@@ -42,14 +42,28 @@ public class MeansDao implements IMeansDAO {
 
     @Override
     public void deleteMean(long id) {
+        //Mean meanToDelete = this.meanById(id);
+
         Mean meanToDelete = this.meanById(id);
+        Mean prevMean = this.getPrevMean(meanToDelete);
+        if(prevMean!=null ){
+            if(meanToDelete.getNext()!=null){
+                prevMean.setNext(meanToDelete.getNext());
+            } else {
+                prevMean.setNext(null);
+            }
+            this.saveOrUpdate(prevMean);
+        }
+
         for(Layer dependedLayer : layerDAO.getLyersOfMean(meanToDelete)){
             layerDAO.delete(dependedLayer);
         }
         for(Mean childMean : this.getChildren(meanToDelete)){
             this.deleteMean(childMean.getId());
         }
+
         sessionFactory.getCurrentSession().delete(meanToDelete);
+
     }
 
     @Override
@@ -59,7 +73,14 @@ public class MeansDao implements IMeansDAO {
 
     @Override
     public Mean meanByTitle(String title) {
-        return (Mean) sessionFactory.getCurrentSession().createCriteria(Mean.class).add(Restrictions.eq("title", title)).uniqueResult();
+        return (Mean) sessionFactory.getCurrentSession()
+                .createCriteria(Mean.class).add(Restrictions.eq("title", title)).uniqueResult();
+    }
+
+    @Override
+    public Mean getPrevMean(Mean mean) {
+        return (Mean) sessionFactory.getCurrentSession()
+                .createCriteria(Mean.class).add(Restrictions.eq("next", mean)).uniqueResult();
     }
 
 //    @Override
