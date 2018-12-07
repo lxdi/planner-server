@@ -29,12 +29,22 @@ registerEvent('means-dao', 'create', function(stateSetter, mean, parent){
   // mean.position = parent!=null? getMaxVal(parent.children, 'position')+1:
   //         getMaxVal(viewStateVal('means-dao', 'means').map((mean)=>mean, (mean)=>mean.parentid==null), 'position')+1
   if(parent!=null){
-    const head = findHead(parent.children, 'next')
+    const head = findHead(parent.children)
+    mean.nextid = head!=null? head.id: null
+  } else {
+    const head = findHead(viewStateVal('means-dao', 'root-means-by-realm')[mean.realmid])
     mean.nextid = head!=null? head.id: null
   }
   sendPut('/mean/create', JSON.stringify(mean), function(data) {
     viewStateVal('means-dao', 'means')[data.id] = data
     resolveMeans(viewStateVal('means-dao', 'means'))
+    if(data.parentid==null){
+      const meansByRealm = viewStateVal('means-dao', 'root-means-by-realm')[data.realmid]
+      if(meansByRealm!=null){
+        meansByRealm[data.id] = data
+      }
+      //resolveMeans(viewStateVal('means-dao', 'root-means-by-realm')[data.realmid])
+    }
     fireEvent('means-dao', 'mean-created', [data])
   })
 })
@@ -132,23 +142,24 @@ registerEvent('means-dao', 'replace-mean', (stateSetter, newParent, targetMean)=
 
 const importMeansDto = function(stateSetter, meansDto){
   if(viewStateVal('means-dao', 'means')==null){
-    stateSetter('means', means)
+    stateSetter('means', [])
   }
-  if(viewStateVal('means-dao', 'means-by-realm')==null){
-    stateSetter('means-by-realm', means)
+  if(viewStateVal('means-dao', 'root-means-by-realm')==null){
+    stateSetter('root-means-by-realm', [])
   }
   const means = viewStateVal('means-dao', 'means')
+  const rootMeansByRealm = viewStateVal('means-dao', 'root-means-by-realm')
   for(var i in meansDto){
     const currentMeanDto = meansDto[i]
-    if(means[currentMeanDto.realmid]==null){
-      means[currentMeanDto.realmid] = []
+    if(rootMeansByRealm[currentMeanDto.realmid]==null){
+      rootMeansByRealm[currentMeanDto.realmid] = []
     }
-    means[currentMeanDto.realmid][meansDto[i].id] = meansDto[i]
+    if(currentMeanDto.parentid==null){
+      rootMeansByRealm[currentMeanDto.realmid][currentMeanDto.id] = currentMeanDto
+    }
+    means[currentMeanDto.id] = currentMeanDto
   }
-  for(var realmid in means){
-    resolveMeans(means[realmid])
-  }
-  //resolveMeans(viewStateVal('means-dao', 'means'));
+  resolveMeans(viewStateVal('means-dao', 'means'));
 }
 
 const resolveMeans = function(means){
@@ -166,7 +177,8 @@ const resolveMean = function(mean){
   const means = viewStateVal('means-dao', 'means')
   for(var j in means){
     if(means[j].parentid == mean.id){
-      mean.children.push(means[j])
+      mean.children[means[j].id]=means[j]
+      mean.length++
     }
   }
   for(var tid in mean.targetsIds){

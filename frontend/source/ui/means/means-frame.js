@@ -6,6 +6,7 @@ import {Button, ButtonToolbar,  DropdownButton, MenuItem, ListGroup, ListGroupIt
 import {MeanModal} from './mean-modal'
 import {registerEvent, registerReaction, fireEvent, viewStateVal} from '../../controllers/eventor'
 import {sortByField} from '../../utils/import-utils'
+import {iterateLLfull} from '../../utils/linked-list'
 
 const offsetVal = 10
 
@@ -54,11 +55,16 @@ export class MeansFrame extends React.Component{
 const meansUIlist = function(){
     if(viewStateVal('means-dao', 'means')!=null){
       const result = []
-      iterateLL(viewStateVal('means-dao', 'means'), )
-      return sortByField(
-        viewStateVal('means-dao', 'means')
-          .map((mean)=>mean, (mean)=>mean.parentid==null && mean.realmid == viewStateVal('realms-dao', 'currentRealm').id), 'position')
-        .map((mean)=><ListGroupItem>{meanUI(mean, 20)}</ListGroupItem>)
+      if(viewStateVal('realms-dao', 'currentRealm')!=null){
+        iterateLLfull(viewStateVal('means-dao', 'root-means-by-realm')[viewStateVal('realms-dao', 'currentRealm').id], (mean)=>{
+          result.push(<ListGroupItem>{meanUI(mean, 20)}</ListGroupItem>)
+        })
+      }
+      // return sortByField(
+      //   viewStateVal('means-dao', 'means')
+      //     .map((mean)=>mean, (mean)=>mean.parentid==null && mean.realmid == viewStateVal('realms-dao', 'currentRealm').id), 'position')
+      //   .map((mean)=><ListGroupItem>{meanUI(mean, 20)}</ListGroupItem>)
+      return result
     } else {
       return "Loading..."
     }
@@ -83,13 +89,21 @@ const meanUI = function(mean, offset){
         </a>
       </div>
       <div style={{'margin-left': offset + 'px'}}>
-        {mean.children.map(function(childMean){
-            return <li draggable='true'>
-              {meanUI(childMean, offset + offsetVal)}
-            </li>
-        })}
+        {meanChildrenUI(mean.children, offset)}
         {mean.children!=null && mean.children.length==0?<div style={{width:'50px', height: '12px', border: '1px dotted lightgrey'}}></div>:null}
       </div>
     </div>
   )
+}
+
+const meanChildrenUI = function(children, offset){
+  const result = []
+  if(children!=null){
+    iterateLLfull(children, (mean)=>{
+      result.push(<li key={'mean_'+mean.id}>
+        {meanUI(mean, offset + offsetVal)}
+      </li>)
+    })
+  }
+  return result
 }
