@@ -45,3 +45,55 @@ export const findLast = function(nodes){
     }
   }
 }
+
+export const findPrev = function(nodes, obj){
+  for(var id in nodes){
+    if(nodes[id].nextid==obj.id){
+      return nodes[id]
+    }
+  }
+  return null
+}
+
+export const swapLL = function(nodes, obj1, obj2){
+
+  const prevObj1 = findPrev(nodes, obj1)
+  const prevObj2 = findPrev(nodes, obj2)
+  if(prevObj1!=null && prevObj1!=obj1 && prevObj1!=obj2){
+    prevObj1.nextid=obj2.id
+  }
+  if(prevObj2!=null && prevObj2!=obj1 && prevObj2!=obj2){
+    prevObj2.nextid=obj1.id
+  }
+
+  if(obj1.nextid==obj2.id){
+    obj1.nextid = obj2.nextid
+    obj2.nextid = obj1.id
+  } else {
+    if(obj2.nextid == obj1.id){
+      obj2.nextid = obj1.nextid
+      obj1.nextid = obj2.id
+    } else {
+      const tempNextid = obj1.nextid
+      obj1.nextid = obj2.nextid
+      obj2.nextid = tempNextid
+    }
+  }
+}
+
+export const insertLL = function(nodes, targetObj, sourceObj){
+  const prevTargetObj = findPrev(nodes, targetObj)
+  if(prevTargetObj!=null && prevTargetObj!=sourceObj){
+    prevTargetObj.nextid = sourceObj.id
+  }
+  nodes[sourceObj.id] = sourceObj
+  sourceObj.nextid = targetObj.id
+}
+
+export const removeFromLL = function(nodes, obj){
+  const prevObj = findPrev(nodes, obj)
+  if(prevObj!=null){
+      prevObj.nextid = obj.nextid
+  }
+  delete nodes[obj.id]
+}

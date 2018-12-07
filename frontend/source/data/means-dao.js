@@ -3,7 +3,7 @@ import {Protomean} from './creators'
 import {registerEvent, registerReaction, fireEvent, viewStateVal, registerReactionCombo} from '../controllers/eventor'
 import {getMaxVal} from '../utils/import-utils'
 import {insertObj, deleteObj, swapObjs, addObj} from '../utils/drag-utils'
-import {findHead, findLast, iterateLL} from '../utils/linked-list'
+import {findHead, findLast, iterateLL, swapLL, insertLL, removeFromLL} from '../utils/linked-list'
 
 
 registerEvent('means-dao', 'means-request', function(stateSetter){
@@ -98,19 +98,34 @@ registerEvent('means-dao', 'replace-mean', (stateSetter, newParent, targetMean)=
   const meanToDrag = viewStateVal('means-dao', 'draggableMean')
   if(meanToDrag!=null && meanToDrag!=targetMean && !isMeanDescendsFrom(targetMean, meanToDrag)){
     const oldParent = meanToDrag.parentid!=null? viewStateVal('means-dao', 'means')[meanToDrag.parentid]:null
-    if(oldParent!=null && oldParent==newParent){
-      //swapObjs(oldParent, meanToDrag.position, targetMean.position, 'children', 'position')
-    } else {
-      if(newParent!=null){
-        // insertObj(newParent, meanToDrag, targetMean.position, 'children', 'position')
-        // meanToDrag.parentid = newParent!=null? newParent.id: null
-      } else{
-        // const root = generateRootArray(viewStateVal('means-dao', 'means'), 'parentid', 'position')
-        // insertObj({children: root}, meanToDrag, targetMean.position, 'children', 'position')
-        // meanToDrag.parentid = null
+    if(oldParent==null && newParent==null){
+      //swap within root
+      swapLL(viewStateVal('means-dao', 'root-means-by-realm')[meanToDrag.realmid], meanToDrag, targetMean)
+    }
+    if(oldParent==null && newParent!=null){
+      //insert to new parent
+      removeFromLL(viewStateVal('means-dao', 'root-means-by-realm')[meanToDrag.realmid], meanToDrag)
+      insertLL(newParent.children, targetMean, meanToDrag)
+      meanToDrag.parentid = newParent.id
+    }
+    if(oldParent!=null && newParent==null){
+      //insert to root
+      removeFromLL(oldParent.children, meanToDrag)
+      insertLL(viewStateVal('means-dao', 'root-means-by-realm')[meanToDrag.realmid], targetMean, meanToDrag)
+      meanToDrag.parentid = null
+    }
+    if(oldParent!=null && newParent!=null){
+      if(oldParent==newParent){
+        //swap within new parent (or within old parent)
+        swapLL(oldParent.children, meanToDrag, targetMean)
+      } else {
+        //insert to new parent
+        removeFromLL(oldParent.children, meanToDrag)
+        insertLL(newParent.children, targetMean, meanToDrag)
+        meanToDrag.parentid = newParent.id
       }
     }
-    //resolveMeans(viewStateVal('means-dao', 'means'))
+    resolveMeans(viewStateVal('means-dao', 'means'))
   }
 })
 
