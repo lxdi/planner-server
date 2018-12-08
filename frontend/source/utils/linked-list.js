@@ -56,52 +56,74 @@ export const findPrev = function(nodes, obj){
 }
 
 export const swapLL = function(nodes, obj1, obj2){
-
-  const prevObj1 = findPrev(nodes, obj1)
-  const prevObj2 = findPrev(nodes, obj2)
-  if(prevObj1!=null && prevObj1!=obj1 && prevObj1!=obj2){
-    prevObj1.nextid=obj2.id
-  }
-  if(prevObj2!=null && prevObj2!=obj1 && prevObj2!=obj2){
-    prevObj2.nextid=obj1.id
-  }
-
-  if(obj1.nextid==obj2.id){
-    obj1.nextid = obj2.nextid
-    obj2.nextid = obj1.id
-  } else {
-    if(obj2.nextid == obj1.id){
-      obj2.nextid = obj1.nextid
-      obj1.nextid = obj2.id
-    } else {
-      const tempNextid = obj1.nextid
-      obj1.nextid = obj2.nextid
-      obj2.nextid = tempNextid
+  const altered = []
+  if(obj1!=obj2){
+    const prevObj1 = findPrev(nodes, obj1)
+    const prevObj2 = findPrev(nodes, obj2)
+    if(prevObj1!=null && prevObj1!=obj1 && prevObj1!=obj2){
+      prevObj1.nextid=obj2.id
+      altered.push(prevObj1)
     }
+    if(prevObj2!=null && prevObj2!=obj1 && prevObj2!=obj2){
+      prevObj2.nextid=obj1.id
+      altered.push(prevObj2)
+    }
+
+    if(obj1.nextid==obj2.id){
+      obj1.nextid = obj2.nextid
+      obj2.nextid = obj1.id
+    } else {
+      if(obj2.nextid == obj1.id){
+        obj2.nextid = obj1.nextid
+        obj1.nextid = obj2.id
+      } else {
+        const tempNextid = obj1.nextid
+        obj1.nextid = obj2.nextid
+        obj2.nextid = tempNextid
+      }
+    }
+    altered.push(obj1)
+    altered.push(obj2)
   }
+  return altered
 }
 
 export const insertLL = function(nodes, targetObj, sourceObj){
-  const prevTargetObj = findPrev(nodes, targetObj)
-  if(prevTargetObj!=null && prevTargetObj!=sourceObj){
-    prevTargetObj.nextid = sourceObj.id
+  const altered = []
+  if(targetObj!=sourceObj){
+    const prevTargetObj = findPrev(nodes, targetObj)
+    if(prevTargetObj!=null && prevTargetObj!=sourceObj){
+      prevTargetObj.nextid = sourceObj.id
+      altered.push(prevTargetObj)
+    }
+    nodes[sourceObj.id] = sourceObj
+    sourceObj.nextid = targetObj.id
+    altered.push(sourceObj)
+    altered.push(targetObj)
   }
-  nodes[sourceObj.id] = sourceObj
-  sourceObj.nextid = targetObj.id
+  return altered
 }
 
 export const removeFromLL = function(nodes, obj){
+  const altered = []
   const prevObj = findPrev(nodes, obj)
   if(prevObj!=null){
       prevObj.nextid = obj.nextid
+      altered.push(prevObj)
   }
   delete nodes[obj.id]
+  altered.push(obj)
+  return altered
 }
 
 export const addToLastLL = function(nodes, obj){
+  const altered = []
   const last = findLast(nodes)
   if(last != null){
     last.nextid = obj.id
+    altered.push(last)
   }
   nodes[obj.id] = obj
+  altered.push(obj)
+  return altered
 }

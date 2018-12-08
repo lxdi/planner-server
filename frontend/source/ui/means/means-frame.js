@@ -69,7 +69,7 @@ const meanUI = function(mean, offset){
       <div style={{'margin-bottom': '5px'}}>
         <a href="#" onClick={()=>fireEvent('mean-modal', 'open', [mean])}
           onDragStart={()=>fireEvent('means-dao', 'add-draggable', [mean])}
-          onDragEnd={()=>fireEvent('means-dao', 'remove-draggable', [])}
+          onDragEnd={()=>{console.log('on drag end'); fireEvent('means-dao', 'draggable-save-altered'); fireEvent('means-dao', 'remove-draggable', [])}}
           onDragOver={(e)=>{e.preventDefault();fireEvent('means-dao', 'replace-mean', [parentMean, mean])}}>
            {mean.children.length==0?
               <span style={{'font-weight': 'bold'}}>{mean.title}</span>
