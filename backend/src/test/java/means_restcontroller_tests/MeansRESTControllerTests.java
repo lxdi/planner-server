@@ -1,3 +1,5 @@
+package means_restcontroller_tests;
+
 import controllers.MeansRESTController;
 import model.dto.mean.MeansDtoMapper;
 import model.entities.Mean;
@@ -31,58 +33,6 @@ public class MeansRESTControllerTests extends ATestsWithTargetsMeansQuartalsGene
         super.init();
         meansRESTController = new MeansRESTController(meansDao, meansDtoMapper);
         mockMvc = MockMvcBuilders.standaloneSetup(meansRESTController).build();
-    }
-
-    @Test
-    public void createTest() throws Exception {
-        String content = "{\"id\":0,\"title\":\"new mean\",\"parentid\":2, \"targetsIds\":[1, 4] ,\"children\":[], \"realmid\":1}";
-        MvcResult result = mockMvc.perform(put("/mean/create")
-                .contentType(MediaType.APPLICATION_JSON).content(content))
-                .andExpect(status().isOk()).andReturn();
-
-        int newId = 4;
-        assertTrue(meansDao.meanById(newId)!=null);
-        assertTrue(meansDao.meanById(newId).getTitle().equals("new mean"));
-        assertTrue(meansDao.meanById(newId).getTargets().size()==2);
-        assertTrue(meansDao.meanById(newId).getTargets().get(0).getTitle().equals(defaultParentTarget) ||
-                meansDao.meanById(newId).getTargets().get(0).getTitle().equals(defaultChildChildTarget));
-        assertTrue(meansDao.meanById(newId).getTargets().get(1).getTitle().equals(defaultParentTarget) ||
-                meansDao.meanById(newId).getTargets().get(1).getTitle().equals(defaultChildChildTarget));
-        assertTrue(result.getResponse().getContentAsString().contains("\"id\":"+newId));
-        assertTrue(result.getResponse().getContentAsString().contains("new mean"));
-        System.out.println(result.getResponse().getContentAsString());
-    }
-
-    @Test(expected = NestedServletException.class)
-    public void createMeanWithoutRealm() throws Exception {
-        String content = "{\"title\":\"Parent mean changed\",\"parentid\":0, \"targetsIds\":[1]}";
-        MvcResult result = mockMvc.perform(put("/mean/create")
-                .contentType(MediaType.APPLICATION_JSON).content(content))
-                .andExpect(status().isOk()).andReturn();
-    }
-
-    @Test
-    public void createMeanWithNotExistingRealm() {
-        String content = "{\"id\":1,\"title\":\"Parent mean changed\",\"parentid\":0, \"targetsIds\":[1], \"realmid\":100500}";
-        try {
-            MvcResult result = mockMvc.perform(post("/mean/update")
-                    .contentType(MediaType.APPLICATION_JSON).content(content))
-                    .andExpect(status().isOk()).andReturn();
-        } catch (Exception ex){
-            if(ex instanceof NestedServletException){
-                assertTrue(ex.getMessage().contains("Realm doesn't exist with id = 100500"));
-                return;
-            }
-        }
-        throw new AssertionError();
-    }
-
-    @Test(expected = NestedServletException.class)
-    public void createMeanWithIdGtThanZero() throws Exception {
-        String content = "{\"id\":1,\"title\":\"new mean\",\"parentid\":2, \"targetsIds\":[1, 4] ,\"children\":[], \"realmid\":1}";
-        MvcResult result = mockMvc.perform(put("/mean/create")
-                .contentType(MediaType.APPLICATION_JSON).content(content))
-                .andExpect(status().isOk()).andReturn();
     }
 
     @Test

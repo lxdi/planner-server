@@ -74,12 +74,19 @@ public class MeansRESTController {
     }
 
     @RequestMapping(path = "/mean/create" , method = RequestMethod.PUT)
-    public ResponseEntity<MeanDtoLazy> createTarget(@RequestBody MeanDtoLazy meanDtoLazy){
-        assert meanDtoLazy.getId()==0;
+    public ResponseEntity<MeanDtoLazy> create(@RequestBody MeanDtoLazy meanDtoLazy){
+        assert meanDtoLazy.getId()==0 && meanDtoLazy.getNextid()==null;
         Mean mean = meansDtoMapper.mapToEntity(meanDtoLazy);
+        Mean prevMean = meansDAO.getLastOfChildren(mean.getParent());
         meansDAO.validateMean(mean);
         //TODO do not save the mean if layers are not valid
         meansDAO.saveOrUpdate(mean);
+
+        if(prevMean!=null){
+            prevMean.setNext(mean);
+            meansDAO.saveOrUpdate(prevMean);
+        }
+
         saveLayers(meanDtoLazy.getLayers(), mean.getId());
         return new ResponseEntity<MeanDtoLazy>(meansDtoMapper.mapToDto(mean), HttpStatus.OK);
     }

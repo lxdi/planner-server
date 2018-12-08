@@ -3,7 +3,7 @@ import {Protomean} from './creators'
 import {registerEvent, registerReaction, fireEvent, viewStateVal, registerReactionCombo} from '../controllers/eventor'
 import {getMaxVal} from '../utils/import-utils'
 import {insertObj, deleteObj, swapObjs, addObj} from '../utils/drag-utils'
-import {findHead, findLast, iterateLL, swapLL, insertLL, removeFromLL} from '../utils/linked-list'
+import {swapLL, insertLL, removeFromLL, addToLastLL} from '../utils/linked-list'
 
 
 registerEvent('means-dao', 'means-request', function(stateSetter){
@@ -26,14 +26,15 @@ registerEvent('means-dao', 'create', function(stateSetter, mean, parent){
   for(var i in mean.targets){
     mean.targetsIds.push(mean.targets[i].id)
   }
-  if(parent!=null){
-    const head = findHead(parent.children)
-    mean.nextid = head!=null? head.id: null
-  } else {
-    const head = findHead(viewStateVal('means-dao', 'root-means-by-realm')[mean.realmid])
-    mean.nextid = head!=null? head.id: null
-  }
   sendPut('/mean/create', JSON.stringify(mean), function(data) {
+    if(data.parentid!=null){
+      addToLastLL(viewStateVal('means-dao', 'means')[data.parentid].children, data)
+    } else{
+      if(viewStateVal('means-dao', 'root-means-by-realm')[data.realmid]==null){
+        viewStateVal('means-dao', 'root-means-by-realm')[data.realmid]=[]
+      }
+      addToLastLL(viewStateVal('means-dao', 'root-means-by-realm')[data.realmid], data)
+    }
     importOneMeanDto(data)
     resolveMeans(viewStateVal('means-dao', 'means'))
     fireEvent('means-dao', 'mean-created', [data])

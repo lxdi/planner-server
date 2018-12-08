@@ -19,6 +19,7 @@ public interface IMeansDAO {
     //void assignQuarter(HQuarter HQuarter, Mean mean, Integer position);
     void validateMean(Mean mean);
     Mean getPrevMean(Mean mean);
+    Mean getLastOfChildren(Mean mean);
 
 
 

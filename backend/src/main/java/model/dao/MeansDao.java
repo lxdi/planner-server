@@ -4,6 +4,7 @@ import model.entities.Layer;
 import model.entities.Mean;
 import model.entities.HQuarter;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -83,33 +84,13 @@ public class MeansDao implements IMeansDAO {
                 .createCriteria(Mean.class).add(Restrictions.eq("next", mean)).uniqueResult();
     }
 
-//    @Override
-//    public void assignQuarter(HQuarter HQuarter, Mean mean, Integer position) {
-//        if(mean.getHquarter()==null || mean.getHquarter().getId()!= HQuarter.getId()) {
-//            mean.setHquarter(HQuarter);
-//            mean.setPosition(position);
-//            validateByQuarter(mean);
-//            this.saveOrUpdate(mean);
-//        }
-//    }
-
-//    @Override
-//    public void assignQuarter(@NotNull HQuarter quarter, @NotNull Mean mean, @NotNull Integer position) {
-//        if (mean.getHquarter() == null || mean.getHquarter().getId() != quarter.getId()) {
-//            int meansAlreadyAssigned = sessionFactory.getCurrentSession().createCriteria(Mean.class)
-//                    .add(Restrictions.eq("realm", mean.getRealm()))
-//                    .add(Restrictions.eq("quarter", quarter))
-//                    .add(Restrictions.eq("position", position))
-//                    .list().size();
-//            if (meansAlreadyAssigned == 0) {
-//                mean.setHquarter(quarter);
-//                mean.setPosition(position);
-//                this.saveOrUpdate(mean);
-//            } else {
-//                throw new RuntimeException("Cannot assign mean to quarter, position is already occupied");
-//            }
-//        }
-//    }
+    @Override
+    public Mean getLastOfChildren(Mean mean) {
+        return (Mean) sessionFactory.getCurrentSession()
+                .createCriteria(Mean.class)
+                .add(mean!=null?Restrictions.eq("parent", mean):Restrictions.isNull("parent"))
+                .add(Restrictions.isNull("next")).uniqueResult();
+    }
 
     @Override
     public void validateMean(Mean mean){

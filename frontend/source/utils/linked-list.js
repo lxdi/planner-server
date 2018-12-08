@@ -97,3 +97,11 @@ export const removeFromLL = function(nodes, obj){
   }
   delete nodes[obj.id]
 }
+
+export const addToLastLL = function(nodes, obj){
+  const last = findLast(nodes)
+  if(last != null){
+    last.nextid = obj.id
+  }
+  nodes[obj.id] = obj
+}
