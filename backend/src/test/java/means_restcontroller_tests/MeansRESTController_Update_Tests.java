@@ -32,7 +32,7 @@ public class MeansRESTController_Update_Tests extends ATestsWithTargetsMeansQuar
     @Before
     public void init(){
         super.init();
-        meansRESTController = new MeansRESTController(meansDao, meansDtoMapper);
+        meansRESTController = new MeansRESTController(meansDao, meansDtoMapper, realmDAO);
         mockMvc = MockMvcBuilders.standaloneSetup(meansRESTController).build();
     }
 

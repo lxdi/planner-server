@@ -113,6 +113,7 @@ export const removeFromLL = function(nodes, obj){
   }
   delete nodes[obj.id]
   obj.nextid = null
+  obj.parentid = null
   altered.push(obj)
   return altered
 }

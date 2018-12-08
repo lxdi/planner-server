@@ -3,6 +3,7 @@ package model.dao;
 import model.entities.Layer;
 import model.entities.Mean;
 import model.entities.HQuarter;
+import model.entities.Realm;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.Restrictions;
@@ -85,9 +86,10 @@ public class MeansDao implements IMeansDAO {
     }
 
     @Override
-    public Mean getLastOfChildren(Mean mean) {
+    public Mean getLastOfChildren(Mean mean, Realm realm) {
         return (Mean) sessionFactory.getCurrentSession()
                 .createCriteria(Mean.class)
+                .add(Restrictions.eq("realm", realm))
                 .add(mean!=null?Restrictions.eq("parent", mean):Restrictions.isNull("parent"))
                 .add(Restrictions.isNull("next")).uniqueResult();
     }

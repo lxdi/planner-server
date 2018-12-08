@@ -2,6 +2,7 @@ package model.dao;
 
 import model.entities.Mean;
 import model.entities.HQuarter;
+import model.entities.Realm;
 
 import java.util.List;
 
@@ -19,7 +20,7 @@ public interface IMeansDAO {
     //void assignQuarter(HQuarter HQuarter, Mean mean, Integer position);
     void validateMean(Mean mean);
     Mean getPrevMean(Mean mean);
-    Mean getLastOfChildren(Mean mean);
+    Mean getLastOfChildren(Mean mean, Realm realm);
 
 
 

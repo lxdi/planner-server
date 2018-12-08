@@ -26,6 +26,7 @@ registerEvent('means-dao', 'create', function(stateSetter, mean, parent){
   for(var i in mean.targets){
     mean.targetsIds.push(mean.targets[i].id)
   }
+  mean.realmid = viewStateVal('realms-dao', 'currentRealm').id
   sendPut('/mean/create', JSON.stringify(mean), function(data) {
     //-- need this to update a nextid locally of means which are peering to the new mean
     if(data.parentid!=null){

@@ -1,9 +1,6 @@
 package controllers;
 
-import model.dao.ILayerDAO;
-import model.dao.IMeansDAO;
-import model.dao.ISubjectDAO;
-import model.dao.ITasksDAO;
+import model.dao.*;
 import model.dto.layer.LayerDtoLazy;
 import model.dto.layer.LayersDtoMapper;
 import model.dto.mean.MeanDtoLazy;
@@ -14,6 +11,7 @@ import model.dto.task.TaskDtoLazy;
 import model.dto.task.TasksDtoMapper;
 import model.entities.Layer;
 import model.entities.Mean;
+import model.entities.Realm;
 import model.entities.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -58,12 +56,16 @@ public class MeansRESTController {
     @Autowired
     TasksDtoMapper tasksDtoMapper;
 
+    @Autowired
+    IRealmDAO realmDAO;
+
 
     public MeansRESTController(){}
 
-    public MeansRESTController(IMeansDAO meansDAO, MeansDtoMapper meansDtoMapper){
+    public MeansRESTController(IMeansDAO meansDAO, MeansDtoMapper meansDtoMapper, IRealmDAO realmDAO){
         this.meansDAO = meansDAO;
         this.meansDtoMapper = meansDtoMapper;
+        this.realmDAO = realmDAO;
     }
 
     @RequestMapping(path = "/mean/all/lazy")
@@ -75,9 +77,10 @@ public class MeansRESTController {
 
     @RequestMapping(path = "/mean/create" , method = RequestMethod.PUT)
     public ResponseEntity<MeanDtoLazy> create(@RequestBody MeanDtoLazy meanDtoLazy){
-        assert meanDtoLazy.getId()==0 && meanDtoLazy.getNextid()==null;
+        assert meanDtoLazy.getId()==0 && meanDtoLazy.getNextid()==null && meanDtoLazy.getRealmid()>0;
+        Realm realm = realmDAO.realmById(meanDtoLazy.getRealmid());
         Mean mean = meansDtoMapper.mapToEntity(meanDtoLazy);
-        Mean prevMean = meansDAO.getLastOfChildren(mean.getParent());
+        Mean prevMean = meansDAO.getLastOfChildren(mean.getParent(), realm);
         meansDAO.validateMean(mean);
         //TODO do not save the mean if layers are not valid
         meansDAO.saveOrUpdate(mean);
