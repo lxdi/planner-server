@@ -4,6 +4,7 @@ import model.entities.Layer;
 import model.entities.Mean;
 import model.entities.HQuarter;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,14 +43,28 @@ public class MeansDao implements IMeansDAO {
 
     @Override
     public void deleteMean(long id) {
+        //Mean meanToDelete = this.meanById(id);
+
         Mean meanToDelete = this.meanById(id);
+        Mean prevMean = this.getPrevMean(meanToDelete);
+        if(prevMean!=null ){
+            if(meanToDelete.getNext()!=null){
+                prevMean.setNext(meanToDelete.getNext());
+            } else {
+                prevMean.setNext(null);
+            }
+            this.saveOrUpdate(prevMean);
+        }
+
         for(Layer dependedLayer : layerDAO.getLyersOfMean(meanToDelete)){
             layerDAO.delete(dependedLayer);
         }
         for(Mean childMean : this.getChildren(meanToDelete)){
             this.deleteMean(childMean.getId());
         }
+
         sessionFactory.getCurrentSession().delete(meanToDelete);
+
     }
 
     @Override
@@ -59,36 +74,23 @@ public class MeansDao implements IMeansDAO {
 
     @Override
     public Mean meanByTitle(String title) {
-        return (Mean) sessionFactory.getCurrentSession().createCriteria(Mean.class).add(Restrictions.eq("title", title)).uniqueResult();
+        return (Mean) sessionFactory.getCurrentSession()
+                .createCriteria(Mean.class).add(Restrictions.eq("title", title)).uniqueResult();
     }
 
-//    @Override
-//    public void assignQuarter(HQuarter HQuarter, Mean mean, Integer position) {
-//        if(mean.getHquarter()==null || mean.getHquarter().getId()!= HQuarter.getId()) {
-//            mean.setHquarter(HQuarter);
-//            mean.setPosition(position);
-//            validateByQuarter(mean);
-//            this.saveOrUpdate(mean);
-//        }
-//    }
+    @Override
+    public Mean getPrevMean(Mean mean) {
+        return (Mean) sessionFactory.getCurrentSession()
+                .createCriteria(Mean.class).add(Restrictions.eq("next", mean)).uniqueResult();
+    }
 
-//    @Override
-//    public void assignQuarter(@NotNull HQuarter quarter, @NotNull Mean mean, @NotNull Integer position) {
-//        if (mean.getHquarter() == null || mean.getHquarter().getId() != quarter.getId()) {
-//            int meansAlreadyAssigned = sessionFactory.getCurrentSession().createCriteria(Mean.class)
-//                    .add(Restrictions.eq("realm", mean.getRealm()))
-//                    .add(Restrictions.eq("quarter", quarter))
-//                    .add(Restrictions.eq("position", position))
-//                    .list().size();
-//            if (meansAlreadyAssigned == 0) {
-//                mean.setHquarter(quarter);
-//                mean.setPosition(position);
-//                this.saveOrUpdate(mean);
-//            } else {
-//                throw new RuntimeException("Cannot assign mean to quarter, position is already occupied");
-//            }
-//        }
-//    }
+    @Override
+    public Mean getLastOfChildren(Mean mean) {
+        return (Mean) sessionFactory.getCurrentSession()
+                .createCriteria(Mean.class)
+                .add(mean!=null?Restrictions.eq("parent", mean):Restrictions.isNull("parent"))
+                .add(Restrictions.isNull("next")).uniqueResult();
+    }
 
     @Override
     public void validateMean(Mean mean){

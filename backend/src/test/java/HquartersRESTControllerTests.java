@@ -107,7 +107,7 @@ public class HquartersRESTControllerTests extends AbstractTestsWithTargets {
 
     @Test
     public void assigningMeanTest() throws Exception {
-        Mean mean = new Mean("test Mean", realm, 2);
+        Mean mean = new Mean("test Mean", realm);
         meansDAO.saveOrUpdate(mean);
 
         HQuarter hQuarter = quarterDAO.getAllHQuartals().get(0);
@@ -132,7 +132,7 @@ public class HquartersRESTControllerTests extends AbstractTestsWithTargets {
 
     @Test
     public void unassigningTest() throws Exception {
-        Mean mean = new Mean("test Mean", realm, 2);
+        Mean mean = new Mean("test Mean", realm);
         meansDAO.saveOrUpdate(mean);
 
         HQuarter hQuarter = quarterDAO.getAllHQuartals().get(0);

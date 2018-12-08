@@ -19,7 +19,9 @@ public class Mean {
     long id;
     String title;
     String criteria;
-    long position;
+
+    @OneToOne
+    Mean next;
 
     @Fetch(FetchMode.SUBSELECT) // TODO duplicates was added in targets
     @ManyToMany(fetch = FetchType.EAGER)//(cascade = CascadeType.PERSIST)
@@ -43,11 +45,10 @@ public class Mean {
 
     public Mean(){}
 
-    public Mean(String title, Realm realm, long position){
-        assert title!=null && !title.trim().equals("") && realm!=null && position>0;
+    public Mean(String title, Realm realm){
+        assert title!=null && !title.trim().equals("") && realm!=null;
         this.realm = realm;
         this.title = title;
-        this.position = position;
     }
 
     public long getId() {
@@ -99,10 +100,11 @@ public class Mean {
         this.layers = layers;
     }
 
-    public long getPosition() {
-        return position;
+    public Mean getNext() {
+        return next;
     }
-    public void setPosition(long position) {
-        this.position = position;
+
+    public void setNext(Mean next) {
+        this.next = next;
     }
 }

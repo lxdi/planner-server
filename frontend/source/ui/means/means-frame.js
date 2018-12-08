@@ -6,6 +6,7 @@ import {Button, ButtonToolbar,  DropdownButton, MenuItem, ListGroup, ListGroupIt
 import {MeanModal} from './mean-modal'
 import {registerEvent, registerReaction, fireEvent, viewStateVal} from '../../controllers/eventor'
 import {sortByField} from '../../utils/import-utils'
+import {iterateLLfull} from '../../utils/linked-list'
 
 const offsetVal = 10
 
@@ -18,17 +19,14 @@ export class MeansFrame extends React.Component{
       this.setState({})
     }.bind(this)
 
-    registerReaction('means-frame', 'means-dao', ['mean-created', 'mean-deleted', 'mean-modified'], function(){
-      this.setState({})
-    }.bind(this))
-
     registerReaction('means-frame', 'targets-dao', 'target-deleted', (state, targetid)=>{
       fireEvent('means-dao', 'delete-depended-means', [targetid])
       this.setState({})
     })
 
     registerReaction('means-frame', 'realms-dao', 'change-current-realm', ()=>this.setState({}))
-    registerReaction('means-frame', 'means-dao', ['means-received', 'replace-mean'], ()=>this.setState({}))
+    registerReaction('means-frame', 'means-dao',
+            ['means-received', 'replace-mean', 'mean-created', 'mean-deleted', 'mean-modified', 'modify-list', 'draggable-add-as-child'], ()=>this.setState({}))
   }
 
   render(){
@@ -44,7 +42,8 @@ export class MeansFrame extends React.Component{
           <ListGroup style={{marginBottom: '0px'}}>
             {meansUIlist()}
           </ListGroup>
-          <div style={{width:'50px', height: '12px', border: '1px dotted lightgrey'}}></div>
+          <div style={{width:'50px', height: '12px', border: '1px dotted lightgrey'}}
+                onDragOver={(e)=>{e.preventDefault();fireEvent('means-dao', 'draggable-add-as-child', [null])}}></div>
         </div>
       </div>
     )
@@ -53,10 +52,13 @@ export class MeansFrame extends React.Component{
 
 const meansUIlist = function(){
     if(viewStateVal('means-dao', 'means')!=null){
-      return sortByField(
-        viewStateVal('means-dao', 'means')
-          .map((mean)=>mean, (mean)=>mean.parentid==null && mean.realmid == viewStateVal('realms-dao', 'currentRealm').id), 'position')
-        .map((mean)=><ListGroupItem>{meanUI(mean, 20)}</ListGroupItem>)
+      const result = []
+      if(viewStateVal('realms-dao', 'currentRealm')!=null){
+        iterateLLfull(viewStateVal('means-dao', 'root-means-by-realm')[viewStateVal('realms-dao', 'currentRealm').id], (mean)=>{
+          result.push(<ListGroupItem key={'mean_'+mean.id}>{meanUI(mean, 20)}</ListGroupItem>)
+        })
+      }
+      return result
     } else {
       return "Loading..."
     }
@@ -65,12 +67,13 @@ const meansUIlist = function(){
 const meanUI = function(mean, offset){
   const parentMean = mean.parentid!=null?viewStateVal('means-dao', 'means')[mean.parentid]:null
   return (
-    <div>
-      <div style={{'margin-bottom': '5px'}}
+    <div onDrop={()=>{fireEvent('means-dao', 'draggable-save-altered'); fireEvent('means-dao', 'remove-draggable', [])}}
+          onDragOver={(e)=>e.preventDefault()}>
+      <div style={{'margin-bottom': '5px'}}>
+        <a href="#" onClick={()=>fireEvent('mean-modal', 'open', [mean])}
+          draggable='true'
           onDragStart={()=>fireEvent('means-dao', 'add-draggable', [mean])}
-          onDragEnd={()=>fireEvent('means-dao', 'remove-draggable', [])}
           onDragOver={(e)=>{e.preventDefault();fireEvent('means-dao', 'replace-mean', [parentMean, mean])}}>
-        <a href="#" onClick={()=>fireEvent('mean-modal', 'open', [mean])}>
            {mean.children.length==0?
               <span style={{'font-weight': 'bold'}}>{mean.title}</span>
               :mean.title}
@@ -81,13 +84,24 @@ const meanUI = function(mean, offset){
         </a>
       </div>
       <div style={{'margin-left': offset + 'px'}}>
-        {mean.children.map(function(childMean){
-            return <li draggable='true'>
-              {meanUI(childMean, offset + offsetVal)}
-            </li>
-        })}
-        {mean.children!=null && mean.children.length==0?<div style={{width:'50px', height: '12px', border: '1px dotted lightgrey'}}></div>:null}
+        {meanChildrenUI(mean.children, offset)}
+        {mean.children!=null && mean.children.length==0?
+          <div style={{width:'50px', height: '12px', border: '1px dotted lightgrey'}}
+                onDragOver={(e)=>{e.preventDefault();fireEvent('means-dao', 'draggable-add-as-child', [mean])}}></div>
+          :null}
       </div>
     </div>
   )
+}
+
+const meanChildrenUI = function(children, offset){
+  const result = []
+  if(children!=null){
+    iterateLLfull(children, (mean)=>{
+      result.push(<li key={'mean_'+mean.id}>
+        {meanUI(mean, offset + offsetVal)}
+      </li>)
+    })
+  }
+  return result
 }

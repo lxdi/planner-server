@@ -1,3 +1,5 @@
+package means_restcontroller_tests;
+
 import controllers.MeansRESTController;
 import model.dto.mean.MeansDtoMapper;
 import model.entities.Mean;
@@ -12,15 +14,13 @@ import org.springframework.web.util.NestedServletException;
 import orm_tests.conf.ATestsWithTargetsMeansQuartalsGenerated;
 
 import static org.junit.Assert.assertTrue;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * Created by Alexander on 08.04.2018.
  */
-public class MeansRESTControllerTests extends ATestsWithTargetsMeansQuartalsGenerated {
+public class MeansRESTController_Creating_Tests extends ATestsWithTargetsMeansQuartalsGenerated {
 
     @Autowired
     MeansDtoMapper meansDtoMapper;
@@ -37,12 +37,12 @@ public class MeansRESTControllerTests extends ATestsWithTargetsMeansQuartalsGene
 
     @Test
     public void createTest() throws Exception {
-        String content = "{\"id\":0,\"title\":\"new mean\",\"parentid\":2, \"targetsIds\":[1, 4] ,\"children\":[], \"realmid\":1, \"position\":10}";
+        String content = "{\"id\":0,\"title\":\"new mean\",\"parentid\":2, \"targetsIds\":[1, 4] ,\"children\":[], \"realmid\":1}";
         MvcResult result = mockMvc.perform(put("/mean/create")
                 .contentType(MediaType.APPLICATION_JSON).content(content))
                 .andExpect(status().isOk()).andReturn();
 
-        int newId = 4;
+        long newId = meansDao.meanByTitle("new mean").getId();
         assertTrue(meansDao.meanById(newId)!=null);
         assertTrue(meansDao.meanById(newId).getTitle().equals("new mean"));
         assertTrue(meansDao.meanById(newId).getTargets().size()==2);
@@ -87,62 +87,61 @@ public class MeansRESTControllerTests extends ATestsWithTargetsMeansQuartalsGene
                 .andExpect(status().isOk()).andReturn();
     }
 
+
     @Test
-    public void updateTest() throws Exception {
-        String content = "{\"id\":1,\"title\":\"Parent mean changed\",\"parentid\":0, \"targetsIds\":[1], \"realmid\":1, \"position\":10}";
-        MvcResult result = mockMvc.perform(post("/mean/update")
+    public void createMeanOnTheLastPositionTest() throws Exception {
+        Mean mean = new Mean("parent mean test", realm);
+        meansDao.saveOrUpdate(mean);
+
+        Mean child2 = new Mean("child 2 mean test", realm);
+        child2.setParent(mean);
+        meansDao.saveOrUpdate(child2);
+
+        Mean child1 = new Mean("child 1 mean test", realm);
+        child1.setParent(mean);
+        child1.setNext(child2);
+        meansDao.saveOrUpdate(child1);
+
+        String content = "{\"id\":0,\"title\":\"new mean to add\"," +
+                "\"parentid\":"+mean.getId()+", " +
+                "\"children\":[]," +
+                "\"realmid\":1}";
+        MvcResult result = mockMvc.perform(put("/mean/create")
                 .contentType(MediaType.APPLICATION_JSON).content(content))
                 .andExpect(status().isOk()).andReturn();
 
-        assertTrue(meansDao.meanById(1).getTitle().equals("Parent mean changed"));
-        assertTrue(result.getResponse().getContentAsString().contains("\"id\":1"));
-        assertTrue(result.getResponse().getContentAsString().contains("Parent mean changed"));
-        System.out.println(result.getResponse().getContentAsString());
+        Mean newMean = meansDao.meanByTitle("new mean to add");
+        child2 = meansDao.meanById(child2.getId());
+        assertTrue(newMean.getParent().getId()==mean.getId());
+        assertTrue(newMean.getParent().getId()==mean.getId());
+        assertTrue(child2.getNext().getId()==newMean.getId());
     }
 
-    @Test(expected = NestedServletException.class)
-    public void updateMeanWithoutExistingId() throws Exception {
-        String content = "{\"id\":0,\"title\":\"Parent mean changed\",\"parentid\":0, \"targetsIds\":[1], \"realmid\":1}";
-        MvcResult result = mockMvc.perform(post("/mean/update")
+    @Test
+    public void createMeanOnTheLastPositionOfRootTest() throws Exception {
+
+        Mean root2 = new Mean("root 2 mean test", realm);
+        meansDao.saveOrUpdate(root2);
+
+        Mean root1 = new Mean("root 1 mean test", realm);
+        root1.setNext(root2);
+        meansDao.saveOrUpdate(root1);
+
+        Mean parentMean = meansDao.meanByTitle(parentMeanTitle);
+        parentMean.setNext(root1);
+        meansDao.saveOrUpdate(parentMean);
+
+        String content = "{\"id\":0,\"title\":\"new root mean to add\"," +
+                "\"children\":[]," +
+                "\"realmid\":1}";
+        MvcResult result = mockMvc.perform(put("/mean/create")
                 .contentType(MediaType.APPLICATION_JSON).content(content))
                 .andExpect(status().isOk()).andReturn();
-    }
 
-    @Test
-    public void replaceToOtherMeanTest() throws Exception {
-        Mean newParent = new Mean("new parent test", realm, 2);
-        meansDao.saveOrUpdate(newParent);
-        assertTrue(newParent.getId()>0);
-
-        Mean mean = meansDao.meanByTitle(childMeanTitle);
-        assertTrue(mean!=null && mean.getId()>0);
-
-        MvcResult result = mockMvc.perform(post("/mean/replace/"+mean.getId()+"/"+newParent.getId()))
-                .andExpect(status().isOk()).andReturn();
-
-        mean = meansDao.meanById(mean.getId());
-        assertTrue(mean.getParent().getId() == newParent.getId());
-
-    }
-
-    @Test
-    public void replaceToRootTest() throws Exception {
-        Mean mean = meansDao.meanByTitle(childMeanTitle);
-        assertTrue(mean.getParent()!=null);
-        assertTrue(mean!=null && mean.getId()>0);
-
-        MvcResult result = mockMvc.perform(post("/mean/replace/"+mean.getId()+"/0"))
-                .andExpect(status().isOk()).andReturn();
-
-        mean = meansDao.meanById(mean.getId());
-        assertTrue(mean.getParent()==null);
-
-    }
-
-    @Test(expected = NestedServletException.class)
-    public void replaceNotExistingTest() throws Exception {
-        MvcResult result = mockMvc.perform(post("/mean/replace/100500/0"))
-                .andExpect(status().isOk()).andReturn();
+        Mean newMean = meansDao.meanByTitle("new root mean to add");
+        root2 = meansDao.meanById(root2.getId());
+        assertTrue(newMean.getParent()==null);
+        assertTrue(root2.getNext().getId()==newMean.getId());
     }
 
 }

@@ -38,7 +38,9 @@ public class MeansDtoMapper implements IMapper<MeanDtoLazy, Mean> {
             meanDtoLazy.getTargetsIds().add(target.getId());
         }
         meanDtoLazy.setRealmid(mean.getRealm().getId());
-        meanDtoLazy.setPosition(mean.getPosition());
+        if(mean.getNext()!=null){
+            meanDtoLazy.setNextid(mean.getNext().getId());
+        }
 //        if(mean.getHquarter()!=null)
 //            meanDtoLazy.setQuarterid(mean.getHquarter().getId());
 //        if(mean.getPosition()!=null && mean.getPosition()>0){
@@ -53,7 +55,7 @@ public class MeansDtoMapper implements IMapper<MeanDtoLazy, Mean> {
     }
 
     public Mean mapToEntity(MeanDtoLazy meanDto){
-        Realm realm = null;
+        Realm realm;
         if(meanDto.getRealmid()!=null){
             realm = realmDAO.realmById(meanDto.getRealmid());
             if(realm==null){
@@ -63,11 +65,15 @@ public class MeansDtoMapper implements IMapper<MeanDtoLazy, Mean> {
             throw new RuntimeException("No realm in mean");
         }
 
-        Mean mean = new Mean(meanDto.getTitle(), realm, meanDto.getPosition());
+        Mean mean = new Mean(meanDto.getTitle(), realm);
         mean.setId(meanDto.getId());
         mean.setCriteria(meanDto.getCriteria());
         if(meanDto.getParentid()!=null)
             mean.setParent(meansDAO.meanById(meanDto.getParentid()));
+
+        if(meanDto.getNextid()!=null){
+            mean.setNext(meansDAO.meanById(meanDto.getNextid()));
+        }
 
         //TODO optimize in one call
         for(Long id : meanDto.getTargetsIds()){

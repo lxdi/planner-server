@@ -74,12 +74,19 @@ public class MeansRESTController {
     }
 
     @RequestMapping(path = "/mean/create" , method = RequestMethod.PUT)
-    public ResponseEntity<MeanDtoLazy> createTarget(@RequestBody MeanDtoLazy meanDtoLazy){
-        assert meanDtoLazy.getId()==0;
+    public ResponseEntity<MeanDtoLazy> create(@RequestBody MeanDtoLazy meanDtoLazy){
+        assert meanDtoLazy.getId()==0 && meanDtoLazy.getNextid()==null;
         Mean mean = meansDtoMapper.mapToEntity(meanDtoLazy);
+        Mean prevMean = meansDAO.getLastOfChildren(mean.getParent());
         meansDAO.validateMean(mean);
         //TODO do not save the mean if layers are not valid
         meansDAO.saveOrUpdate(mean);
+
+        if(prevMean!=null){
+            prevMean.setNext(mean);
+            meansDAO.saveOrUpdate(prevMean);
+        }
+
         saveLayers(meanDtoLazy.getLayers(), mean.getId());
         return new ResponseEntity<MeanDtoLazy>(meansDtoMapper.mapToDto(mean), HttpStatus.OK);
     }
@@ -97,15 +104,19 @@ public class MeansRESTController {
 
     @RequestMapping(path = "/mean/update" , method = RequestMethod.POST)
     public ResponseEntity<MeanDtoLazy> update(@RequestBody MeanDtoLazy meanDtoLazy){
-        assert meanDtoLazy.getId()>0;
-        Mean mean = meansDtoMapper.mapToEntity(meanDtoLazy);
-        meansDAO.validateMean(mean);
-        //TODO validate before saving
-        meansDAO.saveOrUpdate(mean);
-        saveLayers(meanDtoLazy.getLayers(), mean.getId());
-        return new ResponseEntity<MeanDtoLazy>(meansDtoMapper.mapToDto(mean), HttpStatus.OK);
+        return new ResponseEntity<MeanDtoLazy>(meansDtoMapper.mapToDto(updateMean(meanDtoLazy)), HttpStatus.OK);
     }
 
+    @RequestMapping(path = "/mean/update/list" , method = RequestMethod.POST)
+    public ResponseEntity<List<MeanDtoLazy>> updateList(@RequestBody List<MeanDtoLazy> meanDtoLazyList){
+        List<MeanDtoLazy> result = new ArrayList<>();
+        for(MeanDtoLazy meanDtoLazy : meanDtoLazyList) {
+            result.add(meansDtoMapper.mapToDto(updateMean(meanDtoLazy)));
+        }
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @Deprecated
     @RequestMapping(path = "/mean/replace/{meanid}/{parentid}" , method = RequestMethod.POST)
     public ResponseEntity<MeanDtoLazy> replace(@PathVariable("meanid") long meanid, @PathVariable("parentid") long parentid){
         Mean mean = meansDAO.meanById(meanid);
@@ -119,6 +130,15 @@ public class MeansRESTController {
         }
     }
 
+    private Mean updateMean(MeanDtoLazy meanDtoLazy){
+        assert meanDtoLazy.getId()>0;
+        Mean mean = meansDtoMapper.mapToEntity(meanDtoLazy);
+        meansDAO.validateMean(mean);
+        //TODO validate before saving
+        meansDAO.saveOrUpdate(mean);
+        saveLayers(meanDtoLazy.getLayers(), mean.getId());
+        return mean;
+    }
 
     private void saveLayers(List<LayerDtoLazy> layersDto, long meanId){
         if(layersDto!=null){

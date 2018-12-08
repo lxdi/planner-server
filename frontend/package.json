@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "start": "webpack -p",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "author": "",
   "license": "ISC",
@@ -21,6 +21,8 @@
     "@babel/preset-react": "^7.0.0",
     "babel-loader": "^8.0.4",
     "webpack": "^4.26.1",
-    "webpack-cli": "^3.1.2"
+    "webpack-cli": "^3.1.2",
+    "jest": "23.6.0",
+    "babel-core": "7.0.0-bridge.0"
   }
 }
