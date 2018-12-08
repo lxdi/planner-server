@@ -38,7 +38,8 @@ export class MeansFrame extends React.Component{
           </Button>
           <MeanModal/>
         </div>:null}
-        <div>
+        <div onDrop={()=>{fireEvent('means-dao', 'draggable-save-altered'); fireEvent('means-dao', 'remove-draggable', [])}}
+              onDragOver={(e)=>e.preventDefault()}>
           <ListGroup style={{marginBottom: '0px'}}>
             {meansUIlist()}
           </ListGroup>
@@ -67,8 +68,7 @@ const meansUIlist = function(){
 const meanUI = function(mean, offset){
   const parentMean = mean.parentid!=null?viewStateVal('means-dao', 'means')[mean.parentid]:null
   return (
-    <div onDrop={()=>{fireEvent('means-dao', 'draggable-save-altered'); fireEvent('means-dao', 'remove-draggable', [])}}
-          onDragOver={(e)=>e.preventDefault()}>
+    <div>
       <div style={{'margin-bottom': '5px'}}>
         <a href="#" onClick={()=>fireEvent('mean-modal', 'open', [mean])}
           draggable='true'
