@@ -65,20 +65,23 @@ const meansUIlist = function(){
     }
 }
 
+// <a href="#" onClick={()=>fireEvent('mean-modal', 'open', [mean])}
+//   draggable='true'
+//   onDragStart={()=>fireEvent('means-dao', 'add-draggable', [mean])}
+//   onDragOver={(e)=>{e.preventDefault();fireEvent('means-dao', 'replace-mean', [parentMean, mean])}}>
+//    {mean.children.length==0?
+//       <span style={{'font-weight': 'bold'}}>{mean.title}</span>
+//       :mean.title}
+//  </a>
+
 const meanUI = function(mean, offset){
   const parentMean = mean.parentid!=null?viewStateVal('means-dao', 'means')[mean.parentid]:null
   return (
     <div>
       <div style={{'margin-bottom': '5px'}}>
-        <a href="#" onClick={()=>fireEvent('mean-modal', 'open', [mean])}
-          draggable='true'
-          onDragStart={()=>fireEvent('means-dao', 'add-draggable', [mean])}
-          onDragOver={(e)=>{e.preventDefault();fireEvent('means-dao', 'replace-mean', [parentMean, mean])}}>
-           {mean.children.length==0?
-              <span style={{'font-weight': 'bold'}}>{mean.title}</span>
-              :mean.title}
-         </a>
-          <span style={{color: 'green'}}> {mean.targetsString()}</span>  <span/>
+         {draggableElem(mean.children.length==0?<span style={{'font-weight': 'bold'}}>{mean.title}</span>:mean.title,
+                          parentMean, mean, ()=>fireEvent('mean-modal', 'open', [mean]))}
+          <span style={{color: 'green'}}> {mean.targetsString()}</span>
         <a href="#" onClick={()=>fireEvent('mean-modal', 'open', [CreateMean(0, '', viewStateVal('realms-dao', 'currentRealm').id, []), mean])}>
           {addNewMeanTitle}
         </a>
@@ -92,6 +95,15 @@ const meanUI = function(mean, offset){
       </div>
     </div>
   )
+}
+
+const draggableElem = function(content, parentMean, mean, onClick){
+  return  <a href="#" onClick={onClick}
+            draggable='true'
+            onDragStart={()=>fireEvent('means-dao', 'add-draggable', [mean])}
+            onDragOver={(e)=>{e.preventDefault();fireEvent('means-dao', 'replace-mean', [parentMean, mean])}}>
+             {content}
+           </a>
 }
 
 const meanChildrenUI = function(children, offset){
