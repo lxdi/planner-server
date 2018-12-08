@@ -112,6 +112,7 @@ export const removeFromLL = function(nodes, obj){
       altered.push(prevObj)
   }
   delete nodes[obj.id]
+  obj.nextid = null
   altered.push(obj)
   return altered
 }

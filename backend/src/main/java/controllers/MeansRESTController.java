@@ -104,7 +104,6 @@ public class MeansRESTController {
 
     @RequestMapping(path = "/mean/update" , method = RequestMethod.POST)
     public ResponseEntity<MeanDtoLazy> update(@RequestBody MeanDtoLazy meanDtoLazy){
-
         return new ResponseEntity<MeanDtoLazy>(meansDtoMapper.mapToDto(updateMean(meanDtoLazy)), HttpStatus.OK);
     }
 

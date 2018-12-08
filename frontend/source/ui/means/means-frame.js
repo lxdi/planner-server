@@ -25,7 +25,8 @@ export class MeansFrame extends React.Component{
     })
 
     registerReaction('means-frame', 'realms-dao', 'change-current-realm', ()=>this.setState({}))
-    registerReaction('means-frame', 'means-dao', ['means-received', 'replace-mean', 'mean-created', 'mean-deleted', 'mean-modified'], ()=>this.setState({}))
+    registerReaction('means-frame', 'means-dao',
+            ['means-received', 'replace-mean', 'mean-created', 'mean-deleted', 'mean-modified', 'modify-list', 'draggable-add-as-child'], ()=>this.setState({}))
   }
 
   render(){
@@ -41,7 +42,8 @@ export class MeansFrame extends React.Component{
           <ListGroup style={{marginBottom: '0px'}}>
             {meansUIlist()}
           </ListGroup>
-          <div style={{width:'50px', height: '12px', border: '1px dotted lightgrey'}}></div>
+          <div style={{width:'50px', height: '12px', border: '1px dotted lightgrey'}}
+                onDragOver={(e)=>{e.preventDefault();fireEvent('means-dao', 'draggable-add-as-child', [null])}}></div>
         </div>
       </div>
     )
@@ -65,11 +67,12 @@ const meansUIlist = function(){
 const meanUI = function(mean, offset){
   const parentMean = mean.parentid!=null?viewStateVal('means-dao', 'means')[mean.parentid]:null
   return (
-    <div>
+    <div onDrop={()=>{fireEvent('means-dao', 'draggable-save-altered'); fireEvent('means-dao', 'remove-draggable', [])}}
+          onDragOver={(e)=>e.preventDefault()}>
       <div style={{'margin-bottom': '5px'}}>
         <a href="#" onClick={()=>fireEvent('mean-modal', 'open', [mean])}
+          draggable='true'
           onDragStart={()=>fireEvent('means-dao', 'add-draggable', [mean])}
-          onDragEnd={()=>{console.log('on drag end'); fireEvent('means-dao', 'draggable-save-altered'); fireEvent('means-dao', 'remove-draggable', [])}}
           onDragOver={(e)=>{e.preventDefault();fireEvent('means-dao', 'replace-mean', [parentMean, mean])}}>
            {mean.children.length==0?
               <span style={{'font-weight': 'bold'}}>{mean.title}</span>
@@ -82,7 +85,10 @@ const meanUI = function(mean, offset){
       </div>
       <div style={{'margin-left': offset + 'px'}}>
         {meanChildrenUI(mean.children, offset)}
-        {mean.children!=null && mean.children.length==0?<div style={{width:'50px', height: '12px', border: '1px dotted lightgrey'}}></div>:null}
+        {mean.children!=null && mean.children.length==0?
+          <div style={{width:'50px', height: '12px', border: '1px dotted lightgrey'}}
+                onDragOver={(e)=>{e.preventDefault();fireEvent('means-dao', 'draggable-add-as-child', [mean])}}></div>
+          :null}
       </div>
     </div>
   )

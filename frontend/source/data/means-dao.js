@@ -27,7 +27,7 @@ registerEvent('means-dao', 'create', function(stateSetter, mean, parent){
     mean.targetsIds.push(mean.targets[i].id)
   }
   sendPut('/mean/create', JSON.stringify(mean), function(data) {
-    //need this to update a nextid locally of means which are peering to the new mean
+    //-- need this to update a nextid locally of means which are peering to the new mean
     if(data.parentid!=null){
       addToLastLL(viewStateVal('means-dao', 'means')[data.parentid].children, data)
     } else{
@@ -36,7 +36,7 @@ registerEvent('means-dao', 'create', function(stateSetter, mean, parent){
       }
       addToLastLL(viewStateVal('means-dao', 'root-means-by-realm')[data.realmid], data)
     }
-
+    //--
     importOneMeanDto(data)
     resolveMeans(viewStateVal('means-dao', 'means'))
     fireEvent('means-dao', 'mean-created', [data])
@@ -102,15 +102,18 @@ registerEvent('means-dao', 'modify-list', function(stateSetter, means){
     fireEvent('means-dao', 'means-list-modified', [data])
   })
 })
+
 registerEvent('means-dao', 'means-list-modified', (stateSetter, means)=>means)
 
 registerEvent('means-dao', 'add-draggable', (stateSetter, mean)=>{stateSetter('draggableMean', mean)})
+
 registerEvent('means-dao', 'remove-draggable', (stateSetter)=>stateSetter('draggableMean', null))
+
 registerEvent('means-dao', 'draggable-save-altered', (stateSetter)=>{
   const alteredMeans = viewStateVal('means-dao', 'draggable-altered')
-  console.log(alteredMeans)
   if(alteredMeans!=null){
     fireEvent('means-dao', 'modify-list', [alteredMeans])
+    stateSetter('draggable-altered', null)
   }
 })
 
@@ -151,9 +154,31 @@ registerEvent('means-dao', 'replace-mean', (stateSetter, newParent, targetMean)=
       }
     }
     resolveMeans(viewStateVal('means-dao', 'means'))
-    // if(altered.length>0){
-    //   stateSetter('draggable-altered', altered)
-    // }
+  }
+})
+
+registerEvent('means-dao', 'draggable-add-as-child', (stateSetter, parent)=>{
+  const meanToDrag = viewStateVal('means-dao', 'draggableMean')
+  const oldParent = meanToDrag.parentid!=null? viewStateVal('means-dao', 'means')[meanToDrag.parentid]:null
+  if(meanToDrag!=null && !isMeanDescendsFrom(parent, meanToDrag) && parent!=oldParent){
+    var altered = viewStateVal('means-dao', 'draggable-altered')
+    if(altered==null){
+      altered = []
+      stateSetter('draggable-altered', altered)
+    }
+    if(oldParent!=null){
+      mergeArrays(altered, removeFromLL(oldParent.children, meanToDrag))
+    }else {
+      mergeArrays(altered, removeFromLL(viewStateVal('means-dao', 'root-means-by-realm')[meanToDrag.realmid], meanToDrag))
+    }
+    if(parent!=null){
+      mergeArrays(altered, addToLastLL(parent.children, meanToDrag))
+      meanToDrag.parentid = parent.id
+    } else {
+      mergeArrays(altered, addToLastLL(viewStateVal('means-dao', 'root-means-by-realm')[meanToDrag.realmid], meanToDrag))
+      meanToDrag.parentid = null
+    }
+    resolveMeans(viewStateVal('means-dao', 'means'))
   }
 })
 
@@ -236,6 +261,9 @@ const resolveMean = function(mean){
 }
 
 const isMeanDescendsFrom =function(child, searchParent){
+  if(child==null || searchParent==null){
+    return false
+  }
   if(child==searchParent){
     return true
   }
