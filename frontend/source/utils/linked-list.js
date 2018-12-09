@@ -125,7 +125,10 @@ export const addToLastLL = function(nodes, obj){
     last.nextid = obj.id
     altered.push(last)
   }
-  nodes[obj.id] = obj
+  if(nodes!=null){
+    nodes[obj.id] = obj
+  }
+  obj.nextid = null
   altered.push(obj)
   return altered
 }

@@ -1,4 +1,4 @@
-import {mergeArrays} from '../../source/utils/draggable-utils'
+import {mergeArrays} from '../../source/utils/draggable-tree-utils'
 
 describe('Tests for mergeArrays', ()=>{
   test('Simple merge', ()=>{

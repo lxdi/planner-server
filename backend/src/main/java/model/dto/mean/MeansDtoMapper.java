@@ -41,6 +41,14 @@ public class MeansDtoMapper implements IMapper<MeanDtoLazy, Mean> {
         if(mean.getNext()!=null){
             meanDtoLazy.setNextid(mean.getNext().getId());
         }
+
+        if(mean.getId()>0){
+            Mean prevMean = meansDAO.getPrevMean(mean);
+            if(prevMean!=null){
+                meanDtoLazy.setPrevid(prevMean.getId());
+            }
+        }
+
 //        if(mean.getHquarter()!=null)
 //            meanDtoLazy.setQuarterid(mean.getHquarter().getId());
 //        if(mean.getPosition()!=null && mean.getPosition()>0){
@@ -79,7 +87,6 @@ public class MeansDtoMapper implements IMapper<MeanDtoLazy, Mean> {
         for(Long id : meanDto.getTargetsIds()){
             mean.getTargets().add(targetsDAO.targetById(id));
         }
-
 //        if(meanDto.getQuarterid()!=null){
 //            mean.setHquarter(quarterDAO.getById(meanDto.getQuarterid()));
 //        }

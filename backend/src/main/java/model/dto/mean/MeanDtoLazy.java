@@ -14,6 +14,7 @@ public class MeanDtoLazy{
     String title;
     String criteria;
     Long nextid;
+    Long previd;
 
     Long parentid;
     List<Long> targetsIds = new ArrayList<>();
@@ -68,6 +69,14 @@ public class MeanDtoLazy{
     }
     public void setNextid(Long nextid) {
         this.nextid = nextid;
+    }
+
+    public Long getPrevid() {
+        return previd;
+    }
+
+    public void setPrevid(Long previd) {
+        this.previd = previd;
     }
 
     public List<LayerDtoLazy> getLayers() {

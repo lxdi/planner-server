@@ -66,7 +66,7 @@ const getSlotView = function(slot){
   if(slot.meanid!=null){
     return <tr>
                     <td>
-                      <a href='#'>{viewStateVal('means-dao', 'means')[slot.meanid].title}</a>
+                      <a href='#'>{findMean(slot.meanid).title}</a>
                       <a href='#' onClick={()=>fireEvent('hquarters-dao', 'unassign-mean', [slot])}> X </a>
                     </td>
                   </tr>
@@ -79,6 +79,16 @@ const getSlotView = function(slot){
                     </td>
                   </tr>
   }
+}
+
+const findMean = function(meanid){
+  for(var realmid in viewStateVal('means-dao', 'means')){
+    const means = viewStateVal('means-dao', 'means')[realmid]
+    if(means[meanid]!=null){
+      return means[meanid]
+    }
+  }
+  return null
 }
 
 const formatDateNumber = function(num){
