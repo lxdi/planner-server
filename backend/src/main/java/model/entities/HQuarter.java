@@ -17,6 +17,15 @@ public class HQuarter {
 
     boolean custom = false;
 
+    public HQuarter(){}
+
+    public HQuarter(int year, int startMonth, int startDay){
+        assert startMonth<13 && startDay<32;
+        this.year = year;
+        this.startMonth = startMonth;
+        this.startDay = startDay;
+    }
+
     public long getId() {
         return id;
     }

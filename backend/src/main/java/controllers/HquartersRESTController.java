@@ -74,10 +74,7 @@ public class HquartersRESTController {
 
     @RequestMapping(path = "/update", method = RequestMethod.POST)
     public ResponseEntity<HquarterDtoLazy> update(@RequestBody HquarterDtoLazy hquarterDto){
-        HQuarter hQuarter = hquarterMapper.mapToEntity(hquarterDto);
-        //TODO validate slots before saving
-        quarterDAO.saveOrUpdate(hQuarter);
-        saveSlots(hquarterDto.getSlots(), hQuarter.getId());
+        HQuarter hQuarter = saveHQuarter(hquarterDto);
         return new ResponseEntity<HquarterDtoLazy>(hquarterMapper.mapToDto(hQuarter), HttpStatus.OK);
     }
 
@@ -98,22 +95,49 @@ public class HquartersRESTController {
         return new ResponseEntity<>(slotMapper.mapToDto(slot), HttpStatus.OK);
     }
 
+    @RequestMapping(path="/get/default", method = RequestMethod.GET)
+    public ResponseEntity<HquarterDtoLazy> getDefault(){
+        return new ResponseEntity<>(hquarterMapper.mapToDto(quarterDAO.getDefault()), HttpStatus.OK);
+    }
+
     @RequestMapping(path="/set/default", method = RequestMethod.POST)
-    public ResponseEntity defaultSlot(@RequestBody HquarterDtoLazy hquarterDtoLazy){
-        HQuarter defaultHquarter = hquarterMapper.mapToEntity(hquarterDtoLazy);
+    public ResponseEntity setDefault(@RequestBody HquarterDtoLazy hquarterDtoLazy){
+        HQuarter defaultHquarter = saveHQuarter(hquarterDtoLazy);
         List<Slot> defaultSlots = slotDAO.getSlotsForHquarter(defaultHquarter);
         if(defaultSlots.size()>0) {
             for(HQuarter hQuarter : quarterDAO.getDefaultHquarters()) {
                 //List<Slot> slots = slotDAO.getSlotsForHquarter(hQuarter);
                 for(Slot defaultSlot :  defaultSlots){
                     Slot slot = slotDAO.getByHquarterAndPosition(hQuarter, defaultSlot.getPosition());
-                    //TODO
+                    if(slot==null){
+                        slot = new Slot();
+                        slot.setHquarter(hQuarter);
+                        slotDAO.saveOrUpdate(slot);
+                    }
+                    for(SlotPosition defaultSlotPosition : slotDAO.getSlotPositionsForSlot(defaultSlot)){
+                        SlotPosition slotPosition = slotDAO.getSlotPosition(slot, defaultSlotPosition.getDaysOfWeek(), defaultSlotPosition.getPosition());
+                        if(slotPosition==null){
+                            slotPosition = new SlotPosition();
+                            slotPosition.setSlot(slot);
+                            //slotDAO.saveOrUpdate(slotPosition);
+                        }
+                        slotPosition.setDaysOfWeek(defaultSlotPosition.getDaysOfWeek());
+                        slotPosition.setPosition(defaultSlotPosition.getPosition());
+                        slotDAO.saveOrUpdate(slotPosition);
+                    }
                 }
             }
         }
         return new ResponseEntity(HttpStatus.OK);
     }
 
+    private HQuarter saveHQuarter(HquarterDtoLazy hquarterDtoLazy){
+        HQuarter hQuarter = hquarterMapper.mapToEntity(hquarterDtoLazy);
+        //TODO validate slots before saving
+        quarterDAO.saveOrUpdate(hQuarter);
+        saveSlots(hquarterDtoLazy.getSlots(), hQuarter.getId());
+        return hQuarter;
+    }
 
     private void saveSlots(List<SlotDtoLazy> slotsDto, long hquarterid){
         if(slotsDto!=null){

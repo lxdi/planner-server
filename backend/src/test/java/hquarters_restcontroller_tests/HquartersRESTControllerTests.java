@@ -1,3 +1,5 @@
+package hquarters_restcontroller_tests;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import controllers.HquartersRESTController;
 import model.dao.IHQuarterDAO;

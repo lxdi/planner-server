@@ -17,6 +17,14 @@ public class SlotPosition {
 
     int position;
 
+    public SlotPosition(){}
+
+    public SlotPosition(Slot slot, DaysOfWeek daysOfWeek, int position){
+        this.slot = slot;
+        this.daysOfWeek = daysOfWeek;
+        this.position = position;
+    }
+
     public long getId() {
         return id;
     }

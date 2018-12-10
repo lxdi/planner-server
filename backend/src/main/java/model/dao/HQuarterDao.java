@@ -38,6 +38,27 @@ public class HQuarterDao implements IHQuarterDAO {
                 .add(Restrictions.eq("custom", false)).list();
     }
 
+    @Override
+    public HQuarter getByStartDate(int year, int month, int day) {
+        return (HQuarter) sessionFactory.getCurrentSession().createCriteria(HQuarter.class)
+                .add(Restrictions.eq("year", year))
+                .add(Restrictions.eq("startMonth", month))
+                .add(Restrictions.eq("startDay", day)).uniqueResult();
+    }
+
+    @Override
+    public HQuarter getDefault() {
+        HQuarter hQuarter = this.getByStartDate(0,0,0);
+        if(hQuarter==null){
+            hQuarter = new HQuarter();
+            hQuarter.setYear(0);
+            hQuarter.setStartMonth(0);
+            hQuarter.setStartDay(0);
+            this.saveOrUpdate(hQuarter);
+        }
+        return hQuarter;
+    }
+
 //    @Override
 //    public List<Mean> getMeansOfQuarter(HQuarter hquarter) {
 //         return sessionFactory.getCurrentSession().createCriteria(Mean.class)
