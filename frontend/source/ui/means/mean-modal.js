@@ -4,11 +4,11 @@ import ReactDOM from 'react-dom';
 import {CommonModal} from './../common-modal'
 import {CreateMean} from './../../data/creators'
 import {CommonCrudeTemplate} from './../common-crud-template'
-import {Button, ButtonToolbar,  DropdownButton, MenuItem,  FormGroup, ControlLabel, FormControl,  ListGroup, ListGroupItem} from 'react-bootstrap'
+import {Button, ButtonToolbar,  DropdownButton, MenuItem,  FormGroup, ControlLabel, FormControl,  ListGroup, ListGroupItem, Alert} from 'react-bootstrap'
 import {registerEvent, registerReaction, fireEvent, viewStateVal} from '../../controllers/eventor'
 import {SubjectModal} from './subject-modal'
 import {TaskModal} from './task-modal'
-
+import {isValidMean} from '../../utils/mean-validator'
 
 const dumbMean = CreateMean(0, '', null, [])
 
@@ -73,13 +73,15 @@ export class MeanModal extends React.Component {
   }
 
   render(){
+        this.state.alerts = []
         return <CommonModal
                   isOpen = {this.state.isOpen}
-                  okHandler = {this.okHandler}
+                  okHandler = {isValidMean(this.state.alerts, this.state.currentMean)?this.okHandler:null}
                   cancelHandler = {()=>fireEvent('mean-modal', 'close', [])}
                   title={meanModalHeaderTitle}
                   styleClass='mean-modal-style'>
             <CommonCrudeTemplate editing = {this.state.mode} changeEditHandler = {this.forceUpdate.bind(this)} deleteHandler={()=>fireEvent('means-dao', 'delete', [this.state.currentMean.id])}>
+                {showAlerts(this.state.alerts)}
                 <form>
                   <FormGroup controlId="formBasicText">
                   <ControlLabel>Title</ControlLabel>
@@ -102,6 +104,7 @@ export class MeanModal extends React.Component {
           </CommonModal>
   }
 }
+
 
 const targetsChooser = function(component){
   if(component.state.mode.isEdit){
@@ -245,5 +248,15 @@ const moveEvent = function(e, parentObj, obj, type){
     if(draggableSubject!=null && draggableSubject.subject){
       fireEvent('subjects-dao', 'move-subject', [parentObj, obj])
     }
+  }
+}
+
+const showAlerts = function(alerts){
+  if(alerts!=null && alerts.length>0){
+    const result = []
+    for(var i in alerts){
+      result.push(<li>{alerts[i]}</li>)
+    }
+    return <Alert bsStyle="danger">{result}</Alert>
   }
 }
