@@ -2,7 +2,7 @@ import {createNewMeanButtonTitle, addNewMeanTitle} from './../../titles'
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {CreateMean} from './../../data/creators'
-import {Button, ButtonToolbar,  DropdownButton, MenuItem, ListGroup, ListGroupItem} from 'react-bootstrap'
+import {Button, ButtonGroup, ButtonToolbar,  DropdownButton, MenuItem, ListGroup, ListGroupItem} from 'react-bootstrap'
 import {MeanModal} from './mean-modal'
 import {registerEvent, registerReaction, fireEvent, viewStateVal} from '../../controllers/eventor'
 import {sortByField} from '../../utils/import-utils'
@@ -14,7 +14,7 @@ const offsetVal = 10
 export class MeansFrame extends React.Component{
   constructor(props){
     super(props)
-    this.state = {}
+    this.state = {isEdit: false}
     this.onDragOver = this.onDragOver.bind(this)
     this.onDrop = this.onDrop.bind(this)
 
@@ -49,33 +49,51 @@ export class MeansFrame extends React.Component{
   }
 
   onDrop(){
-    fireEvent('means-dao', 'modify-list', [this.state.altered])
+    if(this.state.altered!=null && this.state.altered.length>0){
+      fireEvent('means-dao', 'modify-list', [this.state.altered])
+    }
     fireEvent('means-dao', 'remove-draggable', [])
     this.setState({altered:null, draggableMean:null})
     //this.state.altered=null
   }
+
+  // <Button bsStyle="primary" bsSize="xsmall" onClick={()=>fireEvent('mean-modal', 'open', [CreateMean(0, '', viewStateVal('realms-dao', 'currentRealm').id, [])])}>
+  //   {createNewMeanButtonTitle}
+  // </Button>
 
   render(){
     return(
       <div>
         {viewStateVal('realms-dao', 'currentRealm')!=null?
           <div style={{'margin-bottom': '3px'}}>
-            <Button bsStyle="primary" bsSize="xsmall" onClick={()=>fireEvent('mean-modal', 'open', [CreateMean(0, '', viewStateVal('realms-dao', 'currentRealm').id, [])])}>
-              {createNewMeanButtonTitle}
-            </Button>
+            {getControlButtons(this)}
             <MeanModal/>
           </div>:null}
           <div onDrop={this.onDrop} onDragOver={(e)=>e.preventDefault()}>
-            <ListGroup style={{marginBottom: '0px'}}>
+            <ListGroup style={{marginBottom: '3px'}}>
               {meansUIlist(this)}
             </ListGroup>
-            <div style={{width:'50px', height: '12px', border: '1px dotted lightgrey'}}
-                onDragOver={(e)=>{e.preventDefault(); this.onDragOver(null, null, 'addchild')}}></div>
+            {this.state.isEdit? <div style={styleForAddAsChild} onDragOver={(e)=>{e.preventDefault(); this.onDragOver(null, null, 'addchild')}}>
+              + Add as a child
+            </div> :null}
           </div>
       </div>
     )
   }
 }
+
+const getControlButtons = function(component){
+  const result = []
+  result.push(<Button bsStyle="primary" bsSize="xsmall" onClick={()=>fireEvent('mean-modal', 'open', [CreateMean(0, '', viewStateVal('realms-dao', 'currentRealm').id, [])])}>
+                {createNewMeanButtonTitle}
+              </Button>)
+  result.push(<Button bsStyle="default" bsSize="xsmall" onClick={()=>component.setState({isEdit: !component.state.isEdit})}>
+                  {component.state.isEdit? 'View': 'Edit'}
+                </Button>)
+  return <ButtonGroup>{result}</ButtonGroup>
+}
+
+const styleForAddAsChild = {width:'80px', color:'lightgrey', fontSize: '10px', border: '1px dotted lightgrey', borderRadius: '5px', padding: '3px'}
 
 const meansUIlist = function(component){
     if(viewStateVal('means-dao', 'means')!=null){
@@ -108,9 +126,9 @@ const meanUI = function(component, mean, offset){
       </div>
       <div style={{'margin-left': offset + 'px'}}>
         {meanChildrenUI(component, component.state.cache.children[mean.id], offset)}
-        {countFields(component.state.cache.children[mean.id])==0?
-          <div style={{width:'50px', height: '12px', border: '1px dotted lightgrey'}}
-                onDragOver={(e)=>{e.preventDefault(); component.onDragOver(mean, null, 'addchild')}}></div>
+        {component.state.isEdit && countFields(component.state.cache.children[mean.id])==0?
+          <div style={styleForAddAsChild}
+                onDragOver={(e)=>{e.preventDefault(); component.onDragOver(mean, null, 'addchild')}}>+ Add as a child</div>
           :null}
       </div>
     </div>
@@ -118,22 +136,19 @@ const meanUI = function(component, mean, offset){
 }
 
 const draggableElem = function(component, content, parentMean, mean, onClick){
-  return  <a href="#" onClick={onClick}
-            draggable='true'
-            onDragStart={()=>{component.state.draggableMean = mean; fireEvent('means-dao', 'add-draggable', [mean])}}
-            onDragOver={(e)=>{e.preventDefault(); component.onDragOver(mean, parentMean, 'replace')}}>
-             {content}
-           </a>
+  if(component.state.isEdit){
+    return  <a href="#" onClick={onClick}
+              draggable='true'
+              onDragStart={()=>{component.state.draggableMean = mean; fireEvent('means-dao', 'add-draggable', [mean])}}
+              onDragOver={(e)=>{e.preventDefault(); component.onDragOver(mean, parentMean, 'replace')}}>
+               {content}
+             </a>
+  } else {
+    return  <a href="#" onClick={onClick} draggable='true' onDragStart={()=>{fireEvent('means-dao', 'add-draggable', [mean])}}>
+              {content}
+            </a>
+  }
 }
-
-// const draggableElem = function(content, parentMean, mean, onClick){
-//   return  <a href="#" onClick={onClick}
-//             draggable='true'
-//             onDragStart={()=>fireEvent('means-dao', 'add-draggable', [mean])}
-//             onDragOver={(e)=>{e.preventDefault();fireEvent('means-dao', 'replace-mean', [parentMean, mean])}}>
-//              {content}
-//            </a>
-// }
 
 const meanChildrenUI = function(component, children, offset){
   const result = []

@@ -68,7 +68,13 @@ export class MeanModal extends React.Component {
   }
 
   selectTargetHandler(target, e){
-    this.state.currentMean.targets.push(target)
+    if(this.state.currentMean.targetsIds==null){
+      this.state.currentMean.targetsIds=[]
+    }
+    if(this.state.currentMean.targetsIds.indexOf(target.id)<0){
+      this.state.currentMean.targets.push(target)
+      this.state.currentMean.targetsIds.push(target.id)
+    }
     this.setState({});
   }
 
