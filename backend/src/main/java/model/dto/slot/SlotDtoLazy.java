@@ -5,7 +5,7 @@ import java.util.List;
 
 public class SlotDtoLazy {
     Long id;
-    long position;
+    int position;
     Long meanid;
     Long hquarterid;
     List<SlotPositionDtoLazy> slotPositions = new ArrayList<>();
@@ -42,10 +42,10 @@ public class SlotDtoLazy {
         this.slotPositions = slotPositions;
     }
 
-    public long getPosition() {
+    public int getPosition() {
         return position;
     }
-    public void setPosition(long position) {
+    public void setPosition(int position) {
         this.position = position;
     }
 }

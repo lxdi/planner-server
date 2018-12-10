@@ -98,6 +98,22 @@ public class HquartersRESTController {
         return new ResponseEntity<>(slotMapper.mapToDto(slot), HttpStatus.OK);
     }
 
+    @RequestMapping(path="/set/default", method = RequestMethod.POST)
+    public ResponseEntity defaultSlot(@RequestBody HquarterDtoLazy hquarterDtoLazy){
+        HQuarter defaultHquarter = hquarterMapper.mapToEntity(hquarterDtoLazy);
+        List<Slot> defaultSlots = slotDAO.getSlotsForHquarter(defaultHquarter);
+        if(defaultSlots.size()>0) {
+            for(HQuarter hQuarter : quarterDAO.getDefaultHquarters()) {
+                //List<Slot> slots = slotDAO.getSlotsForHquarter(hQuarter);
+                for(Slot defaultSlot :  defaultSlots){
+                    Slot slot = slotDAO.getByHquarterAndPosition(hQuarter, defaultSlot.getPosition());
+                    //TODO
+                }
+            }
+        }
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
 
     private void saveSlots(List<SlotDtoLazy> slotsDto, long hquarterid){
         if(slotsDto!=null){

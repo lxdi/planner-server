@@ -1,5 +1,6 @@
 package model.dao;
 
+import model.entities.DaysOfWeek;
 import model.entities.HQuarter;
 import model.entities.Slot;
 import model.entities.SlotPosition;
@@ -34,6 +35,14 @@ public class SlotDao implements ISlotDAO {
     }
 
     @Override
+    public Slot getByHquarterAndPosition(HQuarter hQuarter, int position) {
+        return (Slot) this.sessionFactory.getCurrentSession().createCriteria(Slot.class)
+                .add(Restrictions.eq("hquarter", hQuarter))
+                .add(Restrictions.eq("position", position))
+                .uniqueResult();
+    }
+
+    @Override
     public SlotPosition getSlotPositionById(long id) {
         return this.sessionFactory.getCurrentSession().get(SlotPosition.class, id);
     }
@@ -48,5 +57,14 @@ public class SlotDao implements ISlotDAO {
     public List<SlotPosition> getSlotPositionsForSlot(Slot slot) {
         return sessionFactory.getCurrentSession().createCriteria(SlotPosition.class)
                 .add(Restrictions.eq("slot", slot)).list();
+    }
+
+    @Override
+    public SlotPosition getSlotPosition(Slot slot, DaysOfWeek dayOfWeek, int position) {
+        return (SlotPosition) sessionFactory.getCurrentSession().createCriteria(SlotPosition.class)
+                .add(Restrictions.eq("slot", slot))
+                .add(Restrictions.eq("daysOfWeek", dayOfWeek))
+                .add(Restrictions.eq("position", position))
+                .uniqueResult();
     }
 }

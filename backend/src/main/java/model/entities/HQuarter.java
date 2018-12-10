@@ -15,6 +15,8 @@ public class HQuarter {
     int startMonth;
     int startDay;
 
+    boolean custom = false;
+
     public long getId() {
         return id;
     }
@@ -42,5 +44,12 @@ public class HQuarter {
     }
     public void setStartDay(int startDay) {
         this.startDay = startDay;
+    }
+
+    public boolean isCustom() {
+        return custom;
+    }
+    public void setCustom(boolean custom) {
+        this.custom = custom;
     }
 }

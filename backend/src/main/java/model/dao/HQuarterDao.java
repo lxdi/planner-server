@@ -32,6 +32,12 @@ public class HQuarterDao implements IHQuarterDAO {
         return sessionFactory.getCurrentSession().createCriteria(HQuarter.class).list();
     }
 
+    @Override
+    public List<HQuarter> getDefaultHquarters() {
+        return sessionFactory.getCurrentSession().createCriteria(HQuarter.class)
+                .add(Restrictions.eq("custom", false)).list();
+    }
+
 //    @Override
 //    public List<Mean> getMeansOfQuarter(HQuarter hquarter) {
 //         return sessionFactory.getCurrentSession().createCriteria(Mean.class)

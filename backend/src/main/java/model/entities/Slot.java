@@ -8,7 +8,7 @@ public class Slot {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
-    long position;
+    int position;
 
     @ManyToOne
     Mean mean;
@@ -37,10 +37,11 @@ public class Slot {
         this.hquarter = hquarter;
     }
 
-    public long getPosition() {
+    public int getPosition() {
         return position;
     }
-    public void setPosition(long position) {
+
+    public void setPosition(int position) {
         this.position = position;
     }
 }

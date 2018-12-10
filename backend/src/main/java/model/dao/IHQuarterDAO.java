@@ -9,5 +9,6 @@ public interface IHQuarterDAO {
     void saveOrUpdate(HQuarter HQuarter);
     HQuarter getById(long id);
     List<HQuarter> getAllHQuartals();
+    List<HQuarter> getDefaultHquarters();
 
 }
