@@ -15,6 +15,7 @@ import orm_tests.conf.ATestsWithTargetsMeansQuartalsGenerated;
 
 import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -95,6 +96,51 @@ public class MeansRESTController_Update_Tests extends ATestsWithTargetsMeansQuar
 
         assertTrue(child1.getNext()==null);
         assertTrue(child2.getNext().getId()==child1.getId());
+
+    }
+
+    @Test
+    public void updateListAndGetTest() throws Exception {
+
+        Mean mean3 = new Mean("mean3", realm);
+        meansDao.saveOrUpdate(mean3);
+
+        Mean mean2 = new Mean("mean2", realm);
+        mean2.setNext(mean3);
+        meansDao.saveOrUpdate(mean2);
+
+        Mean mean1 = new Mean("mean1", realm);
+        mean1.setNext(mean2);
+        meansDao.saveOrUpdate(mean1);
+
+        String mean1content = "{\"id\":"+mean1.getId()+", " +
+                "\"title\":\"mean1\", " +
+                "\"realmid\":"+mean1.getRealm().getId()+", "+
+                "\"nextid\":" +mean3.getId()+
+                "}";
+
+        String mean2content = "{\"id\":"+mean2.getId()+", " +
+                "\"title\":\"mean2\", " +
+                "\"realmid\":"+mean2.getRealm().getId()+", "+
+                "\"nextid\":null" +
+                "}";
+
+        String mean3content = "{\"id\":"+mean3.getId()+", " +
+                "\"title\":\"mean3\", " +
+                "\"realmid\":"+mean3.getRealm().getId()+", "+
+                "\"nextid\":" +mean2.getId()+
+                "}";
+
+        String content = "["+mean1content+", "+mean3content+", "+mean2content+"]";
+        MvcResult result = mockMvc.perform(post("/mean/update/list")
+                .contentType(MediaType.APPLICATION_JSON).content(content))
+                .andExpect(status().isOk()).andReturn();
+
+        MvcResult getresult = mockMvc.perform(get("/mean/all/lazy"))
+                .andExpect(status().isOk()).andReturn();
+
+        mean2 = meansDao.meanById(mean2.getId());
+        assertTrue(mean2.getNext()==null);
 
     }
 

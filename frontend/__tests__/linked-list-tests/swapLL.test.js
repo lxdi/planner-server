@@ -31,6 +31,19 @@ describe('Tests for swapLL method', ()=>{
     expect(testNodes[1].nextid).toBeNull()
     expect(testNodes[4].nextid).toBe(2)
   })
+
+  test('1->2->3->4; swap 4 and 3', ()=>{
+    expect(testNodes).not.toBeNull();
+    expect(testNodes.length).toBe(5);
+
+    const altered = swapLL(testNodes, testNodes[4], testNodes[3])
+
+    expect(testNodes[2].nextid).toBe(4)
+    expect(testNodes[4].nextid).toBe(3)
+    expect(testNodes[3].nextid).toBeNull()
+    expect(altered.indexOf(testNodes[2])).toBeGreaterThanOrEqual(0)
+  })
+
 })
 
 describe('Test for swapLL on LL with size 2', ()=>{

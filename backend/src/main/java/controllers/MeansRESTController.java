@@ -112,12 +112,17 @@ public class MeansRESTController {
 
     @RequestMapping(path = "/mean/update/list" , method = RequestMethod.POST)
     public ResponseEntity<List<MeanDtoLazy>> updateList(@RequestBody List<MeanDtoLazy> meanDtoLazyList){
+        List<Mean> updated = new ArrayList<>();
+            for(MeanDtoLazy meanDtoLazy : meanDtoLazyList) {
+            updated.add(updateMean(meanDtoLazy));
+        }
         List<MeanDtoLazy> result = new ArrayList<>();
-        for(MeanDtoLazy meanDtoLazy : meanDtoLazyList) {
-            result.add(meansDtoMapper.mapToDto(updateMean(meanDtoLazy)));
+            for(Mean mean : updated) {
+            result.add(meansDtoMapper.mapToDto(mean));
         }
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
+
 
     @Deprecated
     @RequestMapping(path = "/mean/replace/{meanid}/{parentid}" , method = RequestMethod.POST)
