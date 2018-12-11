@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 @Controller
 @RequestMapping(path = "/hquarter")
@@ -116,8 +117,13 @@ public class HquartersRESTController {
                         slot.setHquarter(hQuarter);
                         slotDAO.saveOrUpdate(slot);
                     }
+                    Stack<SlotPosition> slotPositionsPool = new Stack<>();
+                    for(SlotPosition slotPosition : slotDAO.getSlotPositionsForSlot(slot)){
+                        slotPositionsPool.push(slotPosition);
+                    }
                     for(SlotPosition defaultSlotPosition : slotDAO.getSlotPositionsForSlot(defaultSlot)){
-                        SlotPosition slotPosition = slotDAO.getSlotPosition(slot, defaultSlotPosition.getDaysOfWeek(), defaultSlotPosition.getPosition());
+                        //SlotPosition slotPosition = slotDAO.getSlotPosition(slot, defaultSlotPosition.getDaysOfWeek(), defaultSlotPosition.getPosition());
+                        SlotPosition slotPosition = !slotPositionsPool.isEmpty()? slotPositionsPool.pop():null;
                         if(slotPosition==null){
                             slotPosition = new SlotPosition();
                             slotPosition.setSlot(slot);
@@ -127,6 +133,7 @@ public class HquartersRESTController {
                         slotPosition.setPosition(defaultSlotPosition.getPosition());
                         slotDAO.saveOrUpdate(slotPosition);
                     }
+                    //TODO remove all SlotPositions left in the slotPositionsPool
                 }
             }
         }

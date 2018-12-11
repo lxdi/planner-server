@@ -11,7 +11,7 @@ export class ScheduleFrame extends React.Component{
   constructor(props){
     super(props)
     this.state = {};
-    registerReaction('schedule-frame', 'hquarters-dao', ['hquarters-received', 'hquarter-modified', 'mean-assigned-to-slot', 'unassigned-mean'], ()=>this.setState({}))
+    registerReaction('schedule-frame', 'hquarters-dao', ['hquarters-received', 'hquarter-modified', 'mean-assigned-to-slot', 'unassigned-mean', 'hquarters-clean'], ()=>this.setState({}))
     registerReaction('schedule-frame', 'means-dao', ['means-received', 'mean-modified'], ()=>this.setState({}))
     registerReaction('schedule-frame', 'realms-dao', 'change-current-realm', ()=>this.setState({}))
   }
@@ -34,7 +34,7 @@ export class ScheduleFrame extends React.Component{
 }
 
 const hquartersUI = function(){
-  if(viewStateVal('hquarters-dao', 'hquarters') != null){
+  if(viewStateVal('hquarters-dao', 'hquarters') != null && viewStateVal('hquarters-dao', 'default')!=null){
     return viewStateVal('hquarters-dao', 'hquarters').map((hquarter)=>
           <Table striped bordered condensed hover width={'100px'} key={hquarter.year +'.'+formatDateNumber(hquarter.startday) + '.' + formatDateNumber(hquarter.startmonth)}>
             <tbody>
@@ -50,8 +50,12 @@ const hquartersUI = function(){
           </Table>
       )
   } else {
-    fireEvent('hquarters-dao', 'request-for-default')
-    fireEvent('hquarters-dao', 'hquarters-request')
+    if(viewStateVal('hquarters-dao', 'hquarters')==null){
+      fireEvent('hquarters-dao', 'hquarters-request')
+    }
+    if(viewStateVal('hquarters-dao', 'default')==null){
+      fireEvent('hquarters-dao', 'request-for-default')
+    }
   }
 }
 

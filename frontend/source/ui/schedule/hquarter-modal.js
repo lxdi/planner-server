@@ -33,6 +33,7 @@ export class HquarterModal extends React.Component {
 
   okButton(){
     if(viewStateVal('hquarters-dao', 'default')==this.state.hquarter){
+      fireEvent('hquarters-dao', 'hquarters-clean')
       fireEvent('hquarters-dao', 'update-default')
     } else {
       fireEvent('hquarters-dao', 'update', [this.state.hquarter])

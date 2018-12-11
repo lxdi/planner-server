@@ -15,6 +15,8 @@ registerEvent('hquarters-dao', 'hquarters-request', function(stateSetter){
 
 registerEvent('hquarters-dao', 'hquarters-received', function(){})
 
+registerEvent('hquarters-dao', 'hquarters-clean', (stateSetter)=>stateSetter('hquarters', null))
+
 registerEvent('hquarters-dao', 'update', (stateSetter, hquarter)=>{
   sendPost('/hquarter/update', hquarter, (data)=>{
     //var receivedData = typeof data == 'string'? JSON.parse(data): data
@@ -78,9 +80,12 @@ registerEvent('hquarters-dao', 'default-received', (hquarter)=>hquarter)
 registerEvent('hquarters-dao', 'update-default', (stateSetter)=>{
   sendPost('/hquarter/set/default', JSON.stringify(viewStateVal('hquarters-dao', 'default')), (data)=>{
     stateSetter('default', data)
+    //stateSetter('hquarters', null)
+    //fireEvent('hquarters-dao', 'default-received', [data])
     fireEvent('hquarters-dao', 'hquarters-request')
   })
 })
+
 
 const importHquarters = function(stateSetter, hquartersDto){
   const hquarters = []
