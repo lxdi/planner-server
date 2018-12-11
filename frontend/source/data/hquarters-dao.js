@@ -67,6 +67,21 @@ registerEvent('hquarters-dao', 'unassign-mean', (stateSetter, slot)=>{
 })
 registerEvent('hquarters-dao', 'unassigned-mean', (stateSetter)=>{})
 
+registerEvent('hquarters-dao', 'request-for-default', (stateSetter)=>{
+  sendGet('/hquarter/get/default', function(data){
+    stateSetter('default', data)
+    fireEvent('hquarters-dao', 'default-received', [data])
+  })
+})
+registerEvent('hquarters-dao', 'default-received', (hquarter)=>hquarter)
+
+registerEvent('hquarters-dao', 'update-default', (stateSetter)=>{
+  sendPost('/hquarter/set/default', JSON.stringify(viewStateVal('hquarters-dao', 'default')), (data)=>{
+    stateSetter('default', data)
+    fireEvent('hquarters-dao', 'hquarters-request')
+  })
+})
+
 const importHquarters = function(stateSetter, hquartersDto){
   const hquarters = []
   stateSetter('hquarters', hquarters)

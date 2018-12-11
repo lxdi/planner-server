@@ -24,16 +24,26 @@ export class HquarterModal extends React.Component {
   constructor(props){
     super(props)
     this.state = defaultState()
+    this.okButton = this.okButton.bind(this)
 
     registerEvent('hquarter-modal', 'open', (stateSetter, hquarter)=>this.setState({isOpen:true, hquarter:hquarter}))
     registerEvent('hquarter-modal', 'close', (stateSetter)=>this.setState(defaultState()))
     registerReaction('hquarter-modal', 'hquarters-dao', ['add-slot', 'assign-slot'], (stateSetter)=>this.setState({}))
   }
 
+  okButton(){
+    if(viewStateVal('hquarters-dao', 'default')==this.state.hquarter){
+      fireEvent('hquarters-dao', 'update-default')
+    } else {
+      fireEvent('hquarters-dao', 'update', [this.state.hquarter])
+    }
+    fireEvent('hquarter-modal', 'close')
+  }
+
   render(){
     return <CommonModal
               isOpen = {this.state.isOpen}
-              okHandler = {()=>{fireEvent('hquarters-dao', 'update', [this.state.hquarter]);fireEvent('hquarter-modal', 'close')}}
+              okHandler = {this.okButton}
               cancelHandler = {()=>fireEvent('hquarter-modal', 'close')}
               title={this.state.hquarter.year +'.'+formatDateNumber(this.state.hquarter.startday) + '.' + formatDateNumber(this.state.hquarter.startmonth)}
               styleClass='mean-modal-style'>

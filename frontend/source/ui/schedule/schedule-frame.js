@@ -24,6 +24,7 @@ export class ScheduleFrame extends React.Component{
     return(
       <div>
         <HquarterModal/>
+        <Button bsStyle="primary" bsSize="xsmall" onClick={()=>fireEvent('hquarter-modal', 'open', [viewStateVal('hquarters-dao', 'default')])}>Default settings</Button>
         <div>
           {viewStateVal('means-dao', 'means')!=null?hquartersUI():null}
         </div>
@@ -49,7 +50,8 @@ const hquartersUI = function(){
           </Table>
       )
   } else {
-    fireEvent('hquarters-dao', 'hquarters-request', [])
+    fireEvent('hquarters-dao', 'request-for-default')
+    fireEvent('hquarters-dao', 'hquarters-request')
   }
 }
 

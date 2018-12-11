@@ -101,7 +101,8 @@ public class HquartersRESTController {
     }
 
     @RequestMapping(path="/set/default", method = RequestMethod.POST)
-    public ResponseEntity setDefault(@RequestBody HquarterDtoLazy hquarterDtoLazy){
+    public ResponseEntity<HquarterDtoLazy> setDefault(@RequestBody HquarterDtoLazy hquarterDtoLazy){
+        assert hquarterDtoLazy.getYear()==0 && hquarterDtoLazy.getStartmonth()==0 && hquarterDtoLazy.getStartday()==0;
         HQuarter defaultHquarter = saveHQuarter(hquarterDtoLazy);
         List<Slot> defaultSlots = slotDAO.getSlotsForHquarter(defaultHquarter);
         if(defaultSlots.size()>0) {
@@ -111,6 +112,7 @@ public class HquartersRESTController {
                     Slot slot = slotDAO.getByHquarterAndPosition(hQuarter, defaultSlot.getPosition());
                     if(slot==null){
                         slot = new Slot();
+                        slot.setPosition(defaultSlot.getPosition());
                         slot.setHquarter(hQuarter);
                         slotDAO.saveOrUpdate(slot);
                     }
@@ -128,7 +130,7 @@ public class HquartersRESTController {
                 }
             }
         }
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity<>(hquarterMapper.mapToDto(defaultHquarter), HttpStatus.OK);
     }
 
     private HQuarter saveHQuarter(HquarterDtoLazy hquarterDtoLazy){
