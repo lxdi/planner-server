@@ -11,7 +11,7 @@ export class ScheduleFrame extends React.Component{
   constructor(props){
     super(props)
     this.state = {};
-    registerReaction('schedule-frame', 'hquarters-dao', ['hquarters-received', 'hquarter-modified', 'mean-assigned-to-slot', 'unassigned-mean', 'hquarters-clean'], ()=>this.setState({}))
+    registerReaction('schedule-frame', 'hquarters-dao', ['hquarters-received', 'hquarter-modified', 'mean-assigned-to-slot', 'unassigned-mean', 'hquarters-clean', 'default-received'], ()=>this.setState({}))
     registerReaction('schedule-frame', 'means-dao', ['means-received', 'mean-modified'], ()=>this.setState({}))
     registerReaction('schedule-frame', 'realms-dao', 'change-current-realm', ()=>this.setState({}))
   }
@@ -50,12 +50,14 @@ const hquartersUI = function(){
           </Table>
       )
   } else {
-    if(viewStateVal('hquarters-dao', 'hquarters')==null){
-      fireEvent('hquarters-dao', 'hquarters-request')
-    }
     if(viewStateVal('hquarters-dao', 'default')==null){
       fireEvent('hquarters-dao', 'request-for-default')
+    } else {
+      if(viewStateVal('hquarters-dao', 'hquarters')==null){
+        fireEvent('hquarters-dao', 'hquarters-request')
+      }
     }
+    return 'Loading...'
   }
 }
 

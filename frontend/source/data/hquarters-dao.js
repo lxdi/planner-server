@@ -15,7 +15,7 @@ registerEvent('hquarters-dao', 'hquarters-request', function(stateSetter){
 
 registerEvent('hquarters-dao', 'hquarters-received', function(){})
 
-registerEvent('hquarters-dao', 'hquarters-clean', (stateSetter)=>stateSetter('hquarters', null))
+registerEvent('hquarters-dao', 'hquarters-clean', (stateSetter)=>stateSetter('hquarters', []))
 
 registerEvent('hquarters-dao', 'update', (stateSetter, hquarter)=>{
   sendPost('/hquarter/update', hquarter, (data)=>{
