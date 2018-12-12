@@ -42,14 +42,17 @@ public class QuarterGenerator {
         System.out.println("Generating quarters for " + year);
         YearWeek start = YearWeek.of(year,1);
         int numberOfWeeks = start.is53WeekYear()? 53: 54;
-        YearWeek yw = start ;
+        YearWeek yw = start;
+        int hquartersPerYearLimit = 8;
         for(int i = 1; i < numberOfWeeks; i++){
-            if(i==1 || i == (1+12) || i == (1+12*2) || i==(1+12*3)) {
+            if(i==1 || (i-1)%6==0 && hquartersPerYearLimit>0){
+            //if(i==1 || i == (1+12) || i == (1+12*2) || i==(1+12*3)) {
                 HQuarter HQuarter = new HQuarter();
                 Date date = toDate(year, yw.atDay(DayOfWeek.MONDAY).getMonthValue(), yw.atDay(DayOfWeek.MONDAY).getDayOfMonth());
                 Week startWeek = weekDAO.weekByStartDate(date);
                 HQuarter.setStartWeek(startWeek);
                 quartalDAO.saveOrUpdate(HQuarter);
+                hquartersPerYearLimit--;
 
                 String message = "HQuarter: " + yw + " | start: " + yw.atDay(DayOfWeek.MONDAY);
                 System.out.println(message);

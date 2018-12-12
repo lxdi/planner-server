@@ -29,7 +29,9 @@ public class HQuarterDao implements IHQuarterDAO {
 
     @Override
     public List<HQuarter> getAllHQuartals(){
-        return sessionFactory.getCurrentSession().createCriteria(HQuarter.class).list();
+        return sessionFactory.getCurrentSession().createCriteria(HQuarter.class)
+                .add(Restrictions.isNotNull("startWeek"))
+                .list();
     }
 
     @Override

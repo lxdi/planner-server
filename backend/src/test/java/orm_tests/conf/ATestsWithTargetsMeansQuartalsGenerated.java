@@ -30,7 +30,7 @@ public abstract class ATestsWithTargetsMeansQuartalsGenerated extends AbstractTe
         quarterGenerator.generate(new ArrayList<>(Arrays.asList(2018, 2019)));
         List<HQuarter> HQuarters = hquarterDAO.getAllHQuartals();
 
-        assertTrue(HQuarters.size()==8);
+        assertTrue(HQuarters.size()==16);
         int checks = 4;
         for (HQuarter HQuarter : HQuarters) {
             String startWeekDateStr = fromDate(HQuarter.getStartWeek().getStartDay());

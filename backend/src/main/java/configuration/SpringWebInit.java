@@ -40,10 +40,6 @@ public class SpringWebInit implements WebApplicationInitializer {
 				if (event instanceof ContextRefreshedEvent) {
 					Properties extprops = BeanFactoryAnnotationUtils.qualifiedBeanOfType(ctx.getBeanFactory(), Properties.class, "ext_props");
 					//Properties extprops = (Properties) ctx.getBean("ext_props");
-					if (extprops.getProperty("generate_weeks").toLowerCase().equals("true")) {
-						generateWeeks(extprops.getProperty("gen_weeks_from"), extprops.getProperty("gen_weeks_to"),
-								(WeeksGenerator) ctx.getBean("weeksGenerator"));
-					}
                     if (extprops.getProperty("generate_quarters").toLowerCase().equals("true")) {
                         generateQuarters(extprops.getProperty("gen_quarters_from"), extprops.getProperty("gen_quarters_to"),
                                 (QuarterGenerator) ctx.getBean("quarterGenerator"));

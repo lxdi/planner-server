@@ -66,10 +66,6 @@ public class HibernateConfig {
             properties.put("username", envCtx.lookup("username"));
             properties.put("password", envCtx.lookup("password"));
 
-            properties.put("generate_weeks", envCtx.lookup("generate_weeks"));
-            properties.put("gen_weeks_from", envCtx.lookup("gen_weeks_from"));
-            properties.put("gen_weeks_to", envCtx.lookup("gen_weeks_to"));
-
             properties.put("generate_quarters", envCtx.lookup("generate_quarters"));
             properties.put("gen_quarters_from", envCtx.lookup("gen_quarters_from"));
             properties.put("gen_quarters_to", envCtx.lookup("gen_quarters_to"));
@@ -77,7 +73,7 @@ public class HibernateConfig {
         } catch (NamingException e) {
             e.printStackTrace();
             properties.put("use_database", "false");
-            properties.put("generate_weeks", "false");
+            properties.put("generate_quarters", "false");
         }
         return properties;
     }
@@ -88,9 +84,6 @@ public class HibernateConfig {
     <Environment name="url" type="java.lang.String" value="jdbc:postgresql://localhost:5432/planner" />
     <Environment name="username" type="java.lang.String" value="postgres" />
     <Environment name="password" type="java.lang.String" value="" />
-    <Environment name="generate_weeks" type="java.lang.String" value="true" />
-    <Environment name="gen_weeks_from" type="java.lang.String" value="2017" />
-    <Environment name="gen_weeks_to" type="java.lang.String" value="2019" />
      <Environment name="generate_quarters" type="java.lang.String" value="true" />
      <Environment name="gen_quarters_from" type="java.lang.String" value="2017" />
      <Environment name="gen_quarters_to" type="java.lang.String" value="2019" />
