@@ -36,12 +36,12 @@ export class ScheduleFrame extends React.Component{
 const hquartersUI = function(){
   if(viewStateVal('hquarters-dao', 'hquarters') != null && viewStateVal('hquarters-dao', 'default')!=null){
     return viewStateVal('hquarters-dao', 'hquarters').map((hquarter)=>
-          <Table striped bordered condensed hover width={'100px'} key={hquarter.year +'.'+formatDateNumber(hquarter.startday) + '.' + formatDateNumber(hquarter.startmonth)}>
+          <Table striped bordered condensed hover width={'100px'} key={"hquarter_"+weekToString(hquarter.startWeek)}>
             <tbody>
               <tr>
                 <td>
                   <a href='#' onClick={()=>fireEvent('hquarter-modal', 'open', [hquarter])}>
-                    {hquarter.year +'.'+formatDateNumber(hquarter.startday) + '.' + formatDateNumber(hquarter.startmonth)}
+                    {weekToString(hquarter.startWeek)}
                   </a>
                 </td>
               </tr>
@@ -59,6 +59,10 @@ const hquartersUI = function(){
     }
     return 'Loading...'
   }
+}
+
+const weekToString = function(week){
+  return week!=null? week.startDay: "default week (TODO - remove!)"
 }
 
 const getSlotsUI = function(hquarter){

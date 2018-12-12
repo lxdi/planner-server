@@ -5,6 +5,7 @@ import controllers.HquartersRESTController;
 import model.dao.IHQuarterDAO;
 import model.dao.IMeansDAO;
 import model.dao.ISlotDAO;
+import model.dao.IWeekDAO;
 import model.dto.hquarter.HquarterDtoLazy;
 import model.dto.hquarter.HquarterMapper;
 import model.dto.slot.SlotDtoLazy;
@@ -28,6 +29,7 @@ import static junit.framework.TestCase.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static services.DateUtils.fromDate;
 
 public class HquartersRESTControllerTests extends AbstractTestsWithTargets {
 
@@ -55,6 +57,9 @@ public class HquartersRESTControllerTests extends AbstractTestsWithTargets {
     @Autowired
     QuarterGenerator quarterGenerator;
 
+    @Autowired
+    IWeekDAO weekDAO;
+
     @Before
     public void init(){
         super.init();
@@ -73,13 +78,13 @@ public class HquartersRESTControllerTests extends AbstractTestsWithTargets {
     @Test
     public void updateWithSlotsTest() throws Exception {
         HQuarter hQuarter = quarterDAO.getAllHQuartals().get(0);
+        hQuarter.setStartWeek(weekDAO.weekByYearAndNumber(2018, 2));
 
         assertTrue(slotDAO.getSlotsForHquarter(hQuarter).size()==0);
 
         String content = "{\"id\":"+hQuarter.getId()+","+
-                "\"year\":2018,"+
-                "\"startmonth\":1,"+
-                "\"startday\":2,"+
+                "\"startWeek\":{\"id\":"+hQuarter.getStartWeek().getId()+
+                    ", \"startDay\":\""+fromDate(hQuarter.getStartWeek().getStartDay())+"\", \"number\": 1},"+
                 "\"slots\":[{" +
                     "\"position\":1,"+
                     "\"slotPositions\":["+
@@ -103,8 +108,9 @@ public class HquartersRESTControllerTests extends AbstractTestsWithTargets {
         assertTrue(slot!=null);
         assertTrue(slot.getPosition()==1);
         assertTrue(slotPositions.size()==2);
-        assertTrue(hQuarter.getStartMonth()==1);
-        assertTrue(hQuarter.getStartDay()==2);
+        assertTrue(fromDate(hQuarter.getStartWeek().getStartDay())
+                .equals(fromDate(weekDAO.weekByYearAndNumber(2018, 2).getStartDay())));
+
     }
 
     @Test

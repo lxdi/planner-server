@@ -2,8 +2,8 @@ package model.dao;
 
 import model.entities.Week;
 
+import java.sql.Date;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Alexander on 22.04.2018.
@@ -11,10 +11,12 @@ import java.util.Map;
 public interface IWeekDAO {
 
     Week getById(long id);
-    void createWeek(Week week);
+    void saveOrUpdate(Week week);
     List<Week> allWeeks();
     List<Week> getWeeksOfYear(int year);
-    Map<Integer, List<Week>> getWeeksMap();
+    //Map<Integer, List<Week>> getWeeksMap();
     Week weekByStartDate(int day, int month, int year);
+    Week weekByStartDate(Date date);
+    Week weekByYearAndNumber(int year, int number);
 
 }

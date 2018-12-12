@@ -4,13 +4,11 @@ import controllers.HquartersRESTController;
 import model.dao.IHQuarterDAO;
 import model.dao.IMeansDAO;
 import model.dao.ISlotDAO;
+import model.dao.IWeekDAO;
 import model.dto.hquarter.HquarterMapper;
 import model.dto.slot.SlotMapper;
 import model.dto.slot.SlotPositionMapper;
-import model.entities.DaysOfWeek;
-import model.entities.HQuarter;
-import model.entities.Slot;
-import model.entities.SlotPosition;
+import model.entities.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +18,12 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import orm_tests.conf.AbstractTestsWithTargets;
 import services.QuarterGenerator;
+import services.WeeksGenerator;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static services.DateUtils.toDate;
 
 public class HquartersRESTController_default_tests extends AbstractTestsWithTargets {
 
@@ -51,9 +51,16 @@ public class HquartersRESTController_default_tests extends AbstractTestsWithTarg
     @Autowired
     QuarterGenerator quarterGenerator;
 
+    @Autowired
+    WeeksGenerator weeksGenerator;
+
+    @Autowired
+    IWeekDAO weekDAO;
+
     @Before
     public void init(){
         super.init();
+        weeksGenerator.generateYear(2018);
         hquartersRESTController = new HquartersRESTController(meansDAO, quarterDAO, slotDAO, hquarterMapper, slotMapper, slotPositionMapper);
         mockMvc = MockMvcBuilders.standaloneSetup(hquartersRESTController).build();
     }
@@ -66,13 +73,13 @@ public class HquartersRESTController_default_tests extends AbstractTestsWithTarg
 
     @Test
     public void setDefaultTest() throws Exception {
-        HQuarter hQuarter1 = new HQuarter(2018, 1, 2);
+        HQuarter hQuarter1 = new HQuarter(weekDAO.weekByYearAndNumber(2018, 1));
         quarterDAO.saveOrUpdate(hQuarter1);
 
-        HQuarter hQuarter2 = new HQuarter(2018, 3, 14);
+        HQuarter hQuarter2 = new HQuarter(weekDAO.weekByYearAndNumber(2018, 2));
         quarterDAO.saveOrUpdate(hQuarter2);
 
-        HQuarter hQuarter3 = new HQuarter(2018, 5, 28);
+        HQuarter hQuarter3 = new HQuarter(weekDAO.weekByYearAndNumber(2018, 3));
         quarterDAO.saveOrUpdate(hQuarter3);
 
         HQuarter defaultHquarter = quarterDAO.getDefault();
@@ -86,9 +93,6 @@ public class HquartersRESTController_default_tests extends AbstractTestsWithTarg
 
 
         String content = "{\"id\":"+defaultHquarter.getId()+","+
-                "\"year\":0,"+
-                "\"startmonth\":0,"+
-                "\"startday\":0,"+
                 "\"slots\":[{" +
                     "\"id\": "+slot1.getId()+","+
                     "\"position\":1,"+

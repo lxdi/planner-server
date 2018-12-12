@@ -103,7 +103,7 @@ public class HquartersRESTController {
 
     @RequestMapping(path="/set/default", method = RequestMethod.POST)
     public ResponseEntity<HquarterDtoLazy> setDefault(@RequestBody HquarterDtoLazy hquarterDtoLazy){
-        assert hquarterDtoLazy.getYear()==0 && hquarterDtoLazy.getStartmonth()==0 && hquarterDtoLazy.getStartday()==0;
+        assert hquarterDtoLazy.getStartWeek()==null && hquarterDtoLazy.getEndWeek()==null;
         HQuarter defaultHquarter = saveHQuarter(hquarterDtoLazy);
         List<Slot> defaultSlots = slotDAO.getSlotsForHquarter(defaultHquarter);
         if(defaultSlots.size()>0) {
@@ -129,9 +129,11 @@ public class HquartersRESTController {
                             slotPosition.setSlot(slot);
                             //slotDAO.saveOrUpdate(slotPosition);
                         }
-                        slotPosition.setDaysOfWeek(defaultSlotPosition.getDaysOfWeek());
-                        slotPosition.setPosition(defaultSlotPosition.getPosition());
-                        slotDAO.saveOrUpdate(slotPosition);
+                        if(slotPosition.getDaysOfWeek()!=defaultSlotPosition.getDaysOfWeek() || slotPosition.getPosition()!=defaultSlotPosition.getPosition()){
+                            slotPosition.setDaysOfWeek(defaultSlotPosition.getDaysOfWeek());
+                            slotPosition.setPosition(defaultSlotPosition.getPosition());
+                            slotDAO.saveOrUpdate(slotPosition);
+                        }
                     }
                     //TODO remove all SlotPositions left in the slotPositionsPool
                 }

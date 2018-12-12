@@ -15,6 +15,7 @@ import java.util.Map;
  * Created by Alexander on 23.04.2018.
  */
 
+@Deprecated
 @Controller
 public class WeeksRESTController {
 
@@ -30,7 +31,8 @@ public class WeeksRESTController {
 
     @RequestMapping(path = "/week/all")
     public ResponseEntity<Map<Integer, List<Week>>> getAllWeeks(){
-        return new ResponseEntity<Map<Integer, List<Week>>>(weekDAO.getWeeksMap(), HttpStatus.OK);
+        //return new ResponseEntity<Map<Integer, List<Week>>>(weekDAO.getWeeksMap(), HttpStatus.OK);
+        return null;
     }
 
 

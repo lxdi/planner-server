@@ -11,19 +11,22 @@ public class HQuarter {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
 
-    int year;
-    int startMonth;
-    int startDay;
+//    int year;
+//    int startMonth;
+//    int startDay;
+
+    @ManyToOne
+    Week startWeek;
+
+    @ManyToOne
+    Week endWeek;
 
     boolean custom = false;
 
     public HQuarter(){}
 
-    public HQuarter(int year, int startMonth, int startDay){
-        assert startMonth<13 && startDay<32;
-        this.year = year;
-        this.startMonth = startMonth;
-        this.startDay = startDay;
+    public HQuarter(Week startWeek){
+        this.startWeek = startWeek;
     }
 
     public long getId() {
@@ -33,32 +36,24 @@ public class HQuarter {
         this.id = id;
     }
 
-
-    public int getYear() {
-        return year;
-    }
-    public void setYear(int year) {
-        this.year = year;
-    }
-
-    public int getStartMonth() {
-        return startMonth;
-    }
-    public void setStartMonth(int startMonth) {
-        this.startMonth = startMonth;
-    }
-
-    public int getStartDay() {
-        return startDay;
-    }
-    public void setStartDay(int startDay) {
-        this.startDay = startDay;
-    }
-
     public boolean isCustom() {
         return custom;
     }
     public void setCustom(boolean custom) {
         this.custom = custom;
+    }
+
+    public Week getStartWeek() {
+        return startWeek;
+    }
+    public void setStartWeek(Week startWeek) {
+        this.startWeek = startWeek;
+    }
+
+    public Week getEndWeek() {
+        return endWeek;
+    }
+    public void setEndWeek(Week endWeek) {
+        this.endWeek = endWeek;
     }
 }
