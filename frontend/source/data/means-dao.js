@@ -38,7 +38,7 @@ registerEvent('means-dao', 'mean-created', (stateSetter, mean)=>mean)
 
 registerEvent('means-dao', 'delete', function(stateSetter, id, targetid){
   sendDelete('/mean/delete/'+id, function() {
-    deleteMeanUI(viewStateVal('means-dao', 'means')[id])
+    deleteMeanUI(viewStateVal('means-dao', 'means')[viewStateVal('realms-dao', 'currentRealm').id][id])
     //resolveMeans(viewStateVal('means-dao', 'means'))
     fireEvent('means-dao', 'mean-deleted', [id])
   })
@@ -151,7 +151,7 @@ const resolveMean = function(mean){
 
 //delete Mean only form UI
 const deleteMeanUI = function(mean){
-  const means = viewStateVal('means-dao', 'means')
+  const means = viewStateVal('means-dao', 'means')[viewStateVal('realms-dao', 'currentRealm').id]
   for(var id in means){
     if(means[id].nextid == mean.id){
       means[id].nextid = mean.nextid
@@ -159,9 +159,9 @@ const deleteMeanUI = function(mean){
     }
   }
   delete means[mean.id]
-  if(mean.parentid==null){
-    delete viewStateVal('means-dao', 'root-means-by-realm')[mean.realmid][mean.id]
-  }
+  // if(mean.parentid==null){
+  //   delete viewStateVal('means-dao', 'root-means-by-realm')[mean.realmid][mean.id]
+  // }
 }
 
 export var MeanById = function(id){
