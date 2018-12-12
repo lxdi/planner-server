@@ -19,35 +19,6 @@ import static services.DateUtils.toDate;
  */
 public class WeekDAOTests extends AbstractTestsWithTargets {
 
-    //TODO restore
-//    @Test
-//    public void weekDAOgetWeeeksOfYearTest(){
-//        List<Week> weeksIn2018 = weekDAO.getWeeksOfYear(2018);
-//        assertTrue(weeksIn2018.get(0).getYear()==2018);
-//        assertTrue(weeksIn2018.get(20).getYear()==2018);
-//        assertTrue(weeksIn2018.get(35).getYear()==2018);
-//        assertTrue(weeksIn2018.size()==53);
-//        assertTrue(weeksIn2018.get(weeksIn2018.size()-1).getYear()==2018);
-//    }
-//
-//    @Test
-//    public void weekDAOgetWeeksMapTest(){
-//        Map<Integer, List<Week>> weekshmap = weekDAO.getWeeksMap();
-//        assertTrue(weekshmap.get(2018).size()==53);
-//        assertTrue(weekshmap.get(2018).get(0).getYear()==2018);
-//        assertTrue(weekshmap.get(2017).get(0).getYear()==2017);
-//        assertTrue(weekshmap.get(2019).get(0).getYear()==2019);
-//    }
-//
-//    @Test
-//    public void weekByStartDateTest(){
-//        Week week = weekDAO.weekByStartDate(9, 7, 2018);
-//        assertTrue(week!=null);
-//        assertTrue(week.getYear()==2018);
-//        assertTrue(week.getStartDay()==9);
-//        assertTrue(week.getStartMonth()==7);
-//    }
-
     @Autowired
     IWeekDAO weekDAO;
 
