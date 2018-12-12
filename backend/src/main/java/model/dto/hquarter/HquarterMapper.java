@@ -23,9 +23,13 @@ public class HquarterMapper implements IMapper<HquarterDtoLazy, HQuarter> {
     public HquarterDtoLazy mapToDto(HQuarter entity) {
         HquarterDtoLazy dto = new HquarterDtoLazy();
         dto.setId(entity.getId());
-        dto.setYear(entity.getYear());
-        dto.setStartmonth(entity.getStartMonth());
-        dto.setStartday(entity.getStartDay());
+        if(entity.getStartWeek()!=null){
+            dto.setStartWeek(entity.getStartWeek());
+        }
+
+        if(entity.getEndWeek()!=null){
+            dto.setEndWeek(entity.getEndWeek());
+        }
 
         List<Slot> slotList = slotDAO.getSlotsForHquarter(entity);
         if(slotList.size()>0){
@@ -40,9 +44,12 @@ public class HquarterMapper implements IMapper<HquarterDtoLazy, HQuarter> {
     public HQuarter mapToEntity(HquarterDtoLazy dto) {
         HQuarter hquarter = new HQuarter();
         hquarter.setId(dto.getId());
-        hquarter.setYear(dto.getYear());
-        hquarter.setStartMonth(dto.getStartmonth());
-        hquarter.setStartDay(dto.getStartday());
+        if(dto.getStartWeek()!=null) {
+            hquarter.setStartWeek(dto.getStartWeek());
+        }
+        if(dto.getEndWeek()!=null) {
+            hquarter.setEndWeek(dto.getEndWeek());
+        }
         return hquarter;
     }
 }

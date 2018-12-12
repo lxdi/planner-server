@@ -1,7 +1,9 @@
 package model.entities;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import javax.persistence.*;
-import java.util.Date;
+import java.sql.Date;
 
 /**
  * Created by Alexander on 05.03.2018.
@@ -14,13 +16,23 @@ public class Week {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
 
-    int year;
+    @Basic
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    Date startDay;
 
-    int startMonth;
-    int startDay;
+    @Basic
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    Date endDay;
 
-    int endMonth;
-    int endDay;
+    int number;
+
+    public Week(){}
+
+    public Week(Date startDay, Date endDay, int number){
+        this.startDay = startDay;
+        this.endDay = endDay;
+        this.number = number;
+    }
 
     public long getId() {
         return id;
@@ -29,43 +41,27 @@ public class Week {
         this.id = id;
     }
 
-    public int getYear() {
-        return year;
-    }
-
-    public void setYear(int year) {
-        this.year = year;
-    }
-
-    public int getStartMonth() {
-        return startMonth;
-    }
-
-    public void setStartMonth(int startMonth) {
-        this.startMonth = startMonth;
-    }
-
-    public int getStartDay() {
+    public Date getStartDay() {
         return startDay;
     }
 
-    public void setStartDay(int startDay) {
+    public void setStartDay(Date startDay) {
         this.startDay = startDay;
     }
 
-    public int getEndMonth() {
-        return endMonth;
-    }
-
-    public void setEndMonth(int endMonth) {
-        this.endMonth = endMonth;
-    }
-
-    public int getEndDay() {
+    public Date getEndDay() {
         return endDay;
     }
 
-    public void setEndDay(int endDay) {
+    public void setEndDay(Date endDay) {
         this.endDay = endDay;
+    }
+
+    public int getNumber() {
+        return number;
+    }
+
+    public void setNumber(int number) {
+        this.number = number;
     }
 }

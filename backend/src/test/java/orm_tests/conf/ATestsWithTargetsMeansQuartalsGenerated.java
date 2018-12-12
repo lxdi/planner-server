@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static junit.framework.TestCase.assertTrue;
+import static services.DateUtils.fromDate;
 
 
 public abstract class ATestsWithTargetsMeansQuartalsGenerated extends AbstractTestsWithTargetsWithMeans {
@@ -31,20 +32,19 @@ public abstract class ATestsWithTargetsMeansQuartalsGenerated extends AbstractTe
 
         assertTrue(HQuarters.size()==8);
         int checks = 4;
-        for(HQuarter HQuarter : HQuarters){
-            if(HQuarter.getYear()==2018){
-                if(HQuarter.getStartMonth()==1 && HQuarter.getStartDay()==1){
-                    checks--;
-                }
-                if(HQuarter.getStartMonth()==3 && HQuarter.getStartDay()==26){
-                    checks--;
-                }
-                if(HQuarter.getStartMonth()==6 && HQuarter.getStartDay()==18){
-                    checks--;
-                }
-                if(HQuarter.getStartMonth()==9 && HQuarter.getStartDay()==10){
-                    checks--;
-                }
+        for (HQuarter HQuarter : HQuarters) {
+            String startWeekDateStr = fromDate(HQuarter.getStartWeek().getStartDay());
+            if (startWeekDateStr.contains("2018-01-01")) {
+                checks--;
+            }
+            if (startWeekDateStr.contains("2018-03-26")) {
+                checks--;
+            }
+            if (startWeekDateStr.contains("2018-06-18")) {
+                checks--;
+            }
+            if (startWeekDateStr.contains("2018-09-10")) {
+                checks--;
             }
         }
         assertTrue(checks==0);

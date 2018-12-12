@@ -48,12 +48,11 @@ public class HQuarterDao implements IHQuarterDAO {
 
     @Override
     public HQuarter getDefault() {
-        HQuarter hQuarter = this.getByStartDate(0,0,0);
+        HQuarter hQuarter = (HQuarter) sessionFactory.getCurrentSession().createCriteria(HQuarter.class)
+                .add(Restrictions.isNull("startWeek"))
+                .add(Restrictions.isNull("endWeek")).uniqueResult();
         if(hQuarter==null){
             hQuarter = new HQuarter();
-            hQuarter.setYear(0);
-            hQuarter.setStartMonth(0);
-            hQuarter.setStartDay(0);
             this.saveOrUpdate(hQuarter);
         }
         return hQuarter;
