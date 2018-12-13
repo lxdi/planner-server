@@ -75,7 +75,9 @@ registerEvent('means-dao', 'modify', function(stateSetter, mean){
     mean.targetsIds.push(mean.targets[i].id)
   }
   sendPost('/mean/update', JSON.stringify(mean), function(data) {
-    viewStateVal('means-dao', 'means')[data.id] = data
+    //viewStateVal('means-dao', 'means')[mean.realmid][data.id] = data
+    importOneMeanDto(data)
+    resolveMean(viewStateVal('means-dao', 'means')[data.realmid][data.id])
     //resolveMeans(viewStateVal('means-dao', 'means'))
     fireEvent('means-dao', 'mean-modified', [mean])
   })
