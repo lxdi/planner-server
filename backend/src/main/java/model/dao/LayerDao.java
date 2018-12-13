@@ -3,7 +3,7 @@ package model.dao;
 import model.entities.Layer;
 import model.entities.Mean;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,9 +19,13 @@ public class LayerDao implements ILayerDAO {
 
     @Override
     public List<Layer> getLyersOfMean(Mean mean) {
-        return sessionFactory.getCurrentSession().createCriteria(Layer.class)
-                .add(Restrictions.eq("mean", mean))
-                .list();
+        String hql = "from Layer lr where lr.mean = :mean";
+        Query query = sessionFactory.getCurrentSession().createQuery(hql);
+        query.setParameter("mean", mean);
+        return query.list();
+//        return sessionFactory.getCurrentSession().createCriteria(Layer.class)
+//                .add(Restrictions.eq("mean", mean))
+//                .list();
     }
 
     @Override

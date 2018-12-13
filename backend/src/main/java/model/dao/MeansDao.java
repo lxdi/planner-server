@@ -2,11 +2,9 @@ package model.dao;
 
 import model.entities.Layer;
 import model.entities.Mean;
-import model.entities.HQuarter;
 import model.entities.Realm;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Junction;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,7 +27,8 @@ public class MeansDao implements IMeansDAO {
 
     @Override
     public List<Mean> getAllMeans() {
-        return sessionFactory.getCurrentSession().createCriteria(Mean.class).list();
+        return sessionFactory.getCurrentSession().createQuery("FROM Mean").list();
+        //return sessionFactory.getCurrentSession().createCriteria(Mean.class).list();
     }
 
     @Override
@@ -70,28 +69,49 @@ public class MeansDao implements IMeansDAO {
 
     @Override
     public List<Mean> getChildren(Mean mean){
-        return sessionFactory.getCurrentSession().createCriteria(Mean.class).add(Restrictions.eq("parent", mean)).list();
+        String hql = "FROM Mean mean where mean.parent = :parent";
+        Query query = sessionFactory.getCurrentSession().createQuery(hql);
+        query.setParameter("parent", mean);
+        return query.list();
+//        return sessionFactory.getCurrentSession().createCriteria(Mean.class)
+//                .add(Restrictions.eq("parent", mean)).list();
     }
 
     @Override
     public Mean meanByTitle(String title) {
-        return (Mean) sessionFactory.getCurrentSession()
-                .createCriteria(Mean.class).add(Restrictions.eq("title", title)).uniqueResult();
+        String hql = "FROM Mean mean where mean.title = :title";
+        Query query = sessionFactory.getCurrentSession().createQuery(hql);
+        query.setParameter("title", title);
+        return (Mean) query.uniqueResult();
+//        return (Mean) sessionFactory.getCurrentSession()
+//                .createCriteria(Mean.class).add(Restrictions.eq("title", title)).uniqueResult();
     }
 
     @Override
     public Mean getPrevMean(Mean mean) {
-        return (Mean) sessionFactory.getCurrentSession()
-                .createCriteria(Mean.class).add(Restrictions.eq("next", mean)).uniqueResult();
+        String hql = "FROM Mean mean where mean.next = :next";
+        Query query = sessionFactory.getCurrentSession().createQuery(hql);
+        query.setParameter("next", mean);
+        return (Mean) query.uniqueResult();
+//        return (Mean) sessionFactory.getCurrentSession()
+//                .createCriteria(Mean.class).add(Restrictions.eq("next", mean)).uniqueResult();
     }
 
     @Override
     public Mean getLastOfChildren(Mean mean, Realm realm) {
-        return (Mean) sessionFactory.getCurrentSession()
-                .createCriteria(Mean.class)
-                .add(Restrictions.eq("realm", realm))
-                .add(mean!=null?Restrictions.eq("parent", mean):Restrictions.isNull("parent"))
-                .add(Restrictions.isNull("next")).uniqueResult();
+        String hql = "FROM Mean mean where mean.realm = :realm and mean.next is null and "
+                + (mean!=null?"mean.parent = :parent":"mean.parent is null");
+        Query query = sessionFactory.getCurrentSession().createQuery(hql);
+        if(mean!=null){
+            query.setParameter("parent", mean);
+        }
+        query.setParameter("realm", realm);
+        return (Mean) query.uniqueResult();
+//        return (Mean) sessionFactory.getCurrentSession()
+//                .createCriteria(Mean.class)
+//                .add(Restrictions.eq("realm", realm))
+//                .add(mean!=null?Restrictions.eq("parent", mean):Restrictions.isNull("parent"))
+//                .add(Restrictions.isNull("next")).uniqueResult();
     }
 
     @Override

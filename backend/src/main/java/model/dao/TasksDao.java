@@ -1,10 +1,8 @@
 package model.dao;
 
-import model.entities.Layer;
 import model.entities.Subject;
 import model.entities.Task;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,7 +27,9 @@ public class TasksDao implements ITasksDAO {
 
     @Override
     public Task byTitle(String title) {
-        return (Task) sessionFactory.getCurrentSession().createCriteria(Task.class).add(Restrictions.eq("title", title)).uniqueResult();
+        return (Task) sessionFactory.getCurrentSession().createQuery("from Task t where t.title = :title")
+                .setParameter("title", title).uniqueResult();
+        //return (Task) sessionFactory.getCurrentSession().createCriteria(Task.class).add(Restrictions.eq("title", title)).uniqueResult();
     }
 
     @Override
@@ -44,14 +44,17 @@ public class TasksDao implements ITasksDAO {
 
     @Override
     public List<Task> allTasks() {
-        return sessionFactory.getCurrentSession().createCriteria(Task.class).list();
+        return sessionFactory.getCurrentSession().createQuery("from Task").list();
+        //return sessionFactory.getCurrentSession().createCriteria(Task.class).list();
     }
 
     @Override
     public List<Task> tasksBySubject(Subject subject) {
-        return sessionFactory.getCurrentSession().createCriteria(Task.class)
-                .add(Restrictions.eq("subject", subject))
-                .list();
+        return sessionFactory.getCurrentSession().createQuery("from Task t where t.subject = :subject")
+                .setParameter("subject", subject).list();
+//        return sessionFactory.getCurrentSession().createCriteria(Task.class)
+//                .add(Restrictions.eq("subject", subject))
+//                .list();
     }
 
 }

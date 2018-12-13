@@ -5,7 +5,7 @@ import model.entities.HQuarter;
 import model.entities.Slot;
 import model.entities.SlotPosition;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,10 +36,15 @@ public class SlotDao implements ISlotDAO {
 
     @Override
     public Slot getByHquarterAndPosition(HQuarter hQuarter, int position) {
-        return (Slot) this.sessionFactory.getCurrentSession().createCriteria(Slot.class)
-                .add(Restrictions.eq("hquarter", hQuarter))
-                .add(Restrictions.eq("position", position))
-                .uniqueResult();
+        String hql = "FROM Slot slot WHERE slot.hquarter = :hquarter and slot.position = :position";
+        Query query = sessionFactory.getCurrentSession().createQuery(hql);
+        query.setParameter("hquarter", hQuarter);
+        query.setParameter("position", position);
+        return (Slot) query.uniqueResult();
+//        return (Slot) this.sessionFactory.getCurrentSession().createCriteria(Slot.class)
+//                .add(Restrictions.eq("hquarter", hQuarter))
+//                .add(Restrictions.eq("position", position))
+//                .uniqueResult();
     }
 
     @Override
@@ -49,22 +54,33 @@ public class SlotDao implements ISlotDAO {
 
     @Override
     public List<Slot> getSlotsForHquarter(HQuarter hquarter) {
-        return sessionFactory.getCurrentSession().createCriteria(Slot.class)
-                .add(Restrictions.eq("hquarter", hquarter)).list();
+        String hql = "FROM Slot slot WHERE slot.hquarter = :hquarter";
+        Query query = sessionFactory.getCurrentSession().createQuery(hql);
+        query.setParameter("hquarter", hquarter);
+        return query.list();
+//        return sessionFactory.getCurrentSession().createCriteria(Slot.class)
+//                .add(Restrictions.eq("hquarter", hquarter)).list();
     }
 
     @Override
     public List<SlotPosition> getSlotPositionsForSlot(Slot slot) {
-        return sessionFactory.getCurrentSession().createCriteria(SlotPosition.class)
-                .add(Restrictions.eq("slot", slot)).list();
+        String hql = "FROM SlotPosition sp WHERE sp.slot= :slot";
+        Query query = sessionFactory.getCurrentSession().createQuery(hql);
+        query.setParameter("slot", slot);
+        return query.list();
+//        return sessionFactory.getCurrentSession().createCriteria(SlotPosition.class)
+//                .add(Restrictions.eq("slot", slot)).list();
     }
 
     @Override
     public SlotPosition getSlotPosition(Slot slot, DaysOfWeek dayOfWeek, int position) {
-        return (SlotPosition) sessionFactory.getCurrentSession().createCriteria(SlotPosition.class)
-                .add(Restrictions.eq("slot", slot))
-                .add(Restrictions.eq("daysOfWeek", dayOfWeek))
-                .add(Restrictions.eq("position", position))
+        return (SlotPosition) sessionFactory.getCurrentSession()
+                .createQuery("from SlotPosition sp from sp.slot = :slot and sp.daysOfWeek and sp.position")
                 .uniqueResult();
+//        return (SlotPosition) sessionFactory.getCurrentSession().createCriteria(SlotPosition.class)
+//                .add(Restrictions.eq("slot", slot))
+//                .add(Restrictions.eq("daysOfWeek", dayOfWeek))
+//                .add(Restrictions.eq("position", position))
+//                .uniqueResult();
     }
 }

@@ -13,8 +13,6 @@ public interface IWeekDAO {
     Week getById(long id);
     void saveOrUpdate(Week week);
     List<Week> allWeeks();
-    List<Week> getWeeksOfYear(int year);
-    //Map<Integer, List<Week>> getWeeksMap();
     Week weekByStartDate(int day, int month, int year);
     Week weekByStartDate(Date date);
     Week weekByYearAndNumber(int year, int number);

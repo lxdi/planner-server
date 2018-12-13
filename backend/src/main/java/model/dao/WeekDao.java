@@ -2,17 +2,12 @@ package model.dao;
 
 import model.entities.Week;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Disjunction;
-import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Date;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static services.DateUtils.fromDate;
 import static services.DateUtils.toDate;
@@ -40,13 +35,8 @@ public class WeekDao implements IWeekDAO {
 
     @Override
     public List<Week> allWeeks() {
-        return sessionFactory.getCurrentSession().createCriteria(Week.class).list();
-    }
-
-    @Deprecated
-    @Override
-    public List<Week> getWeeksOfYear(int year) {
-        return sessionFactory.getCurrentSession().createCriteria(Week.class).add(Restrictions.eq("year", year)).list();
+        return sessionFactory.getCurrentSession().createQuery("from Week").list();
+        //return sessionFactory.getCurrentSession().createCriteria(Week.class).list();
     }
 
     @Override
@@ -56,8 +46,10 @@ public class WeekDao implements IWeekDAO {
 
     @Override
     public Week weekByStartDate(Date date) {
-        Week week = (Week) sessionFactory.getCurrentSession().createCriteria(Week.class)
-                .add(Restrictions.eq("startDay", date)).uniqueResult();
+        Week week = (Week) sessionFactory.getCurrentSession().createQuery("from Week w where w.startDay = :startDay")
+                .setParameter("startDay", date).uniqueResult();
+//        Week week = (Week) sessionFactory.getCurrentSession().createCriteria(Week.class)
+//                .add(Restrictions.eq("startDay", date)).uniqueResult();
         if(week==null){
             throw new NullPointerException("An week with start date "+ fromDate(date) + " either doesn't exist either hasn't been generated");
         }
@@ -68,10 +60,16 @@ public class WeekDao implements IWeekDAO {
     public Week weekByYearAndNumber(int year, int number) {
         Date firstDay = toDate(year, 1, 1);
         Date lastDay = toDate(year+1, 1, 1);
-        return (Week) sessionFactory.getCurrentSession().createCriteria(Week.class)
-                .add(Restrictions.gt("startDay", firstDay))
-                .add(Restrictions.le("startDay", lastDay))
-                .add(Restrictions.eq("number", number))
+        return (Week) sessionFactory.getCurrentSession()
+                .createQuery("from Week w where w.startDay > :firstDay and w.startDay < :lastDay and w.number = :number")
+                .setParameter("firstDay", firstDay)
+                .setParameter("lastDay", lastDay)
+                .setParameter("number", number)
                 .uniqueResult();
+//        return (Week) sessionFactory.getCurrentSession().createCriteria(Week.class)
+//                .add(Restrictions.gt("startDay", firstDay))
+//                .add(Restrictions.le("startDay", lastDay))
+//                .add(Restrictions.eq("number", number))
+//                .uniqueResult();
     }
 }

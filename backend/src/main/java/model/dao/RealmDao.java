@@ -17,7 +17,8 @@ public class RealmDao implements IRealmDAO {
 
     @Override
     public List<Realm> getAllRealms() {
-        return sessionFactory.getCurrentSession().createCriteria(Realm.class).list();
+        return sessionFactory.getCurrentSession().createQuery("from Realm").list();
+        //return sessionFactory.getCurrentSession().createCriteria(Realm.class).list();
     }
 
     @Override
