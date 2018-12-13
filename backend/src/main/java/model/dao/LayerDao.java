@@ -17,6 +17,9 @@ public class LayerDao implements ILayerDAO {
     @Autowired
     SessionFactory sessionFactory;
 
+    @Autowired
+    IMeansDAO meansDAO;
+
     @Override
     public List<Layer> getLyersOfMean(Mean mean) {
         String hql = "from Layer lr where lr.mean = :mean";
@@ -26,6 +29,22 @@ public class LayerDao implements ILayerDAO {
 //        return sessionFactory.getCurrentSession().createCriteria(Layer.class)
 //                .add(Restrictions.eq("mean", mean))
 //                .list();
+    }
+
+    @Override
+    public Layer getCurrentLayer(Mean mean) {
+        long assignsCount = meansDAO.assignsMeansCount(mean);
+        Layer result = getLayerAtPriority(mean, (int)(assignsCount+1));
+        return result;
+    }
+
+    @Override
+    public Layer getLayerAtPriority(Mean mean, int priority) {
+        String hql = "from Layer l where l.mean = :mean and l.priority = :priority";
+        Query query = sessionFactory.getCurrentSession().createQuery(hql);
+        query.setParameter("mean", mean);
+        query.setParameter("priority", priority);
+        return (Layer) query.uniqueResult();
     }
 
     @Override

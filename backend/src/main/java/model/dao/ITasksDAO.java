@@ -1,5 +1,6 @@
 package model.dao;
 
+import model.entities.Layer;
 import model.entities.Subject;
 import model.entities.Task;
 
@@ -16,5 +17,6 @@ public interface ITasksDAO {
     void delete(long id);
     List<Task> allTasks();
     List<Task> tasksBySubject(Subject subject);
+    List<Task> tasksByLayer(Layer layer);
 
 }

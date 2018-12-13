@@ -21,6 +21,7 @@ public interface IMeansDAO {
     void validateMean(Mean mean);
     Mean getPrevMean(Mean mean);
     Mean getLastOfChildren(Mean mean, Realm realm);
+    long assignsMeansCount(Mean mean);
 
 
 

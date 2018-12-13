@@ -1,5 +1,6 @@
 package model.dao;
 
+import model.entities.HQuarter;
 import model.entities.Week;
 
 import java.sql.Date;
@@ -16,5 +17,6 @@ public interface IWeekDAO {
     Week weekByStartDate(int day, int month, int year);
     Week weekByStartDate(Date date);
     Week weekByYearAndNumber(int year, int number);
+    List<Week> weeksOfHquarter(HQuarter hQuarter);
 
 }

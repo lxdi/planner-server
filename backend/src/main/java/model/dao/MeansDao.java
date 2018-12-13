@@ -115,6 +115,14 @@ public class MeansDao implements IMeansDAO {
     }
 
     @Override
+    public long assignsMeansCount(Mean mean) {
+        String hql = "select count(*) from Slot s where s.mean = :mean";
+        Query query = sessionFactory.getCurrentSession().createQuery(hql);
+        query.setParameter("mean", mean);
+        return (Long) query.uniqueResult();
+    }
+
+    @Override
     public void validateMean(Mean mean){
         //validateByQuarter(mean);
     }

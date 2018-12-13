@@ -12,6 +12,7 @@ import java.sql.Date;
 import java.time.DayOfWeek;
 import java.util.List;
 
+import static services.DateUtils.fromDate;
 import static services.DateUtils.toDate;
 
 /**
@@ -44,21 +45,30 @@ public class QuarterGenerator {
         int numberOfWeeks = start.is53WeekYear()? 53: 54;
         YearWeek yw = start;
         int hquartersPerYearLimit = 8;
-        for(int i = 1; i < numberOfWeeks; i++){
-            if(i==1 || (i-1)%6==0 && hquartersPerYearLimit>0){
+        int hquarterlength = 6;
+        for(int i = 1; i <= hquartersPerYearLimit; i++){
+            //if(i==1 || (i-1)%6==0 && hquartersPerYearLimit>0){
             //if(i==1 || i == (1+12) || i == (1+12*2) || i==(1+12*3)) {
-                HQuarter HQuarter = new HQuarter();
-                Date date = toDate(year, yw.atDay(DayOfWeek.MONDAY).getMonthValue(), yw.atDay(DayOfWeek.MONDAY).getDayOfMonth());
-                Week startWeek = weekDAO.weekByStartDate(date);
-                HQuarter.setStartWeek(startWeek);
-                quartalDAO.saveOrUpdate(HQuarter);
-                hquartersPerYearLimit--;
+                if(yw.getWeek()==1 && yw.atDay(DayOfWeek.MONDAY).getMonthValue()==12){
+                    yw = yw.plusWeeks(1); //if the first week starts in the last year then start from the second week
+                }
+                Date startDate = toDate(year, yw.atDay(DayOfWeek.MONDAY).getMonthValue(), yw.atDay(DayOfWeek.MONDAY).getDayOfMonth());
+                Week startWeek = weekDAO.weekByStartDate(startDate);
 
-                String message = "HQuarter: " + yw + " | start: " + yw.atDay(DayOfWeek.MONDAY);
+                yw = yw.plusWeeks(hquarterlength-1);
+                Date endDate = toDate(year, yw.atDay(DayOfWeek.MONDAY).getMonthValue(), yw.atDay(DayOfWeek.MONDAY).getDayOfMonth());
+                Week endWeek = weekDAO.weekByStartDate(endDate);
+
+                HQuarter HQuarter = new HQuarter(startWeek, endWeek);
+                quartalDAO.saveOrUpdate(HQuarter);
+                yw = yw.plusWeeks(1);
+                //hquartersPerYearLimit--;
+
+                String message = "HQuarter: " + HQuarter.getStartWeek().getNumber() + " | start: " + fromDate(HQuarter.getStartWeek().getStartDay());
                 System.out.println(message);
-            }
+            //}
             // Prepare for next loop.
-            yw = yw.plusWeeks(1);
+            //yw = yw.plusWeeks(1);
         }
     }
 

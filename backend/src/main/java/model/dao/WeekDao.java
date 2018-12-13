@@ -1,5 +1,6 @@
 package model.dao;
 
+import model.entities.HQuarter;
 import model.entities.Week;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,5 +72,10 @@ public class WeekDao implements IWeekDAO {
 //                .add(Restrictions.le("startDay", lastDay))
 //                .add(Restrictions.eq("number", number))
 //                .uniqueResult();
+    }
+
+    @Override
+    public List<Week> weeksOfHquarter(HQuarter hQuarter) {
+        return null;
     }
 }

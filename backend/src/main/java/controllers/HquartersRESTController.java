@@ -1,18 +1,13 @@
 package controllers;
 
-import model.dao.IHQuarterDAO;
-import model.dao.IMeansDAO;
-import model.dao.ISlotDAO;
+import model.dao.*;
 import model.dto.hquarter.HquarterDtoLazy;
 import model.dto.hquarter.HquarterMapper;
 import model.dto.slot.SlotDtoLazy;
 import model.dto.slot.SlotMapper;
 import model.dto.slot.SlotPositionDtoLazy;
 import model.dto.slot.SlotPositionMapper;
-import model.entities.HQuarter;
-import model.entities.Mean;
-import model.entities.Slot;
-import model.entities.SlotPosition;
+import model.entities.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -47,6 +42,12 @@ public class HquartersRESTController {
 
     @Autowired
     SlotPositionMapper slotPositionMapper;
+
+    @Autowired
+    ILayerDAO layerDAO;
+
+    @Autowired
+    ITasksDAO tasksDAO;
 
     public HquartersRESTController(){}
 
@@ -94,6 +95,14 @@ public class HquartersRESTController {
         slot.setMean(null);
         slotDAO.saveOrUpdate(slot);
         return new ResponseEntity<>(slotMapper.mapToDto(slot), HttpStatus.OK);
+    }
+
+    private void createTaskMappers(Mean mean, Slot slot){
+        Layer layerToMap = layerDAO.getCurrentLayer(mean);
+        if(layerToMap!=null){
+            List<Task> tasks = tasksDAO.tasksByLayer(layerToMap);
+            //TODO
+        }
     }
 
     @RequestMapping(path="/get/default", method = RequestMethod.GET)

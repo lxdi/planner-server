@@ -10,6 +10,8 @@ public interface ILayerDAO {
     Layer layerById(long id);
     void saveOrUpdate(Layer layer);
     List<Layer> getLyersOfMean(Mean mean);
+    Layer getCurrentLayer(Mean mean);
+    Layer getLayerAtPriority(Mean mean, int priority);
     Layer create(Mean mean);
     void delete(Layer layer);
 }

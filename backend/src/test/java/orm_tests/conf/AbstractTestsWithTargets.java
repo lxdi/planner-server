@@ -39,7 +39,8 @@ import static org.junit.Assert.assertTrue;
                 LayerDao.class, LayersDtoMapper.class,
                 SubjectDao.class, SubjectDtoMapper.class,
                 SlotDao.class, SlotMapper.class,
-                SlotPositionMapper.class})
+                SlotPositionMapper.class,
+                TaskMapperDao.class})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public abstract class AbstractTestsWithTargets {
 

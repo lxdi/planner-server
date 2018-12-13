@@ -1,8 +1,10 @@
 package model.dao;
 
+import model.entities.Layer;
 import model.entities.Subject;
 import model.entities.Task;
 import org.hibernate.SessionFactory;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,6 +57,13 @@ public class TasksDao implements ITasksDAO {
 //        return sessionFactory.getCurrentSession().createCriteria(Task.class)
 //                .add(Restrictions.eq("subject", subject))
 //                .list();
+    }
+
+    @Override
+    public List<Task> tasksByLayer(Layer layer) {
+        String hql = "from Task t where t.subject.layer = :layer";
+        Query query = sessionFactory.getCurrentSession().createQuery(hql).setParameter("layer", layer);
+        return query.list();
     }
 
 }

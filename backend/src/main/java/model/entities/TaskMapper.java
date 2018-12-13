@@ -18,4 +18,35 @@ public class TaskMapper {
     @OneToOne
     Week week;
 
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public Task getTask() {
+        return task;
+    }
+
+    public void setTask(Task task) {
+        this.task = task;
+    }
+
+    public SlotPosition getSlotPosition() {
+        return slotPosition;
+    }
+
+    public void setSlotPosition(SlotPosition slotPosition) {
+        this.slotPosition = slotPosition;
+    }
+
+    public Week getWeek() {
+        return week;
+    }
+
+    public void setWeek(Week week) {
+        this.week = week;
+    }
 }

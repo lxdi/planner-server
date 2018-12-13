@@ -29,6 +29,12 @@ public class HQuarter {
         this.startWeek = startWeek;
     }
 
+    public HQuarter(Week startWeek, Week endWeek){
+        assert startWeek!=null && endWeek!=null && startWeek.getStartDay().before(endWeek.getStartDay());
+        this.startWeek = startWeek;
+        this.endWeek = endWeek;
+    }
+
     public long getId() {
         return id;
     }
