@@ -19,6 +19,14 @@ public class Subject {
     @OneToMany(mappedBy = "subject", cascade = CascadeType.REMOVE)
     private List<Task> tasks = new ArrayList();
 
+    public Subject(){}
+
+    public Subject(Layer layer, int position){
+        assert layer!=null && position>0;
+        this.layer = layer;
+        this.position = position;
+    }
+
     public long getId() {
         return id;
     }

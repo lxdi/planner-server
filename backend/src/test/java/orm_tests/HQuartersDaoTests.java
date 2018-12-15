@@ -61,6 +61,19 @@ public class HQuartersDaoTests extends ATestsWithTargetsMeansQuartalsGenerated {
         assertTrue(hQuarter.getStartWeek().getId() == week.getId());
     }
 
+    @Test
+    public void getHQuartersInYearTest(){
+        List<HQuarter> hQuartersIn2018 = hquarterDAO.getHQuartersInYear(2018);
+        assertTrue(hQuartersIn2018.size()==8);
+        for(int i =1; i<hQuartersIn2018.size(); i++){
+            HQuarter prev = hQuartersIn2018.get(i-1);
+            HQuarter current = hQuartersIn2018.get(i);
+            assertTrue(current.getStartWeek().getStartDay().after(prev.getStartWeek().getStartDay()));
+        }
+
+        assertTrue(hquarterDAO.getHQuartersInYear(2019).size()==8);
+    }
+
 //    @Test
 //    public void deleteMeanWithQuarter(){
 //        int quartersAtTheBeginning = hquartalDAO.getAllHQuartals().size();

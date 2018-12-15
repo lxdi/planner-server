@@ -1,16 +1,11 @@
 package hquarters_restcontroller_tests;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import controllers.HquartersRESTController;
+import controllers.delegates.HquartersDelegate;
 import model.dao.IHQuarterDAO;
 import model.dao.IMeansDAO;
 import model.dao.ISlotDAO;
 import model.dao.IWeekDAO;
-import model.dto.hquarter.HquarterDtoLazy;
-import model.dto.hquarter.HquarterMapper;
-import model.dto.slot.SlotDtoLazy;
-import model.dto.slot.SlotMapper;
-import model.dto.slot.SlotPositionMapper;
 import model.entities.*;
 import org.junit.Assert;
 import org.junit.Before;
@@ -46,25 +41,19 @@ public class HquartersRESTControllerTests extends AbstractTestsWithTargets {
     ISlotDAO slotDAO;
 
     @Autowired
-    HquarterMapper hquarterMapper;
-
-    @Autowired
-    SlotMapper slotMapper;
-
-    @Autowired
-    SlotPositionMapper slotPositionMapper;
-
-    @Autowired
     QuarterGenerator quarterGenerator;
 
     @Autowired
     IWeekDAO weekDAO;
 
+    @Autowired
+    HquartersDelegate hquartersDelegate;
+
     @Before
     public void init(){
         super.init();
         quarterGenerator.generateYear(2018);
-        hquartersRESTController = new HquartersRESTController(meansDAO, quarterDAO, slotDAO, hquarterMapper, slotMapper, slotPositionMapper);
+        hquartersRESTController = new HquartersRESTController(hquartersDelegate);
         mockMvc = MockMvcBuilders.standaloneSetup(hquartersRESTController).build();
     }
 

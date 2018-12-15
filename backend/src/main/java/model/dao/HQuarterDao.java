@@ -7,7 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Date;
 import java.util.List;
+
+import static services.DateUtils.toDate;
 
 @Service
 @Transactional
@@ -43,6 +46,17 @@ public class HQuarterDao implements IHQuarterDAO {
                 .list();
 //        return sessionFactory.getCurrentSession().createCriteria(HQuarter.class)
 //                .add(Restrictions.eq("custom", false)).list();
+    }
+
+    @Override
+    public List<HQuarter> getHQuartersInYear(int year) {
+        Date firstDay = toDate(year, 1, 1);
+        Date lastDay = toDate(year+1, 1, 1);
+        return sessionFactory.getCurrentSession()
+                .createQuery("from HQuarter where startWeek.startDay >= :firstDay and startWeek.startDay < :lastDay order by startWeek.startDay asc")
+                .setParameter("firstDay", firstDay)
+                .setParameter("lastDay", lastDay)
+                .list();
     }
 
 

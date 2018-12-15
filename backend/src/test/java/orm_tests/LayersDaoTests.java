@@ -53,7 +53,7 @@ public class LayersDaoTests extends ATestsWithTargetsWithMeansWithLayers{
         slot.setMean(mean);
         slotDAO.saveOrUpdate(slot);
 
-        Layer currentLayer = layerDAO.getCurrentLayer(mean);
+        Layer currentLayer = layerDAO.getNextLayerToSchedule(mean);
 
         assertTrue(currentLayer.getId()==layer2.getId());
 
@@ -70,7 +70,7 @@ public class LayersDaoTests extends ATestsWithTargetsWithMeansWithLayers{
         Layer layer2 = new Layer(mean, 2);
         layerDAO.saveOrUpdate(layer2);
 
-        Layer currentLayer = layerDAO.getCurrentLayer(mean);
+        Layer currentLayer = layerDAO.getNextLayerToSchedule(mean);
 
         assertTrue(currentLayer.getId()==layer.getId());
 

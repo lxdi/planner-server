@@ -3,7 +3,7 @@ package model.entities;
 import javax.persistence.*;
 
 @Entity
-public class SlotPosition {
+public class SlotPosition implements Comparable<SlotPosition> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -51,5 +51,24 @@ public class SlotPosition {
     }
     public void setPosition(int position) {
         this.position = position;
+    }
+
+    @Override
+    public int compareTo(SlotPosition slotPosition) {
+        if(this.daysOfWeek.id>slotPosition.daysOfWeek.id){
+            return 1;
+        }
+        if(this.daysOfWeek.id<slotPosition.daysOfWeek.id){
+            return -1;
+        }
+        if(this.daysOfWeek.id==slotPosition.daysOfWeek.id){
+            if(this.position>slotPosition.position){
+                return 1;
+            }
+            if(this.position<slotPosition.position){
+                return -1;
+            }
+        }
+        return 0;
     }
 }

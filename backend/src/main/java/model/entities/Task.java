@@ -7,7 +7,7 @@ import javax.persistence.*;
  */
 
 @Entity
-public class Task {
+public class Task implements Comparable<Task>{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,6 +18,15 @@ public class Task {
     @ManyToOne
     Subject subject;
     int position;
+
+    public Task(){}
+
+    public Task(String title, Subject subject, int position){
+        assert subject!=null && position>0 && title!=null && !title.isEmpty();
+        this.title = title;
+        this.subject = subject;
+        this.position = position;
+    }
 
     public long getId() {
         return id;
@@ -45,5 +54,24 @@ public class Task {
     }
     public void setPosition(int position) {
         this.position = position;
+    }
+
+    @Override
+    public int compareTo(Task task) {
+        if(this.subject.getPosition()>task.subject.getPosition()){
+            return 1;
+        }
+        if(this.subject.getPosition()<task.subject.getPosition()){
+            return -1;
+        }
+        if(this.subject.getPosition()==task.subject.getPosition()){
+            if(this.position>task.position){
+                return 1;
+            }
+            if(this.position<task.position){
+                return -1;
+            }
+        }
+        return 0;
     }
 }

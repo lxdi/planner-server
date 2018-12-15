@@ -11,6 +11,7 @@ public interface IHQuarterDAO {
     HQuarter getById(long id);
     List<HQuarter> getAllHQuartals();
     List<HQuarter> getDefaultHquarters();
+    List<HQuarter> getHQuartersInYear(int year);
     HQuarter getDefault();
     HQuarter getHquarterWithStartingWeek(Week week);
 

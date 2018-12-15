@@ -16,6 +16,14 @@ public class Slot {
     @ManyToOne
     HQuarter hquarter;
 
+    public Slot(){}
+
+    public Slot(HQuarter hquarter, int position){
+        assert hquarter!=null && position>0;
+        this.hquarter = hquarter;
+        this.position = position;
+    }
+
     public long getId() {
         return id;
     }

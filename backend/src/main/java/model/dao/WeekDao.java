@@ -63,7 +63,7 @@ public class WeekDao implements IWeekDAO {
         Date firstDay = toDate(year, 1, 1);
         Date lastDay = toDate(year+1, 1, 1);
         return (Week) sessionFactory.getCurrentSession()
-                .createQuery("from Week w where w.startDay >= :firstDay and w.startDay <= :lastDay and w.number = :number")
+                .createQuery("from Week w where w.startDay >= :firstDay and w.startDay < :lastDay and w.number = :number")
                 .setParameter("firstDay", firstDay)
                 .setParameter("lastDay", lastDay)
                 .setParameter("number", number)

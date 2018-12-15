@@ -1,13 +1,10 @@
 package hquarters_restcontroller_tests;
 
 import controllers.HquartersRESTController;
+import controllers.delegates.HquartersDelegate;
 import model.dao.IHQuarterDAO;
-import model.dao.IMeansDAO;
 import model.dao.ISlotDAO;
 import model.dao.IWeekDAO;
-import model.dto.hquarter.HquarterMapper;
-import model.dto.slot.SlotMapper;
-import model.dto.slot.SlotPositionMapper;
 import model.entities.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,21 +14,16 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import orm_tests.conf.AbstractTestsWithTargets;
-import services.QuarterGenerator;
 import services.WeeksGenerator;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static services.DateUtils.toDate;
 
 public class HquartersRESTController_default_tests extends AbstractTestsWithTargets {
 
     MockMvc mockMvc;
     HquartersRESTController hquartersRESTController;
-
-    @Autowired
-    IMeansDAO meansDAO;
 
     @Autowired
     IHQuarterDAO quarterDAO;
@@ -40,28 +32,19 @@ public class HquartersRESTController_default_tests extends AbstractTestsWithTarg
     ISlotDAO slotDAO;
 
     @Autowired
-    HquarterMapper hquarterMapper;
-
-    @Autowired
-    SlotMapper slotMapper;
-
-    @Autowired
-    SlotPositionMapper slotPositionMapper;
-
-    @Autowired
-    QuarterGenerator quarterGenerator;
-
-    @Autowired
     WeeksGenerator weeksGenerator;
 
     @Autowired
     IWeekDAO weekDAO;
 
+    @Autowired
+    HquartersDelegate hquartersDelegate;
+
     @Before
     public void init(){
         super.init();
         weeksGenerator.generateYear(2018);
-        hquartersRESTController = new HquartersRESTController(meansDAO, quarterDAO, slotDAO, hquarterMapper, slotMapper, slotPositionMapper);
+        hquartersRESTController = new HquartersRESTController(hquartersDelegate);
         mockMvc = MockMvcBuilders.standaloneSetup(hquartersRESTController).build();
     }
 

@@ -1,6 +1,9 @@
 package orm_tests.conf;
 
 import configuration.HibernateConfigMain;
+import controllers.delegates.DefaultSettingsPropagator;
+import controllers.delegates.HquartersDelegate;
+import controllers.delegates.TaskMappersController;
 import model.dao.*;
 import model.dto.hquarter.HquarterMapper;
 import model.dto.layer.LayersDtoMapper;
@@ -40,7 +43,8 @@ import static org.junit.Assert.assertTrue;
                 SubjectDao.class, SubjectDtoMapper.class,
                 SlotDao.class, SlotMapper.class,
                 SlotPositionMapper.class,
-                TaskMapperDao.class})
+                TaskMapperDao.class,
+                HquartersDelegate.class, DefaultSettingsPropagator.class, TaskMappersController.class})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public abstract class AbstractTestsWithTargets {
 

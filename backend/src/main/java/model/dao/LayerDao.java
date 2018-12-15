@@ -32,7 +32,7 @@ public class LayerDao implements ILayerDAO {
     }
 
     @Override
-    public Layer getCurrentLayer(Mean mean) {
+    public Layer getNextLayerToSchedule(Mean mean) {
         long assignsCount = meansDAO.assignsMeansCount(mean);
         Layer result = getLayerAtPriority(mean, (int)(assignsCount+1));
         return result;
