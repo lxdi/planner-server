@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
 
@@ -48,6 +49,12 @@ public class HquartersRESTController {
 
     @Autowired
     ITasksDAO tasksDAO;
+
+    @Autowired
+    IWeekDAO weekDAO;
+
+    @Autowired
+    ITaskMappersDAO taskMappersDAO;
 
     public HquartersRESTController(){}
 
@@ -86,6 +93,7 @@ public class HquartersRESTController {
         Slot slot = slotDAO.getById(slotid);
         slot.setMean(mean);
         slotDAO.saveOrUpdate(slot);
+        createTaskMappers(mean, slot);
         return new ResponseEntity<>(slotMapper.mapToDto(slot), HttpStatus.OK);
     }
 
@@ -101,8 +109,37 @@ public class HquartersRESTController {
         Layer layerToMap = layerDAO.getCurrentLayer(mean);
         if(layerToMap!=null){
             List<Task> tasks = tasksDAO.tasksByLayer(layerToMap);
-            //TODO
+            if(tasks.size()>0) {
+                Stack<Task> taskStack = tasksInStack(tasks);
+                HQuarter hQuarter = slot.getHquarter();
+                Task currentTask = !taskStack.isEmpty()? taskStack.pop():null;
+                Iterator<Week> weekIterator = weekDAO.weeksOfHquarter(hQuarter).iterator();
+                while(weekIterator.hasNext() && currentTask!=null){
+                    Week currentWeek = weekIterator.next();
+                    Iterator<SlotPosition> slotPositionIterator = slotDAO.getSlotPositionsForSlot(slot).iterator();
+                    while (slotPositionIterator.hasNext() && currentTask!=null){
+                        SlotPosition currentSP = slotPositionIterator.next();
+                        TaskMapper taskMapper = taskMappersDAO.taskMapperForTask(currentTask);
+                        if(taskMapper==null){
+                            taskMapper = new TaskMapper();
+                            taskMapper.setTask(currentTask);
+                        }
+                        taskMapper.setSlotPosition(currentSP);
+                        taskMapper.setWeek(currentWeek);
+                        taskMappersDAO.saveOrUpdate(taskMapper);
+                        currentTask = !taskStack.isEmpty()? taskStack.pop():null;
+                    }
+                }
+            }
         }
+    }
+
+    private Stack<Task> tasksInStack(List<Task> tasks){
+        Stack<Task> result = new Stack<>();
+        for(Task task : tasks){
+            result.push(task);
+        }
+        return result;
     }
 
     @RequestMapping(path="/get/default", method = RequestMethod.GET)

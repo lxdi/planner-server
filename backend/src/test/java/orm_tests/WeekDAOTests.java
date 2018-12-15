@@ -1,11 +1,14 @@
 package orm_tests;
 
+import model.dao.IHQuarterDAO;
 import model.dao.IWeekDAO;
+import model.entities.HQuarter;
 import model.entities.Week;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import orm_tests.conf.ATestsWithTargetsMeansWeeks;
 import orm_tests.conf.AbstractTestsWithTargets;
+import services.QuarterGenerator;
 
 import java.sql.Date;
 import java.util.List;
@@ -21,6 +24,12 @@ public class WeekDAOTests extends AbstractTestsWithTargets {
 
     @Autowired
     IWeekDAO weekDAO;
+
+    @Autowired
+    QuarterGenerator quarterGenerator;
+
+    @Autowired
+    IHQuarterDAO hquarterDao;
 
     @Test
     public void gettingSameWeekByDateTest(){
@@ -46,6 +55,24 @@ public class WeekDAOTests extends AbstractTestsWithTargets {
         Week sameWeek = weekDAO.weekByYearAndNumber(2017, 1);
 
         assertTrue(week.getId()==sameWeek.getId());
+    }
+
+    @Test
+    public void gettingWeeksInHQuarterTest(){
+        quarterGenerator.generateYear(2018);
+
+        Week startWeek = weekDAO.weekByYearAndNumber(2018, 1);
+        HQuarter hQuarter = hquarterDao.getHquarterWithStartingWeek(startWeek);
+
+        List<Week> weeks = weekDAO.weeksOfHquarter(hQuarter);
+
+        assertTrue(weeks.size()==6);
+        assertTrue(weeks.get(0).getId() == startWeek.getId());
+        for(int i = 1; i<weeks.size();  i++){
+            Week weekPrev = weeks.get(i-1);
+            Week week= weeks.get(i);
+            assertTrue(week.getStartDay().after(weekPrev.getStartDay()));
+        }
     }
 
 }

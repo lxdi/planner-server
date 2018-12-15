@@ -1,6 +1,7 @@
 package model.dao;
 
 import model.entities.HQuarter;
+import model.entities.Week;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -58,6 +59,14 @@ public class HQuarterDao implements IHQuarterDAO {
             this.saveOrUpdate(hQuarter);
         }
         return hQuarter;
+    }
+
+    @Override
+    public HQuarter getHquarterWithStartingWeek(Week week) {
+        return (HQuarter) sessionFactory.getCurrentSession()
+                .createQuery("from HQuarter hq where hq.startWeek.startDay = :startDay")
+                .setParameter("startDay", week.getStartDay())
+                .uniqueResult();
     }
 
 //    @Override

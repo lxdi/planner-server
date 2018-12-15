@@ -3,6 +3,7 @@ package model.dao;
 import model.entities.HQuarter;
 import model.entities.Week;
 import org.hibernate.SessionFactory;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,7 +53,7 @@ public class WeekDao implements IWeekDAO {
 //        Week week = (Week) sessionFactory.getCurrentSession().createCriteria(Week.class)
 //                .add(Restrictions.eq("startDay", date)).uniqueResult();
         if(week==null){
-            throw new NullPointerException("An week with start date "+ fromDate(date) + " either doesn't exist either hasn't been generated");
+            throw new NullPointerException("The week with start date "+ fromDate(date) + " either doesn't exist either hasn't been generated");
         }
         return week;
     }
@@ -62,7 +63,7 @@ public class WeekDao implements IWeekDAO {
         Date firstDay = toDate(year, 1, 1);
         Date lastDay = toDate(year+1, 1, 1);
         return (Week) sessionFactory.getCurrentSession()
-                .createQuery("from Week w where w.startDay > :firstDay and w.startDay < :lastDay and w.number = :number")
+                .createQuery("from Week w where w.startDay >= :firstDay and w.startDay <= :lastDay and w.number = :number")
                 .setParameter("firstDay", firstDay)
                 .setParameter("lastDay", lastDay)
                 .setParameter("number", number)
@@ -76,6 +77,10 @@ public class WeekDao implements IWeekDAO {
 
     @Override
     public List<Week> weeksOfHquarter(HQuarter hQuarter) {
-        return null;
+        String hql = "from Week w where w.startDay >= :hqStartWeekDay and w.startDay <= :hqEndWeekDay order by w.startDay asc";
+        Query query = sessionFactory.getCurrentSession().createQuery(hql)
+                .setParameter("hqStartWeekDay", hQuarter.getStartWeek().getStartDay())
+                .setParameter("hqEndWeekDay", hQuarter.getEndWeek().getStartDay());
+        return query.list();
     }
 }
