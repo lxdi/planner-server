@@ -7,6 +7,7 @@ public class SlotDtoLazy {
     Long id;
     int position;
     Long meanid;
+    Long layerid;
     Long hquarterid;
     List<SlotPositionDtoLazy> slotPositions = new ArrayList<>();
 
@@ -47,5 +48,13 @@ public class SlotDtoLazy {
     }
     public void setPosition(int position) {
         this.position = position;
+    }
+
+    public Long getLayerid() {
+        return layerid;
+    }
+
+    public void setLayerid(Long layerid) {
+        this.layerid = layerid;
     }
 }

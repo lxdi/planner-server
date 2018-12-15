@@ -14,6 +14,9 @@ public class Slot {
     Mean mean;
 
     @ManyToOne
+    Layer layer;
+
+    @ManyToOne
     HQuarter hquarter;
 
     public Slot(){}
@@ -51,5 +54,13 @@ public class Slot {
 
     public void setPosition(int position) {
         this.position = position;
+    }
+
+    public Layer getLayer() {
+        return layer;
+    }
+
+    public void setLayer(Layer layer) {
+        this.layer = layer;
     }
 }

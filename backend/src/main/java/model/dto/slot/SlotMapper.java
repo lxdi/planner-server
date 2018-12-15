@@ -1,6 +1,7 @@
 package model.dto.slot;
 
 import model.dao.IHQuarterDAO;
+import model.dao.ILayerDAO;
 import model.dao.IMeansDAO;
 import model.dao.ISlotDAO;
 import model.dto.IMapper;
@@ -16,6 +17,9 @@ public class SlotMapper implements IMapper<SlotDtoLazy, Slot> {
 
     @Autowired
     IMeansDAO meansDAO;
+
+    @Autowired
+    ILayerDAO layerDAO;
 
     @Autowired
     ISlotDAO slotDAO;
@@ -37,6 +41,9 @@ public class SlotMapper implements IMapper<SlotDtoLazy, Slot> {
         if(entity.getMean()!=null){
             dto.setMeanid(entity.getMean().getId());
         }
+        if(entity.getLayer()!=null){
+            dto.setLayerid(entity.getLayer().getId());
+        }
         List<SlotPosition> slotPositionList = slotDAO.getSlotPositionsForSlot(entity);
         if(slotPositionList.size()>0){
             for(SlotPosition slotPosition : slotPositionList){
@@ -55,6 +62,9 @@ public class SlotMapper implements IMapper<SlotDtoLazy, Slot> {
         }
         if(dto.getMeanid()!=null){
             entity.setMean(meansDAO.meanById(dto.meanid));
+        }
+        if(dto.getLayerid()!=null){
+            entity.setLayer(layerDAO.layerById(dto.getLayerid()));
         }
         if(dto.getHquarterid()!=null){
             entity.setHquarter(hquarterDAO.getById(dto.getHquarterid()));

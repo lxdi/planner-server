@@ -1,9 +1,6 @@
 package model.dao;
 
-import model.entities.DaysOfWeek;
-import model.entities.HQuarter;
-import model.entities.Slot;
-import model.entities.SlotPosition;
+import model.entities.*;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,6 +57,16 @@ public class SlotDao implements ISlotDAO {
         return query.list();
 //        return sessionFactory.getCurrentSession().createCriteria(Slot.class)
 //                .add(Restrictions.eq("hquarter", hquarter)).list();
+    }
+
+    @Override
+    public List<Slot> slotsAfter(Slot slot) {
+        assert slot.getMean()!=null;
+        String hql = "from Slot s where s.mean = :mean and s.hquarter.startWeek.startDay > :startDay";
+        Query query = sessionFactory.getCurrentSession().createQuery(hql);
+        query.setParameter("mean", slot.getMean());
+        query.setParameter("startDay", slot.getHquarter().getStartWeek().getStartDay());
+        return query.list();
     }
 
     @Override

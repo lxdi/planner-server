@@ -141,6 +141,8 @@ public class TaskMappersController_ConsecutiveAssigns_Tests extends ATestsWithTa
 
         hquartersDelegate.assign(mean.getId(), slot1.getId());
 
+        assertTrue(slotDAO.getById(slot1.getId()).getId()==layerDAO.getLayerAtPriority(mean, 1).getId());
+
         List<Week> weeks = weekDAO.weeksOfHquarter(hQuarter1);
 
         checkTaskMapper(taskMappersDAO.taskMapperForTask(tasksDAO.byTitle("task 1")), weeks.get(0), slotPosition11);
@@ -160,6 +162,9 @@ public class TaskMappersController_ConsecutiveAssigns_Tests extends ATestsWithTa
 
         hquartersDelegate.assign(mean.getId(), slot1.getId());
         hquartersDelegate.assign(mean.getId(), slot2.getId());
+
+        assertTrue(slotDAO.getById(slot1.getId()).getLayer().getId()==layerDAO.getLayerAtPriority(mean, 1).getId());
+        assertTrue(slotDAO.getById(slot2.getId()).getId()==layerDAO.getLayerAtPriority(mean, 2).getId());
 
         List<Week> weeksHq1 = weekDAO.weeksOfHquarter(hQuarter1);
         List<Week> weeksHq2 = weekDAO.weeksOfHquarter(hQuarter2);

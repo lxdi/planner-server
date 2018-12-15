@@ -27,8 +27,7 @@ public class TaskMappersController {
     @Autowired
     ITaskMappersDAO taskMappersDAO;
 
-    public void createTaskMappers(Mean mean, Slot slot){
-        Layer layerToMap = layerDAO.getNextLayerToSchedule(mean);
+    public void createTaskMappers(Layer layerToMap, Slot slot){
         if(layerToMap!=null){
             List<Task> tasks = tasksDAO.tasksByLayer(layerToMap);
             Collections.sort(tasks);

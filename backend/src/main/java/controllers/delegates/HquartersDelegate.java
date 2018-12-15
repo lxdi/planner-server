@@ -41,6 +41,9 @@ public class HquartersDelegate {
     @Autowired
     DefaultSettingsPropagator defaultSettingsPropagator;
 
+    @Autowired
+    ILayerDAO layerDAO;
+
     public List<HquarterDtoLazy> getAllQuarters(){
         List<HquarterDtoLazy> result = new ArrayList<>();
         for(HQuarter hQuarter : quarterDAO.getAllHQuartals()){
@@ -58,8 +61,10 @@ public class HquartersDelegate {
         Mean mean = meansDAO.meanById(meanid);
         Slot slot = slotDAO.getById(slotid);
         slot.setMean(mean);
-        taskMappersController.createTaskMappers(mean, slot);
+        Layer layer = layerDAO.getNextLayerToSchedule(mean);
+        slot.setLayer(layer);
         slotDAO.saveOrUpdate(slot);
+        taskMappersController.createTaskMappers(layer, slot);
         return slotMapper.mapToDto(slot);
     }
 
