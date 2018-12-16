@@ -70,8 +70,31 @@ public class HquartersDelegate {
 
     public SlotDtoLazy unassign(long slotid){
         Slot slot = slotDAO.getById(slotid);
+        Mean mean = slot.getMean();
+        Layer layer = slot.getLayer();
+        List<Slot> slotsAfter = slotDAO.slotsAfter(slot);
+
         slot.setMean(null);
+        slot.setLayer(null);
         slotDAO.saveOrUpdate(slot);
+
+        for(Slot slotAfter: slotsAfter){
+            if(slotAfter.getLayer()!=null) {
+                Layer prevLayer = layerDAO.getLayerAtPriority(mean, slotAfter.getLayer().getPriority()-1);
+                if(prevLayer!=null){
+                    slotAfter.setLayer(prevLayer);
+                    taskMappersController.createTaskMappers(prevLayer, slotAfter);
+                    slotDAO.saveOrUpdate(slotAfter);
+                }
+            } else {
+                Layer nextLayer = layerDAO.getNextLayerToSchedule(mean);
+                if(nextLayer!=null){
+                    slotAfter.setLayer(nextLayer);
+                    taskMappersController.createTaskMappers(nextLayer, slotAfter);
+                    slotDAO.saveOrUpdate(slotAfter);
+                }
+            }
+        }
         return slotMapper.mapToDto(slot);
     }
 
