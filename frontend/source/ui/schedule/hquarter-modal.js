@@ -6,7 +6,7 @@ import {registerEvent, registerReaction, fireEvent, viewStateVal} from '../../co
 
 import {findSlotInPosition} from '../../utils/hquarters-utils'
 
-const dumbHquarter = {}
+const dumbHquarter = {dumb:true}
 
 const createState = function(isOpen, isStatic, isEdit, hquarter){
   return {
@@ -28,7 +28,7 @@ export class HquarterModal extends React.Component {
 
     registerEvent('hquarter-modal', 'open', (stateSetter, hquarter)=>this.setState({isOpen:true, hquarter:hquarter}))
     registerEvent('hquarter-modal', 'close', (stateSetter)=>this.setState(defaultState()))
-    registerReaction('hquarter-modal', 'hquarters-dao', ['add-slot', 'assign-slot'], (stateSetter)=>this.setState({}))
+    registerReaction('hquarter-modal', 'hquarters-dao', ['add-slot', 'assign-slot', 'got-full'], (stateSetter)=>this.setState({}))
   }
 
   okButton(){
@@ -49,30 +49,38 @@ export class HquarterModal extends React.Component {
               title={this.state.hquarter.year +'.'+formatDateNumber(this.state.hquarter.startday) + '.' + formatDateNumber(this.state.hquarter.startmonth)}
               styleClass='mean-modal-style'>
         <CommonCrudeTemplate editing = {this.state.mode} changeEditHandler = {this.forceUpdate.bind(this)}>
-          <div>
-            <div style={{display:'table-cell', borderRight:'1px solid lightgrey', padding:'10px'}}>
-              <a href='#' onClick={()=>fireEvent('hquarters-dao', 'add-slot', [this.state.hquarter])}>+ Add slot</a>
-              {getSlotsUI(this.state.hquarter)}
-            </div>
-            <div style={{display:'table-cell', padding:'10px'}}>
-              {weekMappingTable(this.state.hquarter)}
-            </div>
-          </div>
+          {this.state.hquarter.dumb==null? modalBody(this):null}
         </CommonCrudeTemplate>
       </CommonModal>
   }
 }
 
+const modalBody = function(component){
+  return     <div>
+              <div style={{display:'table-cell', borderRight:'1px solid lightgrey', padding:'10px'}}>
+                {component.state.hquarter.isfull!=null?<a href='#' onClick={()=>fireEvent('hquarters-dao', 'add-slot', [component.state.hquarter])}>+ Add slot</a>:null}
+                {getSlotsUI(component.state.hquarter)}
+              </div>
+              <div style={{display:'table-cell', padding:'10px'}}>
+                {weekMappingTable(component.state.hquarter)}
+              </div>
+            </div>
+}
+
 const getSlotsUI = function(hquarter){
   const result = []
-  for(var slotpos in hquarter.slots){
-      const slot = hquarter.slots[slotpos]
-      result.push(<div
-                  draggable='true'
-                  onDragStart={()=>fireEvent('hquarters-dao', 'add-draggable', [hquarter, slot])}
-                  onDragEnd={()=>fireEvent('hquarters-dao', 'remove-draggable')}>
-                    Slot {slot.position}
-                  </div>)
+  if(hquarter.slots!=null){
+    for(var slotpos in hquarter.slots){
+        const slot = hquarter.slots[slotpos]
+        result.push(<div
+                    draggable='true'
+                    onDragStart={()=>fireEvent('hquarters-dao', 'add-draggable', [hquarter, slot])}
+                    onDragEnd={()=>fireEvent('hquarters-dao', 'remove-draggable')}>
+                      Slot {slot.position}
+                    </div>)
+    }
+  } else {
+    fireEvent('hquarters-dao', 'get-full', [hquarter.id])
   }
   return result
 }

@@ -1,8 +1,10 @@
 package controllers.delegates;
 
 import model.dao.*;
+import model.dto.hquarter.HquarterDtoFull;
 import model.dto.hquarter.HquarterDtoLazy;
 import model.dto.hquarter.HquarterMapper;
+import model.dto.hquarter.HquarterMapperFull;
 import model.dto.slot.SlotDtoLazy;
 import model.dto.slot.SlotMapper;
 import model.dto.slot.SlotPositionDtoLazy;
@@ -30,6 +32,9 @@ public class HquartersDelegate {
     HquarterMapper hquarterMapper;
 
     @Autowired
+    HquarterMapperFull hquarterMapperFull;
+
+    @Autowired
     SlotMapper slotMapper;
 
     @Autowired
@@ -52,9 +57,13 @@ public class HquartersDelegate {
         return result;
     }
 
-    public HquarterDtoLazy update(HquarterDtoLazy hquarterDto){
+    public HquarterDtoFull get(long id){
+        return hquarterMapperFull.mapToDto(quarterDAO.getById(id));
+    }
+
+    public HquarterDtoLazy update(HquarterDtoFull hquarterDto){
         HQuarter hQuarter = saveHQuarter(hquarterDto);
-        return hquarterMapper.mapToDto(hQuarter);
+        return hquarterMapperFull.mapToDto(hQuarter);
     }
 
     public SlotDtoLazy assign(long meanid, long slotid){
@@ -102,18 +111,18 @@ public class HquartersDelegate {
         return hquarterMapper.mapToDto(quarterDAO.getDefault());
     }
 
-    public HquarterDtoLazy setDefault(HquarterDtoLazy hquarterDtoLazy){
-        assert hquarterDtoLazy.getStartWeek()==null && hquarterDtoLazy.getEndWeek()==null;
-        HQuarter defaultHquarter = saveHQuarter(hquarterDtoLazy);
+    public HquarterDtoFull setDefault(HquarterDtoFull hquarterDtoFull){
+        assert hquarterDtoFull.getStartWeek()==null && hquarterDtoFull.getEndWeek()==null;
+        HQuarter defaultHquarter = saveHQuarter(hquarterDtoFull);
         defaultSettingsPropagator.propagateSettingsFrom(defaultHquarter);
-        return hquarterMapper.mapToDto(defaultHquarter);
+        return hquarterMapperFull.mapToDto(defaultHquarter);
     }
 
-    private HQuarter saveHQuarter(HquarterDtoLazy hquarterDtoLazy){
-        HQuarter hQuarter = hquarterMapper.mapToEntity(hquarterDtoLazy);
+    private HQuarter saveHQuarter(HquarterDtoFull hquarterDtoFull){
+        HQuarter hQuarter = hquarterMapperFull.mapToEntity(hquarterDtoFull);
         //TODO validate slots before saving
         quarterDAO.saveOrUpdate(hQuarter);
-        saveSlots(hquarterDtoLazy.getSlots(), hQuarter.getId());
+        saveSlots(hquarterDtoFull.getSlots(), hQuarter.getId());
         return hQuarter;
     }
 

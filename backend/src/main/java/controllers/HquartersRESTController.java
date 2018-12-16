@@ -2,6 +2,7 @@ package controllers;
 
 import controllers.delegates.HquartersDelegate;
 import model.dao.*;
+import model.dto.hquarter.HquarterDtoFull;
 import model.dto.hquarter.HquarterDtoLazy;
 import model.dto.hquarter.HquarterMapper;
 import model.dto.slot.SlotDtoLazy;
@@ -42,8 +43,13 @@ public class HquartersRESTController {
         return new ResponseEntity<List<HquarterDtoLazy>>(hquartersDelegate.getAllQuarters(), HttpStatus.OK);
     }
 
+    @RequestMapping(path="/get/{hquarterid}", method = RequestMethod.GET)
+    public ResponseEntity<HquarterDtoFull> get(@PathVariable("hquarterid") long hqid){
+        return new ResponseEntity<>(hquartersDelegate.get(hqid), HttpStatus.OK);
+    }
+
     @RequestMapping(path = "/update", method = RequestMethod.POST)
-    public ResponseEntity<HquarterDtoLazy> update(@RequestBody HquarterDtoLazy hquarterDto){
+    public ResponseEntity<HquarterDtoLazy> update(@RequestBody HquarterDtoFull hquarterDto){
         return new ResponseEntity<HquarterDtoLazy>(hquartersDelegate.update(hquarterDto), HttpStatus.OK);
     }
 
@@ -63,7 +69,7 @@ public class HquartersRESTController {
     }
 
     @RequestMapping(path="/set/default", method = RequestMethod.POST)
-    public ResponseEntity<HquarterDtoLazy> setDefault(@RequestBody HquarterDtoLazy hquarterDtoLazy){
+    public ResponseEntity<HquarterDtoFull> setDefault(@RequestBody HquarterDtoFull hquarterDtoLazy){
         return new ResponseEntity<>(hquartersDelegate.setDefault(hquarterDtoLazy), HttpStatus.OK);
     }
 

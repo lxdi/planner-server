@@ -86,13 +86,26 @@ registerEvent('hquarters-dao', 'update-default', (stateSetter)=>{
   })
 })
 
+registerEvent('hquarters-dao', 'get-full', (stateSetter, id)=>{
+  sendGet('/hquarter/get/'+id, (hquarterfull)=>{
+    hquarterfull.isfull=true
+    if(hquarterfull.startWeek==null && hquarterfull.endWeek==null){
+      Object.assign(viewStateVal('hquarters-dao', 'default'), hquarterfull)
+    }else {
+      Object.assign(viewStateVal('hquarters-dao', 'hquarters')[hquarterfull.id], hquarterfull)
+    }
+    fireEvent('hquarters-dao', 'got-full', [viewStateVal('hquarters-dao', 'hquarters')[hquarterfull.id]])
+  })
+})
+registerEvent('hquarters-dao', 'got-full', (stateSetter, hquarterfull)=>hquarterfull)
+
 
 const importHquarters = function(stateSetter, hquartersDto){
   const hquarters = []
   stateSetter('hquarters', hquarters)
   for(var i in hquartersDto){
     normalizeInnerArrays(hquartersDto[i], [{
-      arrName:'slots',
+      arrName:'slotsLazy',
       posName: 'position'
     }])
     hquarters[""+hquartersDto[i].id] = hquartersDto[i]

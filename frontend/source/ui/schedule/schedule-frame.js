@@ -67,8 +67,8 @@ const weekToString = function(week){
 
 const getSlotsUI = function(hquarter){
   const result = []
-  for(var slotpos in hquarter.slots){
-    const slot = hquarter.slots[slotpos]
+  for(var slotpos in hquarter.slotsLazy){
+    const slot = hquarter.slotsLazy[slotpos]
     result.push(getSlotView(slot))
   }
   return result

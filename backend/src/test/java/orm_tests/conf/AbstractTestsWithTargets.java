@@ -6,6 +6,7 @@ import controllers.delegates.HquartersDelegate;
 import controllers.delegates.TaskMappersController;
 import model.dao.*;
 import model.dto.hquarter.HquarterMapper;
+import model.dto.hquarter.HquarterMapperFull;
 import model.dto.layer.LayersDtoMapper;
 import model.dto.mean.MeansDtoMapper;
 import model.dto.slot.SlotMapper;
@@ -38,7 +39,7 @@ import static org.junit.Assert.assertTrue;
                 MeansDao.class, MeansDtoMapper.class,
                 WeekDao.class, WeeksGenerator.class,
                 TasksDao.class, TasksDtoMapper.class,
-                HQuarterDao.class, HquarterMapper.class,  QuarterGenerator.class,
+                HQuarterDao.class, HquarterMapper.class,  QuarterGenerator.class, HquarterMapperFull.class,
                 LayerDao.class, LayersDtoMapper.class,
                 SubjectDao.class, SubjectDtoMapper.class,
                 SlotDao.class, SlotMapper.class,

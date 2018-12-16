@@ -1,10 +1,14 @@
 package model.dto.hquarter;
 
 import model.dto.slot.SlotDtoLazy;
+import model.dto.slot.SlotLazyTemp;
+import model.entities.SlotPosition;
 import model.entities.Week;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class HquarterDtoLazy {
 
@@ -14,20 +18,13 @@ public class HquarterDtoLazy {
 
     Week endWeek;
 
-    List<SlotDtoLazy> slots = new ArrayList<>();
+    List<SlotLazyTemp> slotsLazy = new ArrayList<>();
 
     public long getId() {
         return id;
     }
     public void setId(long id) {
         this.id = id;
-    }
-
-    public List<SlotDtoLazy> getSlots() {
-        return slots;
-    }
-    public void setSlots(List<SlotDtoLazy> slots) {
-        this.slots = slots;
     }
 
     public Week getStartWeek() {
@@ -44,5 +41,13 @@ public class HquarterDtoLazy {
 
     public void setEndWeek(Week endWeek) {
         this.endWeek = endWeek;
+    }
+
+    public List<SlotLazyTemp> getSlotsLazy() {
+        return slotsLazy;
+    }
+
+    public void setSlotsLazy(List<SlotLazyTemp> slotsLazy) {
+        this.slotsLazy = slotsLazy;
     }
 }
