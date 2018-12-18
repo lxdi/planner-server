@@ -6,10 +6,12 @@ import model.dao.IWeekDAO;
 import model.dto.IMapper;
 import model.dto.slot.SlotLazyTemp;
 import model.dto.slot.SlotMapper;
+import model.dto.task.TasksDtoMapper;
 import model.entities.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -27,6 +29,8 @@ public class HquarterMapperFull implements IMapper<HquarterDtoFull, HQuarter> {
     @Autowired
     ITaskMappersDAO taskMappersDAO;
 
+    @Autowired
+    TasksDtoMapper tasksDtoMapper;
 
     @Override
     public HquarterDtoFull mapToDto(HQuarter entity) {
@@ -54,15 +58,24 @@ public class HquarterMapperFull implements IMapper<HquarterDtoFull, HQuarter> {
             }
         }
 
-//        List<Week> weeks = weekDAO.weeksOfHquarter(entity);
-//        for(Slot slot : slotDAO.getSlotsForHquarter(entity)){
-//            for(SlotPosition slotPosition : slotDAO.getSlotPositionsForSlot(slot)){
-//                for(Week week : weeks){
-//                    TaskMapper taskMapper = taskMappersDAO.taskMapperByWeekAndSlotPosition(week, slotPosition);
-//
-//                }
-//            }
-//        }
+        if(entity.getStartWeek()!=null && entity.getEndWeek()!=null) {
+            List<Week> weeks = weekDAO.weeksOfHquarter(entity);
+            for (Week week : weeks) {
+                WeekWithTasksDto weekWithTasksDto = new WeekWithTasksDto();
+                for (Slot slot : slotDAO.getSlotsForHquarter(entity)) {
+                    for (SlotPosition slotPosition : slotDAO.getSlotPositionsForSlot(slot)) {
+                        TaskMapper taskMapper = taskMappersDAO.taskMapperByWeekAndSlotPosition(week, slotPosition);
+                        if(taskMapper!=null) {
+                            if (weekWithTasksDto.getDays().get(taskMapper.getSlotPosition().getDaysOfWeek()) == null) {
+                                weekWithTasksDto.getDays().put(taskMapper.getSlotPosition().getDaysOfWeek(), new ArrayList<>());
+                            }
+                            weekWithTasksDto.getDays().get(taskMapper.getSlotPosition().getDaysOfWeek()).add(tasksDtoMapper.mapToDto(taskMapper.getTask()));
+                        }
+                    }
+                }
+                dto.getWeeks().add(weekWithTasksDto);
+            }
+        }
 
         return dto;
     }

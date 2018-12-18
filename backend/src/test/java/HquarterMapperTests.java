@@ -37,7 +37,9 @@ public class HquarterMapperTests extends AbstractTestsWithTargets {
     SlotPosition slotPosition;
     Slot slot;
     Week startWeek;
+    Week endWeek;
     String startDateStr = "2018-05-26";
+    String endDateStr = "2018-07-28";
 
     @Before
     public void init(){
@@ -46,8 +48,12 @@ public class HquarterMapperTests extends AbstractTestsWithTargets {
         startWeek = new Week(toDate(startDateStr), null, 1);
         weekDAO.saveOrUpdate(startWeek);
 
+        endWeek = new Week(toDate(startDateStr), null, 6);
+        weekDAO.saveOrUpdate(endWeek);
+
         hQuarter = new HQuarter();
         hQuarter.setStartWeek(startWeek);
+        hQuarter.setEndWeek(endWeek);
         hQuarterDao.saveOrUpdate(hQuarter);
 
         slot = new Slot();

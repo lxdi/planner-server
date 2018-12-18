@@ -68,12 +68,15 @@ public class HquartersRESTControllerTests extends AbstractTestsWithTargets {
     public void updateWithSlotsTest() throws Exception {
         HQuarter hQuarter = quarterDAO.getAllHQuartals().get(0);
         hQuarter.setStartWeek(weekDAO.weekByYearAndNumber(2018, 2));
+        hQuarter.setEndWeek(weekDAO.weekByYearAndNumber(2018, 8));
 
         assertTrue(slotDAO.getSlotsForHquarter(hQuarter).size()==0);
 
         String content = "{\"id\":"+hQuarter.getId()+","+
                 "\"startWeek\":{\"id\":"+hQuarter.getStartWeek().getId()+
                     ", \"startDay\":\""+fromDate(hQuarter.getStartWeek().getStartDay())+"\", \"number\": 1},"+
+                "\"endWeek\":{\"id\":"+hQuarter.getEndWeek().getId()+
+                ", \"startDay\":\""+fromDate(hQuarter.getEndWeek().getStartDay())+"\", \"number\": 8},"+
                 "\"slots\":[{" +
                     "\"position\":1,"+
                     "\"slotPositions\":["+

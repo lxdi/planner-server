@@ -19,6 +19,7 @@ import services.WeeksGenerator;
 import static junit.framework.TestCase.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static services.DateUtils.fromDate;
 
 public class HquartersRESTController_default_tests extends AbstractTestsWithTargets {
 
