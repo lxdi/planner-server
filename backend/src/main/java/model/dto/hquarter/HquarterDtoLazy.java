@@ -10,12 +10,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
 public class HquarterDtoLazy {
 
     long id;
-
     Week startWeek;
-
     Week endWeek;
 
     List<SlotLazyTemp> slotsLazy = new ArrayList<>();

@@ -13,7 +13,6 @@ public class HquarterDtoFull extends HquarterDtoLazy{
     public List<SlotDtoLazy> getSlots() {
         return slots;
     }
-
     public void setSlots(List<SlotDtoLazy> slots) {
         this.slots = slots;
     }

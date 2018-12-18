@@ -58,7 +58,7 @@ export class HquarterModal extends React.Component {
 const modalBody = function(component){
   return     <div>
               <div style={{display:'table-cell', borderRight:'1px solid lightgrey', padding:'10px'}}>
-                {component.state.hquarter.isfull!=null?<a href='#' onClick={()=>fireEvent('hquarters-dao', 'add-slot', [component.state.hquarter])}>+ Add slot</a>:null}
+                {component.state.hquarter.isfull!=null || component.state.hquarter.startWeek==null?<a href='#' onClick={()=>fireEvent('hquarters-dao', 'add-slot', [component.state.hquarter])}>+ Add slot</a>:null}
                 {getSlotsUI(component.state.hquarter)}
               </div>
               <div style={{display:'table-cell', padding:'10px'}}>

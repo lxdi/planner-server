@@ -2,6 +2,7 @@ package model.dto.hquarter;
 
 import model.dao.ISlotDAO;
 import model.dto.IMapper;
+import model.dto.slot.SlotLazyTemp;
 import model.dto.slot.SlotMapper;
 import model.entities.HQuarter;
 import model.entities.Slot;
@@ -21,6 +22,8 @@ public class HquarterMapperFull implements IMapper<HquarterDtoFull, HQuarter> {
 
     @Override
     public HquarterDtoFull mapToDto(HQuarter entity) {
+
+        //TODO use mapper for the lazy
         HquarterDtoFull dto = new HquarterDtoFull();
         dto.setId(entity.getId());
         if(entity.getStartWeek()!=null){
@@ -33,6 +36,10 @@ public class HquarterMapperFull implements IMapper<HquarterDtoFull, HQuarter> {
 
         List<Slot> slotList = slotDAO.getSlotsForHquarter(entity);
         if(slotList.size()>0){
+            for(Slot slot : slotList){
+                dto.getSlotsLazy().add(
+                        new SlotLazyTemp(slot.getId(), slot.getPosition(), slot.getMean()!=null? slot.getMean().getId():null));
+            }
             for(Slot slot : slotList){
                 //dto.getSlotsLazy().put(slot.getId(), slot.getPosition());
                 dto.getSlots().add(slotMapper.mapToDto(slot));

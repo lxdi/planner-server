@@ -61,7 +61,7 @@ public class HquartersDelegate {
         return hquarterMapperFull.mapToDto(quarterDAO.getById(id));
     }
 
-    public HquarterDtoLazy update(HquarterDtoFull hquarterDto){
+    public HquarterDtoFull update(HquarterDtoFull hquarterDto){
         HQuarter hQuarter = saveHQuarter(hquarterDto);
         return hquarterMapperFull.mapToDto(hQuarter);
     }
@@ -107,8 +107,8 @@ public class HquartersDelegate {
         return slotMapper.mapToDto(slot);
     }
 
-    public HquarterDtoLazy getDefault(){
-        return hquarterMapper.mapToDto(quarterDAO.getDefault());
+    public HquarterDtoFull getDefault(){
+        return hquarterMapperFull.mapToDto(quarterDAO.getDefault());
     }
 
     public HquarterDtoFull setDefault(HquarterDtoFull hquarterDtoFull){

@@ -89,11 +89,7 @@ registerEvent('hquarters-dao', 'update-default', (stateSetter)=>{
 registerEvent('hquarters-dao', 'get-full', (stateSetter, id)=>{
   sendGet('/hquarter/get/'+id, (hquarterfull)=>{
     hquarterfull.isfull=true
-    if(hquarterfull.startWeek==null && hquarterfull.endWeek==null){
-      Object.assign(viewStateVal('hquarters-dao', 'default'), hquarterfull)
-    }else {
-      Object.assign(viewStateVal('hquarters-dao', 'hquarters')[hquarterfull.id], hquarterfull)
-    }
+    Object.assign(viewStateVal('hquarters-dao', 'hquarters')[hquarterfull.id], hquarterfull)
     fireEvent('hquarters-dao', 'got-full', [viewStateVal('hquarters-dao', 'hquarters')[hquarterfull.id]])
   })
 })

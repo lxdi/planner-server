@@ -49,8 +49,8 @@ public class HquartersRESTController {
     }
 
     @RequestMapping(path = "/update", method = RequestMethod.POST)
-    public ResponseEntity<HquarterDtoLazy> update(@RequestBody HquarterDtoFull hquarterDto){
-        return new ResponseEntity<HquarterDtoLazy>(hquartersDelegate.update(hquarterDto), HttpStatus.OK);
+    public ResponseEntity<HquarterDtoFull> update(@RequestBody HquarterDtoFull hquarterDto){
+        return new ResponseEntity<HquarterDtoFull>(hquartersDelegate.update(hquarterDto), HttpStatus.OK);
     }
 
     @RequestMapping(path = "/assignmean/{meanid}/toslot/{slotid}", method = RequestMethod.POST)
@@ -64,7 +64,7 @@ public class HquartersRESTController {
     }
 
     @RequestMapping(path="/get/default", method = RequestMethod.GET)
-    public ResponseEntity<HquarterDtoLazy> getDefault(){
+    public ResponseEntity<HquarterDtoFull> getDefault(){
         return new ResponseEntity<>(hquartersDelegate.getDefault(), HttpStatus.OK);
     }
 

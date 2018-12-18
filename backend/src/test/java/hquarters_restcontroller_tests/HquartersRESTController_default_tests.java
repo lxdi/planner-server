@@ -76,6 +76,7 @@ public class HquartersRESTController_default_tests extends AbstractTestsWithTarg
 
 
         String content = "{\"id\":"+defaultHquarter.getId()+","+
+                "\"slotsLazy\":[{\"id\":1, \"position\": 1}, {\"id\":2, \"position\": 2}], "+
                 "\"slots\":[{" +
                     "\"id\": "+slot1.getId()+","+
                     "\"position\":1,"+

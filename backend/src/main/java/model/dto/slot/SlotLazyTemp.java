@@ -5,6 +5,9 @@ public class SlotLazyTemp {
     long id;
     int position;
     Long meanid;
+
+    public SlotLazyTemp(){}
+
     public SlotLazyTemp(long id, int position, Long meanid){
         this.id = id;
         this.position = position;
