@@ -1,11 +1,12 @@
 package model.dto.hquarter;
 
 import model.dao.ISlotDAO;
+import model.dao.ITaskMappersDAO;
+import model.dao.IWeekDAO;
 import model.dto.IMapper;
 import model.dto.slot.SlotLazyTemp;
 import model.dto.slot.SlotMapper;
-import model.entities.HQuarter;
-import model.entities.Slot;
+import model.entities.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,13 @@ public class HquarterMapperFull implements IMapper<HquarterDtoFull, HQuarter> {
 
     @Autowired
     SlotMapper slotMapper;
+
+    @Autowired
+    IWeekDAO weekDAO;
+
+    @Autowired
+    ITaskMappersDAO taskMappersDAO;
+
 
     @Override
     public HquarterDtoFull mapToDto(HQuarter entity) {
@@ -45,6 +53,17 @@ public class HquarterMapperFull implements IMapper<HquarterDtoFull, HQuarter> {
                 dto.getSlots().add(slotMapper.mapToDto(slot));
             }
         }
+
+//        List<Week> weeks = weekDAO.weeksOfHquarter(entity);
+//        for(Slot slot : slotDAO.getSlotsForHquarter(entity)){
+//            for(SlotPosition slotPosition : slotDAO.getSlotPositionsForSlot(slot)){
+//                for(Week week : weeks){
+//                    TaskMapper taskMapper = taskMappersDAO.taskMapperByWeekAndSlotPosition(week, slotPosition);
+//
+//                }
+//            }
+//        }
+
         return dto;
     }
 

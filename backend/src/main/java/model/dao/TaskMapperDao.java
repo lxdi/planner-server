@@ -1,7 +1,9 @@
 package model.dao;
 
+import model.entities.SlotPosition;
 import model.entities.Task;
 import model.entities.TaskMapper;
+import model.entities.Week;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,4 +26,14 @@ public class TaskMapperDao implements ITaskMappersDAO{
         return (TaskMapper) sessionFactory.getCurrentSession().createQuery("from TaskMapper tm where tm.task = :task")
                 .setParameter("task", task).uniqueResult();
     }
+
+    @Override
+    public TaskMapper taskMapperByWeekAndSlotPosition(Week week, SlotPosition slotPosition) {
+        assert week!=null && slotPosition!=null;
+        return (TaskMapper) sessionFactory.getCurrentSession().createQuery("from TaskMapper where week = :week and slotPosition = :sp")
+                .setParameter("week", week)
+                .setParameter("sp", slotPosition)
+                .uniqueResult();
+    }
+
 }
