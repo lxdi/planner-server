@@ -59,6 +59,20 @@ public class TaskMappersController {
         }
     }
 
+    public void unassignTasksForLayer(Layer layer){
+        if(layer!=null) {
+            List<Task> tasks = tasksDAO.tasksByLayer(layer);
+            for(Task task : tasks){
+                TaskMapper taskMapper = taskMappersDAO.taskMapperForTask(task);
+                if(taskMapper!=null){
+                    taskMapper.setSlotPosition(null);
+                    taskMapper.setWeek(null);
+                    taskMappersDAO.saveOrUpdate(taskMapper);
+                }
+            }
+        }
+    }
+
     private Stack<Task> tasksInStack(List<Task> tasks){
         Stack<Task> result = new Stack<>();
         if(tasks.size()>0) {

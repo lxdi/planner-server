@@ -62,6 +62,7 @@ public class HquarterMapperFull implements IMapper<HquarterDtoFull, HQuarter> {
             List<Week> weeks = weekDAO.weeksOfHquarter(entity);
             for (Week week : weeks) {
                 WeekWithTasksDto weekWithTasksDto = new WeekWithTasksDto();
+                weekWithTasksDto.setStartDay(week.getStartDay());
                 for (Slot slot : slotDAO.getSlotsForHquarter(entity)) {
                     for (SlotPosition slotPosition : slotDAO.getSlotPositionsForSlot(slot)) {
                         TaskMapper taskMapper = taskMappersDAO.taskMapperByWeekAndSlotPosition(week, slotPosition);

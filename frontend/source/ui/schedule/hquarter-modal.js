@@ -46,7 +46,7 @@ export class HquarterModal extends React.Component {
               isOpen = {this.state.isOpen}
               okHandler = {this.okButton}
               cancelHandler = {()=>fireEvent('hquarter-modal', 'close')}
-              title={this.state.hquarter.year +'.'+formatDateNumber(this.state.hquarter.startday) + '.' + formatDateNumber(this.state.hquarter.startmonth)}
+              title={this.state.hquarter.startWeek!=null? this.state.hquarter.startWeek.startDay + ' to ' + this.state.hquarter.endWeek.startDay: 'Default settings'}
               styleClass='mean-modal-style'>
         <CommonCrudeTemplate editing = {this.state.mode} changeEditHandler = {this.forceUpdate.bind(this)}>
           {this.state.hquarter.dumb==null? modalBody(this):null}
@@ -62,7 +62,12 @@ const modalBody = function(component){
                 {getSlotsUI(component.state.hquarter)}
               </div>
               <div style={{display:'table-cell', padding:'10px'}}>
-                {weekMappingTable(component.state.hquarter)}
+                <div>
+                  {weekMappingTable(component.state.hquarter)}
+                </div>
+                <div style={{borderTop: '1px solid lightgrey', marginTop: '5px', paddingTop:'5px'}}>
+                  {weeksWithTasksUI(component.state.hquarter)}
+                </div>
               </div>
             </div>
 }
@@ -111,6 +116,29 @@ const weekMappingTable = function(hquarter){
   }
   return days
 }
+
+const weeksWithTasksUI = function(hquarter){
+  const result = []
+  if(hquarter.weeks!=null && hquarter.weeks.length>0){
+    for(var i in hquarter.weeks){
+      const weekUI = []
+      weekUI.push(<td>{hquarter.weeks[i].startDay}</td>)
+      for(var dayOfWeekidx in week){
+        const weekDayUI = []
+        weekDayUI.push(<div>{week[dayOfWeekidx]}</div>)
+        if(hquarter.weeks[i].days!=null && hquarter.weeks[i].days[week[dayOfWeekidx]]!=null){
+          for(var taskidx in hquarter.weeks[i].days[week[dayOfWeekidx]]){
+            weekDayUI.push(<div>{hquarter.weeks[i].days[week[dayOfWeekidx]][taskidx].title}</div>)
+          }
+        }
+        weekUI.push(<td style={{padding:'3px', border:'1px solid lightgrey'}}>{weekDayUI}</td>)
+      }
+      result.push(<table style={{borderCollapse:'collapse', border:'1px solid lightgrey'}}><tr>{weekUI}</tr></table>)
+    }
+  }
+  return result
+}
+
 
 // const slotInCellUI = function(hquarter, day, position){
 //   const pos =

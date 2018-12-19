@@ -81,6 +81,7 @@ public class HquartersDelegate {
         Slot slot = slotDAO.getById(slotid);
         Mean mean = slot.getMean();
         Layer layer = slot.getLayer();
+        taskMappersController.unassignTasksForLayer(layer);
         List<Slot> slotsAfter = slotDAO.slotsAfter(slot);
 
         slot.setMean(null);
@@ -89,6 +90,7 @@ public class HquartersDelegate {
 
         for(Slot slotAfter: slotsAfter){
             if(slotAfter.getLayer()!=null) {
+                taskMappersController.unassignTasksForLayer(slotAfter.getLayer());
                 Layer prevLayer = layerDAO.getLayerAtPriority(mean, slotAfter.getLayer().getPriority()-1);
                 if(prevLayer!=null){
                     slotAfter.setLayer(prevLayer);
