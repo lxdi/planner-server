@@ -109,6 +109,10 @@ public class HquartersDelegate {
         if(layer!=null){
             int currentLayerPriority = layer.getPriority();
             for(Slot slotAfter: slotsAfter){
+                if(slotAfter.getLayer()!=null){
+                    taskMappersController.unassignTasksForLayer(slotAfter.getLayer());
+                    slotAfter.setLayer(null);
+                }
                 Layer nextLayer = layerDAO.getLayerAtPriority(mean, currentLayerPriority);
                 if(nextLayer!=null){
                     slotAfter.setLayer(nextLayer);
