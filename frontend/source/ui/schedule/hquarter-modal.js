@@ -91,6 +91,7 @@ const getSlotsUI = function(hquarter){
 }
 
 const week = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']
+const weekFullName = {'mon': 'Monday', 'tue': 'Tuesday', 'wed': 'Wednsday', 'thu':'Thursday', 'fri': 'Friday', 'sat': 'Saturday', 'sun':'Sunday'}
 const tasksSlots = [1,2,3]
 
 const weekMappingTable = function(hquarter){
@@ -125,7 +126,7 @@ const weeksWithTasksUI = function(hquarter){
       weekUI.push(<td>{hquarter.weeks[i].startDay}</td>)
       for(var dayOfWeekidx in week){
         const weekDayUI = []
-        weekDayUI.push(<div>{week[dayOfWeekidx]}</div>)
+        weekDayUI.push(<div>{weekFullName[week[dayOfWeekidx]]}</div>)
         if(hquarter.weeks[i].days!=null && hquarter.weeks[i].days[week[dayOfWeekidx]]!=null){
           for(var taskidx in hquarter.weeks[i].days[week[dayOfWeekidx]]){
             weekDayUI.push(<div>{hquarter.weeks[i].days[week[dayOfWeekidx]][taskidx].title}</div>)

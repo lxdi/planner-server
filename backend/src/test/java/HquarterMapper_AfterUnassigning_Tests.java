@@ -255,6 +255,15 @@ public class HquarterMapper_AfterUnassigning_Tests extends ATestsWithTargetsMean
         hquartersDelegate.assign(mean.getId(), slot2.getId());
         hquartersDelegate.assign(mean.getId(), slot3.getId());
 
+        assertTrue(slotDAO.getById(slot1.getId()).getMean().getId()==mean.getId());
+        assertTrue(slotDAO.getById(slot1.getId()).getLayer().getId()==layerDAO.getLayerAtPriority(mean, 1).getId());
+
+        assertTrue(slotDAO.getById(slot2.getId()).getMean().getId()==mean.getId());
+        assertTrue(slotDAO.getById(slot2.getId()).getLayer().getId()==layerDAO.getLayerAtPriority(mean, 2).getId());
+
+        assertTrue(slotDAO.getById(slot3.getId()).getMean().getId()==mean.getId());
+        assertTrue(slotDAO.getById(slot3.getId()).getLayer().getId()==layerDAO.getLayerAtPriority(mean, 3).getId());
+
         hquartersDelegate.unassign(slot1.getId());
         hquartersDelegate.unassign(slot2.getId());
         hquartersDelegate.unassign(slot3.getId());

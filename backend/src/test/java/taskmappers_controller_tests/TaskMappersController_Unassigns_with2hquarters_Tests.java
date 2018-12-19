@@ -152,8 +152,8 @@ public class TaskMappersController_Unassigns_with2hquarters_Tests extends ATests
         createTask("task 2-9", subject21, 9);
         createTask("task 2-8", subject21, 8);
 
-        Layer layer3 = new Layer(mean, 3);
-        layerDAO.saveOrUpdate(layer3);
+//        Layer layer3 = new Layer(mean, 3);
+//        layerDAO.saveOrUpdate(layer3);
 
     }
 
@@ -162,6 +162,15 @@ public class TaskMappersController_Unassigns_with2hquarters_Tests extends ATests
         hquartersDelegate.assign(mean.getId(), slot1.getId());
         hquartersDelegate.assign(mean.getId(), slot2.getId());
         hquartersDelegate.assign(mean.getId(), slot3.getId());
+
+        assertTrue(slotDAO.getById(slot1.getId()).getMean().getId()==mean.getId());
+        assertTrue(slotDAO.getById(slot1.getId()).getLayer().getId()==layerDAO.getLayerAtPriority(mean, 1).getId());
+
+        assertTrue(slotDAO.getById(slot2.getId()).getMean().getId()==mean.getId());
+        assertTrue(slotDAO.getById(slot2.getId()).getLayer().getId()==layerDAO.getLayerAtPriority(mean, 2).getId());
+
+        assertTrue(slotDAO.getById(slot3.getId()).getMean().getId()==mean.getId());
+        assertTrue(slotDAO.getById(slot3.getId()).getLayer()==null);
 
         hquartersDelegate.unassign(slot2.getId());
 

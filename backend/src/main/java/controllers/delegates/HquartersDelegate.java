@@ -88,24 +88,37 @@ public class HquartersDelegate {
         slot.setLayer(null);
         slotDAO.saveOrUpdate(slot);
 
-        for(Slot slotAfter: slotsAfter){
-            if(slotAfter.getLayer()!=null) {
-                taskMappersController.unassignTasksForLayer(slotAfter.getLayer());
-                Layer prevLayer = layerDAO.getLayerAtPriority(mean, slotAfter.getLayer().getPriority()-1);
-                if(prevLayer!=null){
-                    slotAfter.setLayer(prevLayer);
-                    taskMappersController.createTaskMappers(prevLayer, slotAfter);
-                    slotDAO.saveOrUpdate(slotAfter);
-                }
-            } else {
-                Layer nextLayer = layerDAO.getNextLayerToSchedule(mean);
+//        for(Slot slotAfter: slotsAfter){
+//            if(slotAfter.getLayer()!=null) {
+//                taskMappersController.unassignTasksForLayer(slotAfter.getLayer());
+//                Layer prevLayer = layerDAO.getLayerAtPriority(mean, slotAfter.getLayer().getPriority()-1);
+//                if(prevLayer!=null){
+//                    slotAfter.setLayer(prevLayer);
+//                    taskMappersController.createTaskMappers(prevLayer, slotAfter);
+//                    slotDAO.saveOrUpdate(slotAfter);
+//                }
+//            } else {
+//                Layer nextLayer = layerDAO.getNextLayerToSchedule(mean);
+//                if(nextLayer!=null){
+//                    slotAfter.setLayer(nextLayer);
+//                    taskMappersController.createTaskMappers(nextLayer, slotAfter);
+//                    slotDAO.saveOrUpdate(slotAfter);
+//                }
+//            }
+//        }
+        if(layer!=null){
+            int currentLayerPriority = layer.getPriority();
+            for(Slot slotAfter: slotsAfter){
+                Layer nextLayer = layerDAO.getLayerAtPriority(mean, currentLayerPriority);
                 if(nextLayer!=null){
                     slotAfter.setLayer(nextLayer);
-                    taskMappersController.createTaskMappers(nextLayer, slotAfter);
                     slotDAO.saveOrUpdate(slotAfter);
+                    taskMappersController.createTaskMappers(nextLayer, slotAfter);
                 }
+                currentLayerPriority++;
             }
         }
+
         return slotMapper.mapToDto(slot);
     }
 
