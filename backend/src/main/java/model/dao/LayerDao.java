@@ -2,6 +2,7 @@ package model.dao;
 
 import model.entities.Layer;
 import model.entities.Mean;
+import model.entities.Slot;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,9 @@ public class LayerDao implements ILayerDAO {
     @Autowired
     IMeansDAO meansDAO;
 
+    @Autowired
+    ILayerDAO layerDAO;
+
     @Override
     public List<Layer> getLyersOfMean(Mean mean) {
         String hql = "from Layer lr where lr.mean = :mean";
@@ -36,6 +40,19 @@ public class LayerDao implements ILayerDAO {
         long assignsCount = meansDAO.assignsMeansCount(mean);
         Layer result = getLayerAtPriority(mean, (int)(assignsCount+1));
         return result;
+    }
+
+    @Override
+    public Layer getLayerToScheduleForSlot(Slot slot) {
+        String hql = "select count(*) from Slot where " +
+                "((hquarter.startWeek.startDay < :startDay) or (hquarter.startWeek.startDay = :startDay and position<:position) )" +
+                "and mean = :mean";
+        long slotsBeforeCount = (long) sessionFactory.getCurrentSession().createQuery(hql)
+                .setParameter("startDay", slot.getHquarter().getStartWeek().getStartDay())
+                .setParameter("position", slot.getPosition())
+                .setParameter("mean", slot.getMean())
+                .uniqueResult();
+        return layerDAO.getLayerAtPriority(slot.getMean(), (int)(slotsBeforeCount+1));
     }
 
     @Override

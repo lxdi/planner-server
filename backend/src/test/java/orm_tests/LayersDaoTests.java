@@ -1,12 +1,15 @@
 package orm_tests;
 
+import model.dao.IHQuarterDAO;
 import model.dao.ISlotDAO;
+import model.entities.HQuarter;
 import model.entities.Layer;
 import model.entities.Mean;
 import model.entities.Slot;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import orm_tests.conf.ATestsWithTargetsWithMeansWithLayers;
+import services.QuarterGenerator;
 
 import java.util.List;
 
@@ -16,6 +19,12 @@ public class LayersDaoTests extends ATestsWithTargetsWithMeansWithLayers{
 
     @Autowired
     ISlotDAO slotDAO;
+
+    @Autowired
+    QuarterGenerator quarterGenerator;
+
+    @Autowired
+    IHQuarterDAO ihQuarterDAO;
 
     @Test
     public void gettingLayersByMeanTest(){
@@ -73,6 +82,39 @@ public class LayersDaoTests extends ATestsWithTargetsWithMeansWithLayers{
         Layer currentLayer = layerDAO.getNextLayerToSchedule(mean);
 
         assertTrue(currentLayer.getId()==layer.getId());
+
+    }
+
+    @Test
+    public void getLayerToScheduleForSlotTest(){
+        quarterGenerator.generateYear(2018);
+        List<HQuarter> hQuarters = ihQuarterDAO.getHQuartersInYear(2018);
+
+        Mean mean = new Mean("test mean", realm);
+        meansDao.saveOrUpdate(mean);
+
+        Layer layer = new Layer(mean, 1);
+        layerDAO.saveOrUpdate(layer);
+
+        Layer layer2 = new Layer(mean, 2);
+        layerDAO.saveOrUpdate(layer2);
+
+        Slot slot1 = new Slot(hQuarters.get(1), 1);
+        slot1.setMean(mean);
+        slotDAO.saveOrUpdate(slot1);
+
+        Slot slot2 = new Slot(hQuarters.get(1), 2);
+        slot2.setMean(mean);
+        slotDAO.saveOrUpdate(slot2);
+
+        Slot slot3 = new Slot(hQuarters.get(5), 1);
+        slot2.setMean(mean);
+        slotDAO.saveOrUpdate(slot3);
+
+        assertTrue(layerDAO.getLayerToScheduleForSlot(slot1).getId()==layer.getId());
+        assertTrue(layerDAO.getLayerToScheduleForSlot(slot2).getId()==layer2.getId());
+        assertTrue(layerDAO.getLayerToScheduleForSlot(slot3) == null);
+
 
     }
 

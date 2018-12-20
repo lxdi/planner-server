@@ -70,10 +70,20 @@ public class HquartersDelegate {
         Mean mean = meansDAO.meanById(meanid);
         Slot slot = slotDAO.getById(slotid);
         slot.setMean(mean);
-        Layer layer = layerDAO.getNextLayerToSchedule(mean);
-        slot.setLayer(layer);
         slotDAO.saveOrUpdate(slot);
+        Layer layer = layerDAO.getLayerToScheduleForSlot(slot);
+        slot.setLayer(layer);
         taskMappersController.createTaskMappers(layer, slot);
+        slotDAO.saveOrUpdate(slot);
+
+        List<Slot> slotsAfter = slotDAO.slotsAfter(slot);
+        for(Slot slotAfter : slotsAfter){
+            Layer layerAfter = layerDAO.getLayerToScheduleForSlot(slotAfter);
+            taskMappersController.createTaskMappers(layerAfter, slotAfter);
+            slotAfter.setLayer(layerAfter);
+            slotDAO.saveOrUpdate(slotAfter);
+        }
+
         return slotMapper.mapToDto(slot);
     }
 
@@ -87,25 +97,6 @@ public class HquartersDelegate {
         slot.setMean(null);
         slot.setLayer(null);
         slotDAO.saveOrUpdate(slot);
-
-//        for(Slot slotAfter: slotsAfter){
-//            if(slotAfter.getLayer()!=null) {
-//                taskMappersController.unassignTasksForLayer(slotAfter.getLayer());
-//                Layer prevLayer = layerDAO.getLayerAtPriority(mean, slotAfter.getLayer().getPriority()-1);
-//                if(prevLayer!=null){
-//                    slotAfter.setLayer(prevLayer);
-//                    taskMappersController.createTaskMappers(prevLayer, slotAfter);
-//                    slotDAO.saveOrUpdate(slotAfter);
-//                }
-//            } else {
-//                Layer nextLayer = layerDAO.getNextLayerToSchedule(mean);
-//                if(nextLayer!=null){
-//                    slotAfter.setLayer(nextLayer);
-//                    taskMappersController.createTaskMappers(nextLayer, slotAfter);
-//                    slotDAO.saveOrUpdate(slotAfter);
-//                }
-//            }
-//        }
         if(layer!=null){
             int currentLayerPriority = layer.getPriority();
             for(Slot slotAfter: slotsAfter){
