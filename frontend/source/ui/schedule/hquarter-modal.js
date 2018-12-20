@@ -119,6 +119,7 @@ const weekMappingTable = function(hquarter){
 }
 
 const weeksWithTasksUI = function(hquarter){
+  const borderStyle = '1px solid lightgrey'
   const result = []
   if(hquarter.weeks!=null && hquarter.weeks.length>0){
     for(var i in hquarter.weeks){
@@ -126,15 +127,15 @@ const weeksWithTasksUI = function(hquarter){
       weekUI.push(<td>{hquarter.weeks[i].startDay}</td>)
       for(var dayOfWeekidx in week){
         const weekDayUI = []
-        weekDayUI.push(<div>{weekFullName[week[dayOfWeekidx]]}</div>)
+        weekDayUI.push(<div style={{borderBottom: borderStyle, fontStyle: 'italic'}}>{weekFullName[week[dayOfWeekidx]]}</div>)
         if(hquarter.weeks[i].days!=null && hquarter.weeks[i].days[week[dayOfWeekidx]]!=null){
           for(var taskidx in hquarter.weeks[i].days[week[dayOfWeekidx]]){
-            weekDayUI.push(<div>{hquarter.weeks[i].days[week[dayOfWeekidx]][taskidx].title}</div>)
+            weekDayUI.push(<li>{hquarter.weeks[i].days[week[dayOfWeekidx]][taskidx].title}</li>)
           }
         }
-        weekUI.push(<td style={{padding:'3px', border:'1px solid lightgrey'}}>{weekDayUI}</td>)
+        weekUI.push(<td style={{padding:'3px', border: borderStyle, verticalAlign: 'top'}}>{weekDayUI}</td>)
       }
-      result.push(<table style={{borderCollapse:'collapse', border:'1px solid lightgrey'}}><tr>{weekUI}</tr></table>)
+      result.push(<table style={{borderCollapse:'collapse', border: borderStyle}}><tr>{weekUI}</tr></table>)
     }
   }
   return result
