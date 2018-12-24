@@ -5,7 +5,6 @@ import {CreateMean} from './../../data/creators'
 import {Button, ButtonGroup, ButtonToolbar,  DropdownButton, MenuItem, ListGroup, ListGroupItem} from 'react-bootstrap'
 import {MeanModal} from './mean-modal'
 import {registerEvent, registerReaction, fireEvent, viewStateVal} from '../../controllers/eventor'
-import {sortByField} from '../../utils/import-utils'
 import {iterateLLfull} from '../../utils/linked-list'
 import {mergeArrays, resolveNodes, replaceDraggableUtil, addAsChildDraggableUtil} from '../../utils/draggable-tree-utils'
 
@@ -17,10 +16,6 @@ export class MeansFrame extends React.Component{
     this.state = {isEdit: false}
     this.onDragOver = this.onDragOver.bind(this)
     this.onDrop = this.onDrop.bind(this)
-
-    var uiUpdate = function(){
-      this.setState({})
-    }.bind(this)
 
     registerReaction('means-frame', 'targets-dao', 'target-deleted', (state, targetid)=>{
       fireEvent('means-dao', 'delete-depended-means', [targetid])

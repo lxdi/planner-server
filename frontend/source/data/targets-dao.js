@@ -5,9 +5,12 @@ import {registerEvent, registerReaction, fireEvent, viewStateVal} from '../contr
 registerEvent('targets-dao', 'create', function(stateSetter, target, parent){
   target.parentid = parent!=null? parent.id: null
   sendPut('/target/create', JSON.stringify(target), function(data) {
-    viewStateVal('targets-dao', 'targets')[""+data.id] = data
-    resolveTargets()
-    fireEvent('targets-dao', 'target-created', [target])
+    if(data.previd!=null){
+      viewStateVal('targets-dao', 'targets')[data.realmid][data.previd].nextid = data.id
+    }
+    importOneTargetDto(data)
+    resolveTarget(data)
+    fireEvent('targets-dao', 'target-created', [data])
   })
 })
 
@@ -25,8 +28,8 @@ registerEvent('targets-dao', 'target-deleted', (stateSetter, id)=>id)
 
 registerEvent('targets-dao', 'modify', function(stateSetter, target){
   sendPost('/target/update', JSON.stringify(target), function(data) {
-    viewStateVal('targets-dao', 'targets')[""+data.id] = data
-    resolveTargets()
+    importOneTargetDto(data)
+    resolveTarget(viewStateVal('targets-dao', 'targets')[data.realmid][data.id])
     fireEvent('targets-dao', 'target-modified', [target])
   })
 })
@@ -69,35 +72,56 @@ const targetsuper = {
 
 const importTargetsDto = function(stateSetter, targetsDto){
   if(viewStateVal('targets-dao', 'targets')==null){
-    const targets = []
-    targets.__proto__ = targetsProto
-    stateSetter('targets', targets)
+    stateSetter('targets', [])
   }
   for(var i in targetsDto){
-    viewStateVal('targets-dao', 'targets')[""+targetsDto[i].id] = targetsDto[i]
+    importOneMeanDto(targetsDto[i])
+    resolveMean(viewStateVal('targets-dao', 'targets')[targetsDto[i].realmid][targetsDto[i].id])
   }
-  resolveTargets();
+  //resolveTargets();
 }
 
-const resolveTargets = function(){
-  const targets = viewStateVal('targets-dao', 'targets')
-  for(var i in targets){
-    if(targets.hasOwnProperty(i)){
-      resolveTarget(targets[i])
-    }
+const importMeansDto = function(stateSetter, targetsDto){
+  if(viewStateVal('targets-dao', 'targets')==null){
+    stateSetter('targets', [])
   }
+  for(var i in targetsDto){
+    importOneTargetDto(targetsDto[i])
+    resolveTarget(viewStateVal('targets-dao', 'targets')[targetsDto[i].realmid][targetsDto[i].id])
+  }
+}
+
+const importOneTargetDto = function(targetDto){
+  const targets = viewStateVal('targets-dao', 'targets')
+  if(targets[targetDto.realmid]==null){
+    targets[targetDto.realmid] = []
+  }
+  targets[targetDto.realmid][targetDto.id] = targetDto
 }
 
 const resolveTarget = function(target){
-  target.children = []
-  target.__proto__ = targetsuper
-  const targets = viewStateVal('targets-dao', 'targets')
-  for(var j in targets){
-    if(targets[j].parentid == target.id){
-      target.children.push(targets[j])
-    }
-  }
+  mean.__proto__ = targetsuper
 }
+
+// const resolveTargets = function(){
+//   const targets = viewStateVal('targets-dao', 'targets')
+//   for(var i in targets){
+//     if(targets.hasOwnProperty(i)){
+//       resolveTarget(targets[i])
+//     }
+//   }
+// }
+//
+// const resolveTarget = function(target){
+//   target.children = []
+//   target.__proto__ = targetsuper
+//   const targets = viewStateVal('targets-dao', 'targets')
+//   for(var j in targets){
+//     if(targets[j].parentid == target.id){
+//       target.children.push(targets[j])
+//     }
+//   }
+// }
 
 export var GetTargetById = function(id){
   return viewStateVal('targets-dao', 'targets').id
