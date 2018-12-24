@@ -16,5 +16,6 @@ public interface ITargetsDAO {
     void deleteTarget(long id);
     List<Target> getChildren(Target target);
     Target getTargetByTitle(String title);
+    Target getPrevTarget(Target target);
 
 }

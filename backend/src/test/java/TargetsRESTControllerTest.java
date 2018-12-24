@@ -1,28 +1,26 @@
 import controllers.TargetsRESTController;
-import model.dao.ITargetsDAO;
 import model.dto.target.TargetsDtoMapper;
 import model.entities.Realm;
 import model.entities.Target;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import orm_tests.conf.AbstractTestsWithTargets;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * Created by Alexander on 10.03.2018.
  */
-public class TargetsRESTControllerTest {
+public class TargetsRESTControllerTest extends AbstractTestsWithTargets {
 
    private MockMvc mockMvc;
    private TargetsRESTController targetsRESTController;
@@ -39,10 +37,8 @@ public class TargetsRESTControllerTest {
       target3.setId(3);
       List<Target> listoftargets = new ArrayList<>(Arrays.asList(target1, target2 , target3));
 
-      ITargetsDAO targetsDAOtest = Mockito.mock(ITargetsDAO.class);
-      when(targetsDAOtest.allTargets()).thenReturn(listoftargets);
 
-      targetsRESTController = new TargetsRESTController(targetsDAOtest, new TargetsDtoMapper());
+      targetsRESTController = new TargetsRESTController(targetsDAO, new TargetsDtoMapper());
       mockMvc = MockMvcBuilders.standaloneSetup(targetsRESTController).build();
    }
 

@@ -27,9 +27,6 @@ public class MeansDtoMapper implements IMapper<MeanDtoLazy, Mean> {
     @Autowired
     IRealmDAO realmDAO;
 
-    @Autowired
-    IHQuarterDAO quarterDAO;
-
     public MeanDtoLazy mapToDto(Mean mean){
         MeanDtoLazy meanDtoLazy = new MeanDtoLazy();
         mapStatic(mean, meanDtoLazy);
@@ -48,12 +45,6 @@ public class MeansDtoMapper implements IMapper<MeanDtoLazy, Mean> {
                 meanDtoLazy.setPrevid(prevMean.getId());
             }
         }
-
-//        if(mean.getHquarter()!=null)
-//            meanDtoLazy.setQuarterid(mean.getHquarter().getId());
-//        if(mean.getPosition()!=null && mean.getPosition()>0){
-//            meanDtoLazy.setPosition(mean.getPosition());
-//        }
         return meanDtoLazy;
     }
 
@@ -87,12 +78,6 @@ public class MeansDtoMapper implements IMapper<MeanDtoLazy, Mean> {
         for(Long id : meanDto.getTargetsIds()){
             mean.getTargets().add(targetsDAO.targetById(id));
         }
-//        if(meanDto.getQuarterid()!=null){
-//            mean.setHquarter(quarterDAO.getById(meanDto.getQuarterid()));
-//        }
-//        if(meanDto.getPosition()!=null){
-//            mean.setPosition(meanDto.getPosition());
-//        }
         return mean;
     }
 

@@ -1,8 +1,10 @@
 package controllers;
 
 import model.dao.ITargetsDAO;
+import model.dto.mean.MeanDtoLazy;
 import model.dto.target.TargetDtoLazy;
 import model.dto.target.TargetsDtoMapper;
+import model.entities.Mean;
 import model.entities.Target;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -63,6 +65,21 @@ public class TargetsRESTController {
         Target target = targetsDtoMapper.mapToEntity(targetDto);
         targetsDAO.saveOrUpdate(target);
         return new ResponseEntity<TargetDtoLazy>(targetsDtoMapper.mapToDto(target), HttpStatus.OK);
+    }
+
+    @RequestMapping(path = "/target/update/list" , method = RequestMethod.POST)
+    public ResponseEntity<List<TargetDtoLazy>> updateList(@RequestBody List<TargetDtoLazy> targetDtoLazies){
+        List<Target> updated = new ArrayList<>();
+        for(TargetDtoLazy targetDtoLazy : targetDtoLazies) {
+            Target target = targetsDtoMapper.mapToEntity(targetDtoLazy);
+            targetsDAO.saveOrUpdate(target);
+            updated.add(target);
+        }
+        List<TargetDtoLazy> result = new ArrayList<>();
+        for(Target target: updated) {
+            result.add(targetsDtoMapper.mapToDto(target));
+        }
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
 }

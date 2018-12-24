@@ -93,4 +93,12 @@ public class TargetsDao implements ITargetsDAO {
                 .setParameter("title", title).list();
         return result.size()>0? result.get(0):null;
     }
+
+    @Override
+    public Target getPrevTarget(Target target) {
+        String hql = "FROM Target where next = :next";
+        Query query = sessionFactory.getCurrentSession().createQuery(hql);
+        query.setParameter("next", target);
+        return (Target) query.uniqueResult();
+    }
 }

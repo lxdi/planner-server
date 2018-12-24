@@ -18,6 +18,9 @@ public class Target {
     //@org.hibernate.annotations.Cascade( {org.hibernate.annotations.CascadeType.SAVE_UPDATE})
     private Target parent;
 
+    @OneToOne
+    Target next;
+
 //    @OneToMany(mappedBy = "parent")
 //    private List<Target> children = new ArrayList<>();
 
@@ -60,10 +63,10 @@ public class Target {
         this.realm = realm;
     }
 
-    //    public List<Target> getChildren() {
-//        return children;
-//    }
-//    public void setChildren(List<Target> children) {
-//        this.children = children;
-//    }
+    public Target getNext() {
+        return next;
+    }
+    public void setNext(Target next) {
+        this.next = next;
+    }
 }

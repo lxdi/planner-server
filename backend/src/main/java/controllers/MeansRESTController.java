@@ -123,21 +123,6 @@ public class MeansRESTController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-
-    @Deprecated
-    @RequestMapping(path = "/mean/replace/{meanid}/{parentid}" , method = RequestMethod.POST)
-    public ResponseEntity<MeanDtoLazy> replace(@PathVariable("meanid") long meanid, @PathVariable("parentid") long parentid){
-        Mean mean = meansDAO.meanById(meanid);
-        if(mean!=null){
-            Mean newParent = parentid>0?meansDAO.meanById(parentid):null;
-            mean.setParent(newParent);
-            meansDAO.saveOrUpdate(mean);
-            return new ResponseEntity<MeanDtoLazy>(meansDtoMapper.mapToDto(mean), HttpStatus.OK);
-        } else {
-            throw new NullPointerException("Mean with given ID doesn't exist");
-        }
-    }
-
     private Mean updateMean(MeanDtoLazy meanDtoLazy){
         assert meanDtoLazy.getId()>0;
         Mean mean = meansDtoMapper.mapToEntity(meanDtoLazy);
