@@ -1,7 +1,7 @@
 import {createNewTargetButtonTitle, addNewTargetTitle} from './../../titles'
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {Button, FormGroup, ControlLabel, FormControl, ListGroup, ListGroupItem} from 'react-bootstrap'
+import {Button, FormGroup, ControlLabel, FormControl, ListGroup, ListGroupItem, ButtonGroup} from 'react-bootstrap'
 import {CreateTarget, CreateRealm} from './../../data/creators'
 import {TargetModal} from './target-modal'
 import {RealmModal} from './realm-modal'
@@ -119,7 +119,7 @@ const targetsUI = function(component){
 
 const getControlButtonsForTargets = function(component){
   const result = []
-  result.push(<Button bsStyle="success" bsSize="xsmall" onClick={()=>fireEvent('target-modal', 'open', [CreateTarget(0, '', viewStateVal('realms-dao','realms')[realmId].id)])}>
+  result.push(<Button bsStyle="success" bsSize="xsmall" onClick={()=>fireEvent('target-modal', 'open', [CreateTarget(0, '', viewStateVal('realms-dao','currentRealm').id)])}>
               {createNewTargetButtonTitle}
             </Button>)
   result.push(<Button bsStyle="default" bsSize="xsmall" onClick={()=>component.setState({isEdit: !component.state.isEdit})}>
@@ -133,7 +133,7 @@ const styleForAddAsChild = {width:'80px', color:'lightgrey', fontSize: '10px', b
 const targetsUIlist = function(component){
       const result = []
       if(viewStateVal('realms-dao', 'currentRealm')!=null){
-        component.state.allNodes = viewStateVal('targets-dao', 'targets')[viewStateVal('targets-dao', 'currentRealm').id]
+        component.state.allNodes = viewStateVal('targets-dao', 'targets')[viewStateVal('realms-dao', 'currentRealm').id]
         component.state.cache = resolveNodes(component.state.allNodes)
         iterateLLfull(component.state.cache.root, (target)=>{
           result.push(<ListGroupItem key={'target_'+target.id}>{targetUI(component, target, 20)}</ListGroupItem>)

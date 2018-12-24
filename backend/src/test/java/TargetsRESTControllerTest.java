@@ -38,7 +38,7 @@ public class TargetsRESTControllerTest extends AbstractTestsWithTargets {
       List<Target> listoftargets = new ArrayList<>(Arrays.asList(target1, target2 , target3));
 
 
-      targetsRESTController = new TargetsRESTController(targetsDAO, new TargetsDtoMapper());
+      targetsRESTController = new TargetsRESTController(targetsDAO, new TargetsDtoMapper(), null);
       mockMvc = MockMvcBuilders.standaloneSetup(targetsRESTController).build();
    }
 

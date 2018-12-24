@@ -75,20 +75,10 @@ const importTargetsDto = function(stateSetter, targetsDto){
     stateSetter('targets', [])
   }
   for(var i in targetsDto){
-    importOneMeanDto(targetsDto[i])
-    resolveMean(viewStateVal('targets-dao', 'targets')[targetsDto[i].realmid][targetsDto[i].id])
-  }
-  //resolveTargets();
-}
-
-const importMeansDto = function(stateSetter, targetsDto){
-  if(viewStateVal('targets-dao', 'targets')==null){
-    stateSetter('targets', [])
-  }
-  for(var i in targetsDto){
     importOneTargetDto(targetsDto[i])
     resolveTarget(viewStateVal('targets-dao', 'targets')[targetsDto[i].realmid][targetsDto[i].id])
   }
+  //resolveTargets();
 }
 
 const importOneTargetDto = function(targetDto){
@@ -100,28 +90,8 @@ const importOneTargetDto = function(targetDto){
 }
 
 const resolveTarget = function(target){
-  mean.__proto__ = targetsuper
+  target.__proto__ = targetsuper
 }
-
-// const resolveTargets = function(){
-//   const targets = viewStateVal('targets-dao', 'targets')
-//   for(var i in targets){
-//     if(targets.hasOwnProperty(i)){
-//       resolveTarget(targets[i])
-//     }
-//   }
-// }
-//
-// const resolveTarget = function(target){
-//   target.children = []
-//   target.__proto__ = targetsuper
-//   const targets = viewStateVal('targets-dao', 'targets')
-//   for(var j in targets){
-//     if(targets[j].parentid == target.id){
-//       target.children.push(targets[j])
-//     }
-//   }
-// }
 
 export var GetTargetById = function(id){
   return viewStateVal('targets-dao', 'targets').id

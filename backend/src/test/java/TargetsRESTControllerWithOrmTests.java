@@ -33,13 +33,13 @@ public class TargetsRESTControllerWithOrmTests extends AbstractTestsWithTargets 
     @Before
     public void init(){
         super.init();
-        targetsRESTController = new TargetsRESTController(targetsDAO, targetsDtoMapper);
+        targetsRESTController = new TargetsRESTController(targetsDAO, targetsDtoMapper, realmDAO);
         mockMvc = MockMvcBuilders.standaloneSetup(targetsRESTController).build();
     }
 
     @Test
     public void createTest() throws Exception {
-        String content = "{\"id\":0,\"title\":\"new target\",\"parentid\":2, \"realmid\":1, \"children\":[]}";
+        String content = "{\"id\":0,\"title\":\"new target\",\"parentid\":2, \"realmid\":"+realm.getId()+", \"children\":[]}";
         MvcResult result = mockMvc.perform(put("/target/create")
                 .contentType(MediaType.APPLICATION_JSON).content(content))
                 .andExpect(status().isOk()).andReturn();

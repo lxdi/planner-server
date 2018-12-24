@@ -1,10 +1,12 @@
 package controllers;
 
+import model.dao.IRealmDAO;
 import model.dao.ITargetsDAO;
 import model.dto.mean.MeanDtoLazy;
 import model.dto.target.TargetDtoLazy;
 import model.dto.target.TargetsDtoMapper;
 import model.entities.Mean;
+import model.entities.Realm;
 import model.entities.Target;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,11 +30,15 @@ public class TargetsRESTController {
     @Autowired
     TargetsDtoMapper targetsDtoMapper;
 
+    @Autowired
+    IRealmDAO realmDAO;
+
     public TargetsRESTController(){}
 
-    public TargetsRESTController(ITargetsDAO targetsDAO, TargetsDtoMapper targetsDtoMapper){
+    public TargetsRESTController(ITargetsDAO targetsDAO, TargetsDtoMapper targetsDtoMapper, IRealmDAO realmDAO){
         this.targetsDAO = targetsDAO;
         this.targetsDtoMapper = targetsDtoMapper;
+        this.realmDAO = realmDAO;
     }
 
     @RequestMapping(path = "/target/all/lazy")
@@ -44,8 +50,15 @@ public class TargetsRESTController {
 
     @RequestMapping(path = "/target/create" , method = RequestMethod.PUT)
     public ResponseEntity<TargetDtoLazy> createTarget(@RequestBody TargetDtoLazy targetDto) {
+        assert targetDto.getId()==0 && targetDto.getNextid()==null && targetDto.getRealmid()>0;
+        Realm realm = realmDAO.realmById(targetDto.getRealmid());
         Target target = targetsDtoMapper.mapToEntity(targetDto);
+        Target prevTarget = targetsDAO.getLastOfChildren(target.getParent(), realm);
         targetsDAO.saveOrUpdate(target);
+        if(prevTarget!=null){
+            prevTarget.setNext(target);
+            targetsDAO.saveOrUpdate(prevTarget);
+        }
         return new ResponseEntity<TargetDtoLazy>(targetsDtoMapper.mapToDto(target), HttpStatus.OK);
     }
 

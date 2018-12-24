@@ -1,6 +1,7 @@
 package model.dao;
 
 import model.entities.Mean;
+import model.entities.Realm;
 import model.entities.Target;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
@@ -99,6 +100,18 @@ public class TargetsDao implements ITargetsDAO {
         String hql = "FROM Target where next = :next";
         Query query = sessionFactory.getCurrentSession().createQuery(hql);
         query.setParameter("next", target);
+        return (Target) query.uniqueResult();
+    }
+
+    @Override
+    public Target getLastOfChildren(Target targetParent, Realm realm) {
+        String hql = "FROM Target where realm = :realm and next is null and "
+                + (targetParent!=null?"parent = :parent":"parent is null");
+        Query query = sessionFactory.getCurrentSession().createQuery(hql);
+        if(targetParent!=null){
+            query.setParameter("parent", targetParent);
+        }
+        query.setParameter("realm", realm);
         return (Target) query.uniqueResult();
     }
 }

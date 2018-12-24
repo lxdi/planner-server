@@ -1,5 +1,6 @@
 package model.dao;
 
+import model.entities.Realm;
 import model.entities.Target;
 
 import java.util.List;
@@ -17,5 +18,6 @@ public interface ITargetsDAO {
     List<Target> getChildren(Target target);
     Target getTargetByTitle(String title);
     Target getPrevTarget(Target target);
+    Target getLastOfChildren(Target targetParent, Realm realm);
 
 }
