@@ -37,6 +37,10 @@ export class TargetModal extends React.Component {
       this.setState(defaultState())
     }.bind(this))
 
+    registerReaction('target-modal', 'targets-dao', 'target-created', ()=>{
+      fireEvent('target-modal', 'close')
+    })
+
   }
 
   okHandler(){

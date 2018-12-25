@@ -20,11 +20,11 @@ registerEvent('realms-dao', 'create', function(stateSetter, realm){
   sendPut('/realm/create', JSON.stringify(realm), function(data) {
     var receivedData = typeof data == 'string'? JSON.parse(data): data
     viewStateVal('realms-dao', 'realms')[""+receivedData.id] = receivedData
-    fireEvent('realms-dao', 'realms-created', [realm])
+    fireEvent('realms-dao', 'realm-created', [realm])
   })
 })
 
-registerEvent('realms-dao', 'realms-created', function(stateSetter, realm){
+registerEvent('realms-dao', 'realm-created', function(stateSetter, realm){
   return realm
 })
 

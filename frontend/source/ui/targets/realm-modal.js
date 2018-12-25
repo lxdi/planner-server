@@ -36,6 +36,10 @@ export class RealmModal extends React.Component {
       this.setState(defaultState())
     }.bind(this))
 
+    registerReaction('realm-modal', 'realms-dao', 'realm-created', ()=>{
+      fireEvent('realm-modal', 'close')
+    })
+
   }
 
   okHandler(){

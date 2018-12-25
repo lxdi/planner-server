@@ -18,18 +18,8 @@ export class TargetsFrame extends React.Component{
     this.onDragOver = this.onDragOver.bind(this)
     this.onDrop = this.onDrop.bind(this)
 
-    // registerReaction('targets-frame', 'targets-dao', ['target-created', 'target-deleted', 'target-modified'], function(){
-    //   fireEvent('target-modal', 'close')
-    //   this.setState({})
-    // }.bind(this))
-
-    // registerReaction('targets-frame', 'realms-dao', ['realms-created'], function(){
-    //   fireEvent('realm-modal', 'close')
-    //   this.setState({})
-    // }.bind(this))
-
     registerReaction('targets-frame', 'targets-dao', 'targets-received', ()=>this.setState({}))
-    registerReaction('targets-frame', 'realms-dao', ['realms-received', 'change-current-realm'], ()=>this.setState({}))
+    registerReaction('targets-frame', 'realms-dao', ['realms-received', 'change-current-realm', 'realm-created'], ()=>this.setState({}))
 
     registerReaction('targets-frame', 'targets-dao',
             ['targets-received', 'replace-target', 'target-created', 'target-deleted', 'target-modified', 'targets-list-modified', 'draggable-add-as-child'], ()=>this.setState({}))
@@ -69,9 +59,11 @@ export class TargetsFrame extends React.Component{
           <Button bsStyle="success" bsSize="xsmall" onClick={()=>fireEvent('realm-modal', 'open', [CreateRealm(0, '')])}>
             Create New Realm
           </Button>
-          <ListGroup>
-            {realmsUI(this)}
-          </ListGroup>
+          <div onDrop={this.onDrop} onDragOver={(e)=>e.preventDefault()}>
+            <ListGroup>
+              {realmsUI(this)}
+            </ListGroup>
+          </div>
         </div>
       </div>
     )

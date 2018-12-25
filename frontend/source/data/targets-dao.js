@@ -46,6 +46,22 @@ registerEvent('targets-dao', 'targets-request', function(stateSetter){
 
 registerEvent('targets-dao', 'targets-received', ()=>{})
 
+registerEvent('targets-dao', 'modify-list', function(stateSetter, targets){
+  sendPost('/target/update/list', JSON.stringify(targets), function(data) {
+    for(var i in data){
+      importOneTargetDto(data[i])
+      resolveTarget(viewStateVal('targets-dao', 'targets')[data[i].realmid][data[i].id])
+    }
+    fireEvent('targets-dao', 'targets-list-modified', [data])
+  })
+})
+
+registerEvent('targets-dao', 'targets-list-modified', (stateSetter, targets)=>targets)
+
+registerEvent('targets-dao', 'add-draggable', (stateSetter, target)=>{stateSetter('draggableTarget', target)})
+
+registerEvent('targets-dao', 'remove-draggable', (stateSetter)=>stateSetter('draggableTarget', null))
+
 const targetsProto = {
   map: function(callback, filter){
     var result = []

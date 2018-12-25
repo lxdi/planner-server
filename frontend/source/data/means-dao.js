@@ -14,21 +14,17 @@ registerEvent('means-dao', 'means-request', function(stateSetter){
             })
 })
 
-//registerReaction('means-dao', 'targets-dao', 'targets-received', ()=>fireEvent('means-dao', 'means-request'))
-
 registerReactionCombo('means-dao', {'realms-dao':'realms-received', 'targets-dao': 'targets-received'}, ()=>fireEvent('means-dao', 'means-request'))
 
 registerEvent('means-dao', 'means-received', ()=>{})
 
 registerEvent('means-dao', 'create', function(stateSetter, mean, parent){
   mean.parentid = parent!=null? parent.id: null
-  //mean.realmid = viewStateVal('realms-dao', 'currentRealm').id
   sendPut('/mean/create', JSON.stringify(mean), function(data) {
     if(data.previd!=null){
       viewStateVal('means-dao', 'means')[data.realmid][data.previd].nextid = data.id
     }
     importOneMeanDto(data)
-    //resolveMeans(viewStateVal('means-dao', 'means'))
     resolveMean(data)
     fireEvent('means-dao', 'mean-created', [data])
   })
@@ -39,7 +35,6 @@ registerEvent('means-dao', 'mean-created', (stateSetter, mean)=>mean)
 registerEvent('means-dao', 'delete', function(stateSetter, id, targetid){
   sendDelete('/mean/delete/'+id, function() {
     deleteMeanUI(viewStateVal('means-dao', 'means')[viewStateVal('realms-dao', 'currentRealm').id][id])
-    //resolveMeans(viewStateVal('means-dao', 'means'))
     fireEvent('means-dao', 'mean-deleted', [id])
   })
 })
@@ -53,7 +48,6 @@ registerEvent('means-dao', 'delete-depended-means', function(stateSetter, target
   for(var i in means){
     if(means.hasOwnProperty(i)){
       if(means[i].targets.length == 1 && means[i].targets[0].id == targetid){
-        //delete means[i]
         deleteMeanUI(means[i])
       } else {
         if(means[i].targets.length>1){
@@ -66,7 +60,6 @@ registerEvent('means-dao', 'delete-depended-means', function(stateSetter, target
       }
     }
   }
-  //resolveMeans(means)
 })
 
 registerEvent('means-dao', 'modify', function(stateSetter, mean){
@@ -75,10 +68,8 @@ registerEvent('means-dao', 'modify', function(stateSetter, mean){
     mean.targetsIds.push(mean.targets[i].id)
   }
   sendPost('/mean/update', JSON.stringify(mean), function(data) {
-    //viewStateVal('means-dao', 'means')[mean.realmid][data.id] = data
     importOneMeanDto(data)
     resolveMean(viewStateVal('means-dao', 'means')[data.realmid][data.id])
-    //resolveMeans(viewStateVal('means-dao', 'means'))
     fireEvent('means-dao', 'mean-modified', [mean])
   })
 })
@@ -88,11 +79,9 @@ registerEvent('means-dao', 'mean-modified', (stateSetter, mean)=>mean)
 registerEvent('means-dao', 'modify-list', function(stateSetter, means){
   sendPost('/mean/update/list', JSON.stringify(means), function(data) {
     for(var i in data){
-      //viewStateVal('means-dao', 'means')[data[i].id] = data[i]
       importOneMeanDto(data[i])
       resolveMean(viewStateVal('means-dao', 'means')[data[i].realmid][data[i].id])
     }
-    //resolveMeans(viewStateVal('means-dao', 'means'))
     fireEvent('means-dao', 'means-list-modified', [data])
   })
 })
@@ -103,24 +92,6 @@ registerEvent('means-dao', 'add-draggable', (stateSetter, mean)=>{stateSetter('d
 
 registerEvent('means-dao', 'remove-draggable', (stateSetter)=>stateSetter('draggableMean', null))
 
-// const meansProto = {
-//   map: function(callback, filter){
-//     var result = []
-//     for (var i in this){
-//       if(i != 'map'){
-//         if(filter!=null){
-//           if(filter(this[i])){
-//             result.push(callback(this[i]))
-//           }
-//         } else {
-//           result.push(callback(this[i]))
-//         }
-//       }
-//     }
-//     return result
-//   }
-// }
-
 const importMeansDto = function(stateSetter, meansDto){
   if(viewStateVal('means-dao', 'means')==null){
     stateSetter('means', [])
@@ -129,7 +100,6 @@ const importMeansDto = function(stateSetter, meansDto){
     importOneMeanDto(meansDto[i])
     resolveMean(viewStateVal('means-dao', 'means')[meansDto[i].realmid][meansDto[i].id])
   }
-  //resolveMeans(viewStateVal('means-dao', 'means'));
 }
 
 const importOneMeanDto = function(meanDto){
@@ -161,9 +131,6 @@ const deleteMeanUI = function(mean){
     }
   }
   delete means[mean.id]
-  // if(mean.parentid==null){
-  //   delete viewStateVal('means-dao', 'root-means-by-realm')[mean.realmid][mean.id]
-  // }
 }
 
 export var MeanById = function(id){
