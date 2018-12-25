@@ -1,6 +1,7 @@
 package means_restcontroller_tests;
 
 import controllers.MeansRESTController;
+import controllers.delegates.TaskMappersController;
 import model.dto.mean.MeansDtoMapper;
 import model.entities.Mean;
 import org.junit.Before;
@@ -25,13 +26,16 @@ public class MeansRESTController_Creating_Tests extends ATestsWithTargetsMeansQu
     @Autowired
     MeansDtoMapper meansDtoMapper;
 
+    @Autowired
+    TaskMappersController taskMappersController;
+
     private MockMvc mockMvc;
     private MeansRESTController meansRESTController;
 
     @Before
     public void init(){
         super.init();
-        meansRESTController = new MeansRESTController(meansDao, meansDtoMapper, realmDAO);
+        meansRESTController = new MeansRESTController(meansDao, meansDtoMapper, realmDAO, taskMappersController);
         mockMvc = MockMvcBuilders.standaloneSetup(meansRESTController).build();
     }
 

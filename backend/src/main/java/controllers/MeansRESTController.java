@@ -1,5 +1,6 @@
 package controllers;
 
+import controllers.delegates.TaskMappersController;
 import model.dao.*;
 import model.dto.layer.LayerDtoLazy;
 import model.dto.layer.LayersDtoMapper;
@@ -59,13 +60,17 @@ public class MeansRESTController {
     @Autowired
     IRealmDAO realmDAO;
 
+    @Autowired
+    TaskMappersController taskMappersController;
+
 
     public MeansRESTController(){}
 
-    public MeansRESTController(IMeansDAO meansDAO, MeansDtoMapper meansDtoMapper, IRealmDAO realmDAO){
+    public MeansRESTController(IMeansDAO meansDAO, MeansDtoMapper meansDtoMapper, IRealmDAO realmDAO, TaskMappersController taskMappersController){
         this.meansDAO = meansDAO;
         this.meansDtoMapper = meansDtoMapper;
         this.realmDAO = realmDAO;
+        this.taskMappersController = taskMappersController;
     }
 
     @RequestMapping(path = "/mean/all/lazy")
@@ -130,6 +135,7 @@ public class MeansRESTController {
         //TODO validate before saving
         meansDAO.saveOrUpdate(mean);
         saveLayers(meanDtoLazy.getLayers(), mean.getId());
+        taskMappersController.rescheduleTaskMappers(mean, true);
         return mean;
     }
 
