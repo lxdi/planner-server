@@ -71,49 +71,17 @@ public class HquartersDelegate {
         Slot slot = slotDAO.getById(slotid);
         slot.setMean(mean);
         slotDAO.saveOrUpdate(slot);
-        Layer layer = layerDAO.getLayerToScheduleForSlot(slot);
-        slot.setLayer(layer);
-        taskMappersController.createTaskMappers(layer, slot);
-        slotDAO.saveOrUpdate(slot);
-
-        List<Slot> slotsAfter = slotDAO.slotsAfter(slot);
-        for(Slot slotAfter : slotsAfter){
-            Layer layerAfter = layerDAO.getLayerToScheduleForSlot(slotAfter);
-            taskMappersController.createTaskMappers(layerAfter, slotAfter);
-            slotAfter.setLayer(layerAfter);
-            slotDAO.saveOrUpdate(slotAfter);
-        }
-
+        taskMappersController.rescheduleTaskMappers(mean, false);
         return slotMapper.mapToDto(slot);
     }
 
     public SlotDtoLazy unassign(long slotid){
         Slot slot = slotDAO.getById(slotid);
         Mean mean = slot.getMean();
-        Layer layer = slot.getLayer();
-        taskMappersController.unassignTasksForLayer(layer);
-        List<Slot> slotsAfter = slotDAO.slotsAfter(slot);
-
-        slot.setMean(null);
         slot.setLayer(null);
+        slot.setMean(null);
         slotDAO.saveOrUpdate(slot);
-        if(layer!=null){
-            int currentLayerPriority = layer.getPriority();
-            for(Slot slotAfter: slotsAfter){
-                if(slotAfter.getLayer()!=null){
-                    taskMappersController.unassignTasksForLayer(slotAfter.getLayer());
-                    slotAfter.setLayer(null);
-                }
-                Layer nextLayer = layerDAO.getLayerAtPriority(mean, currentLayerPriority);
-                if(nextLayer!=null){
-                    slotAfter.setLayer(nextLayer);
-                    slotDAO.saveOrUpdate(slotAfter);
-                    taskMappersController.createTaskMappers(nextLayer, slotAfter);
-                }
-                currentLayerPriority++;
-            }
-        }
-
+        taskMappersController.rescheduleTaskMappers(mean, false);
         return slotMapper.mapToDto(slot);
     }
 

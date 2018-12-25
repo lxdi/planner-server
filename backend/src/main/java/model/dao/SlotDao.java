@@ -38,10 +38,6 @@ public class SlotDao implements ISlotDAO {
         query.setParameter("hquarter", hQuarter);
         query.setParameter("position", position);
         return (Slot) query.uniqueResult();
-//        return (Slot) this.sessionFactory.getCurrentSession().createCriteria(Slot.class)
-//                .add(Restrictions.eq("hquarter", hQuarter))
-//                .add(Restrictions.eq("position", position))
-//                .uniqueResult();
     }
 
     @Override
@@ -55,8 +51,6 @@ public class SlotDao implements ISlotDAO {
         Query query = sessionFactory.getCurrentSession().createQuery(hql);
         query.setParameter("hquarter", hquarter);
         return query.list();
-//        return sessionFactory.getCurrentSession().createCriteria(Slot.class)
-//                .add(Restrictions.eq("hquarter", hquarter)).list();
     }
 
     @Override
@@ -75,8 +69,6 @@ public class SlotDao implements ISlotDAO {
         Query query = sessionFactory.getCurrentSession().createQuery(hql);
         query.setParameter("slot", slot);
         return query.list();
-//        return sessionFactory.getCurrentSession().createCriteria(SlotPosition.class)
-//                .add(Restrictions.eq("slot", slot)).list();
     }
 
     @Override
@@ -84,10 +76,12 @@ public class SlotDao implements ISlotDAO {
         return (SlotPosition) sessionFactory.getCurrentSession()
                 .createQuery("from SlotPosition sp from sp.slot = :slot and sp.daysOfWeek and sp.position")
                 .uniqueResult();
-//        return (SlotPosition) sessionFactory.getCurrentSession().createCriteria(SlotPosition.class)
-//                .add(Restrictions.eq("slot", slot))
-//                .add(Restrictions.eq("daysOfWeek", dayOfWeek))
-//                .add(Restrictions.eq("position", position))
-//                .uniqueResult();
+    }
+
+    @Override
+    public List<Slot> slotsWithMean(Mean mean) {
+        return sessionFactory.getCurrentSession().createQuery("from Slot where mean = :mean " +
+                "order by hquarter.startWeek.startDay asc, position asc")
+                .setParameter("mean", mean).list();
     }
 }

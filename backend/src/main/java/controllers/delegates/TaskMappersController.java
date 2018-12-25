@@ -83,4 +83,34 @@ public class TaskMappersController {
         return result;
     }
 
+    public void rescheduleTaskMappers(Mean mean, boolean isFullReschedule){
+        List<Layer> layers = layerDAO.getLyersOfMean(mean);
+        List<Slot> slots = slotDAO.slotsWithMean(mean);
+
+        int i =0, j=0;
+        for(; i<layers.size() && j<slots.size(); i++, j++){
+            if(isFullReschedule || slots.get(j).getLayer()==null || slots.get(j).getLayer().getId()!=layers.get(i).getId()){
+                createTaskMappers(layers.get(i), slots.get(j));
+                slots.get(j).setLayer(layers.get(i));
+                slotDAO.saveOrUpdate(slots.get(j));
+            }
+        }
+
+        if(i<layers.size()){
+            for(;i<layers.size();i++){
+                unassignTasksForLayer(layers.get(i));
+            }
+        }
+
+        if(j<slots.size()){
+            for(;j<slots.size();j++){
+                if(slots.get(j).getLayer()!=null) {
+                    slots.get(j).setLayer(null);
+                    slotDAO.saveOrUpdate(slots.get(j));
+                }
+            }
+        }
+
+    }
+
 }

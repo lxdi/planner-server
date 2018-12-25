@@ -59,4 +59,34 @@ public class SlotsDaoTests extends ATestsWithTargetsMeansQuartalsGenerated {
 
     }
 
+    @Test
+    public void slotsWithMeanTest(){
+        Mean mean = new Mean("test mean", realm);
+        meansDAO.saveOrUpdate(mean);
+
+        List<HQuarter> hQuarters = ihQuarterDAO.getHQuartersInYear(2018);
+
+        Slot slot1 = new Slot(hQuarters.get(1), 1);
+        slot1.setMean(mean);
+        slotDAO.saveOrUpdate(slot1);
+
+        Slot slot2 = new Slot(hQuarters.get(3), 1);
+        slotDAO.saveOrUpdate(slot2);
+
+        Slot slot4 = new Slot(hQuarters.get(7), 2);
+        slot4.setMean(mean);
+        slotDAO.saveOrUpdate(slot4);
+
+        Slot slot3 = new Slot(hQuarters.get(7), 1);
+        slot3.setMean(mean);
+        slotDAO.saveOrUpdate(slot3);
+
+        List<Slot> slotsWithMean = slotDAO.slotsWithMean(mean);
+
+        assertTrue(slotsWithMean.size()==3);
+        assertTrue(slotsWithMean.get(0).getId()==slot1.getId());
+        assertTrue(slotsWithMean.get(1).getId()==slot3.getId());
+        assertTrue(slotsWithMean.get(2).getId()==slot4.getId());
+    }
+
 }

@@ -26,13 +26,10 @@ public class LayerDao implements ILayerDAO {
 
     @Override
     public List<Layer> getLyersOfMean(Mean mean) {
-        String hql = "from Layer lr where lr.mean = :mean";
+        String hql = "from Layer lr where lr.mean = :mean order by lr.priority asc";
         Query query = sessionFactory.getCurrentSession().createQuery(hql);
         query.setParameter("mean", mean);
         return query.list();
-//        return sessionFactory.getCurrentSession().createCriteria(Layer.class)
-//                .add(Restrictions.eq("mean", mean))
-//                .list();
     }
 
     @Override
