@@ -36,11 +36,12 @@ export class ScheduleFrame extends React.Component{
 const hquartersUI = function(){
   if(viewStateVal('hquarters-dao', 'hquarters') != null && viewStateVal('hquarters-dao', 'default')!=null){
     return viewStateVal('hquarters-dao', 'hquarters').map((hquarter)=>
-          <Table striped bordered condensed hover width={'100px'} key={"hquarter_"+weekToString(hquarter.startWeek)}>
+        <div>
+          <Table striped bordered condensed hover width={'100px'} key={"hquarter_"+weekToString(hquarter.startWeek)} >
             <tbody>
               <tr>
                 <td>
-                  <a href='#' onClick={()=>fireEvent('hquarter-modal', 'open', [hquarter])} style={isCurrentHquarter(hquarter)?{color: 'red'}:{}}>
+                  <a href='#' onClick={()=>fireEvent('hquarter-modal', 'open', [hquarter])} style={isCurrentHquarter(hquarter)?{fontWeight: 'bold'}:{}}>
                     {weekToString(hquarter.startWeek)}
                   </a>
                 </td>
@@ -48,6 +49,7 @@ const hquartersUI = function(){
               {getSlotsUI(hquarter)}
             </tbody>
           </Table>
+          </div>
       )
   } else {
     if(viewStateVal('hquarters-dao', 'default')==null){
@@ -76,9 +78,11 @@ const getSlotsUI = function(hquarter){
 
 const getSlotView = function(slot){
   if(slot.meanid!=null){
+    const mean = findMean(slot.meanid)
+    const realm = viewStateVal('realms-dao', 'realms')[mean.realmid]
     return <tr>
                     <td>
-                      <a href='#'>{findMean(slot.meanid).title}</a>
+                      <a href='#' style={getStyleFroSlot(slot)}>{getSlotTitleWithMean(slot.meanid)}</a>
                       <a href='#' onClick={()=>fireEvent('hquarters-dao', 'unassign-mean', [slot])}> X </a>
                     </td>
                   </tr>
@@ -91,6 +95,37 @@ const getSlotView = function(slot){
                     </td>
                   </tr>
   }
+}
+
+const getStyleFroSlot = function(slot){
+  if(slot.tasksInLayer == null){
+    return {color: 'darkgrey'}
+  }
+  if(slot.tasksInLayer < 9){
+    return {color: 'orange'}
+  }
+  if(slot.tasksInLayer == 9){
+    return {color: 'LimeGreen'}
+  }
+  if(slot.tasksInLayer > 9){
+    return {color: 'red'}
+  }
+}
+
+const getSlotTitleWithMean = function(meanid){
+  const mean = findMean(meanid)
+  const realm = viewStateVal('realms-dao', 'realms')[mean.realmid]
+  var chain = []
+  var currMean = mean
+  while(currMean!=null){
+    chain.unshift(currMean.title)
+    currMean = viewStateVal('means-dao', 'means')[realm.id][currMean.parentid]
+  }
+  var result = realm.title
+  for(var i in chain){
+    result = result + ' / ' + chain[i]
+  }
+  return result
 }
 
 const findMean = function(meanid){
@@ -112,7 +147,7 @@ const formatDateNumber = function(num){
 }
 
 const isCurrentHquarter = function(hquarter){
-  const todayTime = new Date().getTime()
+  const todayTime = Date.parse('2018-11-05')//new Date().getTime()
   const beginTime = Date.parse(hquarter.startWeek.startDay)
   const endTime = Date.parse(hquarter.endWeek.startDay)
   return todayTime>beginTime && todayTime<endTime
