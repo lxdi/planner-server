@@ -72,6 +72,14 @@ public class LayerDao implements ILayerDAO {
         sessionFactory.getCurrentSession().delete(layer);
     }
 
+    @Override
+    public long taskCountInLayer(Layer layer) {
+        return (long) sessionFactory.getCurrentSession()
+                .createQuery("select count(*) from Task where subject.layer = :layer")
+                .setParameter("layer", layer)
+                .uniqueResult();
+    }
+
     private int getNextPriority(Mean mean){
         //TODO optimize
         int max = 0;

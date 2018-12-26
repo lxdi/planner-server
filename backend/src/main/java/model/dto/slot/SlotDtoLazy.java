@@ -5,6 +5,7 @@ public class SlotDtoLazy {
     long id;
     int position;
     Long meanid;
+    Long tasksInLayer;
 
     public SlotDtoLazy(){}
 
@@ -17,7 +18,6 @@ public class SlotDtoLazy {
     public long getId() {
         return id;
     }
-
     public void setId(long id) {
         this.id = id;
     }
@@ -25,7 +25,6 @@ public class SlotDtoLazy {
     public int getPosition() {
         return position;
     }
-
     public void setPosition(int position) {
         this.position = position;
     }
@@ -33,8 +32,14 @@ public class SlotDtoLazy {
     public Long getMeanid() {
         return meanid;
     }
-
     public void setMeanid(Long meanid) {
         this.meanid = meanid;
+    }
+
+    public Long getTasksInLayer() {
+        return tasksInLayer;
+    }
+    public void setTasksInLayer(Long tasksInLayer) {
+        this.tasksInLayer = tasksInLayer;
     }
 }
