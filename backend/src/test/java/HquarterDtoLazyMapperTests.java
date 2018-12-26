@@ -1,11 +1,9 @@
-import model.dao.HQuarterDao;
 import model.dao.IHQuarterDAO;
 import model.dao.ISlotDAO;
 import model.dao.IWeekDAO;
 import model.dto.hquarter.HquarterDtoFull;
-import model.dto.hquarter.HquarterDtoLazy;
-import model.dto.hquarter.HquarterMapper;
-import model.dto.hquarter.HquarterMapperFull;
+import model.dto.hquarter.HquarterDtoLazyMapper;
+import model.dto.hquarter.HquarterDtoFullMapper;
 import model.entities.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,7 +14,7 @@ import static junit.framework.TestCase.assertTrue;
 import static services.DateUtils.fromDate;
 import static services.DateUtils.toDate;
 
-public class HquarterMapperTests extends AbstractTestsWithTargets {
+public class HquarterDtoLazyMapperTests extends AbstractTestsWithTargets {
 
     @Autowired
     IHQuarterDAO hQuarterDao;
@@ -25,10 +23,10 @@ public class HquarterMapperTests extends AbstractTestsWithTargets {
     ISlotDAO slotDAO;
 
     @Autowired
-    HquarterMapper hquarterMapper;
+    HquarterDtoLazyMapper hquarterDtoLazyMapper;
 
     @Autowired
-    HquarterMapperFull hquarterMapperFull;
+    HquarterDtoFullMapper hquarterDtoFullMapper;
 
     @Autowired
     IWeekDAO weekDAO;
@@ -71,7 +69,7 @@ public class HquarterMapperTests extends AbstractTestsWithTargets {
 
     @Test
     public void mapToDtoWithDependenciesTest(){
-        HquarterDtoFull dtoLazy = hquarterMapperFull.mapToDto(hQuarter);
+        HquarterDtoFull dtoLazy = hquarterDtoFullMapper.mapToDto(hQuarter);
         assertTrue(dtoLazy.getStartWeek().getId() == startWeek.getId());
         assertTrue(fromDate(dtoLazy.getStartWeek().getStartDay()).equals(startDateStr));
         assertTrue(dtoLazy.getSlots().size()==1);

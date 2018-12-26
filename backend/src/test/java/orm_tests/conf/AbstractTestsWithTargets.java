@@ -5,11 +5,12 @@ import controllers.delegates.DefaultSettingsPropagator;
 import controllers.delegates.HquartersDelegate;
 import controllers.delegates.TaskMappersController;
 import model.dao.*;
-import model.dto.hquarter.HquarterMapper;
-import model.dto.hquarter.HquarterMapperFull;
+import model.dto.hquarter.HquarterDtoLazyMapper;
+import model.dto.hquarter.HquarterDtoFullMapper;
 import model.dto.layer.LayersDtoMapper;
 import model.dto.mean.MeansDtoMapper;
-import model.dto.slot.SlotMapper;
+import model.dto.slot.SlotDtoLazyMapper;
+import model.dto.slot.SlotDtoMapper;
 import model.dto.slot.SlotPositionMapper;
 import model.dto.subject.SubjectDtoMapper;
 import model.dto.target.TargetsDtoMapper;
@@ -39,13 +40,13 @@ import static org.junit.Assert.assertTrue;
                 MeansDao.class, MeansDtoMapper.class,
                 WeekDao.class, WeeksGenerator.class,
                 TasksDao.class, TasksDtoMapper.class,
-                HQuarterDao.class, HquarterMapper.class,  QuarterGenerator.class, HquarterMapperFull.class,
+                HQuarterDao.class, HquarterDtoLazyMapper.class,  QuarterGenerator.class, HquarterDtoFullMapper.class,
                 LayerDao.class, LayersDtoMapper.class,
                 SubjectDao.class, SubjectDtoMapper.class,
-                SlotDao.class, SlotMapper.class,
+                SlotDao.class, SlotDtoMapper.class,
                 SlotPositionMapper.class,
                 TaskMapperDao.class,
-                HquartersDelegate.class, DefaultSettingsPropagator.class, TaskMappersController.class})
+                HquartersDelegate.class, DefaultSettingsPropagator.class, TaskMappersController.class, SlotDtoLazyMapper.class})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public abstract class AbstractTestsWithTargets {
 

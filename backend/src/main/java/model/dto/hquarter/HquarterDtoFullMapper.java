@@ -4,8 +4,8 @@ import model.dao.ISlotDAO;
 import model.dao.ITaskMappersDAO;
 import model.dao.IWeekDAO;
 import model.dto.IMapper;
-import model.dto.slot.SlotLazyTemp;
-import model.dto.slot.SlotMapper;
+import model.dto.slot.SlotDtoLazy;
+import model.dto.slot.SlotDtoMapper;
 import model.dto.task.TasksDtoMapper;
 import model.entities.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,13 +15,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class HquarterMapperFull implements IMapper<HquarterDtoFull, HQuarter> {
+public class HquarterDtoFullMapper implements IMapper<HquarterDtoFull, HQuarter> {
 
     @Autowired
     ISlotDAO slotDAO;
 
     @Autowired
-    SlotMapper slotMapper;
+    SlotDtoMapper slotDtoMapper;
 
     @Autowired
     IWeekDAO weekDAO;
@@ -32,29 +32,17 @@ public class HquarterMapperFull implements IMapper<HquarterDtoFull, HQuarter> {
     @Autowired
     TasksDtoMapper tasksDtoMapper;
 
+    @Autowired
+    HquarterDtoLazyMapper hquarterDtoLazyMapper;
+
     @Override
     public HquarterDtoFull mapToDto(HQuarter entity) {
-
-        //TODO use mapper for the lazy
         HquarterDtoFull dto = new HquarterDtoFull();
-        dto.setId(entity.getId());
-        if(entity.getStartWeek()!=null){
-            dto.setStartWeek(entity.getStartWeek());
-        }
-
-        if(entity.getEndWeek()!=null){
-            dto.setEndWeek(entity.getEndWeek());
-        }
-
+        hquarterDtoLazyMapper.mapToDto(entity, dto);
         List<Slot> slotList = slotDAO.getSlotsForHquarter(entity);
         if(slotList.size()>0){
             for(Slot slot : slotList){
-                dto.getSlotsLazy().add(
-                        new SlotLazyTemp(slot.getId(), slot.getPosition(), slot.getMean()!=null? slot.getMean().getId():null));
-            }
-            for(Slot slot : slotList){
-                //dto.getSlotsLazy().put(slot.getId(), slot.getPosition());
-                dto.getSlots().add(slotMapper.mapToDto(slot));
+                dto.getSlots().add(slotDtoMapper.mapToDto(slot));
             }
         }
 

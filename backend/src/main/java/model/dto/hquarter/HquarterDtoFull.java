@@ -1,20 +1,19 @@
 package model.dto.hquarter;
 
-import model.dto.slot.SlotDtoLazy;
+import model.dto.slot.SlotDto;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class HquarterDtoFull extends HquarterDtoLazy{
 
-    List<SlotDtoLazy> slots = new ArrayList<>();
+    List<SlotDto> slots = new ArrayList<>();
     List<WeekWithTasksDto> weeks  = new ArrayList<>();
 
-    public List<SlotDtoLazy> getSlots() {
+    public List<SlotDto> getSlots() {
         return slots;
     }
-    public void setSlots(List<SlotDtoLazy> slots) {
+    public void setSlots(List<SlotDto> slots) {
         this.slots = slots;
     }
 

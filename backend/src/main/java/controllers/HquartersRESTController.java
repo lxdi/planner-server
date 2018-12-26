@@ -1,15 +1,9 @@
 package controllers;
 
 import controllers.delegates.HquartersDelegate;
-import model.dao.*;
 import model.dto.hquarter.HquarterDtoFull;
 import model.dto.hquarter.HquarterDtoLazy;
-import model.dto.hquarter.HquarterMapper;
-import model.dto.slot.SlotDtoLazy;
-import model.dto.slot.SlotMapper;
-import model.dto.slot.SlotPositionDtoLazy;
-import model.dto.slot.SlotPositionMapper;
-import model.entities.*;
+import model.dto.slot.SlotDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,10 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Stack;
 
 @Controller
 @RequestMapping(path = "/hquarter")
@@ -54,12 +45,12 @@ public class HquartersRESTController {
     }
 
     @RequestMapping(path = "/assignmean/{meanid}/toslot/{slotid}", method = RequestMethod.POST)
-    public ResponseEntity<SlotDtoLazy> assign(@PathVariable("meanid") long meanid, @PathVariable("slotid") long slotid){
+    public ResponseEntity<SlotDto> assign(@PathVariable("meanid") long meanid, @PathVariable("slotid") long slotid){
         return new ResponseEntity<>(hquartersDelegate.assign(meanid, slotid), HttpStatus.OK);
     }
 
     @RequestMapping(path="/slot/unassign/{slotid}", method = RequestMethod.POST)
-    public ResponseEntity<SlotDtoLazy> unassign(@PathVariable("slotid") long slotid){
+    public ResponseEntity<SlotDto> unassign(@PathVariable("slotid") long slotid){
         return new ResponseEntity<>(hquartersDelegate.unassign(slotid), HttpStatus.OK);
     }
 

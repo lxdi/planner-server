@@ -1,23 +1,20 @@
 import controllers.delegates.HquartersDelegate;
 import model.dao.*;
 import model.dto.hquarter.HquarterDtoFull;
-import model.dto.hquarter.HquarterMapper;
-import model.dto.hquarter.HquarterMapperFull;
+import model.dto.hquarter.HquarterDtoFullMapper;
 import model.dto.hquarter.WeekWithTasksDto;
 import model.entities.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import orm_tests.conf.ATestsWithTargetsMeansQuartalsGenerated;
-import orm_tests.conf.AbstractTestsWithTargets;
 
 import java.util.Stack;
 
 import static junit.framework.TestCase.assertTrue;
-import static services.DateUtils.fromDate;
 import static services.DateUtils.toDate;
 
-public class HquarterMapper_WeeksMappingTests extends ATestsWithTargetsMeansQuartalsGenerated {
+public class HquarterDtoLazyMapper_WeeksMappingTests extends ATestsWithTargetsMeansQuartalsGenerated {
 
     @Autowired
     HquartersDelegate hquartersDelegate;
@@ -47,7 +44,7 @@ public class HquarterMapper_WeeksMappingTests extends ATestsWithTargetsMeansQuar
     IWeekDAO weekDAO;
 
     @Autowired
-    HquarterMapperFull hquarterMapperFull;
+    HquarterDtoFullMapper hquarterDtoFullMapper;
 
     Mean mean;
     HQuarter hQuarter1;
@@ -128,7 +125,7 @@ public class HquarterMapper_WeeksMappingTests extends ATestsWithTargetsMeansQuar
 
     @Test
     public void weeksDtoWithTasksMappingTest(){
-        HquarterDtoFull hquarterDtoFull = hquarterMapperFull.mapToDto(hQuarter1);
+        HquarterDtoFull hquarterDtoFull = hquarterDtoFullMapper.mapToDto(hQuarter1);
         assertTrue(hquarterDtoFull.getWeeks().size()==6);
         Stack<String> tasksTitles = new Stack<>();
         tasksTitles.push("task 9");

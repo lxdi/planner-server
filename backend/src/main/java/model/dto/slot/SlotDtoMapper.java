@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class SlotMapper implements IMapper<SlotDtoLazy, Slot> {
+public class SlotDtoMapper implements IMapper<SlotDto, Slot> {
 
     @Autowired
     IMeansDAO meansDAO;
@@ -30,16 +30,15 @@ public class SlotMapper implements IMapper<SlotDtoLazy, Slot> {
     @Autowired
     SlotPositionMapper slotPositionMapper;
 
+    @Autowired
+    SlotDtoLazyMapper slotDtoLazyMapper;
+
     @Override
-    public SlotDtoLazy mapToDto(Slot entity) {
-        SlotDtoLazy dto = new SlotDtoLazy();
-        dto.setId(entity.getId());
-        dto.setPosition(entity.getPosition());
+    public SlotDto mapToDto(Slot entity) {
+        SlotDto dto = new SlotDto();
+        slotDtoLazyMapper.mapToDto(entity, dto);
         if(entity.getHquarter()!=null){
             dto.setHquarterid(entity.getHquarter().getId());
-        }
-        if(entity.getMean()!=null){
-            dto.setMeanid(entity.getMean().getId());
         }
         if(entity.getLayer()!=null){
             dto.setLayerid(entity.getLayer().getId());
@@ -54,12 +53,11 @@ public class SlotMapper implements IMapper<SlotDtoLazy, Slot> {
     }
 
     @Override
-    public Slot mapToEntity(SlotDtoLazy dto) {
+    public Slot mapToEntity(SlotDto dto) {
         Slot entity = new Slot();
+        entity.setId(dto.getId());
         entity.setPosition(dto.getPosition());
-        if(dto.getId()!=null){
-            entity.setId(dto.getId());
-        }
+
         if(dto.getMeanid()!=null){
             entity.setMean(meansDAO.meanById(dto.meanid));
         }

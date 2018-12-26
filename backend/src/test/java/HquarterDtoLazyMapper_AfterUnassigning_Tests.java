@@ -1,7 +1,7 @@
 import controllers.delegates.HquartersDelegate;
 import model.dao.*;
 import model.dto.hquarter.HquarterDtoFull;
-import model.dto.hquarter.HquarterMapperFull;
+import model.dto.hquarter.HquarterDtoFullMapper;
 import model.dto.hquarter.WeekWithTasksDto;
 import model.entities.*;
 import org.junit.Before;
@@ -9,12 +9,11 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import orm_tests.conf.ATestsWithTargetsMeansQuartalsGenerated;
 
-import java.util.List;
 import java.util.Stack;
 
 import static junit.framework.TestCase.assertTrue;
 
-public class HquarterMapper_AfterUnassigning_Tests extends ATestsWithTargetsMeansQuartalsGenerated {
+public class HquarterDtoLazyMapper_AfterUnassigning_Tests extends ATestsWithTargetsMeansQuartalsGenerated {
 
 
     @Autowired
@@ -45,7 +44,7 @@ public class HquarterMapper_AfterUnassigning_Tests extends ATestsWithTargetsMean
     IWeekDAO weekDAO;
 
     @Autowired
-    HquarterMapperFull hquarterMapperFull;
+    HquarterDtoFullMapper hquarterDtoFullMapper;
 
     Mean mean;
     HQuarter hQuarter1;
@@ -181,7 +180,7 @@ public class HquarterMapper_AfterUnassigning_Tests extends ATestsWithTargetsMean
         assertTrue(slotDAO.getById(slot3.getId()).getLayer().getId()==layerDAO.getLayerAtPriority(mean, 2).getId());
 
 
-        HquarterDtoFull hquarterDtoFull = hquarterMapperFull.mapToDto(hQuarter1);
+        HquarterDtoFull hquarterDtoFull = hquarterDtoFullMapper.mapToDto(hQuarter1);
         assertTrue(hquarterDtoFull.getWeeks().size()==6);
         Stack<String> tasksTitles = new Stack<>();
         tasksTitles.push("task 9");
@@ -214,7 +213,7 @@ public class HquarterMapper_AfterUnassigning_Tests extends ATestsWithTargetsMean
             odd = !odd;
         }
 
-        HquarterDtoFull hquarterDtoFull2 = hquarterMapperFull.mapToDto(hQuarter2);
+        HquarterDtoFull hquarterDtoFull2 = hquarterDtoFullMapper.mapToDto(hQuarter2);
         assertTrue(hquarterDtoFull2.getWeeks().size()==6);
         Stack<String> tasksTitles2 = new Stack<>();
         tasksTitles2.push("task 2-9");
@@ -277,7 +276,7 @@ public class HquarterMapper_AfterUnassigning_Tests extends ATestsWithTargetsMean
         assertTrue(slotDAO.getById(slot3.getId()).getMean()==null);
         assertTrue(slotDAO.getById(slot3.getId()).getLayer()==null);
 
-        HquarterDtoFull hquarterDtoFull = hquarterMapperFull.mapToDto(hQuarter1);
+        HquarterDtoFull hquarterDtoFull = hquarterDtoFullMapper.mapToDto(hQuarter1);
         assertTrue(hquarterDtoFull.getWeeks().size()==6);
         for(WeekWithTasksDto weekWithTasksDto : hquarterDtoFull.getWeeks()) {
             for(DaysOfWeek dayOfWeek : DaysOfWeek.values()){
@@ -285,7 +284,7 @@ public class HquarterMapper_AfterUnassigning_Tests extends ATestsWithTargetsMean
             }
         }
 
-        HquarterDtoFull hquarterDtoFull2 = hquarterMapperFull.mapToDto(hQuarter2);
+        HquarterDtoFull hquarterDtoFull2 = hquarterDtoFullMapper.mapToDto(hQuarter2);
         assertTrue(hquarterDtoFull2.getWeeks().size()==6);
         for(WeekWithTasksDto weekWithTasksDto : hquarterDtoFull2.getWeeks()) {
             for(DaysOfWeek dayOfWeek : DaysOfWeek.values()){

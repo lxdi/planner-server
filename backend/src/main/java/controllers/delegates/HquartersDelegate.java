@@ -3,10 +3,10 @@ package controllers.delegates;
 import model.dao.*;
 import model.dto.hquarter.HquarterDtoFull;
 import model.dto.hquarter.HquarterDtoLazy;
-import model.dto.hquarter.HquarterMapper;
-import model.dto.hquarter.HquarterMapperFull;
-import model.dto.slot.SlotDtoLazy;
-import model.dto.slot.SlotMapper;
+import model.dto.hquarter.HquarterDtoLazyMapper;
+import model.dto.hquarter.HquarterDtoFullMapper;
+import model.dto.slot.SlotDto;
+import model.dto.slot.SlotDtoMapper;
 import model.dto.slot.SlotPositionDtoLazy;
 import model.dto.slot.SlotPositionMapper;
 import model.entities.*;
@@ -29,13 +29,13 @@ public class HquartersDelegate {
     ISlotDAO slotDAO;
 
     @Autowired
-    HquarterMapper hquarterMapper;
+    HquarterDtoLazyMapper hquarterDtoLazyMapper;
 
     @Autowired
-    HquarterMapperFull hquarterMapperFull;
+    HquarterDtoFullMapper hquarterDtoFullMapper;
 
     @Autowired
-    SlotMapper slotMapper;
+    SlotDtoMapper slotDtoMapper;
 
     @Autowired
     SlotPositionMapper slotPositionMapper;
@@ -52,64 +52,64 @@ public class HquartersDelegate {
     public List<HquarterDtoLazy> getAllQuarters(){
         List<HquarterDtoLazy> result = new ArrayList<>();
         for(HQuarter hQuarter : quarterDAO.getAllHQuartals()){
-            result.add(hquarterMapper.mapToDto(hQuarter));
+            result.add(hquarterDtoLazyMapper.mapToDto(hQuarter));
         }
         return result;
     }
 
     public HquarterDtoFull get(long id){
-        return hquarterMapperFull.mapToDto(quarterDAO.getById(id));
+        return hquarterDtoFullMapper.mapToDto(quarterDAO.getById(id));
     }
 
     public HquarterDtoFull update(HquarterDtoFull hquarterDto){
         HQuarter hQuarter = saveHQuarter(hquarterDto);
-        return hquarterMapperFull.mapToDto(hQuarter);
+        return hquarterDtoFullMapper.mapToDto(hQuarter);
     }
 
-    public SlotDtoLazy assign(long meanid, long slotid){
+    public SlotDto assign(long meanid, long slotid){
         Mean mean = meansDAO.meanById(meanid);
         Slot slot = slotDAO.getById(slotid);
         slot.setMean(mean);
         slotDAO.saveOrUpdate(slot);
         taskMappersController.rescheduleTaskMappers(mean, false);
-        return slotMapper.mapToDto(slot);
+        return slotDtoMapper.mapToDto(slot);
     }
 
-    public SlotDtoLazy unassign(long slotid){
+    public SlotDto unassign(long slotid){
         Slot slot = slotDAO.getById(slotid);
         Mean mean = slot.getMean();
         slot.setLayer(null);
         slot.setMean(null);
         slotDAO.saveOrUpdate(slot);
         taskMappersController.rescheduleTaskMappers(mean, false);
-        return slotMapper.mapToDto(slot);
+        return slotDtoMapper.mapToDto(slot);
     }
 
     public HquarterDtoFull getDefault(){
-        return hquarterMapperFull.mapToDto(quarterDAO.getDefault());
+        return hquarterDtoFullMapper.mapToDto(quarterDAO.getDefault());
     }
 
     public HquarterDtoFull setDefault(HquarterDtoFull hquarterDtoFull){
         assert hquarterDtoFull.getStartWeek()==null && hquarterDtoFull.getEndWeek()==null;
         HQuarter defaultHquarter = saveHQuarter(hquarterDtoFull);
         defaultSettingsPropagator.propagateSettingsFrom(defaultHquarter);
-        return hquarterMapperFull.mapToDto(defaultHquarter);
+        return hquarterDtoFullMapper.mapToDto(defaultHquarter);
     }
 
     private HQuarter saveHQuarter(HquarterDtoFull hquarterDtoFull){
-        HQuarter hQuarter = hquarterMapperFull.mapToEntity(hquarterDtoFull);
+        HQuarter hQuarter = hquarterDtoFullMapper.mapToEntity(hquarterDtoFull);
         //TODO validate slots before saving
         quarterDAO.saveOrUpdate(hQuarter);
         saveSlots(hquarterDtoFull.getSlots(), hQuarter.getId());
         return hQuarter;
     }
 
-    private void saveSlots(List<SlotDtoLazy> slotsDto, long hquarterid){
+    private void saveSlots(List<SlotDto> slotsDto, long hquarterid){
         if(slotsDto!=null){
-            for(SlotDtoLazy slotDto : slotsDto){
+            for(SlotDto slotDto : slotsDto){
                 if(slotDto!=null) {
                     slotDto.setHquarterid(hquarterid);
-                    Slot slot = slotMapper.mapToEntity(slotDto);
+                    Slot slot = slotDtoMapper.mapToEntity(slotDto);
                     //TODO validate before saving
                     slotDAO.saveOrUpdate(slot);
                     saveSlotPositions(slotDto.getSlotPositions(), slot.getId());
