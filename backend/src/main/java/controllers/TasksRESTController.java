@@ -37,6 +37,7 @@ public class TasksRESTController {
         this.tasksDtoMapper = tasksDtoMapper;
     }
 
+    @Deprecated
     @RequestMapping(path = "/task/all")
     public ResponseEntity<List<TaskDtoLazy>> getAllTasks(){
         List<TaskDtoLazy> result = new ArrayList<>();
@@ -53,13 +54,8 @@ public class TasksRESTController {
 
     @RequestMapping(path = "/task/delete/{taskId}" , method = RequestMethod.DELETE)
     public ResponseEntity delete(@PathVariable("taskId") long id){
-        try {
-            tasksDAO.delete(id);
-            return new ResponseEntity(HttpStatus.OK);
-        } catch (Exception e){
-            e.printStackTrace();
-            return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        tasksDAO.delete(id);
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     @RequestMapping(path = "/task/update" , method = RequestMethod.POST)

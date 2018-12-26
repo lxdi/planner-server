@@ -28,13 +28,15 @@ public class SubjectDao implements ISubjectDAO {
         Query query = sessionFactory.getCurrentSession().createQuery(hql);
         query.setParameter("layer", layer);
         return query.list();
-//        return sessionFactory.getCurrentSession().createCriteria(Subject.class)
-//                .add(Restrictions.eq("layer", layer))
-//                .list();
     }
 
     @Override
     public Subject getById(long id) {
         return sessionFactory.getCurrentSession().get(Subject.class, id);
+    }
+
+    @Override
+    public void delete(long id) {
+        sessionFactory.getCurrentSession().delete(this.getById(id));
     }
 }

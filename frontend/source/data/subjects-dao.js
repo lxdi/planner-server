@@ -1,5 +1,6 @@
 import {registerEvent, registerReaction, fireEvent, viewStateVal} from '../controllers/eventor'
 import {insertObj, deleteObj, swapObjs} from '../utils/drag-utils'
+import {sendDelete} from './postoffice'
 
 registerEvent('subjects-dao', 'add-subject', (stateSetter, layer, subject)=>{
   if(layer.subjects==null){
@@ -15,8 +16,24 @@ registerEvent('subjects-dao', 'add-subject', (stateSetter, layer, subject)=>{
   layer.subjects[subjectToCreate.position] = subjectToCreate
 })
 
+registerEvent('subjects-dao', 'delete-subject', (stateSetter, layer, subject)=>{
+  sendDelete('/subject/delete/'+subject.id, (data)=>{
+    for(var i in layer.subjects){
+      if(layer.subjects[i]==subject){
+        delete layer.subjects[i]
+        break;
+      }
+    }
+    fireEvent('subjects-dao', 'subject-deleted', [data])
+  })
+})
+
+registerEvent('subjects-dao', 'subject-deleted', (stateSetter, subject)=>subject)
+
 registerEvent('subjects-dao', 'add-subject-to-drag', (stateSetter, layer, subject)=>stateSetter('draggable-subject', {layer: layer, subject: subject}))
+
 registerEvent('subjects-dao', 'release-draggable-subject', (stateSetter)=>stateSetter('draggable-subject', null))
+
 registerEvent('subjects-dao', 'move-subject', (stateSetter, targetLayer, targetSubject)=>{
   const sourceLayer = viewStateVal('subjects-dao', 'draggable-subject').layer
   const sourceSubject = viewStateVal('subjects-dao', 'draggable-subject').subject

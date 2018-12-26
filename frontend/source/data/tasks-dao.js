@@ -1,5 +1,6 @@
 import {registerEvent, registerReaction, fireEvent, viewStateVal} from '../controllers/eventor'
 import {insertObj, deleteObj, swapObjs} from '../utils/drag-utils'
+import {sendDelete} from './postoffice'
 
 registerEvent('tasks-dao', 'add-task', (stateSetter, subject, task)=>{
   if(subject.tasks==null){
@@ -15,8 +16,24 @@ registerEvent('tasks-dao', 'add-task', (stateSetter, subject, task)=>{
   subject.tasks[taskToCreate.position] = taskToCreate
 })
 
+registerEvent('tasks-dao', 'delete-task', (stateSetter, subject, task)=>{
+  sendDelete('/task/delete/'+task.id, (data)=>{
+    for(var i in subject.tasks){
+      if(subject.tasks[i]==task){
+        delete subject.tasks[i]
+        break;
+      }
+    }
+    fireEvent('tasks-dao', 'task-deleted', [data])
+  })
+})
+
+registerEvent('tasks-dao', 'task-deleted', (stateSetter, task)=>task)
+
 registerEvent('tasks-dao', 'add-task-to-drag', (stateSetter, subject, task)=>stateSetter('draggable-task', {subject: subject, task: task}))
+
 registerEvent('tasks-dao', 'release-draggable-task', (stateSetter)=>stateSetter('draggable-task', null))
+
 registerEvent('tasks-dao', 'move-task', (stateSetter, targetSubject, targetTask)=>{
   const sourceSubject = viewStateVal('tasks-dao', 'draggable-task').subject
   const sourceTask = viewStateVal('tasks-dao', 'draggable-task').task
@@ -43,46 +60,6 @@ registerEvent('tasks-dao', 'move-task', (stateSetter, targetSubject, targetTask)
     }
   }
 })
-
-// const insertTask = function(targetSubject, sourceTask, targetPosition){
-//     const newArrayOfTasks = []
-//     for(var taskPos in targetSubject.tasks){
-//       const task = targetSubject.tasks[taskPos]
-//       const currentTaskPos = task.position
-//       if(currentTaskPos>=targetPosition){
-//         task.position = task.position+1
-//         if(currentTaskPos==targetPosition){
-//           sourceTask.position = targetPosition
-//           newArrayOfTasks[sourceTask.position] = sourceTask
-//         }
-//       }
-//       newArrayOfTasks[task.position] = task
-//     }
-//     targetSubject.tasks = newArrayOfTasks
-// }
-
-// const deleteTask = function(subject, taskToDelete){
-//   const newArrayOfTasks = []
-//   for(var taskPos in subject.tasks){
-//     const task = subject.tasks[taskPos]
-//     const currentTaskPos = task.position
-//     if(currentTaskPos>taskToDelete.position){
-//       task.position = currentTaskPos-1
-//     }
-//     if(task!=taskToDelete){
-//       newArrayOfTasks[task.position] = task
-//     }
-//   }
-//   subject.tasks = newArrayOfTasks
-// }
-
-// const swapTasks = function(subject, pos1, pos2){
-//   const tempTask = subject.tasks[pos1]
-//   subject.tasks[pos1] = subject.tasks[pos2]
-//   subject.tasks[pos1].position = pos1
-//   subject.tasks[pos2] = tempTask
-//   subject.tasks[pos2].position = pos2
-// }
 
 const getMaxTaskPosition = function(tasks){
     var result = 0

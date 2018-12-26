@@ -2,21 +2,40 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {FormGroup, ControlLabel, FormControl} from 'react-bootstrap'
 import {CommonModal} from './../common-modal'
+import {CommonCrudeTemplate} from './../common-crud-template'
 import {registerEvent, registerReaction, fireEvent, viewStateVal} from '../../controllers/eventor'
 
+const createState = function(isOpen, isStatic, isEdit, layer, subject){
+  return {
+    isOpen: isOpen,
+    mode: {isStatic: isStatic, isEdit: isEdit},
+    layer: layer,
+    subject: subject
+  }
+}
 
 export class SubjectModal extends React.Component {
   constructor(props){
     super(props)
-    this.state = {isOpen:null}
-    registerEvent('subject-modal', 'open', (stateSetter, layer, subject)=>this.setState({isOpen: true, currentSubject: subject, layer:layer}))
-    registerEvent('subject-modal', 'close', ()=>this.setState({isOpen: false, currentSubject: null, layer: null}))
+    this.state = createState(false, false, false, null, null)
+    registerEvent('subject-modal', 'open', (stateSetter, layer, subject)=>this.setState(getState(layer, subject)))
+    registerEvent('subject-modal', 'close', ()=>this.setState(createState(false, false, false, null, null)))
+
+    registerReaction('subject-modal', 'subjects-dao', 'subject-deleted', (stateSetter)=>fireEvent('subject-modal', 'close'))
   }
 
   render(){
-    return <CommonModal isOpen={this.state.isOpen} okHandler={isSubjectValid(this.state.currentSubject)?()=>okHandler(this.state.layer, this.state.currentSubject):null}>
-              {this.state.currentSubject!=null? modalContent(this): null}
+    return <CommonModal isOpen={this.state.isOpen} okHandler={isSubjectValid(this.state.subject)?()=>okHandler(this.state.layer, this.state.subject):null}>
+              {this.state.subject!=null? modalContent(this): null}
             </CommonModal>
+  }
+}
+
+const getState = function(layer, subject){
+  if(subject.id == null || subject.id == 0){
+    return createState(true, true, true, layer, subject)
+  } else {
+    return createState(true, false, false, layer, subject)
   }
 }
 
@@ -37,17 +56,22 @@ const okHandler = function(layer, subject){
 }
 
 const modalContent = function(component){
-  if(component.state.currentSubject.title == null){
-    component.state.currentSubject.title = ''
+  if(component.state.subject.title == null){
+    component.state.subject.title = ''
   }
-  return   <form>
+  return   <CommonCrudeTemplate editing = {component.state.mode}
+                  changeEditHandler = {()=>component.setState({})}
+                  deleteHandler={()=>fireEvent('subjects-dao', 'delete-subject', [component.state.layer, component.state.subject])}>
+                <form>
                     <FormGroup controlId="formBasicText">
                     <ControlLabel>Title</ControlLabel>
-                    <FormControl
+                    {component.state.mode.isEdit?<FormControl
                         type="text"
-                        value={component.state.currentSubject.title}
+                        value={component.state.subject.title}
                         placeholder="Enter title"
-                        onChange={(e)=>{component.state.currentSubject.title = e.target.value; component.setState({})}}/>
+                        onChange={(e)=>{component.state.subject.title = e.target.value; component.setState({})}}/>
+                    :<FormControl.Static>{component.state.subject.title}</FormControl.Static>}
                     </FormGroup>
                   </form>
+          </CommonCrudeTemplate>
 }
