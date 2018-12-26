@@ -191,25 +191,3 @@ const countFields = (obj)=>{
   }
   return result
 }
-
-//-----------------
-
-// const targetUI = function(target, realmId, offset){
-//   return (
-//     <div>
-//       <div style={{'margin-bottom': '5px'}}>
-//         <a href="#" onClick={()=>fireEvent('target-modal', 'open', [target])}> {target.toString()} </a><span/>
-//         <a href="#" onClick={()=>fireEvent('target-modal', 'open', [CreateTarget(0, '', viewStateVal('realms-dao','realms')[realmId].id), target])}>
-//             {addNewTargetTitle}
-//         </a>
-//       </div>
-//       <div style={{'margin-left': offset + 'px'}}>
-//         {target.children.map(function(childTarget){
-//             return <li>
-//               {targetUI(childTarget, realmId, offset + 10)}
-//             </li>
-//         })}
-//       </div>
-//     </div>
-//   )
-// }

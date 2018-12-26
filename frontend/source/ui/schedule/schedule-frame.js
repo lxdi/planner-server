@@ -40,7 +40,7 @@ const hquartersUI = function(){
             <tbody>
               <tr>
                 <td>
-                  <a href='#' onClick={()=>fireEvent('hquarter-modal', 'open', [hquarter])}>
+                  <a href='#' onClick={()=>fireEvent('hquarter-modal', 'open', [hquarter])} style={isCurrentHquarter(hquarter)?{color: 'red'}:{}}>
                     {weekToString(hquarter.startWeek)}
                   </a>
                 </td>
@@ -109,4 +109,11 @@ const formatDateNumber = function(num){
   } else {
     return num
   }
+}
+
+const isCurrentHquarter = function(hquarter){
+  const todayTime = new Date().getTime()
+  const beginTime = Date.parse(hquarter.startWeek.startDay)
+  const endTime = Date.parse(hquarter.endWeek.startDay)
+  return todayTime>beginTime && todayTime<endTime
 }

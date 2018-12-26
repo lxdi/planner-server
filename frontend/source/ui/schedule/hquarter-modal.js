@@ -124,7 +124,7 @@ const weeksWithTasksUI = function(hquarter){
   if(hquarter.weeks!=null && hquarter.weeks.length>0){
     for(var i in hquarter.weeks){
       const weekUI = []
-      weekUI.push(<td>{hquarter.weeks[i].startDay}</td>)
+      weekUI.push(<td style={isCurrentWeek(hquarter.weeks, i)?{color:'red'}:{}}>{hquarter.weeks[i].startDay}</td>)
       for(var dayOfWeekidx in week){
         const weekDayUI = []
         weekDayUI.push(<div style={{borderBottom: borderStyle, fontStyle: 'italic'}}>{weekFullName[week[dayOfWeekidx]]}</div>)
@@ -155,4 +155,12 @@ const formatDateNumber = function(num){
   } else {
     return num
   }
+}
+
+const isCurrentWeek = function(weeks, icur){
+  const todayTime = new Date().getTime()
+  const startTimeCur = Date.parse(weeks[icur].startDay)
+  const inext = parseInt(icur)+1
+  const startTimeNext = weeks[inext]!=null? Date.parse(weeks[inext].startDay):0
+  return todayTime>=startTimeCur && todayTime<startTimeNext
 }
