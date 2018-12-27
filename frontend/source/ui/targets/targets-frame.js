@@ -9,6 +9,8 @@ import {registerEvent, registerReaction, fireEvent, viewStateVal} from '../../co
 import {iterateLLfull} from '../../utils/linked-list'
 import {mergeArrays, resolveNodes, replaceDraggableUtil, addAsChildDraggableUtil} from '../../utils/draggable-tree-utils'
 
+import {TreeComponent} from './../tree-component'
+
 const offsetVal = 10
 
 export class TargetsFrame extends React.Component{
@@ -51,6 +53,23 @@ export class TargetsFrame extends React.Component{
   }
 
   render(){
+
+    var testNodes = {
+      1:{id:1, nextid:2, parentid:null},
+      2:{id:2, nextid:null, parentid:null},
+      3:{id:3, nextid:4, parentid:1},
+      4:{id:4, nextid:null, parentid:1},
+      5:{id:5, nextid:null, parentid:4}
+    }
+
+    var viewCallback = function(node){
+      if(node.parentid==null){
+        return <div>Node with id {node.id}</div>
+      } else {
+        return <li>Node with id {node.id}</li>
+      }
+    }
+
     return(
       <div>
         <TargetModal/>
@@ -65,6 +84,7 @@ export class TargetsFrame extends React.Component{
             </ListGroup>
           </div>
         </div>
+        <TreeComponent nodes={testNodes} viewCallback={viewCallback} rootStyle={{border:'1px solid lightgrey', borderRadius:'5px', marginBottom:'5px'}}/>
       </div>
     )
   }
