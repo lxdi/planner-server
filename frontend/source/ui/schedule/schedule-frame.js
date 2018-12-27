@@ -1,7 +1,7 @@
 import {addTaskButtonTitle} from './../../titles'
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {Button, Table} from 'react-bootstrap'
+import {Button, Table, ButtonGroup} from 'react-bootstrap'
 import {CurrentDate} from './../../state'
 import {HquarterModal} from './hquarter-modal'
 import {registerEvent, registerReaction, fireEvent, viewStateVal} from '../../controllers/eventor'
@@ -10,10 +10,12 @@ import {registerEvent, registerReaction, fireEvent, viewStateVal} from '../../co
 export class ScheduleFrame extends React.Component{
   constructor(props){
     super(props)
-    this.state = {};
+    this.state = {edit:false};
     registerReaction('schedule-frame', 'hquarters-dao', ['hquarters-received', 'hquarter-modified', 'mean-assigned-to-slot', 'unassigned-mean', 'hquarters-clean', 'default-received'], ()=>this.setState({}))
     registerReaction('schedule-frame', 'means-dao', ['means-received', 'mean-modified'], ()=>this.setState({}))
     registerReaction('schedule-frame', 'realms-dao', 'change-current-realm', ()=>this.setState({}))
+
+    registerEvent('schedule-frame', 'switch-edit-mode', (stateSetter)=>this.setState({edit:!this.state.edit}))
   }
 
   allowDrop(ev) {
@@ -24,16 +26,19 @@ export class ScheduleFrame extends React.Component{
     return(
       <div>
         <HquarterModal/>
-        <Button bsStyle="primary" bsSize="xsmall" onClick={()=>fireEvent('hquarter-modal', 'open', [viewStateVal('hquarters-dao', 'default')])}>Default settings</Button>
+        <ButtonGroup>
+          <Button bsStyle="primary" bsSize="xsmall" onClick={()=>fireEvent('hquarter-modal', 'open', [viewStateVal('hquarters-dao', 'default')])}>Default settings</Button>
+          <Button bsStyle="default" bsSize="xsmall" onClick={()=>fireEvent('schedule-frame', 'switch-edit-mode')}>{this.state.edit?'View': 'Edit'}</Button>
+        </ButtonGroup>
         <div>
-          {viewStateVal('means-dao', 'means')!=null?hquartersUI():null}
+          {viewStateVal('means-dao', 'means')!=null?hquartersUI(this):null}
         </div>
       </div>
     )
   }
 }
 
-const hquartersUI = function(){
+const hquartersUI = function(component){
   if(viewStateVal('hquarters-dao', 'hquarters') != null && viewStateVal('hquarters-dao', 'default')!=null){
     return viewStateVal('hquarters-dao', 'hquarters').map((hquarter)=>
         <div>
@@ -46,7 +51,7 @@ const hquartersUI = function(){
                   </a>
                 </td>
               </tr>
-              {getSlotsUI(hquarter)}
+              {getSlotsUI(component, hquarter)}
             </tbody>
           </Table>
           </div>
@@ -67,23 +72,23 @@ const weekToString = function(week){
   return week!=null? week.startDay: "default week (TODO - remove!)"
 }
 
-const getSlotsUI = function(hquarter){
+const getSlotsUI = function(component, hquarter){
   const result = []
   for(var slotpos in hquarter.slotsLazy){
     const slot = hquarter.slotsLazy[slotpos]
-    result.push(getSlotView(slot))
+    result.push(getSlotView(component, slot))
   }
   return result
 }
 
-const getSlotView = function(slot){
+const getSlotView = function(component, slot){
   if(slot.meanid!=null){
     const mean = findMean(slot.meanid)
     const realm = viewStateVal('realms-dao', 'realms')[mean.realmid]
     return <tr>
                     <td>
                       <a href='#' style={getStyleFroSlot(slot)}>{getSlotTitleWithMean(slot.meanid)}</a>
-                      <a href='#' onClick={()=>fireEvent('hquarters-dao', 'unassign-mean', [slot])}> X </a>
+                      {component.state.edit? <a href='#' onClick={()=>fireEvent('hquarters-dao', 'unassign-mean', [slot])}> X </a>:null}
                     </td>
                   </tr>
   } else {
