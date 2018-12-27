@@ -17,7 +17,7 @@ const createState = function(isOpen, isStatic, isEdit, hquarter){
 }
 
 const defaultState = function(){
-  return createState(false, true, false, dumbHquarter)
+  return createState(false, false, false, dumbHquarter)
 }
 
 export class HquarterModal extends React.Component {
@@ -26,7 +26,10 @@ export class HquarterModal extends React.Component {
     this.state = defaultState()
     this.okButton = this.okButton.bind(this)
 
-    registerEvent('hquarter-modal', 'open', (stateSetter, hquarter)=>this.setState({isOpen:true, hquarter:hquarter}))
+    registerEvent('hquarter-modal', 'open', (stateSetter, hquarter)=>{
+      const mode = hquarter.startWeek==null?{isStatic:true, isEdit:true}:this.state.mode
+      this.setState({isOpen:true, hquarter:hquarter, mode: mode})
+    })
     registerEvent('hquarter-modal', 'close', (stateSetter)=>this.setState(defaultState()))
     registerReaction('hquarter-modal', 'hquarters-dao', ['add-slot', 'assign-slot', 'got-full'], (stateSetter)=>this.setState({}))
   }
@@ -58,8 +61,9 @@ export class HquarterModal extends React.Component {
 const modalBody = function(component){
   return     <div>
               <div style={{display:'table-cell', borderRight:'1px solid lightgrey', padding:'10px'}}>
-                {component.state.hquarter.isfull!=null || component.state.hquarter.startWeek==null?<a href='#' onClick={()=>fireEvent('hquarters-dao', 'add-slot', [component.state.hquarter])}>+ Add slot</a>:null}
-                {getSlotsUI(component.state.hquarter)}
+                {component.state.hquarter.startWeek==null || component.state.mode.isEdit?
+                  <a href='#' onClick={()=>fireEvent('hquarters-dao', 'add-slot', [component.state.hquarter])}>+ Add slot</a>:null}
+                {getSlotsUI(component, component.state.hquarter)}
               </div>
               <div style={{display:'table-cell', padding:'10px'}}>
                 <div>
@@ -72,7 +76,7 @@ const modalBody = function(component){
             </div>
 }
 
-const getSlotsUI = function(hquarter){
+const getSlotsUI = function(component, hquarter){
   const result = []
   if(hquarter.slots!=null){
     for(var slotpos in hquarter.slots){
@@ -80,12 +84,14 @@ const getSlotsUI = function(hquarter){
         result.push(<div
                     draggable='true'
                     onDragStart={()=>fireEvent('hquarters-dao', 'add-draggable', [hquarter, slot])}
-                    onDragEnd={()=>fireEvent('hquarters-dao', 'remove-draggable')}>
+                    onDragEnd={()=>fireEvent('hquarters-dao', 'remove-draggable')}
+                    style={component.state.mode.isEdit?{border: '1px dotted lightgrey', padding:'3px', borderRadius:'10px'}:null}>
                       Slot {slot.position}
                     </div>)
     }
   } else {
     fireEvent('hquarters-dao', 'get-full', [hquarter.id])
+    return 'Loading'
   }
   return result
 }

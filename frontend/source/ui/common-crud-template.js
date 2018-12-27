@@ -33,7 +33,7 @@ export class CommonCrudeTemplate extends React.Component {
           </Button>
           : null}
 
-          {!this.props.editing.isStatic && this.props.editing.isEdit? <Button bsStyle="danger" bsSize="xsmall" onClick={this.props.deleteHandler}>
+          {!this.props.editing.isStatic && this.props.editing.isEdit && this.props.deleteHandler!=null? <Button bsStyle="danger" bsSize="xsmall" onClick={this.props.deleteHandler}>
             {deleteButton}
           </Button>
           : null}
