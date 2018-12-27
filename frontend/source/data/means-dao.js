@@ -14,9 +14,9 @@ registerEvent('means-dao', 'means-request', function(stateSetter){
             })
 })
 
-registerReactionCombo('means-dao', {'realms-dao':'realms-received', 'targets-dao': 'targets-received'}, ()=>fireEvent('means-dao', 'means-request'))
-
 registerEvent('means-dao', 'means-received', ()=>{})
+
+registerReactionCombo('means-dao', {'realms-dao':'realms-received', 'targets-dao': 'targets-received'}, ()=>fireEvent('means-dao', 'means-request'))
 
 registerEvent('means-dao', 'create', function(stateSetter, mean, parent){
   mean.parentid = parent!=null? parent.id: null
@@ -71,6 +71,7 @@ registerEvent('means-dao', 'modify', function(stateSetter, mean){
     importOneMeanDto(data)
     resolveMean(viewStateVal('means-dao', 'means')[data.realmid][data.id])
     fireEvent('means-dao', 'mean-modified', [mean])
+    fireEvent('hquarters-dao', 'hquarters-request')
   })
 })
 

@@ -11,7 +11,7 @@ export class ScheduleFrame extends React.Component{
   constructor(props){
     super(props)
     this.state = {edit:false};
-    registerReaction('schedule-frame', 'hquarters-dao', ['hquarters-received', 'hquarter-modified', 'mean-assigned-to-slot', 'unassigned-mean', 'hquarters-clean', 'default-received'], ()=>this.setState({}))
+    registerReaction('schedule-frame', 'hquarters-dao', ['hquarters-received', 'hquarter-modified', 'hquarters-clean', 'default-received'], ()=>this.setState({}))
     registerReaction('schedule-frame', 'means-dao', ['means-received', 'mean-modified'], ()=>this.setState({}))
     registerReaction('schedule-frame', 'realms-dao', 'change-current-realm', ()=>this.setState({}))
 

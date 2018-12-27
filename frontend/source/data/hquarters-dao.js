@@ -56,18 +56,16 @@ registerEvent('hquarters-dao', 'assign-slot', (stateSetter, day, position)=>{
 registerEvent('hquarters-dao', 'assign-mean-to-slot', (stateSetter, mean, slot)=>{
   sendPost('/hquarter/assignmean/'+mean.id+'/toslot/'+slot.id, null, ()=>{
     slot.meanid = mean.id
-    fireEvent('hquarters-dao', 'mean-assigned-to-slot')
+    fireEvent('hquarters-dao', 'hquarters-request')
   })
 })
-registerEvent('hquarters-dao', 'mean-assigned-to-slot', (stateSetter)=>{})
 
 registerEvent('hquarters-dao', 'unassign-mean', (stateSetter, slot)=>{
   sendPost('/hquarter/slot/unassign/'+slot.id, null, ()=>{
     slot.meanid = null
-    fireEvent('hquarters-dao', 'unassigned-mean')
+    fireEvent('hquarters-dao', 'hquarters-request')
   })
 })
-registerEvent('hquarters-dao', 'unassigned-mean', (stateSetter)=>{})
 
 registerEvent('hquarters-dao', 'request-for-default', (stateSetter)=>{
   sendGet('/hquarter/get/default', function(data){
@@ -80,8 +78,6 @@ registerEvent('hquarters-dao', 'default-received', (hquarter)=>hquarter)
 registerEvent('hquarters-dao', 'update-default', (stateSetter)=>{
   sendPost('/hquarter/set/default', JSON.stringify(viewStateVal('hquarters-dao', 'default')), (data)=>{
     stateSetter('default', data)
-    //stateSetter('hquarters', null)
-    //fireEvent('hquarters-dao', 'default-received', [data])
     fireEvent('hquarters-dao', 'hquarters-request')
   })
 })
