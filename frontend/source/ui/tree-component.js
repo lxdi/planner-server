@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-//import {Button, ButtonGroup, ButtonToolbar,  DropdownButton, MenuItem, ListGroup, ListGroupItem} from 'react-bootstrap'
 import {iterateLLfull} from '../utils/linked-list'
 import {mergeArrays, resolveNodes, replaceDraggableUtil, addAsChildDraggableUtil} from '../utils/draggable-tree-utils'
 
@@ -19,7 +18,7 @@ export class TreeComponent extends React.Component {
 
   onDragOver(e, node, type){
     var altered = null
-    if(node!=e.draggableNode){
+    if(node!=e.draggableNode && this.props.isEdit==true){
       if(type=='replace'){
         altered = replaceDraggableUtil(this.props.nodes, null, node, e.draggableNode, this.state.cache)
       }
@@ -36,10 +35,12 @@ export class TreeComponent extends React.Component {
   }
 
   onDrop(e){
-    if(this.state.altered!=null && this.state.altered.length>0 && this.props.onDropCallback!=null){
-      this.props.onDropCallback(this.state.altered)
+    if(this.props.isEdit==true){
+      if(this.state.altered!=null && this.state.altered.length>0 && this.props.onDropCallback!=null){
+        this.props.onDropCallback(this.state.altered)
+      }
+      this.setState({altered:null})
     }
-    this.setState({altered:null})
   }
 
   render(){
@@ -47,7 +48,7 @@ export class TreeComponent extends React.Component {
       <div>
           <div onDrop={(e)=>this.onDrop(e)} onDragOver={(e)=>e.preventDefault()}>
             {nodesView(this)}
-            {this.props.isEdit!=null && this.props.isEdit? addChildDiv(this, null) :null}
+            {this.props.isEdit==true? addChildDiv(this, null) :null}
           </div>
       </div>
     )
@@ -77,16 +78,12 @@ const nodeUI = function(component, node, level){
 }
 
 const draggableWrapper = function(component, node, content){
-  if(component.props.isEdit!=null && component.props.isEdit){
     return <div style={{display:'inline-block'}}
                     draggable='true'
                     onDragStart={(e)=>{e.draggableNode = node; if(component.props.onDragStartCallback!=null) component.props.onDragStartCallback(node)}}
                     onDragOver={(e)=>{e.preventDefault(); component.onDragOver(e, node, 'replace')}}>
                 {content}
               </div>
-  } else {
-    return content
-  }
 }
 
 const childrenNodeUI = function(component, node, level){
@@ -95,7 +92,7 @@ const childrenNodeUI = function(component, node, level){
   if(children!=null){
     iterateLLfull(children, (childNode)=>childrenUI.push(nodeUI(component, childNode, level)))
   } else {
-    if(component.props.isEdit!=null && component.props.isEdit){
+    if(component.props.isEdit==true){
       childrenUI.push(addChildDiv(component, node))
     }
   }

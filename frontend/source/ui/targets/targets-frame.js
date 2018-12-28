@@ -101,14 +101,15 @@ const targetsUIlist = function(component){
                   viewCallback = {(target)=>targetUI(component, target)}
                   onDropCallback = {(alteredList)=>fireEvent('targets-dao', 'modify-list', [alteredList])}
                   rootStyle={{border:'1px solid lightgrey', borderRadius:'5px', marginBottom:'5px', padding:'3px'}}
-                  shiftpx={20}
+                  shiftpx={10}
                   />
       }
       return result
 }
 
 const targetUI = function(component, target){
-  const result = <div>
+  return <div>
+                    {target.parentid!=null?'/ ':null}
                     <a href="#" onClick={()=>fireEvent('target-modal', 'open', [target])}>
                         {target.title}
                     </a>
@@ -116,9 +117,4 @@ const targetUI = function(component, target){
                       {addNewTargetTitle}
                     </a>
                 </div>
-  if(target.parentid==null){
-    return result
-  } else {
-    return <li>{result}</li>
-  }
 }
