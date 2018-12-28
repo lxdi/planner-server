@@ -62,14 +62,13 @@ const meansUIlist = function(component){
 }
 
 const meanUI = function(component, mean){
-  return <div>
-                    {mean.parentid!=null?'| ':null}
+  return <div style={mean.parentid!=null?{borderLeft:'1px solid grey', paddingLeft:'3px'}:null}>
                     <a href="#" onClick={()=>fireEvent('mean-modal', 'open', [mean])}>
                         {mean.title}
                     </a>
                     <a href="#" style = {{marginLeft:'3px'}} onClick={()=>fireEvent('mean-modal', 'open', [CreateMean(0, '', viewStateVal('realms-dao', 'currentRealm').id, []), mean])}>
                       {addNewMeanTitle}
                     </a>
-                    <span style={{color: 'green'}}> {mean.targetsString()}</span>
+                    <span style={{color: 'green', fontSize:'8pt'}}> {mean.targetsString()}</span>
                 </div>
 }
