@@ -16,7 +16,7 @@ const offsetVal = 10
 export class TargetsFrame extends React.Component{
   constructor(props){
     super(props)
-    this.state = {}
+    this.state = {editTree: false}
     this.onDragOver = this.onDragOver.bind(this)
     this.onDrop = this.onDrop.bind(this)
 
@@ -78,13 +78,16 @@ export class TargetsFrame extends React.Component{
           <Button bsStyle="success" bsSize="xsmall" onClick={()=>fireEvent('realm-modal', 'open', [CreateRealm(0, '')])}>
             Create New Realm
           </Button>
+          <Button bsStyle="default" bsSize="xsmall" onClick={()=>this.setState({editTree: !this.state.editTree})}>
+            Edit tree
+          </Button>
           <div onDrop={this.onDrop} onDragOver={(e)=>e.preventDefault()}>
             <ListGroup>
               {realmsUI(this)}
             </ListGroup>
           </div>
         </div>
-        <TreeComponent nodes={testNodes} viewCallback={viewCallback} rootStyle={{border:'1px solid lightgrey', borderRadius:'5px', marginBottom:'5px'}}/>
+        <TreeComponent isEdit={this.state.editTree} nodes={testNodes} viewCallback={viewCallback} rootStyle={{border:'1px solid lightgrey', borderRadius:'5px', marginBottom:'5px'}}/>
       </div>
     )
   }

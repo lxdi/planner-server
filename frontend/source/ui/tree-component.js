@@ -6,7 +6,8 @@ import {mergeArrays, resolveNodes, replaceDraggableUtil, addAsChildDraggableUtil
 
 const offsetVal = 10
 
-//props: nodes, viewCallback, changeTreeCallback
+// props: nodes, viewCallback(node), onDragStartCallback(draggableNode) onDropCallback(alteredList)
+// props(styles): rootStyle, groupStyle
 // node {id, parentid, nextid}
 export class TreeComponent extends React.Component {
   constructor(props){
@@ -16,13 +17,13 @@ export class TreeComponent extends React.Component {
     this.onDrop = this.onDrop.bind(this)
   }
 
-  onDragOver(mean, parentMean, type){
+  onDragOver(e, node, type){
     var altered = null
     if(type=='replace'){
-      altered = replaceDraggableUtil(this.state.allNodes, parentMean, mean, this.state.draggableMean, this.state.cache)
+      altered = replaceDraggableUtil(this.props.nodes, null, node, e.draggableNode, this.state.cache)
     }
     if(type=='addchild'){
-      altered = addAsChildDraggableUtil(this.state.allNodes, mean, this.state.draggableMean, this.state.cache)
+      altered = addAsChildDraggableUtil(this.props.nodes, node, e.draggableNode, this.state.cache)
     }
     if(this.state.altered==null){
       this.setState({altered: altered})
@@ -32,30 +33,24 @@ export class TreeComponent extends React.Component {
     }
   }
 
-  onDrop(){
-    if(this.state.altered!=null && this.state.altered.length>0){
-      //fireEvent('means-dao', 'modify-list', [this.state.altered])
+  onDrop(e){
+    if(this.state.altered!=null && this.state.altered.length>0 && this.props.onDropCallback!=null){
+      onDropCallback(this.state.altered)
     }
-    //fireEvent('means-dao', 'remove-draggable', [])
-    this.setState({altered:null, draggableMean:null})
-    //this.state.altered=null
+    this.setState({altered:null})
   }
 
   render(){
     return(
       <div>
-          <div onDrop={this.onDrop} onDragOver={(e)=>e.preventDefault()}>
+          <div onDrop={(e)=>this.onDrop(e)} onDragOver={(e)=>e.preventDefault()}>
             {nodesView(this)}
-            {this.state.isEdit? <div style={styleForAddAsChild} onDragOver={(e)=>{e.preventDefault(); this.onDragOver(null, null, 'addchild')}}>
-              + Add as a child
-            </div> :null}
+            {this.props.isEdit!=null && this.props.isEdit? addChildDiv(this, null) :null}
           </div>
       </div>
     )
   }
 }
-
-const styleForAddAsChild = {width:'80px', color:'lightgrey', fontSize: '10px', border: '1px dotted lightgrey', borderRadius: '5px', padding: '3px'}
 
 const nodesView = function(component){
         const result = []
@@ -69,17 +64,44 @@ const nodesView = function(component){
 }
 
 const nodeUI = function(component, node, shift){
+  return <div key={'node_'+node.id} style={component.props.groupStyle}>
+          {draggableWrapper(component, node, component.props.viewCallback(node))}
+          <div style={{paddingLeft:shift}}>
+            {childrenNodeUI(component, node, shift)}
+          </div>
+        </div>
+}
+
+const draggableWrapper = function(component, node, content){
+  if(component.props.isEdit!=null && component.props.isEdit){
+    return <div style={{display:'inline-block'}}
+                    draggable='true'
+                    onDragStart={(e)=>{e.draggableNode = node; if(component.props.onDragStartCallback!=null) component.props.onDragStartCallback(node)}}
+                    onDragOver={(e)=>{e.preventDefault(); component.onDragOver(e, node, 'replace')}}>
+                {content}
+              </div>
+  } else {
+    return content
+  }
+}
+
+const childrenNodeUI = function(component, node, shift){
   const children = component.state.cache.children[node.id]
   const childrenUI = []
   if(children!=null){
-    iterateLLfull(children, (childNode)=>{
-      childrenUI.push(nodeUI(component, childNode, shift+offsetVal))
-    })
+    iterateLLfull(children, (childNode)=>childrenUI.push(nodeUI(component, childNode, shift+offsetVal)))
+  } else {
+    if(component.props.isEdit!=null && component.props.isEdit){
+      childrenUI.push(addChildDiv(component, node))
+    }
   }
-  return <div key={'node_'+node.id} style={component.props.groupStyle}>
-          {component.props.viewCallback(node)}
-          <div style={{paddingLeft:shift}}>
-            {childrenUI}
-          </div>
-        </div>
+  return childrenUI
+}
+
+const styleForAddAsChild = {width:'80px', color:'lightgrey', fontSize: '10px', border: '1px dotted lightgrey', borderRadius: '5px', padding: '3px'}
+
+const addChildDiv = function(component, node){
+  return <div style={styleForAddAsChild} onDragOver={(e)=>{e.preventDefault(); component.onDragOver(e, node, 'addchild')}}>
+                + Add as a child
+              </div>
 }

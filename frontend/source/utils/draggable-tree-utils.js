@@ -8,10 +8,12 @@ export const mergeArrays = function(mainArr, arr2){
   }
 }
 
+// allNodes - map (id->node)
 // dragState{all, root}
 // cache{root, children}
-export const replaceDraggableUtil = function(allnodes, newParent, targetObj, objToDrag, cache){
+export const replaceDraggableUtil = function(allnodes, newParentDeprecated, targetObj, objToDrag, cache){
   const altered = []
+  const newParent = targetObj.parentid!=null? allnodes[targetObj.parentid]:null
   if(objToDrag!=null && objToDrag!=targetObj && !isNodeDescendsFrom(allnodes, targetObj, objToDrag)){
     if(cache==null){
       cache = resolveNodes(allnodes)
