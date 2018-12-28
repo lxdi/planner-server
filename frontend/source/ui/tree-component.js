@@ -4,38 +4,40 @@ import ReactDOM from 'react-dom';
 import {iterateLLfull} from '../utils/linked-list'
 import {mergeArrays, resolveNodes, replaceDraggableUtil, addAsChildDraggableUtil} from '../utils/draggable-tree-utils'
 
-const offsetVal = 10
+const offsetVal = 20
 
-// props: nodes, viewCallback(node), onDragStartCallback(draggableNode) onDropCallback(alteredList)
-// props(styles): rootStyle, groupStyle
+// props: nodes, isEdit,  viewCallback(node), onDragStartCallback(draggableNode) onDropCallback(alteredList)
+// props(styles): rootStyle, groupStyle, shiftpx
 // node {id, parentid, nextid}
 export class TreeComponent extends React.Component {
   constructor(props){
     super(props)
-    this.state = {isEdit: false}
+    this.state = {}
     this.onDragOver = this.onDragOver.bind(this)
     this.onDrop = this.onDrop.bind(this)
   }
 
   onDragOver(e, node, type){
     var altered = null
-    if(type=='replace'){
-      altered = replaceDraggableUtil(this.props.nodes, null, node, e.draggableNode, this.state.cache)
-    }
-    if(type=='addchild'){
-      altered = addAsChildDraggableUtil(this.props.nodes, node, e.draggableNode, this.state.cache)
-    }
-    if(this.state.altered==null){
-      this.setState({altered: altered})
-    } else {
-      mergeArrays(this.state.altered, altered)
-      this.setState({})
+    if(node!=e.draggableNode){
+      if(type=='replace'){
+        altered = replaceDraggableUtil(this.props.nodes, null, node, e.draggableNode, this.state.cache)
+      }
+      if(type=='addchild'){
+        altered = addAsChildDraggableUtil(this.props.nodes, node, e.draggableNode, this.state.cache)
+      }
+      if(this.state.altered==null){
+        this.setState({altered: altered})
+      } else {
+        mergeArrays(this.state.altered, altered)
+        this.setState({})
+      }
     }
   }
 
   onDrop(e){
     if(this.state.altered!=null && this.state.altered.length>0 && this.props.onDropCallback!=null){
-      onDropCallback(this.state.altered)
+      this.props.onDropCallback(this.state.altered)
     }
     this.setState({altered:null})
   }
@@ -57,17 +59,19 @@ const nodesView = function(component){
         component.state.cache = resolveNodes(component.props.nodes)
         iterateLLfull(component.state.cache.root, (node)=>{
           result.push(<div style={component.props.rootStyle}>
-              {nodeUI(component, node, 20)}
+              {nodeUI(component, node, 0)}
             </div>)
         })
         return result
 }
 
-const nodeUI = function(component, node, shift){
+const nodeUI = function(component, node, level){
+  const nextLevel = level + 1
+  const shiftPx = component.props.shiftpx!=null? component.props.shiftpx*nextLevel: offsetVal*nextLevel
   return <div key={'node_'+node.id} style={component.props.groupStyle}>
-          {draggableWrapper(component, node, component.props.viewCallback(node))}
-          <div style={{paddingLeft:shift}}>
-            {childrenNodeUI(component, node, shift)}
+          {draggableWrapper(component, node, component.props.viewCallback(node, level))}
+          <div style={{paddingLeft:shiftPx}}>
+            {childrenNodeUI(component, node, nextLevel)}
           </div>
         </div>
 }
@@ -85,11 +89,11 @@ const draggableWrapper = function(component, node, content){
   }
 }
 
-const childrenNodeUI = function(component, node, shift){
+const childrenNodeUI = function(component, node, level){
   const children = component.state.cache.children[node.id]
   const childrenUI = []
   if(children!=null){
-    iterateLLfull(children, (childNode)=>childrenUI.push(nodeUI(component, childNode, shift+offsetVal)))
+    iterateLLfull(children, (childNode)=>childrenUI.push(nodeUI(component, childNode, level)))
   } else {
     if(component.props.isEdit!=null && component.props.isEdit){
       childrenUI.push(addChildDiv(component, node))

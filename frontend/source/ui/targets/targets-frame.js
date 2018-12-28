@@ -6,19 +6,12 @@ import {CreateTarget, CreateRealm} from './../../data/creators'
 import {TargetModal} from './target-modal'
 import {RealmModal} from './realm-modal'
 import {registerEvent, registerReaction, fireEvent, viewStateVal} from '../../controllers/eventor'
-import {iterateLLfull} from '../../utils/linked-list'
-import {mergeArrays, resolveNodes, replaceDraggableUtil, addAsChildDraggableUtil} from '../../utils/draggable-tree-utils'
-
 import {TreeComponent} from './../tree-component'
-
-const offsetVal = 10
 
 export class TargetsFrame extends React.Component{
   constructor(props){
     super(props)
     this.state = {editTree: false}
-    this.onDragOver = this.onDragOver.bind(this)
-    this.onDrop = this.onDrop.bind(this)
 
     registerReaction('targets-frame', 'targets-dao', 'targets-received', ()=>this.setState({}))
     registerReaction('targets-frame', 'realms-dao', ['realms-received', 'change-current-realm', 'realm-created'], ()=>this.setState({}))
@@ -28,48 +21,7 @@ export class TargetsFrame extends React.Component{
 
   }
 
-  onDragOver(target, parentTarget, type){
-    var altered = null
-    if(type=='replace'){
-      altered = replaceDraggableUtil(this.state.allNodes, parentTarget, target, this.state.draggableTarget, this.state.cache)
-    }
-    if(type=='addchild'){
-      altered = addAsChildDraggableUtil(this.state.allNodes, target, this.state.draggableTarget, this.state.cache)
-    }
-    if(this.state.altered==null){
-      this.setState({altered: altered})
-    } else {
-      mergeArrays(this.state.altered, altered)
-      this.setState({})
-    }
-  }
-
-  onDrop(){
-    if(this.state.altered!=null && this.state.altered.length>0){
-      fireEvent('targets-dao', 'modify-list', [this.state.altered])
-    }
-    fireEvent('targets-dao', 'remove-draggable', [])
-    this.setState({altered:null, draggableTarget:null})
-  }
-
   render(){
-
-    var testNodes = {
-      1:{id:1, nextid:2, parentid:null},
-      2:{id:2, nextid:null, parentid:null},
-      3:{id:3, nextid:4, parentid:1},
-      4:{id:4, nextid:null, parentid:1},
-      5:{id:5, nextid:null, parentid:4}
-    }
-
-    var viewCallback = function(node){
-      if(node.parentid==null){
-        return <div>Node with id {node.id}</div>
-      } else {
-        return <li>Node with id {node.id}</li>
-      }
-    }
-
     return(
       <div>
         <TargetModal/>
@@ -81,13 +33,10 @@ export class TargetsFrame extends React.Component{
           <Button bsStyle="default" bsSize="xsmall" onClick={()=>this.setState({editTree: !this.state.editTree})}>
             Edit tree
           </Button>
-          <div onDrop={this.onDrop} onDragOver={(e)=>e.preventDefault()}>
-            <ListGroup>
-              {realmsUI(this)}
-            </ListGroup>
-          </div>
+          <ListGroup>
+            {realmsUI(this)}
+          </ListGroup>
         </div>
-        <TreeComponent isEdit={this.state.editTree} nodes={testNodes} viewCallback={viewCallback} rootStyle={{border:'1px solid lightgrey', borderRadius:'5px', marginBottom:'5px'}}/>
       </div>
     )
   }
@@ -143,74 +92,33 @@ const getControlButtonsForTargets = function(component){
   return <ButtonGroup>{result}</ButtonGroup>
 }
 
-const styleForAddAsChild = {width:'80px', color:'lightgrey', fontSize: '10px', border: '1px dotted lightgrey', borderRadius: '5px', padding: '3px'}
-
 const targetsUIlist = function(component){
-      const result = []
+      var result = 'Loading...'
       if(viewStateVal('realms-dao', 'currentRealm')!=null){
         component.state.allNodes = viewStateVal('targets-dao', 'targets')[viewStateVal('realms-dao', 'currentRealm').id]
-        component.state.cache = resolveNodes(component.state.allNodes)
-        iterateLLfull(component.state.cache.root, (target)=>{
-          result.push(<ListGroupItem key={'target_'+target.id}>{targetUI(component, target, 20)}</ListGroupItem>)
-        })
+        result = <TreeComponent isEdit={component.state.isEdit}
+                  nodes={viewStateVal('targets-dao', 'targets')[viewStateVal('realms-dao', 'currentRealm').id]}
+                  viewCallback = {(target)=>targetUI(component, target)}
+                  onDropCallback = {(alteredList)=>fireEvent('targets-dao', 'modify-list', [alteredList])}
+                  rootStyle={{border:'1px solid lightgrey', borderRadius:'5px', marginBottom:'5px', padding:'3px'}}
+                  shiftpx={20}
+                  />
       }
       return result
 }
 
-const targetUI = function(component, target, offset){
-  const parentTarget = target.parentid!=null? component.state.allNodes[target.parentid]:null
-  return (
-    <div>
-      <div style={{'margin-bottom': '5px'}}>
-         {draggableElem(component,
-             countFields(component.state.cache.children[target.id])==0?<span style={{'font-weight': 'bold'}}>{target.title}</span>:target.title,
-             parentTarget, target, ()=>fireEvent('target-modal', 'open', [target]))}
-        <a href="#" onClick={()=>fireEvent('target-modal', 'open', [CreateTarget(0, '', viewStateVal('realms-dao', 'currentRealm').id, []), target])}>
-          {addNewTargetTitle}
-        </a>
-      </div>
-      <div style={{'margin-left': offset + 'px'}}>
-        {targetChildrenUI(component, component.state.cache.children[target.id], offset)}
-        {component.state.isEdit && countFields(component.state.cache.children[target.id])==0?
-          <div style={styleForAddAsChild}
-                onDragOver={(e)=>{e.preventDefault(); component.onDragOver(target, null, 'addchild')}}>+ Add as a child</div>
-          :null}
-      </div>
-    </div>
-  )
-}
-
-const targetChildrenUI = function(component, children, offset){
-  const result = []
-  if(children!=null){
-    iterateLLfull(children, (target)=>{
-      result.push(<li key={'target_'+target.id}>
-        {targetUI(component, target, offset + offsetVal)}
-      </li>)
-    })
-  }
-  return result
-}
-
-const draggableElem = function(component, content, parentTarget, target, onClick){
-  if(component.state.isEdit){
-    return  <a href="#" onClick={onClick}
-              draggable='true'
-              onDragStart={()=>{component.state.draggableTarget = target; fireEvent('targets-dao', 'add-draggable', [target])}}
-              onDragOver={(e)=>{e.preventDefault(); component.onDragOver(target, parentTarget, 'replace')}}>
-               {content}
-             </a>
+const targetUI = function(component, target){
+  const result = <div>
+                    <a href="#" onClick={()=>fireEvent('target-modal', 'open', [target])}>
+                        {target.title}
+                    </a>
+                    <a href="#" style = {{marginLeft:'3px'}} onClick={()=>fireEvent('target-modal', 'open', [CreateTarget(0, '', viewStateVal('realms-dao', 'currentRealm').id, []), target])}>
+                      {addNewTargetTitle}
+                    </a>
+                </div>
+  if(target.parentid==null){
+    return result
   } else {
-    return  <a href="#" onClick={onClick} draggable='true' onDragStart={()=>{fireEvent('targets-dao', 'add-draggable', [target])}}>
-              {content}
-            </a>
+    return <li>{result}</li>
   }
-}
-
-const countFields = (obj)=>{
-  var result = 0;
-  if(obj!=null){
-    for(var i in obj){result++};
-  }
-  return result
 }
