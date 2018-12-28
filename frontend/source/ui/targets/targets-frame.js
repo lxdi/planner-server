@@ -101,7 +101,7 @@ const targetsUIlist = function(component){
                   viewCallback = {(target)=>targetUI(component, target)}
                   onDropCallback = {(alteredList)=>fireEvent('targets-dao', 'modify-list', [alteredList])}
                   rootStyle={{border:'1px solid lightgrey', borderRadius:'5px', marginBottom:'5px', padding:'3px'}}
-                  shiftpx={10}
+                  shiftpx={15}
                   />
       }
       return result
@@ -109,7 +109,7 @@ const targetsUIlist = function(component){
 
 const targetUI = function(component, target){
   return <div>
-                    {target.parentid!=null?'/ ':null}
+                    {target.parentid!=null?'| ':null}
                     <a href="#" onClick={()=>fireEvent('target-modal', 'open', [target])}>
                         {target.title}
                     </a>

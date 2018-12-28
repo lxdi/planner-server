@@ -115,7 +115,7 @@ const resolveMean = function(mean){
   mean.targets = []
   mean.__proto__ = Protomean
   for(var tid in mean.targetsIds){
-      var target = viewStateVal('targets-dao', 'targets')[mean.targetsIds[tid]]
+      var target = viewStateVal('targets-dao', 'targets')[viewStateVal('realms-dao', 'currentRealm').id][mean.targetsIds[tid]]
       if(target!=null){
         mean.targets.push(target)
       }

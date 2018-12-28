@@ -55,7 +55,7 @@ const meansUIlist = function(component){
                 onDropCallback = {(alteredList)=>{fireEvent('means-dao', 'modify-list', [alteredList]); fireEvent('means-dao', 'remove-draggable')}}
                 onDragStartCallback = {(mean)=>fireEvent('means-dao', 'add-draggable', [mean])}
                 rootStyle={{border:'1px solid lightgrey', borderRadius:'5px', marginBottom:'5px', padding:'3px'}}
-                shiftpx={10}
+                shiftpx={15}
                 />
     }
     return result
@@ -63,7 +63,7 @@ const meansUIlist = function(component){
 
 const meanUI = function(component, mean){
   return <div>
-                    {mean.parentid!=null?'/ ':null}
+                    {mean.parentid!=null?'| ':null}
                     <a href="#" onClick={()=>fireEvent('mean-modal', 'open', [mean])}>
                         {mean.title}
                     </a>

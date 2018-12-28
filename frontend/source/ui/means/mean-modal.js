@@ -9,6 +9,7 @@ import {registerEvent, registerReaction, fireEvent, viewStateVal} from '../../co
 import {SubjectModal} from './subject-modal'
 import {TaskModal} from './task-modal'
 import {isValidMean} from '../../utils/mean-validator'
+import {iterateLLfull} from '../../utils/linked-list'
 
 const dumbMean = CreateMean(0, '', null, [])
 
@@ -125,9 +126,11 @@ const targetsChooser = function(component){
 }
 
 const availableTargetsUI = function(){
-  return viewStateVal('targets-dao', 'targets').map(function(target){
-    return <MenuItem eventKey={target}>{target.toString()}</MenuItem>
-  }, (target)=>target.realmid==viewStateVal('realms-dao', 'currentRealm').id)
+  const result = []
+  iterateLLfull(viewStateVal('targets-dao', 'targets')[viewStateVal('realms-dao', 'currentRealm').id], (target)=>{
+    result.push(<MenuItem eventKey={target}>{target.toString()}</MenuItem>)
+  })
+  return result
 }
 
 const relatedTargetsUI = function(targets){

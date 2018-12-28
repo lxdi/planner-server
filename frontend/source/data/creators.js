@@ -4,7 +4,7 @@ export const Protomean = {
     var targetsString = '';
     var divisor = ' #';
     for(var i in this.targets){
-      targetsString = targetsString +divisor+ this.targets[i].toString();
+      targetsString = targetsString +divisor+ this.targets[i].title;
     }
     return targetsString
   },

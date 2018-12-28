@@ -68,7 +68,7 @@ const nodesView = function(component){
 
 const nodeUI = function(component, node, level){
   const nextLevel = level + 1
-  const shiftPx = component.props.shiftpx!=null? component.props.shiftpx*nextLevel: offsetVal*nextLevel
+  const shiftPx = component.props.shiftpx!=null? component.props.shiftpx: offsetVal
   return <div key={'node_'+node.id} style={component.props.groupStyle}>
           {draggableWrapper(component, node, component.props.viewCallback(node, level))}
           <div style={{paddingLeft:shiftPx}}>
