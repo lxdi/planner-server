@@ -30,9 +30,6 @@ export class TargetsFrame extends React.Component{
           <Button bsStyle="success" bsSize="xsmall" onClick={()=>fireEvent('realm-modal', 'open', [CreateRealm(0, '')])}>
             Create New Realm
           </Button>
-          <Button bsStyle="default" bsSize="xsmall" onClick={()=>this.setState({editTree: !this.state.editTree})}>
-            Edit tree
-          </Button>
           <ListGroup>
             {realmsUI(this)}
           </ListGroup>
@@ -53,8 +50,7 @@ const realmsUI = function(component){
         result.push(<ListGroupItem key={"realm_"+realmidConst+(realms[realmidConst]==viewStateVal('realms-dao','currentRealm')?"_current":"_notcurrent")}>
             <div>
               <h4 onClick={()=>fireEvent('realms-dao', 'change-current-realm', [realms[realmidConst]])}>
-                <input type="radio" autocomplete="off"
-                  checked={isCurrentRealm?"checked":null}/>
+                <input type="radio" autocomplete="off" checked={isCurrentRealm?"checked":null} style={{marginRight:'5px'}} />
                 {realms[realmId].title}
               </h4>
             </div>

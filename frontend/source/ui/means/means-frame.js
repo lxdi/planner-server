@@ -47,18 +47,20 @@ const getControlButtons = function(component){
 }
 
 const meansUIlist = function(component){
-  var result = 'Loading...'
-    if(viewStateVal('means-dao', 'means')!=null && viewStateVal('realms-dao', 'currentRealm')!=null){
-      result = <TreeComponent isEdit={component.state.isEdit}
-                nodes={viewStateVal('means-dao', 'means')[viewStateVal('realms-dao', 'currentRealm').id]}
-                viewCallback = {(mean)=>meanUI(component, mean)}
-                onDropCallback = {(alteredList)=>{fireEvent('means-dao', 'modify-list', [alteredList]); fireEvent('means-dao', 'remove-draggable')}}
-                onDragStartCallback = {(mean)=>fireEvent('means-dao', 'add-draggable', [mean])}
-                rootStyle={{border:'1px solid lightgrey', borderRadius:'5px', marginBottom:'5px', padding:'3px'}}
-                shiftpx={15}
-                />
+  if(viewStateVal('means-dao', 'means')!=null){
+      if(viewStateVal('realms-dao', 'currentRealm')!=null){
+        return <TreeComponent isEdit={component.state.isEdit}
+                  nodes={viewStateVal('means-dao', 'means')[viewStateVal('realms-dao', 'currentRealm').id]}
+                  viewCallback = {(mean)=>meanUI(component, mean)}
+                  onDropCallback = {(alteredList)=>{fireEvent('means-dao', 'modify-list', [alteredList]); fireEvent('means-dao', 'remove-draggable')}}
+                  onDragStartCallback = {(mean)=>fireEvent('means-dao', 'add-draggable', [mean])}
+                  rootStyle={{border:'1px solid lightgrey', borderRadius:'5px', marginBottom:'5px', padding:'3px'}}
+                  shiftpx={15}
+                  />
+      }
+      return ''
     }
-    return result
+  return 'Loading...'
 }
 
 const meanUI = function(component, mean){
