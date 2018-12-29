@@ -23,11 +23,32 @@ export class TargetsFrame extends React.Component{
   }
 
   render(){
+
+    // const nodes = {
+    //   1:{id:1},
+    //   2:{id:2},
+    //   3:{id:3},
+    //   4:{id:4},
+    //   5:{id:5},
+    //   6:{id:6},
+    //   7:{id:7}
+    // }
+
+    const getPrev = function(node){
+      const previd = node.id-1
+      return previd>0?{id:previd}:null
+    }
+
+    const getNext = function(node){
+      const nextid = node.id+1
+      return nextid<20?{id:nextid}:null
+    }
+
     return(
       <div>
         <TargetModal/>
         <RealmModal/>
-        <BidirectList/>
+        <BidirectList node={{id:10}} getPrev={getPrev} getNext={getNext}/>
         <div>
           <Button bsStyle="success" bsSize="xsmall" onClick={()=>fireEvent('realm-modal', 'open', [CreateRealm(0, '')])}>
             Create New Realm

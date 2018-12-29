@@ -13,8 +13,10 @@ export class Frame extends React.Component {
       frameContent = <ScheduleFrame />
     if(this.props.name=="Means")
       frameContent = <MeansFrame />
+
+    //style={{overflow:'hidden'}}>
     return (
-    <div class="frame" id = {this.props.name} style={{overflow:'hidden'}}>
+    <div class="frame" id = {this.props.name}>
       <p class = "frame_title"><h4>{this.props.name}</h4></p>
       <div class = "frame_content">
         {frameContent}
