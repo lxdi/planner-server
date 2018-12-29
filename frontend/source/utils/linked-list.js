@@ -21,6 +21,14 @@ export const iterateLL = function(nodes, currentNode, callback){
   }
 }
 
+export const iterateLLReverse = function(nodes, currentNode, callback){
+  callback(currentNode)
+  if(currentNode.previd!=null){
+    const next = nodes[currentNode.previd]
+    iterateLLReverse(nodes, next, callback)
+  }
+}
+
 //elements must in elements must be accessed by element.id
 export const findHead = function(nodes){
   for(var i in nodes){

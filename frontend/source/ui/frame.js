@@ -14,7 +14,7 @@ export class Frame extends React.Component {
     if(this.props.name=="Means")
       frameContent = <MeansFrame />
     return (
-    <div class="frame" id = {this.props.name}>
+    <div class="frame" id = {this.props.name} style={{overflow:'hidden'}}>
       <p class = "frame_title"><h4>{this.props.name}</h4></p>
       <div class = "frame_content">
         {frameContent}

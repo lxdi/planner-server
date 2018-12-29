@@ -7,6 +7,7 @@ import {TargetModal} from './target-modal'
 import {RealmModal} from './realm-modal'
 import {registerEvent, registerReaction, fireEvent, viewStateVal} from '../../controllers/eventor'
 import {TreeComponent} from './../tree-component'
+import {BidirectList} from './../bidirect-list'
 
 export class TargetsFrame extends React.Component{
   constructor(props){
@@ -26,6 +27,7 @@ export class TargetsFrame extends React.Component{
       <div>
         <TargetModal/>
         <RealmModal/>
+        <BidirectList/>
         <div>
           <Button bsStyle="success" bsSize="xsmall" onClick={()=>fireEvent('realm-modal', 'open', [CreateRealm(0, '')])}>
             Create New Realm

@@ -28,7 +28,8 @@
 
 .frame-td-3f {
   vertical-align: top;
-  width:30%
+  width:30%;
+  padding:2px;
 }
 
 .frame{
