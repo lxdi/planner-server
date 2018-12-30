@@ -41,14 +41,16 @@ export class TargetsFrame extends React.Component{
 
     const getNext = function(node){
       const nextid = node.id+1
-      return nextid<20?{id:nextid}:null
+      return nextid<100?{id:nextid}:null
     }
 
     return(
       <div>
         <TargetModal/>
         <RealmModal/>
-        <BidirectList node={{id:10}} getPrev={getPrev} getNext={getNext}/>
+        <div style={{border:'1px solid black', height:'300px'}}>
+          <BidirectList firstNode={{id:50}} lastNode = {{id:55}} getPrev={getPrev} getNext={getNext}/>
+        </div>
         <div>
           <Button bsStyle="success" bsSize="xsmall" onClick={()=>fireEvent('realm-modal', 'open', [CreateRealm(0, '')])}>
             Create New Realm

@@ -14,16 +14,16 @@ export const iterateLLfull = function(nodes, callback){
 }
 
 export const iterateLL = function(nodes, currentNode, callback){
-  callback(currentNode)
-  if(currentNode.nextid!=null){
+  const isContinue = callback(currentNode)
+  if((isContinue==null || (isContinue!=null && isContinue==true)) && currentNode.nextid!=null){
     const next = nodes[currentNode.nextid]
     iterateLL(nodes, next, callback)
   }
 }
 
 export const iterateLLReverse = function(nodes, currentNode, callback){
-  callback(currentNode)
-  if(currentNode.previd!=null){
+  const isContinue = callback(currentNode)
+  if((isContinue==null || (isContinue!=null && isContinue==true)) && currentNode.previd!=null){
     const next = nodes[currentNode.previd]
     iterateLLReverse(nodes, next, callback)
   }
