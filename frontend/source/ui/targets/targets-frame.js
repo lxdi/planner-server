@@ -34,23 +34,36 @@ export class TargetsFrame extends React.Component{
     //   7:{id:7}
     // }
 
-    const getPrev = function(node){
-      const previd = node.id-1
-      return previd>0?{id:previd}:null
-    }
+    // const getPrev = function(node){
+    //   const previd = node.id-1
+    //   return previd>0?{id:previd}:null
+    // }
+    //
+    // const getNext = function(node){
+    //   const nextid = node.id+1
+    //   return nextid<1000?{id:nextid}:null
+    // }
+    //
+    // const compareNodes = function(node1, node2){
+    //   return node1.id == node2.id
+    // }
+    //
+    // const nodeView = function(node){
+    //   return <div key={node.id} style={{width:'100%', height:'30px', border:'1px solid red', marginBottom:'3px'}}>
+    //             Node with id {node.id}
+    //           </div>
+    // }
 
-    const getNext = function(node){
-      const nextid = node.id+1
-      return nextid<100?{id:nextid}:null
-    }
+    // <div style={{border:'1px solid black', height:'300px'}}>
+    //   <BidirectList firstNode={{id:500}} lastNode = {{id:505}}
+    //                 getPrev={getPrev} getNext={getNext} compareNodes={compareNodes}
+    //                 nodeView={nodeView} />
+    // </div>
 
     return(
       <div>
         <TargetModal/>
         <RealmModal/>
-        <div style={{border:'1px solid black', height:'300px'}}>
-          <BidirectList firstNode={{id:50}} lastNode = {{id:55}} getPrev={getPrev} getNext={getNext}/>
-        </div>
         <div>
           <Button bsStyle="success" bsSize="xsmall" onClick={()=>fireEvent('realm-modal', 'open', [CreateRealm(0, '')])}>
             Create New Realm

@@ -1,7 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-//props : firstNode(id), lastNode(id), getPrev(node), getNext(node)
+//props(required): firstNode(id), getPrev(node), getNext(node), nodeView(node)
+//props (not required): lastNode(id), compareNodes(node1, node2)
 export class BidirectList extends React.Component {
   constructor(props){
     super(props)
@@ -22,7 +23,7 @@ export class BidirectList extends React.Component {
 }
 
 const onWheelHandler = function(e, component){
-  if(e.deltaY>0){ //up
+  if(e.deltaY>0){
     if(component.state.lastNode!=null){
       const nextLastNode = component.props.getNext(component.state.lastNode)
       if(nextLastNode!=null){
@@ -30,7 +31,7 @@ const onWheelHandler = function(e, component){
       }
     }
   }
-  if(e.deltaY<0){//down
+  if(e.deltaY<0){
     const nextFirstNode = component.props.getPrev(component.state.firstNode)
     if(nextFirstNode!=null){
         component.state.firstNode = nextFirstNode
@@ -48,24 +49,22 @@ const onScrollHandler = function(e){
 }
 
 const fillRange = function(component, elems, startNode, stopNode){
-  elems.push(wrappNodeUI(component, startNode))
+  elems.push(component.props.nodeView(startNode))
 
   var currnode = component.props.getNext(startNode)
   while(currnode!=null){
-    if(stopNode==null || currnode.id!=stopNode.id){
-      elems.push(wrappNodeUI(component, currnode))
+    if(stopNode==null || !compareNodes(component, currnode, stopNode)){
+      elems.push(component.props.nodeView(currnode))
       currnode = component.props.getNext(currnode)
     } else {
       break;
     }
   }
   if(stopNode!=null){
-    elems.push(wrappNodeUI(component, stopNode))
+    elems.push(component.props.nodeView(stopNode))
   }
 }
 
-const wrappNodeUI = function(component, node){
-  return <div style={{position:'relative', width:'100%', height:'30px', border:'1px solid red', marginBottom:'3px'}}>
-            Node with id {node.id}
-          </div>
+const compareNodes = function(component, node1, node2){
+  return component.props.compareNodes!=null? component.props.compareNodes(node1, node2): node1==node2
 }
