@@ -12,8 +12,12 @@ import model.dto.slot.SlotPositionMapper;
 import model.entities.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import services.DateUtils;
+import services.QuarterGenerator;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -49,10 +53,34 @@ public class HquartersDelegate {
     @Autowired
     ILayerDAO layerDAO;
 
+    @Autowired
+    QuarterGenerator quarterGenerator;
+
     public List<HquarterDtoLazy> getAllQuarters(){
         List<HquarterDtoLazy> result = new ArrayList<>();
         for(HQuarter hQuarter : quarterDAO.getAllHQuartals()){
             result.add(hquarterDtoLazyMapper.mapToDto(hQuarter));
+        }
+        return result;
+    }
+
+    public List<HquarterDtoLazy> getCurrentHquarters(){
+        List<HquarterDtoLazy> result = new ArrayList<>();
+        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+        for(HQuarter hQuarter : getOrCreateHquarters(currentYear)){
+            result.add(hquarterDtoLazyMapper.mapToDto(hQuarter));
+        }
+        for(HQuarter hQuarter : getOrCreateHquarters(currentYear+1)){
+            result.add(hquarterDtoLazyMapper.mapToDto(hQuarter));
+        }
+        return result;
+    }
+
+    private List<HQuarter> getOrCreateHquarters(int year){
+        List<HQuarter> result = quarterDAO.getHQuartersInYear(year);
+        if(result.size()==0){
+            quarterGenerator.generateYear(year);
+            result = quarterDAO.getHQuartersInYear(year);
         }
         return result;
     }
@@ -95,6 +123,36 @@ public class HquartersDelegate {
         defaultSettingsPropagator.propagateSettingsFrom(defaultHquarter);
         return hquarterDtoFullMapper.mapToDto(defaultHquarter);
     }
+
+    public List<HquarterDtoLazy> getPrev(long currentHqId, int prevCount){
+        List<HquarterDtoLazy> result = new ArrayList<>();
+        List<HQuarter> hQuarters = quarterDAO.getPrev(currentHqId, prevCount);
+        if(hQuarters.size()==0){
+            int year = DateUtils.getYear(quarterDAO.getById(currentHqId).getStartWeek().getStartDay());
+            quarterGenerator.generateYear(year-1);
+            hQuarters = quarterDAO.getPrev(currentHqId, prevCount);
+        }
+        Collections.sort(hQuarters);
+        for(HQuarter hQuarter : hQuarters){
+            result.add(hquarterDtoLazyMapper.mapToDto(hQuarter));
+        }
+        return result;
+    }
+
+    public List<HquarterDtoLazy> getNext(long currentHqId, int nextCount){
+        List<HquarterDtoLazy> result = new ArrayList<>();
+        List<HQuarter> hQuarters = quarterDAO.getNext(currentHqId, nextCount);
+        if(hQuarters.size()==0){
+            int year = DateUtils.getYear(quarterDAO.getById(currentHqId).getStartWeek().getStartDay());
+            quarterGenerator.generateYear(year+1);
+            hQuarters = quarterDAO.getNext(currentHqId, nextCount);
+        }
+        for(HQuarter hQuarter : hQuarters){
+            result.add(hquarterDtoLazyMapper.mapToDto(hQuarter));
+        }
+        return result;
+    }
+
 
     private HQuarter saveHQuarter(HquarterDtoFull hquarterDtoFull){
         HQuarter hQuarter = hquarterDtoFullMapper.mapToEntity(hquarterDtoFull);

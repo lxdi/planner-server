@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-public class HQuarter {
+public class HQuarter implements Comparable<HQuarter>{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -61,5 +61,10 @@ public class HQuarter {
     }
     public void setEndWeek(Week endWeek) {
         this.endWeek = endWeek;
+    }
+
+    @Override
+    public int compareTo(HQuarter hQuarter) {
+        return this.getStartWeek().getStartDay().compareTo(hQuarter.getStartWeek().getStartDay());
     }
 }

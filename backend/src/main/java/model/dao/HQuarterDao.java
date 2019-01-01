@@ -34,9 +34,6 @@ public class HQuarterDao implements IHQuarterDAO {
         return sessionFactory.getCurrentSession()
                 .createQuery("from HQuarter hq where hq.startWeek is not null")
                 .list();
-//        return sessionFactory.getCurrentSession().createCriteria(HQuarter.class)
-//                .add(Restrictions.isNotNull("startWeek"))
-//                .list();
     }
 
     @Override
@@ -44,8 +41,6 @@ public class HQuarterDao implements IHQuarterDAO {
         return sessionFactory.getCurrentSession()
                 .createQuery("from HQuarter hq where hq.custom = false")
                 .list();
-//        return sessionFactory.getCurrentSession().createCriteria(HQuarter.class)
-//                .add(Restrictions.eq("custom", false)).list();
     }
 
     @Override
@@ -65,9 +60,6 @@ public class HQuarterDao implements IHQuarterDAO {
         HQuarter hQuarter = (HQuarter) sessionFactory.getCurrentSession()
                 .createQuery("from HQuarter hq where hq.startWeek is null and hq.endWeek is null")
                 .uniqueResult();
-//        HQuarter hQuarter = (HQuarter) sessionFactory.getCurrentSession().createCriteria(HQuarter.class)
-//                .add(Restrictions.isNull("startWeek"))
-//                .add(Restrictions.isNull("endWeek")).uniqueResult();
         if(hQuarter==null){
             hQuarter = new HQuarter();
             this.saveOrUpdate(hQuarter);
@@ -83,9 +75,25 @@ public class HQuarterDao implements IHQuarterDAO {
                 .uniqueResult();
     }
 
-//    @Override
-//    public List<Mean> getMeansOfQuarter(HQuarter hquarter) {
-//         return sessionFactory.getCurrentSession().createCriteria(Mean.class)
-//                .add(Restrictions.eq("hquarter", hquarter)).list();
-//    }
+    @Override
+    public List<HQuarter> getPrev(long currentid, int count) {
+        Date dateUntil = this.getById(currentid).getStartWeek().getStartDay();
+        return sessionFactory.getCurrentSession()
+                .createQuery("from HQuarter where startWeek.startDay < :dateUntil order by startWeek.startDay desc")
+                .setMaxResults(count)
+                .setParameter("dateUntil", dateUntil)
+                .list();
+    }
+
+    @Override
+    public List<HQuarter> getNext(long currentid, int count) {
+        Date dateAfter = this.getById(currentid).getStartWeek().getStartDay();
+        return sessionFactory.getCurrentSession()
+                .createQuery("from HQuarter where startWeek.startDay > :dateAfter order by startWeek.startDay asc")
+                .setMaxResults(count)
+                .setParameter("dateAfter", dateAfter)
+                .list();
+    }
+
+
 }

@@ -1,27 +1,43 @@
 //import $ from 'jquery'
 import {sendGet, sendPost} from './postoffice'
-import {registerEvent, registerReaction, fireEvent, viewStateVal} from '../controllers/eventor'
+import {registerObject, registerEvent, registerReaction, fireEvent, viewStateVal} from '../controllers/eventor'
 
 import {normalizeInnerArrays, getMaxVal} from '../utils/import-utils'
 import {findSlotInPosition} from '../utils/hquarters-utils'
 
+registerObject('hquarters-dao', {default:{}})
+
 registerEvent('hquarters-dao', 'hquarters-request', function(stateSetter){
-  sendGet("/hquarter/all", function(data) {
-            var receivedData = typeof data == 'string'? JSON.parse(data): data
-            importHquarters(stateSetter, receivedData)
+  sendGet("/hquarter/currentlist", function(data) {
+            importHquarters(stateSetter, data)
             fireEvent('hquarters-dao', 'hquarters-received', [])
           })
 })
 
 registerEvent('hquarters-dao', 'hquarters-received', function(){})
 
-registerEvent('hquarters-dao', 'hquarters-clean', (stateSetter)=>stateSetter('hquarters', []))
+registerEvent('hquarters-dao', 'hquarters-prev', (stateSetter, hquarter)=>{
+  sendGet('/hquarter/prev/'+hquarter.id + '/1', function(data) {
+            importHquarters(stateSetter, data)
+            fireEvent('hquarters-dao', 'hquarters-received', [])
+          })
+})
+
+registerEvent('hquarters-dao', 'hquarters-next', (stateSetter, hquarter)=>{
+  sendGet('/hquarter/next/'+hquarter.id + '/1', function(data) {
+            importHquarters(stateSetter, data)
+            fireEvent('hquarters-dao', 'hquarters-received', [])
+          })
+})
+
+// registerEvent('hquarters-dao', 'hquarters-clean', (stateSetter)=>{
+//   stateSetter('firstHquarterId', null)
+//   stateSetter('hquarters', null)
+// })
 
 registerEvent('hquarters-dao', 'update', (stateSetter, hquarter)=>{
   sendPost('/hquarter/update', hquarter, (data)=>{
-    //var receivedData = typeof data == 'string'? JSON.parse(data): data
-    viewStateVal('hquarters-dao', 'hquarters')[data.id] = data
-    fireEvent('hquarters-dao', 'hquarter-modified', [data])
+    fireEvent('hquarters-dao', 'hquarter-modified', [Object.assign(viewStateVal('hquarters-dao', 'hquarters')[Date.parse(data.startWeek.startDay)], data)])
   })
 })
 registerEvent('hquarters-dao', 'hquarter-modified', (stateSetter, hquarter)=>hquarter)
@@ -32,6 +48,7 @@ registerEvent('hquarters-dao', 'add-slot', (stateSetter, hquarter)=>{
 })
 
 registerEvent('hquarters-dao', 'add-draggable', (stateSetter, hquarter, slot, slotPosition)=>stateSetter('draggableSlot', {hquarter: hquarter, slot:slot, slotPosition: slotPosition}))
+
 registerEvent('hquarters-dao', 'remove-draggable', (stateSetter)=>stateSetter('draggableSlot', null))
 
 registerEvent('hquarters-dao', 'assign-slot', (stateSetter, day, position)=>{
@@ -69,55 +86,102 @@ registerEvent('hquarters-dao', 'unassign-mean', (stateSetter, slot)=>{
 
 registerEvent('hquarters-dao', 'request-for-default', (stateSetter)=>{
   sendGet('/hquarter/get/default', function(data){
-    stateSetter('default', data)
-    fireEvent('hquarters-dao', 'default-received', [data])
+    Object.assign(viewStateVal('hquarters-dao', 'default'), data)
+    viewStateVal('hquarters-dao', 'default').isFull=true
+    fireEvent('hquarters-dao', 'default-received', [viewStateVal('hquarters-dao', 'default')])
   })
 })
+
 registerEvent('hquarters-dao', 'default-received', (hquarter)=>hquarter)
 
 registerEvent('hquarters-dao', 'update-default', (stateSetter)=>{
   sendPost('/hquarter/set/default', JSON.stringify(viewStateVal('hquarters-dao', 'default')), (data)=>{
-    stateSetter('default', data)
+    Object.assign(viewStateVal('hquarters-dao', 'default'), data)
+    viewStateVal('hquarters-dao', 'default').isFull=true
     fireEvent('hquarters-dao', 'hquarters-request')
   })
 })
 
 registerEvent('hquarters-dao', 'get-full', (stateSetter, id)=>{
   sendGet('/hquarter/get/'+id, (hquarterfull)=>{
-    hquarterfull.isfull=true
-    Object.assign(viewStateVal('hquarters-dao', 'hquarters')[hquarterfull.id], hquarterfull)
-    fireEvent('hquarters-dao', 'got-full', [viewStateVal('hquarters-dao', 'hquarters')[hquarterfull.id]])
+    hquarterfull.isFull=true
+    const idDate = Date.parse(hquarterfull.startWeek.startDay)
+    Object.assign(viewStateVal('hquarters-dao', 'hquarters')[idDate], hquarterfull)
+    fireEvent('hquarters-dao', 'got-full', [viewStateVal('hquarters-dao', 'hquarters')[idDate]])
   })
 })
+
 registerEvent('hquarters-dao', 'got-full', (stateSetter, hquarterfull)=>hquarterfull)
 
 
 const importHquarters = function(stateSetter, hquartersDto){
-  const hquarters = []
-  stateSetter('hquarters', hquarters)
+  var hquarters = viewStateVal('hquarters-dao', 'hquarters')
+  if(hquarters==null){
+    hquarters = []
+    stateSetter('hquarters', hquarters)
+  }
+  const last = hquarters[findLastHquarter(hquarters)]
+  const importedResult = importToArray(hquartersDto, hquarters)
+  spliceIfBefore(importedResult.last)
+  spliceIfAfter(last, importedResult.first)
+  stateSetter('firstHquarterId', findFirstHquarter(hquarters))
+}
+
+const importToArray = function(hquartersDto, hquarters){
+  var lastHq = null
+  var firstHq = null
   for(var i in hquartersDto){
     normalizeInnerArrays(hquartersDto[i], [{
       arrName:'slotsLazy',
       posName: 'position'
     }])
-    hquarters[""+hquartersDto[i].id] = hquartersDto[i]
+    if(hquarters[Date.parse(hquartersDto[i].startWeek.startDay)]!=null){
+      Object.assign(hquarters[Date.parse(hquartersDto[i].startWeek.startDay)], hquartersDto[i])
+    } else {
+      hquarters[Date.parse(hquartersDto[i].startWeek.startDay)] = hquartersDto[i]
+      const previdx = i-1
+      const nextidx = parseInt(i)+1
+      hquartersDto[i].previd = hquartersDto[previdx]!=null?Date.parse(hquartersDto[previdx].startWeek.startDay):null
+      hquartersDto[i].nextid = hquartersDto[nextidx]!=null?Date.parse(hquartersDto[nextidx].startWeek.startDay):null
+    }
+    if(firstHq==null){
+      firstHq = hquarters[Date.parse(hquartersDto[i].startWeek.startDay)]
+    }
+    lastHq = hquarters[Date.parse(hquartersDto[i].startWeek.startDay)]
+  }
+  return {first:firstHq, last:lastHq}
+}
+
+const spliceIfBefore = function(last){
+  if(viewStateVal('hquarters-dao', 'firstHquarterId')!=null && Date.parse(last.startWeek.startDay)<viewStateVal('hquarters-dao', 'firstHquarterId')){
+    last.nextid = viewStateVal('hquarters-dao', 'firstHquarterId')
+    viewStateVal('hquarters-dao', 'hquarters')[viewStateVal('hquarters-dao', 'firstHquarterId')].previd
+          = Date.parse(last.startWeek.startDay)
   }
 }
 
-// const quartersProto = {
-//   map: function(callback, filter){
-//     var result = []
-//     for (var i in this){
-//       if(this.hasOwnProperty(i)){
-//           if(filter!=null){
-//             if(filter(this[i])){
-//               result.push(callback(this[i]))
-//             }
-//           } else {
-//             result.push(callback(this[i]))
-//           }
-//       }
-//     }
-//     return result
-//   }
-// }
+const spliceIfAfter = function(lastBeforeImport, firstInNewImport){
+  if(lastBeforeImport!=null && Date.parse(lastBeforeImport.startWeek.startDay)<Date.parse(firstInNewImport.startWeek.startDay)){
+    lastBeforeImport.nextid = Date.parse(firstInNewImport.startWeek.startDay)
+    firstInNewImport.previd = Date.parse(lastBeforeImport.startWeek.startDay)
+  }
+}
+
+const findFirstHquarter = function(hquarters){
+  return findExtrem(hquarters, (result, curhqId)=>result>curhqId)
+}
+
+const findLastHquarter = function(hquarters){
+  return findExtrem(hquarters, (result, curhqId)=>result<curhqId)
+}
+
+const findExtrem = function(hquarters, compareCallback){
+  var result = null
+  for(var i in hquarters){
+    const curhqId = Date.parse(hquarters[i].startWeek.startDay)
+    if(result==null || compareCallback(result, curhqId)){
+      result = curhqId
+    }
+  }
+  return result
+}

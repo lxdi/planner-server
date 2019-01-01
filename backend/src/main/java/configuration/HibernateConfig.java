@@ -66,10 +66,6 @@ public class HibernateConfig {
             properties.put("username", envCtx.lookup("username"));
             properties.put("password", envCtx.lookup("password"));
 
-            properties.put("generate_quarters", envCtx.lookup("generate_quarters"));
-            properties.put("gen_quarters_from", envCtx.lookup("gen_quarters_from"));
-            properties.put("gen_quarters_to", envCtx.lookup("gen_quarters_to"));
-
         } catch (NamingException e) {
             e.printStackTrace();
             properties.put("use_database", "false");
@@ -84,9 +80,6 @@ public class HibernateConfig {
     <Environment name="url" type="java.lang.String" value="jdbc:postgresql://localhost:5432/planner" />
     <Environment name="username" type="java.lang.String" value="postgres" />
     <Environment name="password" type="java.lang.String" value="" />
-     <Environment name="generate_quarters" type="java.lang.String" value="true" />
-     <Environment name="gen_quarters_from" type="java.lang.String" value="2017" />
-     <Environment name="gen_quarters_to" type="java.lang.String" value="2019" />
      */
 
 }

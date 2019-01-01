@@ -3,6 +3,7 @@ package services;
 import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 public class DateUtils {
 
@@ -27,6 +28,12 @@ public class DateUtils {
     public static String fromDate(Date date){
         SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
         return sdf.format(date);
+    }
+
+    public static int getYear(Date date){
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        return cal.get(Calendar.YEAR);
     }
 
 }

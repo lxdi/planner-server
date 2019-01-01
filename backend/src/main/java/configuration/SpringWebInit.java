@@ -33,35 +33,5 @@ public class SpringWebInit implements WebApplicationInitializer {
 		servlet.setAsyncSupported(true);
 		servlet.setLoadOnStartup(1);
 		servlet.addMapping("/");
-
-		ctx.addApplicationListener(new ApplicationListener<ApplicationEvent>() {
-			@Override
-			public void onApplicationEvent(ApplicationEvent event) {
-				if (event instanceof ContextRefreshedEvent) {
-					Properties extprops = BeanFactoryAnnotationUtils.qualifiedBeanOfType(ctx.getBeanFactory(), Properties.class, "ext_props");
-					//Properties extprops = (Properties) ctx.getBean("ext_props");
-                    if (extprops.getProperty("generate_quarters").toLowerCase().equals("true")) {
-                        generateQuarters(extprops.getProperty("gen_quarters_from"), extprops.getProperty("gen_quarters_to"),
-                                (QuarterGenerator) ctx.getBean("quarterGenerator"));
-                    }
-				}
-			}
-		});
 	}
-
-	private void generateWeeks(String from, String to, WeeksGenerator generator){
-        List<Integer> years = new ArrayList<>();
-        for(int i = Integer.parseInt(from); i<=Integer.parseInt(to); i++){
-            years.add(i);
-        }
-        generator.generate(years);
-    }
-
-    private void generateQuarters(String from, String to, QuarterGenerator generator){
-        List<Integer> years = new ArrayList<>();
-        for(int i = Integer.parseInt(from); i<=Integer.parseInt(to); i++){
-            years.add(i);
-        }
-        generator.generate(years);
-    }
 }

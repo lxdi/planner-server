@@ -34,6 +34,23 @@ public class HquartersRESTController {
         return new ResponseEntity<List<HquarterDtoLazy>>(hquartersDelegate.getAllQuarters(), HttpStatus.OK);
     }
 
+    @RequestMapping(path = "/currentlist")
+    public ResponseEntity<List<HquarterDtoLazy>> getCurrentList(){
+        return new ResponseEntity<List<HquarterDtoLazy>>(hquartersDelegate.getCurrentHquarters(), HttpStatus.OK);
+    }
+
+    @RequestMapping(path = "/prev/{hquarterid}/{count}")
+    public ResponseEntity<List<HquarterDtoLazy>> getPrev(
+            @PathVariable("hquarterid") long hqid, @PathVariable("count") int count){
+        return new ResponseEntity<List<HquarterDtoLazy>>(hquartersDelegate.getPrev(hqid, count), HttpStatus.OK);
+    }
+
+    @RequestMapping(path = "/next/{hquarterid}/{count}")
+    public ResponseEntity<List<HquarterDtoLazy>> getNext(
+            @PathVariable("hquarterid") long hqid, @PathVariable("count") int count){
+        return new ResponseEntity<List<HquarterDtoLazy>>(hquartersDelegate.getNext(hqid, count), HttpStatus.OK);
+    }
+
     @RequestMapping(path="/get/{hquarterid}", method = RequestMethod.GET)
     public ResponseEntity<HquarterDtoFull> get(@PathVariable("hquarterid") long hqid){
         return new ResponseEntity<>(hquartersDelegate.get(hqid), HttpStatus.OK);

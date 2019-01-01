@@ -50,7 +50,9 @@ public class TargetsRESTController {
 
     @RequestMapping(path = "/target/create" , method = RequestMethod.PUT)
     public ResponseEntity<TargetDtoLazy> createTarget(@RequestBody TargetDtoLazy targetDto) {
-        assert targetDto.getId()==0 && targetDto.getNextid()==null && targetDto.getRealmid()>0;
+        if(!(targetDto.getId()==0 && targetDto.getNextid()==null && targetDto.getRealmid()>0)){
+            throw new RuntimeException("Not valid Target Dto received to create");
+        }
         Realm realm = realmDAO.realmById(targetDto.getRealmid());
         Target target = targetsDtoMapper.mapToEntity(targetDto);
         Target prevTarget = targetsDAO.getLastOfChildren(target.getParent(), realm);

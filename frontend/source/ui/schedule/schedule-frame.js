@@ -6,12 +6,13 @@ import {CurrentDate} from './../../state'
 import {HquarterModal} from './hquarter-modal'
 import {registerEvent, registerReaction, fireEvent, viewStateVal} from '../../controllers/eventor'
 
+import {BidirectList} from '../bidirect-list'
 
 export class ScheduleFrame extends React.Component{
   constructor(props){
     super(props)
     this.state = {edit:false};
-    registerReaction('schedule-frame', 'hquarters-dao', ['hquarters-received', 'hquarter-modified', 'hquarters-clean', 'default-received'], ()=>this.setState({}))
+    registerReaction('schedule-frame', 'hquarters-dao', ['hquarters-received', 'hquarter-modified', 'default-received'], ()=>this.setState({}))
     registerReaction('schedule-frame', 'means-dao', ['means-received', 'mean-modified'], ()=>this.setState({}))
     registerReaction('schedule-frame', 'realms-dao', 'change-current-realm', ()=>this.setState({}))
 
@@ -30,7 +31,7 @@ export class ScheduleFrame extends React.Component{
           <Button bsStyle="primary" bsSize="xsmall" onClick={()=>fireEvent('hquarter-modal', 'open', [viewStateVal('hquarters-dao', 'default')])}>Default settings</Button>
           <Button bsStyle="default" bsSize="xsmall" onClick={()=>fireEvent('schedule-frame', 'switch-edit-mode')}>{this.state.edit?'View': 'Edit'}</Button>
         </ButtonGroup>
-        <div>
+        <div style={{height:'78vh', borderTop:'1px solid lightgrey', borderBottom:'1px solid lightgrey', marginTop:'3px'}}>
           {viewStateVal('means-dao', 'means')!=null?hquartersUI(this):null}
         </div>
       </div>
@@ -39,33 +40,60 @@ export class ScheduleFrame extends React.Component{
 }
 
 const hquartersUI = function(component){
-  if(viewStateVal('hquarters-dao', 'hquarters') != null && viewStateVal('hquarters-dao', 'default')!=null){
-    return viewStateVal('hquarters-dao', 'hquarters').map((hquarter)=>
-        <div>
-          <Table striped bordered condensed hover width={'100px'} key={"hquarter_"+weekToString(hquarter.startWeek)} >
-            <tbody>
-              <tr>
-                <td>
-                  <a href='#' onClick={()=>fireEvent('hquarter-modal', 'open', [hquarter])} style={isCurrentHquarter(hquarter)?{fontWeight: 'bold'}:{}}>
-                    {weekToString(hquarter.startWeek)}
-                  </a>
-                </td>
-              </tr>
-              {getSlotsUI(component, hquarter)}
-            </tbody>
-          </Table>
-          </div>
-      )
+  if(viewStateVal('hquarters-dao', 'hquarters') != null){
+    return <BidirectList firstNode={viewStateVal('hquarters-dao', 'hquarters')[viewStateVal('hquarters-dao', 'firstHquarterId')]}
+                          getNext = {(node, isExtend)=>getNextHandler(component, node, isExtend)}
+                          getPrev = {(node)=>getPrevHandler(component, node)}
+                          nodeView = {(node)=>hquarterUI(component, node)}
+    />
   } else {
-    if(viewStateVal('hquarters-dao', 'default')==null){
-      fireEvent('hquarters-dao', 'request-for-default')
-    } else {
-      if(viewStateVal('hquarters-dao', 'hquarters')==null){
-        fireEvent('hquarters-dao', 'hquarters-request')
-      }
-    }
+    fireEvent('hquarters-dao', 'hquarters-request')
     return 'Loading...'
   }
+}
+
+const getPrevHandler = function(component, node){
+  if(node.id=='loading'){
+    return null
+  }
+  var prevNode = viewStateVal('hquarters-dao', 'hquarters')[node.previd]
+  if(prevNode==null){
+    fireEvent('hquarters-dao', 'hquarters-prev', [node])
+    return {id:'loading', nextid:Date.parse(node.startWeek.startDay)}
+  }
+  return prevNode
+}
+
+const getNextHandler = function(component, node, isExtend){
+  if(!isExtend){
+    return viewStateVal('hquarters-dao', 'hquarters')[node.nextid]
+  }
+  var nextNode = viewStateVal('hquarters-dao', 'hquarters')[node.nextid]
+  if(nextNode==null){
+    fireEvent('hquarters-dao', 'hquarters-next', [node])
+    return {id:'loading', previd:Date.parse(node.startWeek.startDay)}
+  }
+  return nextNode
+}
+
+const hquarterUI = function(component, hquarter){
+  if(hquarter.id=='loading'){
+    return <div key = {hquarter.id}>Loading ...</div>
+  }
+  return <div key = {hquarter.id}>
+            <Table striped bordered condensed hover width={'100px'} key={"hquarter_"+weekToString(hquarter.startWeek)} >
+              <tbody>
+                <tr>
+                  <td>
+                    <a href='#' onClick={()=>fireEvent('hquarter-modal', 'open', [hquarter])} style={isCurrentHquarter(hquarter)?{fontWeight: 'bold'}:{}}>
+                      {weekToString(hquarter.startWeek)}
+                    </a>
+                  </td>
+                </tr>
+                {getSlotsUI(component, hquarter)}
+              </tbody>
+            </Table>
+            </div>
 }
 
 const weekToString = function(week){
@@ -85,14 +113,14 @@ const getSlotView = function(component, slot){
   if(slot.meanid!=null){
     const mean = findMean(slot.meanid)
     const realm = viewStateVal('realms-dao', 'realms')[mean.realmid]
-    return <tr>
+    return <tr key={slot.id}>
                     <td>
                       <a href='#' style={getStyleFroSlot(slot)}>{getSlotTitleWithMean(slot.meanid)}</a>
                       {component.state.edit? <a href='#' onClick={()=>fireEvent('hquarters-dao', 'unassign-mean', [slot])}> X </a>:null}
                     </td>
                   </tr>
   } else {
-    return <tr
+    return <tr key={slot.id}
                   onDragOver={(e)=>{e.preventDefault()}}
                   onDrop={(e)=>fireEvent('hquarters-dao', 'assign-mean-to-slot', [viewStateVal('means-dao', 'draggableMean'), slot])}>
                     <td>

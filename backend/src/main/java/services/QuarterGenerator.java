@@ -39,6 +39,7 @@ public class QuarterGenerator {
     }
 
     public void generateYear(int year){
+        assert quartalDAO.getHQuartersInYear(year).size()==0;
         weeksGenerator.generateYear(year);
         System.out.println("Generating quarters for " + year);
         YearWeek start = YearWeek.of(year,1);

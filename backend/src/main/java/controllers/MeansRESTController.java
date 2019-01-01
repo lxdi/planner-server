@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.util.NestedServletException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -82,7 +83,9 @@ public class MeansRESTController {
 
     @RequestMapping(path = "/mean/create" , method = RequestMethod.PUT)
     public ResponseEntity<MeanDtoLazy> create(@RequestBody MeanDtoLazy meanDtoLazy){
-        assert meanDtoLazy.getId()==0 && meanDtoLazy.getNextid()==null && meanDtoLazy.getRealmid()>0;
+        if(!(meanDtoLazy.getId()==0 && meanDtoLazy.getNextid()==null && meanDtoLazy.getRealmid()>0)){
+            throw new RuntimeException("Not valid Mean to create");
+        }
         Realm realm = realmDAO.realmById(meanDtoLazy.getRealmid());
         Mean mean = meansDtoMapper.mapToEntity(meanDtoLazy);
         Mean prevMean = meansDAO.getLastOfChildren(mean.getParent(), realm);
@@ -129,7 +132,9 @@ public class MeansRESTController {
     }
 
     private Mean updateMean(MeanDtoLazy meanDtoLazy){
-        assert meanDtoLazy.getId()>0;
+        if(!(meanDtoLazy.getId()>0)){
+            throw new RuntimeException("Not valid Mean Dto to update");
+        }
         Mean mean = meansDtoMapper.mapToEntity(meanDtoLazy);
         meansDAO.validateMean(mean);
         //TODO validate before saving
