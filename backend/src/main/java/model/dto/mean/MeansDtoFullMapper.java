@@ -1,22 +1,26 @@
 package model.dto.mean;
 
+import model.dao.ILayerDAO;
 import model.dao.IMeansDAO;
-import model.dao.IHQuarterDAO;
 import model.dao.IRealmDAO;
 import model.dao.ITargetsDAO;
 import model.dto.IMapper;
+import model.dto.layer.LayersDtoMapper;
+import model.entities.Layer;
 import model.entities.Mean;
 import model.entities.Realm;
 import model.entities.Target;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 /**
  * Created by Alexander on 10.03.2018.
  */
 
 @Component
-public class MeansDtoMapper implements IMapper<MeanDtoLazy, Mean> {
+public class MeansDtoFullMapper implements IMapper<MeanDtoFull, Mean> {
 
     @Autowired
     IMeansDAO meansDAO;
@@ -27,33 +31,29 @@ public class MeansDtoMapper implements IMapper<MeanDtoLazy, Mean> {
     @Autowired
     IRealmDAO realmDAO;
 
-    public MeanDtoLazy mapToDto(Mean mean){
-        MeanDtoLazy meanDtoLazy = new MeanDtoLazy();
-        mapStatic(mean, meanDtoLazy);
-        meanDtoLazy.setParentid(mean.getParent()!=null? mean.getParent().getId(): null);
-        for(Target target : mean.getTargets()){
-            meanDtoLazy.getTargetsIds().add(target.getId());
-        }
-        meanDtoLazy.setRealmid(mean.getRealm().getId());
-        if(mean.getNext()!=null){
-            meanDtoLazy.setNextid(mean.getNext().getId());
-        }
+    @Autowired
+    MeansDtoLazyMapper meansDtoLazyMapper;
 
-        if(mean.getId()>0){
-            Mean prevMean = meansDAO.getPrevMean(mean);
-            if(prevMean!=null){
-                meanDtoLazy.setPrevid(prevMean.getId());
+    @Autowired
+    ILayerDAO layerDAO;
+
+    @Autowired
+    LayersDtoMapper layersDtoMapper;
+
+    public MeanDtoFull mapToDto(Mean mean){
+        MeanDtoFull meanDtoLazy = new MeanDtoFull();
+        meansDtoLazyMapper.mapToDto(mean, meanDtoLazy);
+        meanDtoLazy.setCriteria(mean.getCriteria());
+        List<Layer> layers = layerDAO.getLyersOfMean(mean);
+        if(layers.size()>0){
+            for(Layer layer : layers){
+                meanDtoLazy.getLayers().add(layersDtoMapper.mapToDto(layer));
             }
         }
         return meanDtoLazy;
     }
 
-    private void mapStatic(Mean mean, MeanDtoLazy abstractMeanDto){
-        abstractMeanDto.setId(mean.getId());
-        abstractMeanDto.setTitle(mean.getTitle());
-    }
-
-    public Mean mapToEntity(MeanDtoLazy meanDto){
+    public Mean mapToEntity(MeanDtoFull meanDto){
         Realm realm;
         if(meanDto.getRealmid()!=null){
             realm = realmDAO.realmById(meanDto.getRealmid());

@@ -2,14 +2,17 @@
 
 // configsArr = [{arrName, posName}]
 export const normalizeInnerArrays = function(obj, configsArr, idx){
-    if(configsArr[idx]!=null){
+    if(idx==null){
+      idx = 0
+    }
+    if(obj!=null && configsArr[idx]!=null){
       const newArr = []
-      for(var i in configsArr.obj[configsArr.arrName]){
-        const childObj = configsArr.obj[configsArr.arrName][i]
-        normalizeArray(childObj, configsArr, idx+1)
-        newArr[childObj[configsArr.posName]] = childObj
+      for(var i in obj[configsArr[idx].arrName]){
+        const childObj = obj[configsArr[idx].arrName][i]
+        normalizeInnerArrays(childObj, configsArr, idx+1)
+        newArr[childObj[configsArr[idx].posName]] = childObj
       }
-      configsArr.obj[configsArr.arrName] = newArr
+      obj[configsArr[idx].arrName] = newArr
     }
 }
 

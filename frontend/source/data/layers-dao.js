@@ -31,7 +31,7 @@ registerEvent('layers-dao', 'add-layer', (stateSetter, mean)=>{
   mean.layers[layer.priority] = layer
 })
 
-registerReaction('layers-dao', 'mean-modal', 'open', (stateSetter, mean)=>fireEvent('layers-dao', 'layers-request', [mean]))
+//registerReaction('layers-dao', 'mean-modal', 'open', (stateSetter, mean)=>fireEvent('layers-dao', 'layers-request', [mean]))
 
 
 const getMaxLayerPriorityOfLayers = function(layers){

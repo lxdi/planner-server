@@ -1,8 +1,9 @@
 package means_restcontroller_tests;
 
 import controllers.MeansRESTController;
+import controllers.delegates.MeansDelegate;
 import controllers.delegates.TaskMappersController;
-import model.dto.mean.MeansDtoMapper;
+import model.dto.mean.MeansDtoLazyMapper;
 import model.entities.Mean;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,10 +27,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class MeansRESTController_Update_Tests extends ATestsWithTargetsMeansQuartalsGenerated {
 
     @Autowired
-    MeansDtoMapper meansDtoMapper;
+    MeansDtoLazyMapper meansDtoLazyMapper;
 
     @Autowired
     TaskMappersController taskMappersController;
+
+    @Autowired
+    MeansDelegate meansDelegate;
 
     private MockMvc mockMvc;
     private MeansRESTController meansRESTController;
@@ -37,7 +41,7 @@ public class MeansRESTController_Update_Tests extends ATestsWithTargetsMeansQuar
     @Before
     public void init(){
         super.init();
-        meansRESTController = new MeansRESTController(meansDao, meansDtoMapper, realmDAO, taskMappersController);
+        meansRESTController = new MeansRESTController(meansDelegate);
         mockMvc = MockMvcBuilders.standaloneSetup(meansRESTController).build();
     }
 
@@ -63,7 +67,7 @@ public class MeansRESTController_Update_Tests extends ATestsWithTargetsMeansQuar
     }
 
     @Test
-    public void updateListTest() throws Exception {
+    public void repositionListTest() throws Exception {
         Mean mean = new Mean("parent mean test", realm);
         meansDao.saveOrUpdate(mean);
 
@@ -91,7 +95,7 @@ public class MeansRESTController_Update_Tests extends ATestsWithTargetsMeansQuar
                 "}";
 
         String content = "["+child1content+", "+child2content+"]";
-        MvcResult result = mockMvc.perform(post("/mean/update/list")
+        MvcResult result = mockMvc.perform(post("/mean/reposition/list")
                 .contentType(MediaType.APPLICATION_JSON).content(content))
                 .andExpect(status().isOk()).andReturn();
 
@@ -104,7 +108,7 @@ public class MeansRESTController_Update_Tests extends ATestsWithTargetsMeansQuar
     }
 
     @Test
-    public void updateListAndGetTest() throws Exception {
+    public void repositionListAndGetTest() throws Exception {
 
         Mean mean3 = new Mean("mean3", realm);
         meansDao.saveOrUpdate(mean3);
@@ -136,7 +140,7 @@ public class MeansRESTController_Update_Tests extends ATestsWithTargetsMeansQuar
                 "}";
 
         String content = "["+mean1content+", "+mean3content+", "+mean2content+"]";
-        MvcResult result = mockMvc.perform(post("/mean/update/list")
+        MvcResult result = mockMvc.perform(post("/mean/reposition/list")
                 .contentType(MediaType.APPLICATION_JSON).content(content))
                 .andExpect(status().isOk()).andReturn();
 

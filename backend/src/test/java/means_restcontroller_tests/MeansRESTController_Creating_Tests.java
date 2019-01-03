@@ -1,8 +1,9 @@
 package means_restcontroller_tests;
 
 import controllers.MeansRESTController;
+import controllers.delegates.MeansDelegate;
 import controllers.delegates.TaskMappersController;
-import model.dto.mean.MeansDtoMapper;
+import model.dto.mean.MeansDtoLazyMapper;
 import model.entities.Mean;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,10 +25,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class MeansRESTController_Creating_Tests extends ATestsWithTargetsMeansQuartalsGenerated {
 
     @Autowired
-    MeansDtoMapper meansDtoMapper;
+    MeansDtoLazyMapper meansDtoLazyMapper;
 
     @Autowired
     TaskMappersController taskMappersController;
+
+    @Autowired
+    MeansDelegate meansDelegate;
+
 
     private MockMvc mockMvc;
     private MeansRESTController meansRESTController;
@@ -35,7 +40,7 @@ public class MeansRESTController_Creating_Tests extends ATestsWithTargetsMeansQu
     @Before
     public void init(){
         super.init();
-        meansRESTController = new MeansRESTController(meansDao, meansDtoMapper, realmDAO, taskMappersController);
+        meansRESTController = new MeansRESTController(meansDelegate);
         mockMvc = MockMvcBuilders.standaloneSetup(meansRESTController).build();
     }
 

@@ -93,8 +93,6 @@ public class MeansDao implements IMeansDAO {
         Query query = sessionFactory.getCurrentSession().createQuery(hql);
         query.setParameter("next", mean);
         return (Mean) query.uniqueResult();
-//        return (Mean) sessionFactory.getCurrentSession()
-//                .createCriteria(Mean.class).add(Restrictions.eq("next", mean)).uniqueResult();
     }
 
     @Override

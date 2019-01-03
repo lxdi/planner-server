@@ -48,6 +48,7 @@ export class MeanModal extends React.Component {
       this.setState({})
     }.bind(this))
     registerReaction('mean-modal', 'layers-dao', ['layers-received', 'add-layer'], ()=>this.setState({}))
+    registerReaction('mean-modal', 'means-dao', 'got-full', ()=>this.setState({}))
     registerReaction('mean-modal', 'subject-modal', 'close', ()=>this.setState({}))
     registerReaction('mean-modal', 'task-modal', 'close', ()=>this.setState({}))
     registerReaction('mean-modal', 'tasks-dao', 'move-task', ()=>this.setState({}))
@@ -140,21 +141,29 @@ const relatedTargetsUI = function(targets){
 }
 
 const layersBlock = function(mean, isEdit){
-  var createLayerButton = null
-  if(isEdit){
-    createLayerButton = <Button bsStyle="primary" bsSize="xsmall"  onClick={()=>fireEvent('layers-dao', 'add-layer', [mean])}>
-                                Create layer
-                            </Button>
-  }
-  return <ListGroup>
-            <div>
-              <h4>Layers</h4>
-              {createLayerButton}
-            </div>
-            <ListGroup>
-              {layersUI(mean, isEdit)}
+  if(mean.id==0 || mean.id==null || (mean.isFull!=null && mean.isFull==true)){
+    if(mean.id==0 || mean.id==null){
+      mean.layers = []
+    }
+    var createLayerButton = null
+    if(isEdit){
+      createLayerButton = <Button bsStyle="primary" bsSize="xsmall"  onClick={()=>fireEvent('layers-dao', 'add-layer', [mean])}>
+                                  Create layer
+                              </Button>
+    }
+    return <ListGroup>
+              <div>
+                <h4>Layers</h4>
+                {createLayerButton}
+              </div>
+              <ListGroup>
+                {layersUI(mean, isEdit)}
+              </ListGroup>
             </ListGroup>
-          </ListGroup>
+  } else {
+    fireEvent('means-dao', 'get-full', [mean])
+    return 'Loading...'
+  }
 }
 
 const layersUI = function(mean, isEdit){

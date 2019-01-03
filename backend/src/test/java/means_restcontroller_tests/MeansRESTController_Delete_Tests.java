@@ -1,17 +1,16 @@
 package means_restcontroller_tests;
 
 import controllers.MeansRESTController;
+import controllers.delegates.MeansDelegate;
 import controllers.delegates.TaskMappersController;
-import model.dto.mean.MeansDtoMapper;
+import model.dto.mean.MeansDtoLazyMapper;
 import model.entities.Mean;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.util.NestedServletException;
 import orm_tests.conf.ATestsWithTargetsMeansQuartalsGenerated;
 
 import static org.junit.Assert.assertTrue;
@@ -24,10 +23,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class MeansRESTController_Delete_Tests extends ATestsWithTargetsMeansQuartalsGenerated {
 
     @Autowired
-    MeansDtoMapper meansDtoMapper;
+    MeansDtoLazyMapper meansDtoLazyMapper;
 
     @Autowired
     TaskMappersController taskMappersController;
+
+    @Autowired
+    MeansDelegate meansDelegate;
 
     private MockMvc mockMvc;
     private MeansRESTController meansRESTController;
@@ -35,7 +37,7 @@ public class MeansRESTController_Delete_Tests extends ATestsWithTargetsMeansQuar
     @Before
     public void init(){
         super.init();
-        meansRESTController = new MeansRESTController(meansDao, meansDtoMapper, realmDAO, taskMappersController);
+        meansRESTController = new MeansRESTController(meansDelegate);
         mockMvc = MockMvcBuilders.standaloneSetup(meansRESTController).build();
     }
 

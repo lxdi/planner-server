@@ -3,12 +3,14 @@ package orm_tests.conf;
 import configuration.HibernateConfigMain;
 import controllers.delegates.DefaultSettingsPropagator;
 import controllers.delegates.HquartersDelegate;
+import controllers.delegates.MeansDelegate;
 import controllers.delegates.TaskMappersController;
 import model.dao.*;
 import model.dto.hquarter.HquarterDtoLazyMapper;
 import model.dto.hquarter.HquarterDtoFullMapper;
 import model.dto.layer.LayersDtoMapper;
-import model.dto.mean.MeansDtoMapper;
+import model.dto.mean.MeansDtoFullMapper;
+import model.dto.mean.MeansDtoLazyMapper;
 import model.dto.slot.SlotDtoLazyMapper;
 import model.dto.slot.SlotDtoMapper;
 import model.dto.slot.SlotPositionMapper;
@@ -37,7 +39,7 @@ import static org.junit.Assert.assertTrue;
 @ContextConfiguration(loader=AnnotationConfigContextLoader.class,
         classes = {HibernateConfigMain.class, EmbeddedDBConf.class,
                 RealmDao.class, TargetsDao.class, TargetsDtoMapper.class,
-                MeansDao.class, MeansDtoMapper.class,
+                MeansDao.class, MeansDtoLazyMapper.class, MeansDtoFullMapper.class, MeansDelegate.class,
                 WeekDao.class, WeeksGenerator.class,
                 TasksDao.class, TasksDtoMapper.class,
                 HQuarterDao.class, HquarterDtoLazyMapper.class,  QuarterGenerator.class, HquarterDtoFullMapper.class,
