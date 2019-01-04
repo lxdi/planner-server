@@ -6,7 +6,7 @@ import {CurrentDate} from './../../state'
 import {HquarterModal} from './hquarter-modal'
 import {registerEvent, registerReaction, fireEvent, viewStateVal} from '../../controllers/eventor'
 
-import {BidirectList} from '../bidirect-list'
+import {BidirectList} from '../components/bidirect-list'
 
 export class ScheduleFrame extends React.Component{
   constructor(props){

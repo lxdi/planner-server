@@ -5,7 +5,7 @@ import {CreateMean} from './../../data/creators'
 import {Button, ButtonGroup, ButtonToolbar,  DropdownButton, MenuItem, ListGroup, ListGroupItem} from 'react-bootstrap'
 import {MeanModal} from './mean-modal'
 import {registerEvent, registerReaction, fireEvent, viewStateVal} from '../../controllers/eventor'
-import {TreeComponent} from './../tree-component'
+import {TreeComponent} from './../components/tree-component'
 
 export class MeansFrame extends React.Component{
   constructor(props){

@@ -2,12 +2,13 @@ package model.dto.mean;
 
 import model.dto.layer.LayerDtoLazy;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MeanDtoFull extends MeanDtoLazy {
 
     String criteria;
-    List<LayerDtoLazy> layers;
+    List<LayerDtoLazy> layers = new ArrayList<>();
 
     public List<LayerDtoLazy> getLayers() {
         return layers;

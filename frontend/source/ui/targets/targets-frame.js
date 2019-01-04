@@ -6,8 +6,7 @@ import {CreateTarget, CreateRealm} from './../../data/creators'
 import {TargetModal} from './target-modal'
 import {RealmModal} from './realm-modal'
 import {registerEvent, registerReaction, fireEvent, viewStateVal} from '../../controllers/eventor'
-import {TreeComponent} from './../tree-component'
-import {BidirectList} from './../bidirect-list'
+import {TreeComponent} from './../components/tree-component'
 
 export class TargetsFrame extends React.Component{
   constructor(props){
@@ -23,43 +22,6 @@ export class TargetsFrame extends React.Component{
   }
 
   render(){
-
-    // const nodes = {
-    //   1:{id:1},
-    //   2:{id:2},
-    //   3:{id:3},
-    //   4:{id:4},
-    //   5:{id:5},
-    //   6:{id:6},
-    //   7:{id:7}
-    // }
-
-    // const getPrev = function(node){
-    //   const previd = node.id-1
-    //   return previd>0?{id:previd}:null
-    // }
-    //
-    // const getNext = function(node){
-    //   const nextid = node.id+1
-    //   return nextid<1000?{id:nextid}:null
-    // }
-    //
-    // const compareNodes = function(node1, node2){
-    //   return node1.id == node2.id
-    // }
-    //
-    // const nodeView = function(node){
-    //   return <div key={node.id} style={{width:'100%', height:'30px', border:'1px solid red', marginBottom:'3px'}}>
-    //             Node with id {node.id}
-    //           </div>
-    // }
-
-    // <div style={{border:'1px solid black', height:'300px'}}>
-    //   <BidirectList firstNode={{id:500}} lastNode = {{id:505}}
-    //                 getPrev={getPrev} getNext={getNext} compareNodes={compareNodes}
-    //                 nodeView={nodeView} />
-    // </div>
-
     return(
       <div>
         <TargetModal/>

@@ -21,9 +21,9 @@ registerReactionCombo('means-dao', {'realms-dao':'realms-received', 'targets-dao
 
 registerEvent('means-dao', 'get-full', (stateSetter, mean)=>{
   sendGet('/mean/full/'+mean.id, (data)=>{
-    Object.assign(viewStateVal('means-dao', 'means')[mean.realmid], data)
+    Object.assign(viewStateVal('means-dao', 'means')[mean.realmid][mean.id], data)
     mean.isFull = true
-    normalizeInnerArrays
+    normalizeInnerArrays(mean, [{arrName:'layers', posName:'priority'}, {arrName:'subjects', posName:'position'}, {arrName:'tasks', posName:'position'}])
     fireEvent('means-dao', 'got-full', [mean])
   })
 })
@@ -33,9 +33,9 @@ registerEvent('means-dao', 'got-full', (stateSetter, mean)=>mean)
 registerEvent('means-dao', 'create', function(stateSetter, mean, parent){
   mean.parentid = parent!=null? parent.id: null
   sendPut('/mean/create', JSON.stringify(mean), function(data) {
-    // if(data.previd!=null){
-    //   viewStateVal('means-dao', 'means')[data.realmid][data.previd].nextid = data.id
-    // }
+    if(data.previd!=null){
+      viewStateVal('means-dao', 'means')[data.realmid][data.previd].nextid = data.id
+    }
     importOneMeanDto(data)
     resolveMean(data)
     fireEvent('means-dao', 'mean-created', [data])
@@ -90,7 +90,7 @@ registerEvent('means-dao', 'modify', function(stateSetter, mean){
 registerEvent('means-dao', 'mean-modified', (stateSetter, mean)=>mean)
 
 registerEvent('means-dao', 'modify-list', function(stateSetter, means){
-  sendPost('/mean/update/list', JSON.stringify(means), function(data) {
+  sendPost('/mean/reposition/list', JSON.stringify(means), function(data) {
     for(var i in data){
       importOneMeanDto(data[i])
       resolveMean(viewStateVal('means-dao', 'means')[data[i].realmid][data[i].id])

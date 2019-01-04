@@ -30,7 +30,10 @@ export class HquarterModal extends React.Component {
       const mode = hquarter.startWeek==null?{isStatic:true, isEdit:true}:this.state.mode
       this.setState({isOpen:true, hquarter:hquarter, mode: mode})
     })
-    registerEvent('hquarter-modal', 'close', (stateSetter)=>this.setState(defaultState()))
+    registerEvent('hquarter-modal', 'close', (stateSetter)=>{
+      this.state.hquarter.isFull = false
+      this.setState(defaultState())
+    })
     registerReaction('hquarter-modal', 'hquarters-dao', ['add-slot', 'assign-slot', 'got-full', 'default-received'], (stateSetter)=>this.setState({}))
   }
 

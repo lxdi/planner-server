@@ -1,9 +1,11 @@
 package model.dto.mean;
 
 
+import model.dao.IMeansDAO;
 import model.dto.IMapper;
 import model.entities.Mean;
 import model.entities.Target;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -12,6 +14,9 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class MeansDtoLazyMapper implements IMapper<MeanDtoLazy, Mean> {
+
+    @Autowired
+    IMeansDAO meansDAO;
 
     public MeanDtoLazy mapToDto(Mean mean){
         MeanDtoLazy meanDtoLazy = new MeanDtoLazy();
@@ -29,6 +34,10 @@ public class MeansDtoLazyMapper implements IMapper<MeanDtoLazy, Mean> {
         meanDtoLazy.setRealmid(mean.getRealm().getId());
         if(mean.getNext()!=null){
             meanDtoLazy.setNextid(mean.getNext().getId());
+        }
+        Mean prevMean = meansDAO.getPrevMean(mean);
+        if(prevMean!=null){
+            meanDtoLazy.setPrevid(prevMean.getId());
         }
     }
 

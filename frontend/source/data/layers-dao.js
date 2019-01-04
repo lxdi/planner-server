@@ -25,6 +25,9 @@ registerEvent('layers-dao', 'layers-request', (stateSetter, mean)=>{
 registerEvent('layers-dao', 'layers-received', (stateSetter, mean, layers)=>[mean, layers])
 
 registerEvent('layers-dao', 'add-layer', (stateSetter, mean)=>{
+  if(mean.layers==null){
+    mean.layers = []
+  }
   const layer = {
     priority: getMaxLayerPriorityOfLayers(mean.layers)+1
   }

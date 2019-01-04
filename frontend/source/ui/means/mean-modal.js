@@ -40,6 +40,7 @@ export class MeanModal extends React.Component {
     }.bind(this))
 
     registerEvent('mean-modal', 'close', function(){
+      this.state.currentMean.isFull = false
       this.setState(defaultState())
     }.bind(this))
 
@@ -60,6 +61,7 @@ export class MeanModal extends React.Component {
     if(this.state.currentMean.id==0){
       fireEvent('means-dao', 'create', [this.state.currentMean, this.state.parent])
     } else {
+      this.state.currentMean.isFull=false
       fireEvent('means-dao', 'modify', [this.state.currentMean])
     }
   }
@@ -142,9 +144,6 @@ const relatedTargetsUI = function(targets){
 
 const layersBlock = function(mean, isEdit){
   if(mean.id==0 || mean.id==null || (mean.isFull!=null && mean.isFull==true)){
-    if(mean.id==0 || mean.id==null){
-      mean.layers = []
-    }
     var createLayerButton = null
     if(isEdit){
       createLayerButton = <Button bsStyle="primary" bsSize="xsmall"  onClick={()=>fireEvent('layers-dao', 'add-layer', [mean])}>
