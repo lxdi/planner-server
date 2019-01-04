@@ -90,7 +90,7 @@ const childrenNodeUI = function(component, node, level){
   const children = component.state.cache.children[node.id]
   const childrenUI = []
   if(children!=null){
-    iterateLLfull(children, (childNode)=>childrenUI.push(nodeUI(component, childNode, level)))
+    iterateLLfull(children, (childNode)=>{childrenUI.push(nodeUI(component, childNode, level))})
   } else {
     if(component.props.isEdit==true){
       childrenUI.push(addChildDiv(component, node))
