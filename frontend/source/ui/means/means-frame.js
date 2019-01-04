@@ -71,6 +71,15 @@ const meanUI = function(component, mean){
                     <a href="#" style = {{marginLeft:'3px'}} onClick={()=>fireEvent('mean-modal', 'open', [CreateMean(0, '', viewStateVal('realms-dao', 'currentRealm').id, []), mean])}>
                       {addNewMeanTitle}
                     </a>
-                    <span style={{color: 'green', fontSize:'8pt'}}> {mean.targetsString()}</span>
+                    <span style={{color: 'green', fontSize:'8pt'}}> {targetsTagsString(mean)}</span>
                 </div>
+}
+
+const targetsTagsString = function(mean){
+  var targetsString = '';
+  var divisor = ' #';
+  for(var indx in mean.targetsIds){
+    targetsString = targetsString +divisor+viewStateVal('targets-dao', 'targets')[mean.realmid][mean.targetsIds[indx]];
+  }
+  return targetsString
 }

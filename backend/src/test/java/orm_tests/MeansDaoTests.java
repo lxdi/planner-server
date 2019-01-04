@@ -3,6 +3,7 @@ package orm_tests;
 import model.dao.ISlotDAO;
 import model.entities.Mean;
 import model.entities.Slot;
+import model.entities.Target;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import orm_tests.conf.AbstractTestsWithTargetsWithMeans;
@@ -115,4 +116,30 @@ public class MeansDaoTests extends AbstractTestsWithTargetsWithMeans {
         assertTrue(meansDao.assignsMeansCount(mean2)==0);
 
     }
+
+    @Test
+    public void updateMeanWithRemovingTargetAssignsTest(){
+        Target target1 = new Target("target test 1", realm);
+        targetsDAO.saveOrUpdate(target1);
+
+        Target target2 = new Target("target test 2", realm);
+        targetsDAO.saveOrUpdate(target2);
+
+        Mean mean = new Mean("Mean test 1", realm);
+        mean.getTargets().add(target1);
+        mean.getTargets().add(target2);
+        meansDao.saveOrUpdate(mean);
+
+        mean = meansDao.meanById(mean.getId());
+        assertTrue(mean.getTargets().size()==2);
+
+        mean.getTargets().remove(0);
+        mean.getTargets().remove(0);
+        meansDao.saveOrUpdate(mean);
+
+        mean = meansDao.meanById(mean.getId());
+        assertTrue(mean.getTargets().size()==0);
+
+    }
+
 }

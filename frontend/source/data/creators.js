@@ -1,13 +1,5 @@
 
 export const Protomean = {
-  targetsString: function(){
-    var targetsString = '';
-    var divisor = ' #';
-    for(var i in this.targets){
-      targetsString = targetsString +divisor+ this.targets[i].title;
-    }
-    return targetsString
-  },
   toString: function(){
     return this.title + ' ' + this.targetsString();
   }

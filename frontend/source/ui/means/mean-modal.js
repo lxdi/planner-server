@@ -34,6 +34,7 @@ export class MeanModal extends React.Component {
     this.okHandler = this.okHandler.bind(this);
     this.handleNameVal = this.handleNameVal.bind(this);
     this.selectTargetHandler = this.selectTargetHandler.bind(this);
+    this.removeTarget = this.removeTarget.bind(this)
 
     registerEvent('mean-modal', 'open', function(stateSetter, currentMean, parent){
       this.setState(createState(true, currentMean.id==0, currentMean.id==0, currentMean, parent))
@@ -44,6 +45,8 @@ export class MeanModal extends React.Component {
       this.state.currentMean.isFull = false
       this.setState(defaultState())
     }.bind(this))
+
+    registerEvent('mean-modal', 'remove-target')
 
     registerReaction('means-modal', 'means-dao', ['mean-deleted', 'mean-modified', 'mean-created'], function(){
       fireEvent('mean-modal', 'close')
@@ -77,10 +80,14 @@ export class MeanModal extends React.Component {
       this.state.currentMean.targetsIds=[]
     }
     if(this.state.currentMean.targetsIds.indexOf(target.id)<0){
-      this.state.currentMean.targets.push(target)
       this.state.currentMean.targetsIds.push(target.id)
     }
     this.setState({});
+  }
+
+  removeTarget(target){
+    this.state.currentMean.targetsIds.splice(this.state.currentMean.targetsIds.indexOf(target.id), 1)
+    this.setState({})
   }
 
   render(){
@@ -106,7 +113,7 @@ export class MeanModal extends React.Component {
                 </form>
                 {targetsChooser(this)}
                 <div>
-                  {relatedTargetsUI(this.state.currentMean.targets)}
+                  {relatedTargetsUI(this, this.state.currentMean.targetsIds)}
                 </div>
                 {layersBlock(this.state.currentMean, this.state.mode.isEdit)}
                 <SubjectModal/>
@@ -138,9 +145,13 @@ const availableTargetsUI = function(){
   return result
 }
 
-const relatedTargetsUI = function(targets){
+const relatedTargetsUI = function(component, targetsids){
+  const targets = []
+  for(var tid in targetsids){
+    targets.push(viewStateVal('targets-dao', 'targets')[component.state.currentMean.realmid][targetsids[tid]])
+  }
   return targets.map((target) =>
-    <li>{target.toString()}</li>
+    <li key={'target_'+target.id} >{target.toString()} {component.state.mode.isEdit?<a href='#' onClick={()=>component.removeTarget(target)}>X</a>:null}</li>
   );
 }
 

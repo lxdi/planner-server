@@ -75,10 +75,10 @@ registerEvent('means-dao', 'delete-depended-means', function(stateSetter, target
 })
 
 registerEvent('means-dao', 'modify', function(stateSetter, mean){
-  mean.targetsIds = []
-  for(var i in mean.targets){
-    mean.targetsIds.push(mean.targets[i].id)
-  }
+  // mean.targetsIds = []
+  // for(var i in mean.targets){
+  //   mean.targetsIds.push(mean.targets[i].id)
+  // }
   sendPost('/mean/update', JSON.stringify(mean), function(data) {
     importOneMeanDto(data)
     resolveMean(viewStateVal('means-dao', 'means')[data.realmid][data.id])
@@ -124,14 +124,7 @@ const importOneMeanDto = function(meanDto){
 }
 
 const resolveMean = function(mean){
-  mean.targets = []
   mean.__proto__ = Protomean
-  for(var tid in mean.targetsIds){
-      var target = viewStateVal('targets-dao', 'targets')[mean.realmid][mean.targetsIds[tid]]
-      if(target!=null){
-        mean.targets.push(target)
-      }
-  }
 }
 
 //delete Mean only form UI
