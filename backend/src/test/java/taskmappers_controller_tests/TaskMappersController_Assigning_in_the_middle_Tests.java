@@ -196,6 +196,17 @@ public class TaskMappersController_Assigning_in_the_middle_Tests extends ATestsW
 
     }
 
+    @Test
+    public void deletingTaskAfterAssigning(){
+        hquartersDelegate.assign(mean.getId(), slot1.getId());
+        hquartersDelegate.assign(mean.getId(), slot3.getId());
+        hquartersDelegate.assign(mean.getId(), slot2.getId());
+
+        tasksDAO.delete(tasksDAO.byTitle("task 1").getId());
+
+        assertTrue(tasksDAO.byTitle("task 1")==null);
+    }
+
     private void checkTaskMapper(TaskMapper taskMapper, Week week, SlotPosition slotPosition){
         assertTrue(taskMapper.getSlotPosition().getId()==slotPosition.getId());
         assertTrue(taskMapper.getWeek().getId()==week.getId());

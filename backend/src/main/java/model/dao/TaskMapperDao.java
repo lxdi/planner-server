@@ -22,6 +22,11 @@ public class TaskMapperDao implements ITaskMappersDAO{
     }
 
     @Override
+    public void delete(TaskMapper taskMapper) {
+        this.sessionFactory.getCurrentSession().delete(taskMapper);
+    }
+
+    @Override
     public TaskMapper taskMapperForTask(Task task) {
         return (TaskMapper) sessionFactory.getCurrentSession().createQuery("from TaskMapper tm where tm.task = :task")
                 .setParameter("task", task).uniqueResult();

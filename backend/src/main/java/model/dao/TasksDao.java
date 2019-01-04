@@ -3,6 +3,7 @@ package model.dao;
 import model.entities.Layer;
 import model.entities.Subject;
 import model.entities.Task;
+import model.entities.TaskMapper;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,9 @@ public class TasksDao implements ITasksDAO {
     @Autowired
     SessionFactory sessionFactory;
 
+    @Autowired
+    ITaskMappersDAO taskMappersDAO;
+
     @Override
     public Task getById(long id) {
         return sessionFactory.getCurrentSession().get(Task.class, id);
@@ -31,7 +35,6 @@ public class TasksDao implements ITasksDAO {
     public Task byTitle(String title) {
         return (Task) sessionFactory.getCurrentSession().createQuery("from Task t where t.title = :title")
                 .setParameter("title", title).uniqueResult();
-        //return (Task) sessionFactory.getCurrentSession().createCriteria(Task.class).add(Restrictions.eq("title", title)).uniqueResult();
     }
 
     @Override
@@ -41,22 +44,24 @@ public class TasksDao implements ITasksDAO {
 
     @Override
     public void delete(long id) {
-        sessionFactory.getCurrentSession().delete(this.getById(id));
+        Task task = this.getById(id);
+        TaskMapper taskMapper = taskMappersDAO.taskMapperForTask(task);
+        if(taskMapper!=null){
+            taskMappersDAO.delete(taskMapper);
+        }
+        sessionFactory.getCurrentSession().delete(task);
+        //sessionFactory.getCurrentSession().delete(this.getById(id));
     }
 
     @Override
     public List<Task> allTasks() {
         return sessionFactory.getCurrentSession().createQuery("from Task").list();
-        //return sessionFactory.getCurrentSession().createCriteria(Task.class).list();
     }
 
     @Override
     public List<Task> tasksBySubject(Subject subject) {
         return sessionFactory.getCurrentSession().createQuery("from Task t where t.subject = :subject")
                 .setParameter("subject", subject).list();
-//        return sessionFactory.getCurrentSession().createCriteria(Task.class)
-//                .add(Restrictions.eq("subject", subject))
-//                .list();
     }
 
     @Override

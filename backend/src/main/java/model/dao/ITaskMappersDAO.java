@@ -8,6 +8,7 @@ import model.entities.Week;
 public interface ITaskMappersDAO {
 
     void saveOrUpdate(TaskMapper taskMapper);
+    void delete(TaskMapper taskMapper);
     TaskMapper taskMapperForTask(Task task);
     TaskMapper taskMapperByWeekAndSlotPosition(Week week, SlotPosition slotPosition);
 
