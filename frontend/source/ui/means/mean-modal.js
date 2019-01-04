@@ -10,6 +10,7 @@ import {SubjectModal} from './subject-modal'
 import {TaskModal} from './task-modal'
 import {isValidMean} from '../../utils/mean-validator'
 import {iterateLLfull} from '../../utils/linked-list'
+import {iterateTree} from '../../utils/tree-utils'
 
 const dumbMean = CreateMean(0, '', null, [])
 
@@ -130,8 +131,9 @@ const targetsChooser = function(component){
 
 const availableTargetsUI = function(){
   const result = []
-  iterateLLfull(viewStateVal('targets-dao', 'targets')[viewStateVal('realms-dao', 'currentRealm').id], (target)=>{
-    result.push(<MenuItem eventKey={target}>{target.toString()}</MenuItem>)
+  iterateTree(viewStateVal('targets-dao', 'targets')[viewStateVal('realms-dao', 'currentRealm').id], (target, level)=>{
+    const style = {marginLeft: (level*10)+'px'}
+    result.push(<MenuItem style={style} eventKey={target}>{target.toString()}</MenuItem>)
   })
   return result
 }
