@@ -50,6 +50,10 @@ public class MeansDtoFullMapper implements IMapper<MeanDtoFull, Mean> {
                 meanDtoLazy.getLayers().add(layersDtoMapper.mapToDto(layer));
             }
         }
+        Mean prevMean = meansDAO.getPrevMean(mean);
+        if(prevMean!=null){
+            meanDtoLazy.setPrevid(prevMean.getId());
+        }
         return meanDtoLazy;
     }
 

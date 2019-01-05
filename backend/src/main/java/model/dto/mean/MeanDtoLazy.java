@@ -13,12 +13,10 @@ public class MeanDtoLazy{
     long id;
     String title;
     Long nextid;
-    Long previd;
 
     Long parentid;
     List<Long> targetsIds = new ArrayList<>();
     Long realmid;
-
 
 
     public Long getParentid() {
@@ -61,13 +59,5 @@ public class MeanDtoLazy{
     }
     public void setNextid(Long nextid) {
         this.nextid = nextid;
-    }
-
-    public Long getPrevid() {
-        return previd;
-    }
-
-    public void setPrevid(Long previd) {
-        this.previd = previd;
     }
 }

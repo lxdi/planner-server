@@ -61,18 +61,18 @@ public class MeansDelegate {
 
     public MeansDelegate(){}
 
-    public List<MeanDtoLazy> getAllTargets(){
+    public List<MeanDtoLazy> getAllMeans(){
         List<MeanDtoLazy> result = new ArrayList<>();
         meansDAO.getAllMeans().forEach(m -> result.add(meansDtoLazyMapper.mapToDto(m)));
         return result;
     }
 
-    public MeanDtoLazy create(MeanDtoFull meanDtoLazy){
-        if(!(meanDtoLazy.getId()==0 && meanDtoLazy.getNextid()==null && meanDtoLazy.getRealmid()>0)){
+    public MeanDtoFull create(MeanDtoFull meanDtoFull){
+        if(!(meanDtoFull.getId()==0 && meanDtoFull.getNextid()==null && meanDtoFull.getRealmid()>0)){
             throw new RuntimeException("Not valid Mean to create");
         }
-        Realm realm = realmDAO.realmById(meanDtoLazy.getRealmid());
-        Mean mean = meansDtoFullMapper.mapToEntity(meanDtoLazy);
+        Realm realm = realmDAO.realmById(meanDtoFull.getRealmid());
+        Mean mean = meansDtoFullMapper.mapToEntity(meanDtoFull);
         Mean prevMean = meansDAO.getLastOfChildren(mean.getParent(), realm);
         meansDAO.validateMean(mean);
         //TODO do not save the mean if layers are not valid
@@ -83,8 +83,8 @@ public class MeansDelegate {
             meansDAO.saveOrUpdate(prevMean);
         }
 
-        saveLayers(meanDtoLazy.getLayers(), mean.getId());
-        return meansDtoLazyMapper.mapToDto(mean);
+        saveLayers(meanDtoFull.getLayers(), mean.getId());
+        return meansDtoFullMapper.mapToDto(mean);
     }
 
     public void delete(long id){

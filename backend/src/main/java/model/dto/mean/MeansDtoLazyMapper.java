@@ -35,10 +35,6 @@ public class MeansDtoLazyMapper implements IMapper<MeanDtoLazy, Mean> {
         if(mean.getNext()!=null){
             meanDtoLazy.setNextid(mean.getNext().getId());
         }
-        Mean prevMean = meansDAO.getPrevMean(mean);
-        if(prevMean!=null){
-            meanDtoLazy.setPrevid(prevMean.getId());
-        }
     }
 
     public Mean mapToEntity(MeanDtoLazy meanDto){

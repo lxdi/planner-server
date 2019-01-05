@@ -1,24 +1,9 @@
 package controllers;
 
 import controllers.delegates.MeansDelegate;
-import controllers.delegates.TaskMappersController;
-import model.dao.*;
-import model.dto.layer.LayerDtoLazy;
-import model.dto.layer.LayersDtoMapper;
 import model.dto.mean.MeanDtoFull;
 import model.dto.mean.MeanDtoLazy;
-import model.dto.mean.MeansDtoFullMapper;
-import model.dto.mean.MeansDtoLazyMapper;
-import model.dto.subject.SubjectDtoLazy;
-import model.dto.subject.SubjectDtoMapper;
-import model.dto.task.TaskDtoLazy;
-import model.dto.task.TasksDtoMapper;
-import model.entities.Layer;
-import model.entities.Mean;
-import model.entities.Realm;
-import model.entities.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -27,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -47,8 +31,8 @@ public class MeansRESTController {
     }
 
     @RequestMapping(path = "/mean/all/lazy")
-    public ResponseEntity<List<MeanDtoLazy>> getAllTargets(){;
-        return new ResponseEntity<>(meansDelegate.getAllTargets(), HttpStatus.OK);
+    public ResponseEntity<List<MeanDtoLazy>> getAllMeans(){;
+        return new ResponseEntity<>(meansDelegate.getAllMeans(), HttpStatus.OK);
     }
 
     @RequestMapping(path = "/mean/full/{meanid}")
@@ -57,8 +41,8 @@ public class MeansRESTController {
     }
 
     @RequestMapping(path = "/mean/create" , method = RequestMethod.PUT)
-    public ResponseEntity<MeanDtoLazy> create(@RequestBody MeanDtoFull meanDtoFull){
-        return new ResponseEntity<MeanDtoLazy>(meansDelegate.create(meanDtoFull), HttpStatus.OK);
+    public ResponseEntity<MeanDtoFull> create(@RequestBody MeanDtoFull meanDtoFull){
+        return new ResponseEntity<MeanDtoFull>(meansDelegate.create(meanDtoFull), HttpStatus.OK);
     }
 
     @RequestMapping(path = "/mean/delete/{meanId}" , method = RequestMethod.DELETE)
