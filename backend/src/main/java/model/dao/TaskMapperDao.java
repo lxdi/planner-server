@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @Transactional
 public class TaskMapperDao implements ITaskMappersDAO{
@@ -40,5 +42,15 @@ public class TaskMapperDao implements ITaskMappersDAO{
                 .setParameter("sp", slotPosition)
                 .uniqueResult();
     }
+
+    @Override
+    public List<TaskMapper> taskMappersByWeeksAndSlotPositions(List<Week> weeks, List<SlotPosition> slotPositions) {
+        return sessionFactory.getCurrentSession()
+                .createQuery("from TaskMapper where week in :weeks and slotPosition in :sps")
+                .setParameter("weeks", weeks)
+                .setParameter("sps", slotPositions)
+                .list();
+    }
+
 
 }
