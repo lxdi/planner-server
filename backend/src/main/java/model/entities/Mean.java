@@ -43,6 +43,8 @@ public class Mean {
     @OneToMany(mappedBy = "mean", cascade = CascadeType.REMOVE)
     private List<Layer> layers = new ArrayList();
 
+    boolean hideChildren = false;
+
     public Mean(){}
 
     public Mean(String title, Realm realm){
@@ -103,8 +105,15 @@ public class Mean {
     public Mean getNext() {
         return next;
     }
-
     public void setNext(Mean next) {
         this.next = next;
+    }
+
+    public boolean isHideChildren() {
+        return hideChildren;
+    }
+
+    public void setHideChildren(boolean hideChildren) {
+        this.hideChildren = hideChildren;
     }
 }

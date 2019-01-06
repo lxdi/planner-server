@@ -61,5 +61,10 @@ public class MeansRESTController {
         return new ResponseEntity<>(meansDelegate.reposition(meanDtoLazyList), HttpStatus.OK);
     }
 
+    @RequestMapping(path = "/mean/{meanid}/hideChildren/{val}" , method = RequestMethod.POST)
+    public ResponseEntity<MeanDtoLazy> hideChildren(@PathVariable("meanid") long id, @PathVariable("val") boolean val){
+        return new ResponseEntity<>(meansDelegate.hideChildren(id, val), HttpStatus.OK);
+    }
+
 
 }

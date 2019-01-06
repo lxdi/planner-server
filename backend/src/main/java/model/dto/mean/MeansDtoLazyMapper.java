@@ -35,6 +35,7 @@ public class MeansDtoLazyMapper implements IMapper<MeanDtoLazy, Mean> {
         if(mean.getNext()!=null){
             meanDtoLazy.setNextid(mean.getNext().getId());
         }
+        meanDtoLazy.setHideChildren(mean.isHideChildren());
     }
 
     public Mean mapToEntity(MeanDtoLazy meanDto){

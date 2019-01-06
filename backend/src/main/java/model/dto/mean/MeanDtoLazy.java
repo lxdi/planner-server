@@ -17,6 +17,7 @@ public class MeanDtoLazy{
     Long parentid;
     List<Long> targetsIds = new ArrayList<>();
     Long realmid;
+    boolean hideChildren = false;
 
 
     public Long getParentid() {
@@ -59,5 +60,12 @@ public class MeanDtoLazy{
     }
     public void setNextid(Long nextid) {
         this.nextid = nextid;
+    }
+
+    public boolean isHideChildren() {
+        return hideChildren;
+    }
+    public void setHideChildren(boolean hideChildren) {
+        this.hideChildren = hideChildren;
     }
 }

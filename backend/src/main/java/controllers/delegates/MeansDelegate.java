@@ -110,6 +110,13 @@ public class MeansDelegate {
         return meansDtoFullMapper.mapToDto(mean);
     }
 
+    public MeanDtoLazy hideChildren(long id, boolean val){
+        Mean mean = meansDAO.meanById(id);
+        mean.setHideChildren(val);
+        meansDAO.saveOrUpdate(mean);
+        return meansDtoLazyMapper.mapToDto(mean);
+    }
+
 
     private Mean updateMean(MeanDtoFull meanDtoFull){
         if(!(meanDtoFull.getId()>0)){

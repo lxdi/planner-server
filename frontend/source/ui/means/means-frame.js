@@ -18,7 +18,7 @@ export class MeansFrame extends React.Component{
 
     registerReaction('means-frame', 'realms-dao', 'change-current-realm', ()=>this.setState({}))
     registerReaction('means-frame', 'means-dao',
-            ['means-received', 'replace-mean', 'mean-created', 'mean-deleted', 'mean-modified', 'means-list-modified', 'draggable-add-as-child'], ()=>this.setState({}))
+            ['means-received', 'replace-mean', 'mean-created', 'mean-deleted', 'mean-modified', 'means-list-modified', 'draggable-add-as-child', 'hide-children-changed'], ()=>this.setState({}))
   }
 
   render(){
@@ -78,11 +78,8 @@ const meanUI = function(component, mean){
 
 const hideShowChildrenControlUI = function(component, mean){
   return <a href="#" style = {{marginRight:'3px'}} onClick={()=>{
-      if(mean.hideChildren==null){
-        mean.hideChildren=false
-      }
       mean.hideChildren = !mean.hideChildren
-      component.setState({})
+      fireEvent('means-dao', 'hide-children', [mean])
     }}>
     {mean.hideChildren==null || (mean.hideChildren!=null && mean.hideChildren==false)?'-':'+'}
   </a>

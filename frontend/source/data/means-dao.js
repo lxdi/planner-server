@@ -75,10 +75,6 @@ registerEvent('means-dao', 'delete-depended-means', function(stateSetter, target
 })
 
 registerEvent('means-dao', 'modify', function(stateSetter, mean){
-  // mean.targetsIds = []
-  // for(var i in mean.targets){
-  //   mean.targetsIds.push(mean.targets[i].id)
-  // }
   sendPost('/mean/update', JSON.stringify(mean), function(data) {
     importOneMeanDto(data)
     resolveMean(viewStateVal('means-dao', 'means')[data.realmid][data.id])
@@ -100,6 +96,15 @@ registerEvent('means-dao', 'modify-list', function(stateSetter, means){
 })
 
 registerEvent('means-dao', 'means-list-modified', (stateSetter, means)=>means)
+
+registerEvent('means-dao', 'hide-children', (stateSetter, mean)=>{
+  sendPost('/mean/'+mean.id+'/hideChildren/'+mean.hideChildren, null, (data)=>{
+    Object.assign(mean, data)
+    fireEvent('means-dao', 'hide-children-changed', [mean])
+  })
+})
+
+registerEvent('means-dao', 'hide-children-changed', (stateSetter, mean)=>mean)
 
 registerEvent('means-dao', 'add-draggable', (stateSetter, mean)=>{stateSetter('draggableMean', mean)})
 

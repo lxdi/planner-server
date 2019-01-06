@@ -82,6 +82,7 @@ public class MeansDtoFullMapper implements IMapper<MeanDtoFull, Mean> {
         for(Long id : meanDto.getTargetsIds()){
             mean.getTargets().add(targetsDAO.targetById(id));
         }
+        mean.setHideChildren(meanDto.isHideChildren());
         return mean;
     }
 
