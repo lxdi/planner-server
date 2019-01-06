@@ -15,10 +15,7 @@ import org.springframework.stereotype.Service;
 import services.DateUtils;
 import services.QuarterGenerator;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class HquartersDelegate {
@@ -67,11 +64,20 @@ public class HquartersDelegate {
     public List<HquarterDtoLazy> getCurrentHquarters(){
         List<HquarterDtoLazy> result = new ArrayList<>();
         int currentYear = Calendar.getInstance().get(Calendar.YEAR);
-        for(HQuarter hQuarter : getOrCreateHquarters(currentYear)){
-            result.add(hquarterDtoLazyMapper.mapToDto(hQuarter));
+
+        List<HQuarter> hQuarters = new ArrayList<>();
+        hQuarters.addAll(getOrCreateHquarters(currentYear));
+        hQuarters.addAll(getOrCreateHquarters(currentYear+1));
+
+        Map<Long, List<Slot>> slotsByHquarterId = new HashMap<>();
+        for(Slot slot : slotDAO.getSlotsForHquarters(hQuarters)){
+            slotsByHquarterId.putIfAbsent(slot.getHquarter().getId(), new ArrayList<>());
+            slotsByHquarterId.get(slot.getHquarter().getId()).add(slot);
         }
-        for(HQuarter hQuarter : getOrCreateHquarters(currentYear+1)){
-            result.add(hquarterDtoLazyMapper.mapToDto(hQuarter));
+        for(HQuarter hQuarter : hQuarters){
+            HquarterDtoLazy dto = hquarterDtoLazyMapper.mapToDtoWithoutSlots(hQuarter);
+            hquarterDtoLazyMapper.addSlots(dto, slotsByHquarterId.get(hQuarter.getId()));
+            result.add(dto);
         }
         return result;
     }

@@ -24,11 +24,17 @@ public class HquarterDtoLazyMapper implements IMapper<HquarterDtoLazy, HQuarter>
     @Override
     public HquarterDtoLazy mapToDto(HQuarter entity) {
         HquarterDtoLazy dto = new HquarterDtoLazy();
-        mapToDto(entity, dto);
+        mapToDto(entity, dto, true);
         return dto;
     }
 
-    public void mapToDto(HQuarter entity, HquarterDtoLazy dto) {
+    public HquarterDtoLazy mapToDtoWithoutSlots(HQuarter entity) {
+        HquarterDtoLazy dto = new HquarterDtoLazy();
+        mapToDto(entity, dto, false);
+        return dto;
+    }
+
+    public void mapToDto(HQuarter entity, HquarterDtoLazy dto, boolean isLoadSlots) {
         dto.setId(entity.getId());
         if(entity.getStartWeek()!=null){
             dto.setStartWeek(entity.getStartWeek());
@@ -38,9 +44,14 @@ public class HquarterDtoLazyMapper implements IMapper<HquarterDtoLazy, HQuarter>
             dto.setEndWeek(entity.getEndWeek());
         }
 
-        List<Slot> slotList = slotDAO.getSlotsForHquarter(entity);
-        if(slotList.size()>0){
-            for(Slot slot : slotList){
+        if(isLoadSlots) {
+            addSlots(dto, slotDAO.getSlotsForHquarter(entity));
+        }
+    }
+
+    public void addSlots(HquarterDtoLazy dto, List<Slot> slots){
+        if (slots.size() > 0) {
+            for (Slot slot : slots) {
                 dto.getSlotsLazy().add(slotDtoLazyMapper.mapToDto(slot));
             }
         }

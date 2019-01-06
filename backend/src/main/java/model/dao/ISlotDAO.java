@@ -12,6 +12,7 @@ public interface ISlotDAO {
     Slot getByHquarterAndPosition(HQuarter hQuarter, int position);
     SlotPosition getSlotPositionById(long id);
     List<Slot> getSlotsForHquarter(HQuarter hquarter);
+    List<Slot> getSlotsForHquarters(List<HQuarter> hquarters);
     List<Slot> slotsAfter(Slot slot);
     List<SlotPosition> getSlotPositionsForSlot(Slot slot);
     SlotPosition getSlotPosition(Slot slot, DaysOfWeek daysOfWeek, int position);

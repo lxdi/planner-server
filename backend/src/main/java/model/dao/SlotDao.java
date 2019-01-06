@@ -50,6 +50,16 @@ public class SlotDao implements ISlotDAO {
         String hql = "FROM Slot slot WHERE slot.hquarter = :hquarter";
         Query query = sessionFactory.getCurrentSession().createQuery(hql);
         query.setParameter("hquarter", hquarter);
+        query.setCacheable(true);
+        return query.list();
+    }
+
+    @Override
+    public List<Slot> getSlotsForHquarters(List<HQuarter> hquarters) {
+        String hql = "FROM Slot slot WHERE slot.hquarter in :hquarters";
+        Query query = sessionFactory.getCurrentSession().createQuery(hql);
+        query.setParameter("hquarters", hquarters);
+        query.setCacheable(true);
         return query.list();
     }
 

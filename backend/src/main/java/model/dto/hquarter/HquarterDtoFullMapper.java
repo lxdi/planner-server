@@ -40,7 +40,7 @@ public class HquarterDtoFullMapper implements IMapper<HquarterDtoFull, HQuarter>
     @Override
     public HquarterDtoFull mapToDto(HQuarter entity) {
         HquarterDtoFull dto = new HquarterDtoFull();
-        hquarterDtoLazyMapper.mapToDto(entity, dto);
+        hquarterDtoLazyMapper.mapToDto(entity, dto, true);
         List<Slot> slotList = slotDAO.getSlotsForHquarter(entity);
         if(slotList.size()>0){
             for(Slot slot : slotList){
