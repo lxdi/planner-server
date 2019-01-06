@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 //props(required): firstNode(id), getPrev(node), getNext(node), nodeView(node)
-//props (not required): lastNode(id), compareNodes(node1, node2)
+//props (not required): loadPrev(bool) loadNext(bool) lastNode(id), compareNodes(node1, node2)
 export class BidirectList extends React.Component {
   constructor(props){
     super(props)
@@ -29,7 +29,7 @@ export class BidirectList extends React.Component {
 }
 
 const onWheelHandler = function(e, component){
-  if(e.deltaY>0){
+  if(e.deltaY>0 && (component.props.loadNext==null || component.props.loadNext==true)){
     if(isBarOnTheBottom(e.currentTarget)){
       const nextLastNode = component.props.getNext(component.state.lastNode, true)
       if(nextLastNode!=null){
@@ -37,7 +37,7 @@ const onWheelHandler = function(e, component){
       }
     }
   }
-  if(e.deltaY<0){
+  if(e.deltaY<0 && (component.props.loadPrev==null || component.props.loadPrev==true) ){
     if(e.currentTarget.scrollTop==0){
       const nextFirstNode = component.props.getPrev(component.state.firstNode)
       if(nextFirstNode!=null){

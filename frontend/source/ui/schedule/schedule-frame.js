@@ -45,6 +45,7 @@ const hquartersUI = function(component){
                           getNext = {(node, isExtend)=>getNextHandler(component, node, isExtend)}
                           getPrev = {(node)=>getPrevHandler(component, node)}
                           nodeView = {(node)=>hquarterUI(component, node)}
+                          loadPrev={component.state.edit}
     />
   } else {
     fireEvent('hquarters-dao', 'hquarters-request')
