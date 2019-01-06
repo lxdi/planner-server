@@ -65,6 +65,7 @@ const meansUIlist = function(component){
 
 const meanUI = function(component, mean){
   return <div style={mean.parentid!=null?{borderLeft:'1px solid grey', paddingLeft:'3px'}:null}>
+                    {hideShowChildrenControlUI(component, mean)}
                     <a href="#" onClick={()=>fireEvent('mean-modal', 'open', [mean])}>
                         {mean.title}
                     </a>
@@ -73,6 +74,18 @@ const meanUI = function(component, mean){
                     </a>
                     <span style={{color: 'green', fontSize:'8pt'}}> {targetsTagsString(mean)}</span>
                 </div>
+}
+
+const hideShowChildrenControlUI = function(component, mean){
+  return <a href="#" style = {{marginRight:'3px'}} onClick={()=>{
+      if(mean.hideChildren==null){
+        mean.hideChildren=false
+      }
+      mean.hideChildren = !mean.hideChildren
+      component.setState({})
+    }}>
+    {mean.hideChildren==null || (mean.hideChildren!=null && mean.hideChildren==false)?'-':'+'}
+  </a>
 }
 
 const targetsTagsString = function(mean){

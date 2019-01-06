@@ -72,7 +72,7 @@ const nodeUI = function(component, node, level){
   return <div key={'node_'+node.id} style={component.props.groupStyle}>
           {draggableWrapper(component, node, component.props.viewCallback(node, level))}
           <div style={{paddingLeft:shiftPx}}>
-            {childrenNodeUI(component, node, nextLevel)}
+            {node.hideChildren==null || (node.hideChildren!=null && node.hideChildren==false)? childrenNodeUI(component, node, nextLevel):null}
           </div>
         </div>
 }
