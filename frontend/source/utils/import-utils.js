@@ -36,3 +36,13 @@ export const sortByField = function(objs, fieldName){
   }
   return result
 }
+
+export const deleteNode = function(nodes, node){
+  for(var id in nodes){
+    if(nodes[id].nextid == node.id){
+      nodes[id].nextid = node.nextid
+      break
+    }
+  }
+  delete nodes[node.id]
+}

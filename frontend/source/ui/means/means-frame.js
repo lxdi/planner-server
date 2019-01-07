@@ -11,8 +11,8 @@ export class MeansFrame extends React.Component{
   constructor(props){
     super(props)
     this.state = {isEdit: false}
-    registerReaction('means-frame', 'targets-dao', 'target-deleted', (state, targetid)=>{
-      fireEvent('means-dao', 'delete-depended-means', [targetid])
+    registerReaction('means-frame', 'targets-dao', 'target-deleted', (state, target)=>{
+      fireEvent('means-dao', 'delete-depended-means', [target])
       this.setState({})
     })
 

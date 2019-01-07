@@ -57,11 +57,13 @@ public class TargetsRESTController {
         Target target = targetsDtoMapper.mapToEntity(targetDto);
         Target prevTarget = targetsDAO.getLastOfChildren(target.getParent(), realm);
         targetsDAO.saveOrUpdate(target);
+        TargetDtoLazy dtoLazy = targetsDtoMapper.mapToDto(target);
         if(prevTarget!=null){
             prevTarget.setNext(target);
             targetsDAO.saveOrUpdate(prevTarget);
+            dtoLazy.setPrevid(prevTarget.getId());
         }
-        return new ResponseEntity<TargetDtoLazy>(targetsDtoMapper.mapToDto(target), HttpStatus.OK);
+        return new ResponseEntity<TargetDtoLazy>(dtoLazy, HttpStatus.OK);
     }
 
     @RequestMapping(path = "/target/delete/{targetId}" , method = RequestMethod.DELETE)

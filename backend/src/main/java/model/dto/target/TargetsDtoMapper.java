@@ -30,12 +30,12 @@ public class TargetsDtoMapper implements IMapper<TargetDtoLazy, Target> {
             targetDtoLazy.setNextid(target.getNext().getId());
         }
 
-        if(target.getId()>0){
-            Target prevTarget= targetsDAO.getPrevTarget(target);
-            if(prevTarget!=null){
-                targetDtoLazy.setPrevid(prevTarget.getId());
-            }
-        }
+//        if(target.getId()>0){
+//            Target prevTarget= targetsDAO.getPrevTarget(target);
+//            if(prevTarget!=null){
+//                targetDtoLazy.setPrevid(prevTarget.getId());
+//            }
+//        }
 
         return targetDtoLazy;
     }

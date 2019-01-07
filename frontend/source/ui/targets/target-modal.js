@@ -37,7 +37,7 @@ export class TargetModal extends React.Component {
       this.setState(defaultState())
     }.bind(this))
 
-    registerReaction('target-modal', 'targets-dao', 'target-created', ()=>{
+    registerReaction('target-modal', 'targets-dao', ['target-created', 'target-modified', 'target-deleted'], ()=>{
       fireEvent('target-modal', 'close')
     })
 
@@ -63,7 +63,7 @@ export class TargetModal extends React.Component {
 
   render(){
     return <CommonModal isOpen = {this.state.isOpen} okHandler = {this.okHandler} cancelHandler={()=>fireEvent('target-modal', 'close', [])} title={targetModalHeaderTitle} >
-        <CommonCrudeTemplate editing = {this.state.mode} changeEditHandler = {this.forceUpdate.bind(this)} deleteHandler={()=>fireEvent('targets-dao', 'delete', [this.state.currentTarget.id])}>
+        <CommonCrudeTemplate editing = {this.state.mode} changeEditHandler = {this.forceUpdate.bind(this)} deleteHandler={()=>fireEvent('targets-dao', 'delete', [this.state.currentTarget])}>
           <form>
             <FormGroup controlId="formBasicText">
               <ControlLabel>Title</ControlLabel>

@@ -55,23 +55,24 @@ registerEvent('means-dao', 'mean-deleted', (stateSetter, id)=>id)
 
 // Remove mean that has only one target and that target has id = targetid
 // Removing is only in UI because on server-side mean is removed automatically when target is removed
-registerEvent('means-dao', 'delete-depended-means', function(stateSetter, targetid){
-  const means = viewStateVal('means-dao', 'means')
-  for(var i in means){
-    if(means.hasOwnProperty(i)){
-      if(means[i].targets.length == 1 && means[i].targets[0].id == targetid){
-        deleteMeanUI(means[i])
-      } else {
-        if(means[i].targets.length>1){
-          for(var j in means[i].targets){
-            if(means[i].targets[j].id == targetid){
-              delete means[i].targets[j]
-            }
-          }
-        }
-      }
-    }
-  }
+registerEvent('means-dao', 'delete-depended-means', function(stateSetter, target){
+  const means = viewStateVal('means-dao', 'means')[target.realmid]
+  //TODO now there is no mean.targets array, only ids
+  // for(var i in means){
+  //   if(means.hasOwnProperty(i)){
+  //     if(means[i].targets.length == 1 && means[i].targets[0].id == targetid){
+  //       deleteMeanUI(means[i])
+  //     } else {
+  //       if(means[i].targets.length>1){
+  //         for(var j in means[i].targets){
+  //           if(means[i].targets[j].id == targetid){
+  //             delete means[i].targets[j]
+  //           }
+  //         }
+  //       }
+  //     }
+  //   }
+  // }
 })
 
 registerEvent('means-dao', 'modify', function(stateSetter, mean){

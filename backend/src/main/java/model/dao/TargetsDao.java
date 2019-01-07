@@ -50,16 +50,21 @@ public class TargetsDao implements ITargetsDAO {
     @Override
     public void deleteTarget(long id) {
         Target targetToDelete = this.targetById(id);
+        deleteDependedMeans(targetToDelete);
+        handlePrevForDeleting(targetToDelete);
 
-        //List<Mean> means = sessionFactory.getCurrentSession().createCriteria(Mean.class).add(Restrictions.in("targets", targetToDelete)).list();
+        for(Target target : this.getChildren(targetToDelete)){
+            this.deleteTarget(target.getId());
+        }
+        sessionFactory.getCurrentSession().delete(targetToDelete);
+    }
+
+    private void deleteDependedMeans(Target target){
         String hql = "select m from Mean m join m.targets t where t = :target";
         Query query = sessionFactory.getCurrentSession().createQuery(hql);
-        query.setParameter("target", targetToDelete);
+        query.setParameter("target", target);
         List<Mean> means = query.list();
-//        Criteria c = sessionFactory.getCurrentSession().createCriteria(Mean.class, "mean");
-//        c.createAlias("mean.targets", "target");
-//        c.add(Restrictions.eq("target.id", targetToDelete.getId()));
-//        List<Mean> means = c.list();
+
         for(Mean mean: means){
             if(mean.getTargets().size()==1){
                 meansDAO.deleteMean(mean.getId());
@@ -67,17 +72,24 @@ public class TargetsDao implements ITargetsDAO {
                 Iterator iterator = mean.getTargets().iterator();
                 while (iterator.hasNext()){
                     Target curTarget = (Target) iterator.next();
-                    if(curTarget.getId()==targetToDelete.getId()){
+                    if(curTarget.getId()==target.getId()){
                         iterator.remove();
                     }
                 }
             }
         }
+    }
 
-        for(Target target : this.getChildren(targetToDelete)){
-            this.deleteTarget(target.getId());
+    private void handlePrevForDeleting(Target target){
+        Target prevTarget = this.getPrevTarget(target);
+        if(prevTarget!=null ){
+            if(target.getNext()!=null){
+                prevTarget.setNext(target.getNext());
+            } else {
+                prevTarget.setNext(null);
+            }
+            this.saveOrUpdate(prevTarget);
         }
-        sessionFactory.getCurrentSession().delete(targetToDelete);
     }
 
     public List<Target> getChildren(Target target){

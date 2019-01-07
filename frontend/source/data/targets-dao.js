@@ -1,6 +1,7 @@
 //import $ from 'jquery'
 import {sendGet, sendPut, sendPost, sendDelete} from './postoffice'
 import {registerEvent, registerReaction, fireEvent, viewStateVal} from '../controllers/eventor'
+import {deleteNode} from '../utils/import-utils'
 
 registerEvent('targets-dao', 'create', function(stateSetter, target, parent){
   target.parentid = parent!=null? parent.id: null
@@ -16,15 +17,15 @@ registerEvent('targets-dao', 'create', function(stateSetter, target, parent){
 
 registerEvent('targets-dao', 'target-created', (stateSetter, target)=>target)
 
-registerEvent('targets-dao', 'delete', function(stateSetter, id){
-  sendDelete('/target/delete/'+id, function() {
-    delete viewStateVal('targets-dao', 'targets')[id]
-    resolveTargets()
-    fireEvent('targets-dao', 'target-deleted', [id])
+registerEvent('targets-dao', 'delete', function(stateSetter, target){
+  sendDelete('/target/delete/'+target.id, function() {
+    deleteNode(viewStateVal('targets-dao', 'targets')[target.realmid], target)
+    //delete viewStateVal('targets-dao', 'targets')[target.realmid][id]
+    fireEvent('targets-dao', 'target-deleted', [target])
   })
 })
 
-registerEvent('targets-dao', 'target-deleted', (stateSetter, id)=>id)
+registerEvent('targets-dao', 'target-deleted', (stateSetter, target)=>target)
 
 registerEvent('targets-dao', 'modify', function(stateSetter, target){
   sendPost('/target/update', JSON.stringify(target), function(data) {
