@@ -54,6 +54,10 @@
   width:80%
 }
 
+.task-modal-style {
+  width:70%
+}
+
 #Targets {
   border: 1px solid green;
 }

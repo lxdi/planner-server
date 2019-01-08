@@ -181,7 +181,7 @@ const formatDateNumber = function(num){
 }
 
 const isCurrentHquarter = function(hquarter){
-  const todayTime = Date.parse('2018-11-05')//new Date().getTime()
+  const todayTime = new Date().getTime()
   const beginTime = Date.parse(hquarter.startWeek.startDay)
   const endTime = Date.parse(hquarter.endWeek.startDay)
   return todayTime>beginTime && todayTime<endTime

@@ -6,6 +6,8 @@ import {Button, ButtonGroup, ButtonToolbar,  DropdownButton, MenuItem, ListGroup
 import {MeanModal} from './mean-modal'
 import {registerEvent, registerReaction, fireEvent, viewStateVal} from '../../controllers/eventor'
 import {TreeComponent} from './../components/tree-component'
+import {SubjectModal} from './subject-modal'
+import {TaskModal} from './task-modal'
 
 export class MeansFrame extends React.Component{
   constructor(props){
@@ -28,6 +30,8 @@ export class MeansFrame extends React.Component{
           <div style={{'margin-bottom': '3px'}}>
             {getControlButtons(this)}
             <MeanModal/>
+            <SubjectModal/>
+            <TaskModal/>
           </div>:null}
           {meansUIlist(this)}
       </div>

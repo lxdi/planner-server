@@ -6,8 +6,8 @@ import {CreateMean} from './../../data/creators'
 import {CommonCrudeTemplate} from './../common-crud-template'
 import {Button, ButtonToolbar,  DropdownButton, MenuItem,  FormGroup, ControlLabel, FormControl,  ListGroup, ListGroupItem, Alert} from 'react-bootstrap'
 import {registerEvent, registerReaction, fireEvent, viewStateVal} from '../../controllers/eventor'
-import {SubjectModal} from './subject-modal'
-import {TaskModal} from './task-modal'
+// import {SubjectModal} from './subject-modal'
+// import {TaskModal} from './task-modal'
 import {isValidMean} from '../../utils/mean-validator'
 import {iterateLLfull} from '../../utils/linked-list'
 import {iterateTree} from '../../utils/tree-utils'
@@ -116,8 +116,6 @@ export class MeanModal extends React.Component {
                   {relatedTargetsUI(this, this.state.currentMean.targetsIds)}
                 </div>
                 {layersBlock(this.state.currentMean, this.state.mode.isEdit)}
-                <SubjectModal/>
-                <TaskModal/>
             </CommonCrudeTemplate>
           </CommonModal>
   }

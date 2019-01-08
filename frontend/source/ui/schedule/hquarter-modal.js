@@ -145,7 +145,10 @@ const weeksWithTasksUI = function(hquarter){
         weekDayUI.push(<div style={{borderBottom: borderStyle, fontStyle: 'italic'}}>{weekFullName[week[dayOfWeekidx]]}</div>)
         if(hquarter.weeks[i].days!=null && hquarter.weeks[i].days[week[dayOfWeekidx]]!=null){
           for(var taskidx in hquarter.weeks[i].days[week[dayOfWeekidx]]){
-            weekDayUI.push(<li>{hquarter.weeks[i].days[week[dayOfWeekidx]][taskidx].title}</li>)
+            const task = hquarter.weeks[i].days[week[dayOfWeekidx]][taskidx]
+            weekDayUI.push(<li>
+                            <a href='#' onClick={()=>fireEvent('task-modal', 'open', [null, task, true])}>{task.title}</a>
+                          </li>)
           }
         }
         weekUI.push(<td style={{padding:'3px', border: borderStyle, verticalAlign: 'top'}}>{weekDayUI}</td>)
@@ -173,7 +176,7 @@ const formatDateNumber = function(num){
 }
 
 const isCurrentWeek = function(weeks, icur){
-  const todayTime = Date.parse('2018-11-05')//new Date().getTime()
+  const todayTime = new Date().getTime()
   const startTimeCur = Date.parse(weeks[icur].startDay)
   const inext = parseInt(icur)+1
   const startTimeNext = weeks[inext]!=null? Date.parse(weeks[inext].startDay):0
