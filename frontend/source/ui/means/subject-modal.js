@@ -25,7 +25,10 @@ export class SubjectModal extends React.Component {
   }
 
   render(){
-    return <CommonModal isOpen={this.state.isOpen} okHandler={isSubjectValid(this.state.subject)?()=>okHandler(this.state.layer, this.state.subject):null}>
+    return <CommonModal title="Subject"
+                        isOpen={this.state.isOpen}
+                        okHandler={isSubjectValid(this.state.subject)?()=>okHandler(this.state.layer, this.state.subject):null}
+                        cancelHandler={()=>fireEvent('subject-modal', 'close')}>
               {this.state.subject!=null? modalContent(this): null}
             </CommonModal>
   }
@@ -64,13 +67,13 @@ const modalContent = function(component){
                   deleteHandler={()=>fireEvent('subjects-dao', 'delete-subject', [component.state.layer, component.state.subject])}>
                 <form>
                     <FormGroup controlId="formBasicText">
-                    <ControlLabel>Title</ControlLabel>
-                    {component.state.mode.isEdit?<FormControl
+                    <div style={{display:'inline-block', paddingRight:'5px'}}><ControlLabel>Title:</ControlLabel></div>
+                    <div style={{display:'inline-block'}}>{component.state.mode.isEdit?<FormControl
                         type="text"
                         value={component.state.subject.title}
                         placeholder="Enter title"
                         onChange={(e)=>{component.state.subject.title = e.target.value; component.setState({})}}/>
-                    :<FormControl.Static>{component.state.subject.title}</FormControl.Static>}
+                    :<FormControl.Static>{component.state.subject.title}</FormControl.Static>}</div>
                     </FormGroup>
                   </form>
           </CommonCrudeTemplate>

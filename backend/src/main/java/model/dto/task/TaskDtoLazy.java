@@ -1,5 +1,10 @@
 package model.dto.task;
 
+import model.dto.topic.TopicDto;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Alexander on 26.04.2018.
  */
@@ -10,6 +15,8 @@ public class TaskDtoLazy {
     Long subjectid;
 
     int position;
+
+    List<TopicDto> topics = new ArrayList<>();
 
     public long getId() {
         return id;
@@ -37,5 +44,12 @@ public class TaskDtoLazy {
     }
     public void setPosition(int position) {
         this.position = position;
+    }
+
+    public List<TopicDto> getTopics() {
+        return topics;
+    }
+    public void setTopics(List<TopicDto> topics) {
+        this.topics = topics;
     }
 }

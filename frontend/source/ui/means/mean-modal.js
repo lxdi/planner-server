@@ -257,7 +257,7 @@ const tasksUI = function(subject, isEdit){
                   </div>)
   if(isEdit){
     tasksHTML.push(<div key={'subject_'+subject.priority+'_task_toAdd'} style={subjectAndTaskStyle}>
-                        <Button bsStyle="success" bsSize="xsmall"  onClick={()=>fireEvent('task-modal', 'open', [subject, {}])}>
+                        <Button bsStyle="success" bsSize="xsmall"  onClick={()=>fireEvent('task-modal', 'open', [subject, {topics:[]}])}>
                             +Add task
                         </Button>
                       </div>)

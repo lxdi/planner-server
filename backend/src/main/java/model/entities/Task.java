@@ -1,6 +1,8 @@
 package model.entities;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Alexander on 05.03.2018.
@@ -18,6 +20,10 @@ public class Task implements Comparable<Task>{
     @ManyToOne
     Subject subject;
     int position;
+
+    //@Cascade(org.hibernate.annotations.CascadeType.ALL)
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    List<Topic> topics = new ArrayList<>();
 
     public Task(){}
 
@@ -54,6 +60,13 @@ public class Task implements Comparable<Task>{
     }
     public void setPosition(int position) {
         this.position = position;
+    }
+
+    public List<Topic> getTopics() {
+        return topics;
+    }
+    public void setTopics(List<Topic> topics) {
+        this.topics = topics;
     }
 
     @Override

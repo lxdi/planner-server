@@ -59,4 +59,9 @@ public class HquartersDelegateTests extends AbstractTestsWithTargets {
 
     }
 
+    @Test
+    public void getCurrentHquartersWithoutSlotsTest(){
+        hquartersDelegate.getCurrentHquarters();
+    }
+
 }

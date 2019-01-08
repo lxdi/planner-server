@@ -1,15 +1,13 @@
 package model.dao;
 
-import model.entities.Layer;
-import model.entities.Subject;
-import model.entities.Task;
-import model.entities.TaskMapper;
+import model.entities.*;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -40,6 +38,15 @@ public class TasksDao implements ITasksDAO {
     @Override
     public void saveOrUpdate(Task task) {
         sessionFactory.getCurrentSession().saveOrUpdate(task);
+        handleRemovedTopics(task);
+    }
+
+    private void handleRemovedTopics(Task task){
+        sessionFactory.getCurrentSession()
+                .createQuery("delete from Topic t where t.task = :task and t not in :topicsToSurvive")
+                .setParameter("task", task)
+                .setParameter("topicsToSurvive", task.getTopics())
+                .executeUpdate();
     }
 
     @Override

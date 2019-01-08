@@ -17,6 +17,7 @@ import model.dto.slot.SlotPositionMapper;
 import model.dto.subject.SubjectDtoMapper;
 import model.dto.target.TargetsDtoMapper;
 import model.dto.task.TasksDtoMapper;
+import model.dto.topic.TopicMapper;
 import model.entities.Realm;
 import model.entities.Target;
 import org.junit.Before;
@@ -48,7 +49,8 @@ import static org.junit.Assert.assertTrue;
                 SlotDao.class, SlotDtoMapper.class,
                 SlotPositionMapper.class,
                 TaskMapperDao.class,
-                HquartersDelegate.class, DefaultSettingsPropagator.class, TaskMappersController.class, SlotDtoLazyMapper.class})
+                HquartersDelegate.class, DefaultSettingsPropagator.class, TaskMappersController.class, SlotDtoLazyMapper.class,
+                TopicDao.class, TopicMapper.class})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public abstract class AbstractTestsWithTargets {
 

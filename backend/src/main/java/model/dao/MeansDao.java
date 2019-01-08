@@ -3,12 +3,14 @@ package model.dao;
 import model.entities.Layer;
 import model.entities.Mean;
 import model.entities.Realm;
+import model.entities.Topic;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -28,7 +30,6 @@ public class MeansDao implements IMeansDAO {
     @Override
     public List<Mean> getAllMeans() {
         return sessionFactory.getCurrentSession().createQuery("FROM Mean").list();
-        //return sessionFactory.getCurrentSession().createCriteria(Mean.class).list();
     }
 
     @Override
@@ -43,8 +44,6 @@ public class MeansDao implements IMeansDAO {
 
     @Override
     public void deleteMean(long id) {
-        //Mean meanToDelete = this.meanById(id);
-
         Mean meanToDelete = this.meanById(id);
         Mean prevMean = this.getPrevMean(meanToDelete);
         if(prevMean!=null ){
@@ -73,8 +72,6 @@ public class MeansDao implements IMeansDAO {
         Query query = sessionFactory.getCurrentSession().createQuery(hql);
         query.setParameter("parent", mean);
         return query.list();
-//        return sessionFactory.getCurrentSession().createCriteria(Mean.class)
-//                .add(Restrictions.eq("parent", mean)).list();
     }
 
     @Override
@@ -83,8 +80,6 @@ public class MeansDao implements IMeansDAO {
         Query query = sessionFactory.getCurrentSession().createQuery(hql);
         query.setParameter("title", title);
         return (Mean) query.uniqueResult();
-//        return (Mean) sessionFactory.getCurrentSession()
-//                .createCriteria(Mean.class).add(Restrictions.eq("title", title)).uniqueResult();
     }
 
     @Override
@@ -105,11 +100,6 @@ public class MeansDao implements IMeansDAO {
         }
         query.setParameter("realm", realm);
         return (Mean) query.uniqueResult();
-//        return (Mean) sessionFactory.getCurrentSession()
-//                .createCriteria(Mean.class)
-//                .add(Restrictions.eq("realm", realm))
-//                .add(mean!=null?Restrictions.eq("parent", mean):Restrictions.isNull("parent"))
-//                .add(Restrictions.isNull("next")).uniqueResult();
     }
 
     @Override
@@ -124,35 +114,4 @@ public class MeansDao implements IMeansDAO {
     public void validateMean(Mean mean){
         //validateByQuarter(mean);
     }
-
-//    private void validateByQuarter(Mean mean){
-//        if(mean.getHquarter()!=null){
-//            if(mean.getPosition()==null){
-//                throw new RuntimeException("Mean must contain position along with quarter");
-//            }
-//            List<Mean> meansAlreadyAssigned = sessionFactory.getCurrentSession().createCriteria(Mean.class)
-//                    .add(Restrictions.eq("realm", mean.getRealm()))
-//                    .add(Restrictions.eq("hquarter", mean.getHquarter()))
-//                    .add(Restrictions.eq("position", mean.getPosition()))
-//                    .list();
-//            if(meansAlreadyAssigned.size()==0){
-//                return;
-//            }
-//            if(meansAlreadyAssigned.size()==1) {
-//                if(mean.getId()<1){
-//                    throw new RuntimeException("Cannot assign mean to quarter, position is already occupied");
-//                }
-//                if (meansAlreadyAssigned.get(0).getId() != mean.getId()) {
-//                    throw new RuntimeException("Cannot assign mean to quarter, position is already occupied");
-//                }
-//            }
-//            if(meansAlreadyAssigned.size()>1){
-//                throw new RuntimeException("Cannot assign mean to quarter, position is already occupied");
-//            }
-//        } else {
-//            if(mean.getPosition()!=null){
-//                throw new RuntimeException("Mean must contain position along with quarter");
-//            }
-//        }
-//    }
 }

@@ -27,38 +27,6 @@ public class TaskMappersController {
     @Autowired
     ITaskMappersDAO taskMappersDAO;
 
-    public void createTaskMappers(Layer layerToMap, Slot slot){
-        if(layerToMap!=null){
-            List<Task> tasks = tasksDAO.tasksByLayer(layerToMap);
-            Collections.sort(tasks);
-            if(tasks.size()>0) {
-                Stack<Task> taskStack = tasksInStack(tasks);
-                HQuarter hQuarter = slot.getHquarter();
-                List<Week> weeks = weekDAO.weeksOfHquarter(hQuarter);
-                List<SlotPosition> slotPositions = slotDAO.getSlotPositionsForSlot(slot);
-                Collections.sort(slotPositions);
-                Task currentTask = !taskStack.isEmpty()? taskStack.pop():null;
-                for(int iw = 0; iw<weeks.size(); iw=iw+2){
-                    for(int isp=0; isp<slotPositions.size(); isp++){
-                        TaskMapper taskMapper = taskMappersDAO.taskMapperForTask(currentTask);
-                        if(taskMapper==null){
-                            taskMapper = new TaskMapper();
-                            taskMapper.setTask(currentTask);
-                        }
-                        taskMapper.setSlotPosition(slotPositions.get(isp));
-                        taskMapper.setWeek(weeks.get(iw));
-                        taskMappersDAO.saveOrUpdate(taskMapper);
-                        currentTask = !taskStack.isEmpty()? taskStack.pop():null;
-                        if(currentTask==null){
-                            iw=weeks.size();
-                            isp=slotPositions.size();
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     public void unassignTasksForLayer(Layer layer){
         if(layer!=null) {
             List<Task> tasks = tasksDAO.tasksByLayer(layer);
@@ -110,7 +78,38 @@ public class TaskMappersController {
                 }
             }
         }
+    }
 
+    private void createTaskMappers(Layer layerToMap, Slot slot){
+        if(layerToMap!=null){
+            List<Task> tasks = tasksDAO.tasksByLayer(layerToMap);
+            Collections.sort(tasks);
+            if(tasks.size()>0) {
+                Stack<Task> taskStack = tasksInStack(tasks);
+                HQuarter hQuarter = slot.getHquarter();
+                List<Week> weeks = weekDAO.weeksOfHquarter(hQuarter);
+                List<SlotPosition> slotPositions = slotDAO.getSlotPositionsForSlot(slot);
+                Collections.sort(slotPositions);
+                Task currentTask = !taskStack.isEmpty()? taskStack.pop():null;
+                for(int iw = 0; iw<weeks.size(); iw=iw+2){
+                    for(int isp=0; isp<slotPositions.size(); isp++){
+                        TaskMapper taskMapper = taskMappersDAO.taskMapperForTask(currentTask);
+                        if(taskMapper==null){
+                            taskMapper = new TaskMapper();
+                            taskMapper.setTask(currentTask);
+                        }
+                        taskMapper.setSlotPosition(slotPositions.get(isp));
+                        taskMapper.setWeek(weeks.get(iw));
+                        taskMappersDAO.saveOrUpdate(taskMapper);
+                        currentTask = !taskStack.isEmpty()? taskStack.pop():null;
+                        if(currentTask==null){
+                            iw=weeks.size();
+                            isp=slotPositions.size();
+                        }
+                    }
+                }
+            }
+        }
     }
 
 }

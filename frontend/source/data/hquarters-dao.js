@@ -97,7 +97,7 @@ registerEvent('hquarters-dao', 'default-received', (hquarter)=>hquarter)
 registerEvent('hquarters-dao', 'update-default', (stateSetter)=>{
   sendPost('/hquarter/set/default', JSON.stringify(viewStateVal('hquarters-dao', 'default')), (data)=>{
     Object.assign(viewStateVal('hquarters-dao', 'default'), data)
-    viewStateVal('hquarters-dao', 'default').isFull=true
+    viewStateVal('hquarters-dao', 'default').isFull=false
     fireEvent('hquarters-dao', 'hquarters-request')
   })
 })

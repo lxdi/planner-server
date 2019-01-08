@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom';
 // import Modal from 'react-modal';
 import {Modal, Button} from 'react-bootstrap'
 
-//props: isOpen, okHandler, cancelHandler, styleClass
+//props: title, isOpen, okHandler, cancelHandler, styleClass
 export class CommonModal extends React.Component{
   render(){
     return (

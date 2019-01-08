@@ -50,7 +50,7 @@ public class HquarterDtoLazyMapper implements IMapper<HquarterDtoLazy, HQuarter>
     }
 
     public void addSlots(HquarterDtoLazy dto, List<Slot> slots){
-        if (slots.size() > 0) {
+        if (slots!=null && slots.size() > 0) {
             for (Slot slot : slots) {
                 dto.getSlotsLazy().add(slotDtoLazyMapper.mapToDto(slot));
             }

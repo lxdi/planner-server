@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {FormGroup, ControlLabel, FormControl} from 'react-bootstrap'
+import {FormGroup, ControlLabel, FormControl, Button} from 'react-bootstrap'
 import {CommonModal} from './../common-modal'
 import {CommonCrudeTemplate} from './../common-crud-template'
 import {registerEvent, registerReaction, fireEvent, viewStateVal} from '../../controllers/eventor'
@@ -25,7 +25,11 @@ export class TaskModal extends React.Component {
   }
 
   render(){
-    return <CommonModal isOpen={this.state.isOpen} okHandler={isTaskValid(this.state.task)?()=>okHandler(this.state.subject, this.state.task):null}>
+    return <CommonModal title="Task"
+                        isOpen={this.state.isOpen}
+                        cancelHandler={()=>fireEvent('task-modal', 'close')}
+                        okHandler={isTaskValid(this.state.task)?()=>okHandler(this.state.subject, this.state.task):null}
+                        styleClass="task-modal-style">
               {this.state.task!=null? modalContent(this): null}
             </CommonModal>
   }
@@ -51,6 +55,8 @@ const okHandler = function(subject, task){
   fireEvent('task-modal', 'close')
 }
 
+var newTopicId = 1
+
 const modalContent = function(component){
   if(component.state.task.title == null){
     component.state.task.title = ''
@@ -60,14 +66,62 @@ const modalContent = function(component){
                   deleteHandler={()=>fireEvent('tasks-dao', 'delete-task', [component.state.subject, component.state.task])}>
                 <form>
                     <FormGroup controlId="formBasicText">
-                    <ControlLabel>Title</ControlLabel>
-                    {component.state.mode.isEdit? <FormControl
-                        type="text"
-                        value={component.state.task.title}
-                        placeholder="Enter title"
-                        onChange={(e)=>{component.state.task.title = e.target.value; component.setState({})}}/>
-                      :<FormControl.Static>{component.state.task.title}</FormControl.Static>}
+                    <div style={{display:'inline-block', paddingRight:'5px'}}><ControlLabel>Title:</ControlLabel></div>
+                    <div style={{display:'inline-block'}}>{statefulTextfield(component, component.state.task, 'title')}</div>
+                    {topicsUI(component)}
                     </FormGroup>
                   </form>
                 </CommonCrudeTemplate>
+}
+
+const topicsUI = function(component){
+  const result = []
+  const commonStyle = {display:'inline-block', paddingLeft:'5px', borderLeft:'1px solid grey'}
+  const styleFields = {width:'45%'}
+  const styleRemoveLink = {width:'10%'}
+  Object.assign(styleFields, commonStyle)
+  Object.assign(styleRemoveLink, commonStyle)
+  const topics = component.state.task.topics
+  for(var indx in topics){
+    const topic = topics[indx]
+    const key = topic.id==null?topic.tempId:topic.id
+    result.push(<div key={key} style={{borderBottom:'1px solid lightgrey', marginBottom:'3px'}}>
+                    <div style={styleFields}>{statefulTextfield(component, topic, 'title')}</div>
+                    <div style={styleFields}>{statefulTextfield(component, topic, 'source')}</div>
+                    <div style={styleRemoveLink}>{removeTopicLink(component, topics, topic)}</div>
+                </div>)
+  }
+  return <div style={{border:'1px solid lightgrey', padding:'5px', borderRadius:'10px'}}>
+          <div><strong>Topics:</strong></div>
+          {result}
+          {addTopicButton(component)}
+        </div>
+}
+
+const statefulTextfield = function(component, obj, valName){
+  if(component.state.mode.isEdit){
+    return textField(component, obj, valName)
+  } else {
+    return <FormControl.Static>{obj[valName]}</FormControl.Static>
+  }
+}
+
+const textField = function(component, obj, valName){
+  return <FormControl
+      type="text"
+      value={obj[valName]}
+      placeholder={"Enter "+valName}
+      onChange={(e)=>{obj[valName] = e.target.value; component.setState({})}}/>
+}
+
+const addTopicButton = function(component){
+  if(component.state.mode.isEdit){
+    return <Button onClick={()=>{component.state.task.topics.push({tempId:'new_'+newTopicId++, title:'', source:''}); component.setState({})}}>+ Add topic</Button>
+  }
+}
+
+const removeTopicLink = function(component, topics, topic){
+  if(component.state.mode.isEdit){
+    return <a href="#" onClick={()=>{topics.splice(topics.indexOf(topic), 1); component.setState({})}}>Remove</a>
+  }
 }

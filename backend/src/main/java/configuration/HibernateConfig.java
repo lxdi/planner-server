@@ -27,14 +27,21 @@ public class HibernateConfig {
         Properties extProps = extProps();
         if(extProps.getProperty("use_database").equals("true")){
             properties.put("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
-            properties.put("hibernate.show_sql", "false");
             properties.put("hibernate.hbm2ddl.auto", "update");
-            return properties;
+        } else {
+            properties.put("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
+            properties.put("hibernate.hbm2ddl.auto", "create-drop");
         }
-        properties.put("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
-        properties.put("hibernate.show_sql", "false");
-        properties.put("hibernate.hbm2ddl.auto", "create-drop");
+        setProp(properties, "hibernate.show_sql", extProps.getProperty("show_sql"), "false");
         return properties;
+    }
+
+    private void setProp(Properties properties, String propName, String propVal, String defaultVal){
+        if(propVal!=null){
+            properties.put(propName, propVal);
+        } else {
+            properties.put(propName, defaultVal);
+        }
     }
 
     @Bean
@@ -63,6 +70,7 @@ public class HibernateConfig {
             Context envCtx = (Context) initCtx.lookup("java:comp/env");
             properties.put("use_database", envCtx.lookup("use_database"));
             properties.put("url", envCtx.lookup("url"));
+            properties.put("show_sql", envCtx.lookup("show_sql"));
             properties.put("username", envCtx.lookup("username"));
             properties.put("password", envCtx.lookup("password"));
 
