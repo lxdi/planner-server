@@ -42,11 +42,16 @@ public class TasksDao implements ITasksDAO {
     }
 
     private void handleRemovedTopics(Task task){
-        sessionFactory.getCurrentSession()
-                .createQuery("delete from Topic t where t.task = :task and t not in :topicsToSurvive")
-                .setParameter("task", task)
-                .setParameter("topicsToSurvive", task.getTopics())
-                .executeUpdate();
+        String queryString = "delete from Topic t where t.task = :task";
+        if(task.getTopics().size()>0){
+            queryString = queryString + " and t not in :topicsToSurvive";
+        }
+        Query query = sessionFactory.getCurrentSession().createQuery(queryString);
+        query.setParameter("task", task);
+        if (task.getTopics().size() > 0) {
+            query.setParameter("topicsToSurvive", task.getTopics());
+        }
+        query.executeUpdate();
     }
 
     @Override
