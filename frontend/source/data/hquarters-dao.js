@@ -16,6 +16,15 @@ registerEvent('hquarters-dao', 'hquarters-request', function(stateSetter){
 
 registerEvent('hquarters-dao', 'hquarters-received', function(){})
 
+registerEvent('hquarters-dao', 'hquarters-request-full', function(stateSetter){
+  sendGet("/hquarter/currentlist/full", function(data) {
+            importHquarters(stateSetter, data, true)
+            fireEvent('big-map-modal', 'update')
+          })
+})
+
+//registerEvent('hquarters-dao', 'hquarters-received-full', function(){})
+
 registerEvent('hquarters-dao', 'hquarters-prev', (stateSetter, hquarter)=>{
   sendGet('/hquarter/prev/'+hquarter.id + '/1', function(data) {
             importHquarters(stateSetter, data)
@@ -117,20 +126,20 @@ registerEvent('hquarters-dao', 'get-full', (stateSetter, id)=>{
 registerEvent('hquarters-dao', 'got-full', (stateSetter, hquarterfull)=>hquarterfull)
 
 
-const importHquarters = function(stateSetter, hquartersDto){
+const importHquarters = function(stateSetter, hquartersDto, isFull){
   var hquarters = viewStateVal('hquarters-dao', 'hquarters')
   if(hquarters==null){
     hquarters = []
     stateSetter('hquarters', hquarters)
   }
   const last = hquarters[findLastHquarter(hquarters)]
-  const importedResult = importToArray(hquartersDto, hquarters)
+  const importedResult = importToArray(hquartersDto, hquarters, isFull)
   spliceIfBefore(importedResult.last)
   spliceIfAfter(last, importedResult.first)
   stateSetter('firstHquarterId', findFirstHquarter(hquarters))
 }
 
-const importToArray = function(hquartersDto, hquarters){
+const importToArray = function(hquartersDto, hquarters, isFull){
   var lastHq = null
   var firstHq = null
   for(var i in hquartersDto){
@@ -138,6 +147,9 @@ const importToArray = function(hquartersDto, hquarters){
       arrName:'slotsLazy',
       posName: 'position'
     }])
+    if(isFull!=null && isFull==true){
+      hquartersDto[i].isFull = true
+    }
     if(hquarters[Date.parse(hquartersDto[i].startWeek.startDay)]!=null){
       Object.assign(hquarters[Date.parse(hquartersDto[i].startWeek.startDay)], hquartersDto[i])
     } else {

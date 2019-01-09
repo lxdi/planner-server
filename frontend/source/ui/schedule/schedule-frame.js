@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom';
 import {Button, Table, ButtonGroup} from 'react-bootstrap'
 import {CurrentDate} from './../../state'
 import {HquarterModal} from './hquarter-modal'
+import {BigMapModal} from './big-map-modal'
 import {registerEvent, registerReaction, fireEvent, viewStateVal} from '../../controllers/eventor'
 
 import {BidirectList} from '../components/bidirect-list'
@@ -21,14 +22,16 @@ export class ScheduleFrame extends React.Component{
 
   allowDrop(ev) {
     ev.preventDefault();
-}
+  }
 
   render(){
     return(
       <div>
         <HquarterModal/>
+        <BigMapModal/>
         <ButtonGroup>
           <Button bsStyle="primary" bsSize="xsmall" onClick={()=>fireEvent('hquarter-modal', 'open', [viewStateVal('hquarters-dao', 'default')])}>Default settings</Button>
+          <Button bsStyle="default" bsSize="xsmall" onClick={()=>fireEvent('big-map-modal', 'open')}>Big map</Button>
           <Button bsStyle="default" bsSize="xsmall" onClick={()=>fireEvent('schedule-frame', 'switch-edit-mode')}>{this.state.edit?'View': 'Edit'}</Button>
           {this.state.edit?<Button bsStyle="default" bsSize="xsmall" onClick={()=>loadPrevNextManually(this, 'prev')}>Load prev</Button>:null}
           {this.state.edit?<Button bsStyle="default" bsSize="xsmall" onClick={()=>loadPrevNextManually(this, 'next')}>Load next</Button>:null}

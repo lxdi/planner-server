@@ -58,6 +58,10 @@
   width:70%
 }
 
+.big-map-style {
+  width:80%
+}
+
 #Targets {
   border: 1px solid green;
 }
