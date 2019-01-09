@@ -24,6 +24,9 @@ registerEvent('hquarters-dao', 'hquarters-prev', (stateSetter, hquarter)=>{
 })
 
 registerEvent('hquarters-dao', 'hquarters-next', (stateSetter, hquarter)=>{
+  if(hquarter==null){
+    hquarter = viewStateVal('hquarters-dao', 'hquarters')[findLastHquarter(viewStateVal('hquarters-dao', 'hquarters'))]
+  }
   sendGet('/hquarter/next/'+hquarter.id + '/1', function(data) {
             importHquarters(stateSetter, data)
             fireEvent('hquarters-dao', 'hquarters-received', [])
@@ -175,6 +178,7 @@ const findLastHquarter = function(hquarters){
   return findExtrem(hquarters, (result, curhqId)=>result<curhqId)
 }
 
+// returns ID !!!
 const findExtrem = function(hquarters, compareCallback){
   var result = null
   for(var i in hquarters){

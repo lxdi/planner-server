@@ -30,12 +30,23 @@ export class ScheduleFrame extends React.Component{
         <ButtonGroup>
           <Button bsStyle="primary" bsSize="xsmall" onClick={()=>fireEvent('hquarter-modal', 'open', [viewStateVal('hquarters-dao', 'default')])}>Default settings</Button>
           <Button bsStyle="default" bsSize="xsmall" onClick={()=>fireEvent('schedule-frame', 'switch-edit-mode')}>{this.state.edit?'View': 'Edit'}</Button>
+          {this.state.edit?<Button bsStyle="default" bsSize="xsmall" onClick={()=>loadPrevNextManually(this, 'prev')}>Load prev</Button>:null}
+          {this.state.edit?<Button bsStyle="default" bsSize="xsmall" onClick={()=>loadPrevNextManually(this, 'next')}>Load next</Button>:null}
         </ButtonGroup>
         <div style={{height:'78vh', borderTop:'1px solid lightgrey', borderBottom:'1px solid lightgrey', marginTop:'3px'}}>
           {viewStateVal('means-dao', 'means')!=null?hquartersUI(this):null}
         </div>
       </div>
     )
+  }
+}
+
+const loadPrevNextManually = function(component, type){
+  if(type=='prev'){
+    loadPrev(viewStateVal('hquarters-dao', 'hquarters')[viewStateVal('hquarters-dao', 'firstHquarterId')])
+  }
+  if(type=='next'){
+    loadNext(null)
   }
 }
 
@@ -57,24 +68,29 @@ const getPrevHandler = function(component, node){
   if(node.id=='loading'){
     return null
   }
-  var prevNode = viewStateVal('hquarters-dao', 'hquarters')[node.previd]
+  const prevNode = viewStateVal('hquarters-dao', 'hquarters')[node.previd]
   if(prevNode==null){
-    fireEvent('hquarters-dao', 'hquarters-prev', [node])
-    return {id:'loading', nextid:Date.parse(node.startWeek.startDay)}
+    return loadPrev(node)
   }
   return prevNode
 }
 
+const loadPrev = function(node){
+  fireEvent('hquarters-dao', 'hquarters-prev', [node])
+  return {id:'loading', nextid:Date.parse(node.startWeek.startDay)}
+}
+
 const getNextHandler = function(component, node, isExtend){
-  if(!isExtend){
-    return viewStateVal('hquarters-dao', 'hquarters')[node.nextid]
-  }
-  var nextNode = viewStateVal('hquarters-dao', 'hquarters')[node.nextid]
-  if(nextNode==null){
-    fireEvent('hquarters-dao', 'hquarters-next', [node])
-    return {id:'loading', previd:Date.parse(node.startWeek.startDay)}
+  const nextNode = viewStateVal('hquarters-dao', 'hquarters')[node.nextid]
+  if(isExtend && nextNode==null){
+    return loadNext(node)
   }
   return nextNode
+}
+
+const loadNext = function(node){
+  fireEvent('hquarters-dao', 'hquarters-next', [node])
+  return {id:'loading', previd:node!=null?Date.parse(node.startWeek.startDay):null}
 }
 
 const hquarterUI = function(component, hquarter){
