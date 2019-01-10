@@ -13,6 +13,9 @@ export class MeansFrame extends React.Component{
   constructor(props){
     super(props)
     this.state = {isEdit: false}
+
+    registerEvent('means-frame', 'update', ()=>this.setState({}))
+
     registerReaction('means-frame', 'targets-dao', 'target-deleted', (state, target)=>{
       fireEvent('means-dao', 'delete-depended-means', [target])
       this.setState({})
@@ -71,13 +74,21 @@ const meanUI = function(component, mean){
   return <div style={mean.parentid!=null?{borderLeft:'1px solid grey', paddingLeft:'3px'}:null}>
                     {hideShowChildrenControlUI(component, mean)}
                     <a href="#" onClick={()=>fireEvent('mean-modal', 'open', [mean])}>
-                        {mean.title}
+                        {markDraggableMeanTitle(mean)}
                     </a>
                     <a href="#" style = {{marginLeft:'3px'}} onClick={()=>fireEvent('mean-modal', 'open', [CreateMean(0, '', viewStateVal('realms-dao', 'currentRealm').id, []), mean])}>
                       {addNewMeanTitle}
                     </a>
                     <span style={{color: 'green', fontSize:'8pt'}}> {targetsTagsString(mean)}</span>
                 </div>
+}
+
+const markDraggableMeanTitle = function(mean){
+  if(viewStateVal('means-dao', 'draggableMean')==mean){
+    return <strong>{mean.title}</strong>
+  } else {
+    return mean.title
+  }
 }
 
 const hideShowChildrenControlUI = function(component, mean){

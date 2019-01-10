@@ -99,16 +99,21 @@ export class MeanModal extends React.Component {
                   title={meanModalHeaderTitle}
                   styleClass='mean-modal-style'>
             <CommonCrudeTemplate editing = {this.state.mode} changeEditHandler = {this.forceUpdate.bind(this)} deleteHandler={()=>fireEvent('means-dao', 'delete', [this.state.currentMean.id])}>
+                {rememberButton(this)}
                 {showAlerts(this.state.alerts)}
                 <form>
                   <FormGroup controlId="formBasicText">
-                  <ControlLabel>Title</ControlLabel>
-                  {this.state.mode.isEdit? <FormControl
-                                    type="text"
-                                    value={this.state.currentMean.title}
-                                    placeholder="Enter title"
-                                    onChange={this.handleNameVal}/>
-                                  : <FormControl.Static>{this.state.currentMean.title}</FormControl.Static>}
+                    <div style={{display:'inline-block', paddingRight:'3px'}}>
+                      <ControlLabel>Title:</ControlLabel>
+                    </div>
+                    <div style={{display:'inline-block'}}>
+                      {this.state.mode.isEdit? <FormControl
+                                        type="text"
+                                        value={this.state.currentMean.title}
+                                        placeholder="Enter title"
+                                        onChange={this.handleNameVal}/>
+                                      : <FormControl.Static>{this.state.currentMean.title}</FormControl.Static>}
+                    </div>
                   </FormGroup>
                 </form>
                 {targetsChooser(this)}
@@ -121,6 +126,20 @@ export class MeanModal extends React.Component {
   }
 }
 
+const rememberButton = function(component){
+  if(viewStateVal('means-dao', 'draggableMean')!=component.state.currentMean){
+    return <Button bsStyle="default" bsSize="xsmall" onClick={()=>rememberReleaseHandler(component, 'remember')}>Remember</Button>
+  } else {
+    return <Button bsStyle="default" bsSize="xsmall" onClick={()=>rememberReleaseHandler(component, 'release')}>Release</Button>
+  }
+}
+
+const rememberReleaseHandler = function(component, type){
+  if(type == 'remember')
+    fireEvent('means-dao', 'add-draggable', [component.state.currentMean])
+  if(type == 'release')
+    fireEvent('means-dao', 'remove-draggable')
+}
 
 const targetsChooser = function(component){
   if(component.state.mode.isEdit){

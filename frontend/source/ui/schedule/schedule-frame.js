@@ -13,11 +13,12 @@ export class ScheduleFrame extends React.Component{
   constructor(props){
     super(props)
     this.state = {edit:false};
+    registerEvent('schedule-frame', 'switch-edit-mode', (stateSetter)=>this.setState({edit:!this.state.edit}))
+    registerEvent('schedule-frame', 'update', (stateSetter)=>this.setState({}))
+
     registerReaction('schedule-frame', 'hquarters-dao', ['hquarters-received', 'hquarter-modified', 'default-received'], ()=>this.setState({}))
     registerReaction('schedule-frame', 'means-dao', ['means-received', 'mean-modified'], ()=>this.setState({}))
     registerReaction('schedule-frame', 'realms-dao', 'change-current-realm', ()=>this.setState({}))
-
-    registerEvent('schedule-frame', 'switch-edit-mode', (stateSetter)=>this.setState({edit:!this.state.edit}))
   }
 
   allowDrop(ev) {
@@ -144,9 +145,19 @@ const getSlotView = function(component, slot){
                   onDragOver={(e)=>{e.preventDefault()}}
                   onDrop={(e)=>fireEvent('hquarters-dao', 'assign-mean-to-slot', [viewStateVal('means-dao', 'draggableMean'), slot])}>
                     <td>
-                      <span style={{color:'lightgrey'}}>Slot {slot.position}</span>
+                        <span style={{color:'lightgrey'}}>Slot {slot.position}</span>
+                        {assignMeanLink(component, slot)}
                     </td>
                   </tr>
+  }
+}
+
+const assignMeanLink = function(component, slot){
+  const draggableMean = viewStateVal('means-dao', 'draggableMean')
+  if(component.state.edit && draggableMean!=null){
+    return <a href='#' onClick={(e)=>{
+      fireEvent('hquarters-dao', 'assign-mean-to-slot', [viewStateVal('means-dao', 'draggableMean'), slot])
+    }}> Assign {draggableMean.title}</a>
   }
 }
 

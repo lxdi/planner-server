@@ -107,9 +107,17 @@ registerEvent('means-dao', 'hide-children', (stateSetter, mean)=>{
 
 registerEvent('means-dao', 'hide-children-changed', (stateSetter, mean)=>mean)
 
-registerEvent('means-dao', 'add-draggable', (stateSetter, mean)=>{stateSetter('draggableMean', mean)})
+registerEvent('means-dao', 'add-draggable', (stateSetter, mean)=>{
+  stateSetter('draggableMean', mean)
+  fireEvent('means-frame', 'update')
+  fireEvent('schedule-frame', 'update')
+})
 
-registerEvent('means-dao', 'remove-draggable', (stateSetter)=>stateSetter('draggableMean', null))
+registerEvent('means-dao', 'remove-draggable', (stateSetter)=>{
+  stateSetter('draggableMean', null)
+  fireEvent('means-frame', 'update')
+  fireEvent('schedule-frame', 'update')
+})
 
 const importMeansDto = function(stateSetter, meansDto){
   if(viewStateVal('means-dao', 'means')==null){
