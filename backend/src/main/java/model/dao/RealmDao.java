@@ -37,4 +37,12 @@ public class RealmDao implements IRealmDAO {
     public void saveOrUpdate(Realm realm) {
         sessionFactory.getCurrentSession().saveOrUpdate(realm);
     }
+
+    @Override
+    public void setCurrent(long realmid) {
+        this.sessionFactory.getCurrentSession().createQuery("update Realm set current=false").executeUpdate();
+        this.sessionFactory.getCurrentSession().createQuery("update Realm set current=true where id = :id")
+                .setParameter("id", realmid)
+                .executeUpdate();
+    }
 }

@@ -1,5 +1,5 @@
 //import $ from 'jquery'
-import {sendGet, sendPut} from './postoffice'
+import {sendGet, sendPut, sendPost} from './postoffice'
 import {registerEvent, registerReaction, fireEvent, viewStateVal} from '../controllers/eventor'
 
 registerEvent('realms-dao', 'realms-request', function(stateSetter){
@@ -7,8 +7,12 @@ registerEvent('realms-dao', 'realms-request', function(stateSetter){
     var receivedData = typeof data == 'string'? JSON.parse(data): data
     importRealms(stateSetter, receivedData)
     for(var i in viewStateVal('realms-dao', 'realms')){
-      stateSetter('currentRealm', viewStateVal('realms-dao', 'realms')[i])
-      break
+      if(viewStateVal('realms-dao', 'currentRealm')==null){
+        stateSetter('currentRealm', viewStateVal('realms-dao', 'realms')[i])
+      }
+      if(viewStateVal('realms-dao', 'realms')[i].current==true){
+        stateSetter('currentRealm', viewStateVal('realms-dao', 'realms')[i])
+      }
     }
     fireEvent('realms-dao', 'realms-received', [])
   })
@@ -29,7 +33,11 @@ registerEvent('realms-dao', 'realm-created', function(stateSetter, realm){
 })
 
 registerEvent('realms-dao', 'change-current-realm', function(stateSetter, realm){
-  stateSetter('currentRealm', realm)
+  sendPost('realm/setcurrent/'+realm.id, null, ()=>{
+    stateSetter('currentRealm', realm)
+    fireEvent('targets-frame', 'update')
+    fireEvent('means-frame', 'update')
+  })
 })
 
 const importRealms = function(stateSetter, data){

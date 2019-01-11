@@ -10,4 +10,5 @@ public interface IRealmDAO {
     Realm realmById(long id);
     Realm createRealm(String title);
     void saveOrUpdate(Realm realm);
+    void setCurrent(long realmid);
 }

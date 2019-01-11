@@ -18,7 +18,7 @@ export class ScheduleFrame extends React.Component{
 
     registerReaction('schedule-frame', 'hquarters-dao', ['hquarters-received', 'hquarter-modified', 'default-received'], ()=>this.setState({}))
     registerReaction('schedule-frame', 'means-dao', ['means-received', 'mean-modified'], ()=>this.setState({}))
-    registerReaction('schedule-frame', 'realms-dao', 'change-current-realm', ()=>this.setState({}))
+    //registerReaction('schedule-frame', 'realms-dao', 'change-current-realm', ()=>this.setState({}))
   }
 
   allowDrop(ev) {
@@ -133,7 +133,7 @@ const getSlotsUI = function(component, hquarter){
 const getSlotView = function(component, slot){
   if(slot.meanid!=null){
     const mean = findMean(slot.meanid)
-    const realm = viewStateVal('realms-dao', 'realms')[mean.realmid]
+    //const realm = viewStateVal('realms-dao', 'realms')[mean.realmid]
     return <tr key={slot.id}>
                     <td>
                       <a href='#' style={getStyleFroSlot(slot)}>{getSlotTitleWithMean(slot.meanid)}</a>

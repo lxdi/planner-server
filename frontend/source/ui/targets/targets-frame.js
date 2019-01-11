@@ -13,6 +13,7 @@ export class TargetsFrame extends React.Component{
     super(props)
     this.state = {editTree: false}
 
+    registerEvent('targets-frame', 'update', ()=>this.setState({}))
     registerReaction('targets-frame', 'targets-dao', 'targets-received', ()=>this.setState({}))
     registerReaction('targets-frame', 'realms-dao', ['realms-received', 'change-current-realm', 'realm-created'], ()=>this.setState({}))
 

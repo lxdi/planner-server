@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -32,9 +33,15 @@ public class RealmsRESTController {
     }
 
     @RequestMapping(path = "/create" , method = RequestMethod.PUT)
-    public ResponseEntity<Realm> createTarget(@RequestBody Realm realm){
+    public ResponseEntity<Realm> createRealm(@RequestBody Realm realm){
         realmDAO.saveOrUpdate(realm);
         return new ResponseEntity<Realm>(realm, HttpStatus.OK);
+    }
+
+    @RequestMapping(path = "/setcurrent/{realmid}" , method = RequestMethod.POST)
+    public ResponseEntity setCurrent(@PathVariable("realmid") long realmid){
+        realmDAO.setCurrent(realmid);
+        return new ResponseEntity(HttpStatus.OK);
     }
 
 }

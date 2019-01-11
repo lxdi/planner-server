@@ -17,6 +17,8 @@ public class Realm {
     long id;
     String title;
 
+    boolean current = false;
+
     public long getId() {
         return id;
     }
@@ -31,4 +33,10 @@ public class Realm {
         this.title = title;
     }
 
+    public boolean isCurrent() {
+        return current;
+    }
+    public void setCurrent(boolean current) {
+        this.current = current;
+    }
 }
