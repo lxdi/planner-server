@@ -1,6 +1,6 @@
 import {findPrev} from '../../source/utils/linked-list'
 
-describe('Tests for insertLL method', ()=>{
+describe('Tests for findPrev method', ()=>{
   test('4-size nodes tests', ()=>{
     const testNodes = []
     const rawData = []

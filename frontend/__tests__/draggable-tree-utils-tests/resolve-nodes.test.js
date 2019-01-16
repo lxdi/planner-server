@@ -19,4 +19,16 @@ describe('Tests for resolveNodes method', ()=>{
     expect(countFields(resolved.children[1])).toBe(2)
     expect(countFields(resolved.children[6])).toBe(0)
   })
+
+  test('1-size array test', ()=>{
+    const nodes = []
+    const node = {id:1}
+    nodes[1] = node
+
+    const resolved = resolveNodes(nodes)
+
+    expect(resolved.root).not.toBeNull()
+    expect(resolved.root[1]).toBe(node)
+
+  })
 })
