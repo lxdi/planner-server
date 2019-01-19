@@ -22,6 +22,17 @@ export const makeMap = function(arr, fieldName, callback){
   return result
 }
 
+export const makeSplitMap = function(arr, fieldName, splitterFieldName){
+  const result = []
+  for(var i in arr){
+    if(result[arr[i][splitterFieldName]]==null){
+      result[arr[i][splitterFieldName]] = []
+    }
+    result[arr[i][splitterFieldName]][arr[i][fieldName]] = arr[i]
+  }
+  return result
+}
+
 
 export const getMaxVal = function(objects, fieldName){
     var result = 0
