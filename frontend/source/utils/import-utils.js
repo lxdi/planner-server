@@ -6,14 +6,20 @@ export const normalizeInnerArrays = function(obj, configsArr, idx){
       idx = 0
     }
     if(obj!=null && configsArr[idx]!=null){
-      const newArr = []
-      for(var i in obj[configsArr[idx].arrName]){
-        const childObj = obj[configsArr[idx].arrName][i]
-        normalizeInnerArrays(childObj, configsArr, idx+1)
-        newArr[childObj[configsArr[idx].posName]] = childObj
-      }
+      const newArr = makeMap(obj[configsArr[idx].arrName], configsArr[idx].posName, (childObj)=>normalizeInnerArrays(childObj, configsArr, idx+1))
       obj[configsArr[idx].arrName] = newArr
     }
+}
+
+export const makeMap = function(arr, fieldName, callback){
+  const result = []
+  for(var i in arr){
+    result[arr[i][fieldName]] = arr[i]
+    if(callback!=null){
+      callback(arr[i])
+    }
+  }
+  return result
 }
 
 
