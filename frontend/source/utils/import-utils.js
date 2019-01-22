@@ -33,6 +33,16 @@ export const makeSplitMap = function(arr, fieldName, splitterFieldName){
   return result
 }
 
+export const getFromMappedRepByid = function(rep, sid){
+  for(var superid in rep){
+    for(var id in rep[superid]){
+      if(rep[superid][id].id === sid){
+        return rep[superid][id]
+      }
+    }
+  }
+  return null
+}
 
 export const getMaxVal = function(objects, fieldName){
     var result = 0
