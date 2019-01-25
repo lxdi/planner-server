@@ -44,6 +44,14 @@ export const getFromMappedRepByid = function(rep, sid){
   return null
 }
 
+export const iterateMappedRep = function(rep, callback){
+  for(var sid in rep){
+    for(var id in rep[sid]){
+      callback(rep[sid][id])
+    }
+  }
+}
+
 export const getMaxVal = function(objects, fieldName){
     var result = 0
     if(objects!=null){
