@@ -44,6 +44,11 @@ public class HquartersRESTController {
         return new ResponseEntity<List<HquarterDtoFull>>(hquartersDelegate.getCurrentHquartersFull(), HttpStatus.OK);
     }
 
+    @RequestMapping(path = "/currentlist/full/currentyear")
+    public ResponseEntity<List<HquarterDtoFull>> getHquartersFullCurrentYear(){
+        return new ResponseEntity<List<HquarterDtoFull>>(hquartersDelegate.getHquartersFullCurrentYear(), HttpStatus.OK);
+    }
+
     @RequestMapping(path = "/prev/{hquarterid}/{count}")
     public ResponseEntity<List<HquarterDtoLazy>> getPrev(
             @PathVariable("hquarterid") long hqid, @PathVariable("count") int count){

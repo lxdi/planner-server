@@ -97,6 +97,20 @@ public class HquartersDelegate {
         return result;
     }
 
+    public List<HquarterDtoFull> getHquartersFullCurrentYear(){
+        List<HquarterDtoFull> result = new ArrayList<>();
+        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+
+        List<HQuarter> hQuarters = new ArrayList<>();
+        hQuarters.addAll(getOrCreateHquarters(currentYear));
+
+        for(HQuarter hQuarter : hQuarters){
+            HquarterDtoFull dto = hquarterDtoFullMapper.mapToDto(hQuarter);
+            result.add(dto);
+        }
+        return result;
+    }
+
     private List<HQuarter> getOrCreateHquarters(int year){
         List<HQuarter> result = quarterDAO.getHQuartersInYear(year);
         if(result.size()==0){

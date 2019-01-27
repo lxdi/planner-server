@@ -54,7 +54,7 @@ export class HquarterModal extends React.Component {
               okHandler = {this.okButton}
               cancelHandler = {()=>fireEvent('hquarter-modal', 'close')}
               title={this.state.hquarter.startWeek!=null? this.state.hquarter.startWeek.startDay + ' to ' + this.state.hquarter.endWeek.startDay: 'Default settings'}
-              styleClass='mean-modal-style'>
+              styleClass='hquarter-modal-style'>
         <CommonCrudeTemplate editing = {this.state.mode} changeEditHandler = {this.forceUpdate.bind(this)}>
           {this.state.hquarter.dumb==null? modalBody(this):null}
         </CommonCrudeTemplate>
@@ -67,12 +67,12 @@ const modalBody = function(component){
   const isDefault = hquarter.startWeek==null
   if(hquarter.isFull!=null && hquarter.isFull){
         return     <div>
-                    <div style={{display:'table-cell', borderRight:'1px solid lightgrey', padding:'10px'}}>
+                    <div style={{display:'inline-block', padding:'10px', width:'8%', verticalAlign:'top'}}>
                       {isDefault || component.state.mode.isEdit?
                         <a href='#' onClick={()=>fireEvent('hquarters-dao', 'add-slot', [hquarter])}>+ Add slot</a>:null}
                       {getSlotsUI(component, hquarter)}
                     </div>
-                    <div style={{display:'table-cell', padding:'10px'}}>
+                    <div style={{display:'inline-block', padding:'10px', width:'92%', borderLeft:'1px solid lightgrey'}}>
                       <div>
                         {weekMappingTable(hquarter)}
                       </div>

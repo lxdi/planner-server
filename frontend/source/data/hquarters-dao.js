@@ -17,9 +17,9 @@ registerEvent('hquarters-dao', 'hquarters-request', function(stateSetter){
 registerEvent('hquarters-dao', 'hquarters-received', function(){})
 
 registerEvent('hquarters-dao', 'hquarters-request-full', function(stateSetter){
-  sendGet("/hquarter/currentlist/full", function(data) {
+  sendGet("/hquarter/currentlist/full/currentyear", function(data) {
             importHquarters(stateSetter, data, true)
-            fireEvent('big-map-modal', 'update')
+            fireEvent('big-map-modal', 'update', [true])
           })
 })
 
