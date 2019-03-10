@@ -5,6 +5,7 @@ import model.dto.hquarter.HquarterDtoFullMapper;
 import model.dto.hquarter.WeekWithTasksDto;
 import model.entities.*;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import orm_tests.conf.ATestsWithTargetsMeansQuartalsGenerated;
@@ -162,6 +163,7 @@ public class HquarterDtoLazyMapper_AfterUnassigning_Tests extends ATestsWithTarg
 
     }
 
+    @Ignore
     @Test
     public void unassignMiddleSlotTest(){
         hquartersDelegate.assign(mean.getId(), slot1.getId());
@@ -248,6 +250,7 @@ public class HquarterDtoLazyMapper_AfterUnassigning_Tests extends ATestsWithTarg
 
     }
 
+    @Ignore
     @Test
     public void unassignAll(){
         hquartersDelegate.assign(mean.getId(), slot1.getId());

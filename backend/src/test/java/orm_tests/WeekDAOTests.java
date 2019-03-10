@@ -66,7 +66,7 @@ public class WeekDAOTests extends AbstractTestsWithTargets {
 
         List<Week> weeks = weekDAO.weeksOfHquarter(hQuarter);
 
-        assertTrue(weeks.size()==6);
+        assertTrue(weeks.size()==4);
         assertTrue(weeks.get(0).getId() == startWeek.getId());
         for(int i = 1; i<weeks.size();  i++){
             Week weekPrev = weeks.get(i-1);

@@ -189,22 +189,22 @@ public class TaskMappersController_Unassigns_with2hquarters_Tests extends ATests
         checkTaskMapper(taskMappersDAO.taskMapperForTask(tasksDAO.byTitle("task 1")), weeksHq1.get(0), slotPosition11);
         checkTaskMapper(taskMappersDAO.taskMapperForTask(tasksDAO.byTitle("task 2")), weeksHq1.get(0), slotPosition12);
         checkTaskMapper(taskMappersDAO.taskMapperForTask(tasksDAO.byTitle("task 3")), weeksHq1.get(0), slotPosition13);
-        checkTaskMapper(taskMappersDAO.taskMapperForTask(tasksDAO.byTitle("task 4")), weeksHq1.get(2), slotPosition11);
-        checkTaskMapper(taskMappersDAO.taskMapperForTask(tasksDAO.byTitle("task 5")), weeksHq1.get(2), slotPosition12);
-        checkTaskMapper(taskMappersDAO.taskMapperForTask(tasksDAO.byTitle("task 6")), weeksHq1.get(2), slotPosition13);
-        checkTaskMapper(taskMappersDAO.taskMapperForTask(tasksDAO.byTitle("task 7")), weeksHq1.get(4), slotPosition11);
-        checkTaskMapper(taskMappersDAO.taskMapperForTask(tasksDAO.byTitle("task 8")), weeksHq1.get(4), slotPosition12);
-        checkTaskMapper(taskMappersDAO.taskMapperForTask(tasksDAO.byTitle("task 9")), weeksHq1.get(4), slotPosition13);
+        checkTaskMapper(taskMappersDAO.taskMapperForTask(tasksDAO.byTitle("task 4")), weeksHq1.get(1), slotPosition11);
+        checkTaskMapper(taskMappersDAO.taskMapperForTask(tasksDAO.byTitle("task 5")), weeksHq1.get(1), slotPosition12);
+        checkTaskMapper(taskMappersDAO.taskMapperForTask(tasksDAO.byTitle("task 6")), weeksHq1.get(1), slotPosition13);
+        checkTaskMapper(taskMappersDAO.taskMapperForTask(tasksDAO.byTitle("task 7")), weeksHq1.get(2), slotPosition11);
+        checkTaskMapper(taskMappersDAO.taskMapperForTask(tasksDAO.byTitle("task 8")), weeksHq1.get(2), slotPosition12);
+        checkTaskMapper(taskMappersDAO.taskMapperForTask(tasksDAO.byTitle("task 9")), weeksHq1.get(2), slotPosition13);
 
         checkTaskMapper(taskMappersDAO.taskMapperForTask(tasksDAO.byTitle("task 2-1")), weeksHq2.get(0), slotPosition31);
         checkTaskMapper(taskMappersDAO.taskMapperForTask(tasksDAO.byTitle("task 2-2")), weeksHq2.get(0), slotPosition32);
         checkTaskMapper(taskMappersDAO.taskMapperForTask(tasksDAO.byTitle("task 2-3")), weeksHq2.get(0), slotPosition33);
-        checkTaskMapper(taskMappersDAO.taskMapperForTask(tasksDAO.byTitle("task 2-4")), weeksHq2.get(2), slotPosition31);
-        checkTaskMapper(taskMappersDAO.taskMapperForTask(tasksDAO.byTitle("task 2-5")), weeksHq2.get(2), slotPosition32);
-        checkTaskMapper(taskMappersDAO.taskMapperForTask(tasksDAO.byTitle("task 2-6")), weeksHq2.get(2), slotPosition33);
-        checkTaskMapper(taskMappersDAO.taskMapperForTask(tasksDAO.byTitle("task 2-7")), weeksHq2.get(4), slotPosition31);
-        checkTaskMapper(taskMappersDAO.taskMapperForTask(tasksDAO.byTitle("task 2-8")), weeksHq2.get(4), slotPosition32);
-        checkTaskMapper(taskMappersDAO.taskMapperForTask(tasksDAO.byTitle("task 2-9")), weeksHq2.get(4), slotPosition33);
+        checkTaskMapper(taskMappersDAO.taskMapperForTask(tasksDAO.byTitle("task 2-4")), weeksHq2.get(1), slotPosition31);
+        checkTaskMapper(taskMappersDAO.taskMapperForTask(tasksDAO.byTitle("task 2-5")), weeksHq2.get(1), slotPosition32);
+        checkTaskMapper(taskMappersDAO.taskMapperForTask(tasksDAO.byTitle("task 2-6")), weeksHq2.get(1), slotPosition33);
+        checkTaskMapper(taskMappersDAO.taskMapperForTask(tasksDAO.byTitle("task 2-7")), weeksHq2.get(2), slotPosition31);
+        checkTaskMapper(taskMappersDAO.taskMapperForTask(tasksDAO.byTitle("task 2-8")), weeksHq2.get(2), slotPosition32);
+        checkTaskMapper(taskMappersDAO.taskMapperForTask(tasksDAO.byTitle("task 2-9")), weeksHq2.get(2), slotPosition33);
 
     }
 

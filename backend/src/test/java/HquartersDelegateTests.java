@@ -3,6 +3,7 @@ import model.dao.IHQuarterDAO;
 import model.dto.hquarter.HquarterDtoLazy;
 import model.entities.HQuarter;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import orm_tests.conf.AbstractTestsWithTargets;
@@ -29,6 +30,7 @@ public class HquartersDelegateTests extends AbstractTestsWithTargets {
         super.init();
     }
 
+    @Ignore
     @Test
     public void getPrevTest(){
         quarterGenerator.generateYear(2018);
@@ -44,6 +46,7 @@ public class HquartersDelegateTests extends AbstractTestsWithTargets {
 
     }
 
+    @Ignore
     @Test
     public void getNextTest(){
         quarterGenerator.generateYear(2018);

@@ -48,9 +48,6 @@ public class HquartersDelegate {
     DefaultSettingsPropagator defaultSettingsPropagator;
 
     @Autowired
-    ILayerDAO layerDAO;
-
-    @Autowired
     QuarterGenerator quarterGenerator;
 
     public List<HquarterDtoLazy> getAllQuarters(){

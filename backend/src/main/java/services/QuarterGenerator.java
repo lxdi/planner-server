@@ -45,8 +45,8 @@ public class QuarterGenerator {
         YearWeek start = YearWeek.of(year,1);
         int numberOfWeeks = start.is53WeekYear()? 53: 54;
         YearWeek yw = start;
-        int hquartersPerYearLimit = 8;
-        int hquarterlength = 6;
+        int hquartersPerYearLimit = 12;
+        int hquarterlength = 4;
         for(int i = 1; i <= hquartersPerYearLimit; i++){
             //if(i==1 || (i-1)%6==0 && hquartersPerYearLimit>0){
             //if(i==1 || i == (1+12) || i == (1+12*2) || i==(1+12*3)) {

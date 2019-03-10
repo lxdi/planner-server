@@ -5,6 +5,7 @@ import model.dto.hquarter.HquarterDtoFullMapper;
 import model.dto.hquarter.WeekWithTasksDto;
 import model.entities.*;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import orm_tests.conf.ATestsWithTargetsMeansQuartalsGenerated;
@@ -123,6 +124,7 @@ public class HquarterDtoLazyMapper_WeeksMappingTests extends ATestsWithTargetsMe
 
     }
 
+    @Ignore
     @Test
     public void weeksDtoWithTasksMappingTest(){
         HquarterDtoFull hquarterDtoFull = hquarterDtoFullMapper.mapToDto(hQuarter1);

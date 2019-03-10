@@ -91,7 +91,7 @@ public class TaskMappersController {
                 List<SlotPosition> slotPositions = slotDAO.getSlotPositionsForSlot(slot);
                 Collections.sort(slotPositions);
                 Task currentTask = !taskStack.isEmpty()? taskStack.pop():null;
-                for(int iw = 0; iw<weeks.size(); iw=iw+2){
+                for(int iw = 0; iw<weeks.size(); iw++){
                     for(int isp=0; isp<slotPositions.size(); isp++){
                         TaskMapper taskMapper = taskMappersDAO.taskMapperForTask(currentTask);
                         if(taskMapper==null){
