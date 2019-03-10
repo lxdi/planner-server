@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import orm_tests.conf.ATestsWithTargetsMeansQuartalsGenerated;
+import services.DateUtils;
 
 import java.util.List;
 
@@ -193,6 +194,11 @@ public class TaskMappersController_Assigning_in_the_middle_Tests extends ATestsW
         checkTaskMapper(taskMappersDAO.taskMapperForTask(tasksDAO.byTitle("task 2-7")), weeksHq1.get(2), slotPosition21);
         checkTaskMapper(taskMappersDAO.taskMapperForTask(tasksDAO.byTitle("task 2-8")), weeksHq1.get(2), slotPosition22);
         checkTaskMapper(taskMappersDAO.taskMapperForTask(tasksDAO.byTitle("task 2-9")), weeksHq1.get(2), slotPosition23);
+
+        TaskMapper task1 = taskMappersDAO.taskMapperForTask(tasksDAO.byTitle("task 1"));
+        Week week = weeksHq1.get(0);
+        SlotPosition slotPosition = task1.getSlotPosition();
+        assertTrue(DateUtils.fromDate(task1.getDate()).equals(DateUtils.fromDate(DateUtils.addDays(week.getStartDay(), slotPosition.getDaysOfWeek().getId()))));
 
     }
 

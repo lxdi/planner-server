@@ -1,6 +1,9 @@
 package model.entities;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import javax.persistence.*;
+import java.sql.Date;
 
 @Entity
 public class TaskMapper {
@@ -17,6 +20,10 @@ public class TaskMapper {
 
     @OneToOne
     Week week;
+
+    @Basic
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    Date date;
 
     public long getId() {
         return id;
@@ -48,5 +55,12 @@ public class TaskMapper {
 
     public void setWeek(Week week) {
         this.week = week;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+    public void setDate(Date date) {
+        this.date = date;
     }
 }

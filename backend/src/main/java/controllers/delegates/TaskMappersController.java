@@ -4,6 +4,7 @@ import model.dao.*;
 import model.entities.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import services.DateUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -35,6 +36,7 @@ public class TaskMappersController {
                 if(taskMapper!=null){
                     taskMapper.setSlotPosition(null);
                     taskMapper.setWeek(null);
+                    taskMapper.setDate(null);
                     taskMappersDAO.saveOrUpdate(taskMapper);
                 }
             }
@@ -100,6 +102,7 @@ public class TaskMappersController {
                         }
                         taskMapper.setSlotPosition(slotPositions.get(isp));
                         taskMapper.setWeek(weeks.get(iw));
+                        taskMapper.setDate(DateUtils.addDays(weeks.get(iw).getStartDay(), taskMapper.getSlotPosition().getDaysOfWeek().getId()));
                         taskMappersDAO.saveOrUpdate(taskMapper);
                         currentTask = !taskStack.isEmpty()? taskStack.pop():null;
                         if(currentTask==null){
