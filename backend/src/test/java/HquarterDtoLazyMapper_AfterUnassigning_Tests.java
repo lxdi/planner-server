@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import orm_tests.conf.ATestsWithTargetsMeansQuartalsGenerated;
 
+import java.util.List;
 import java.util.Stack;
 
 import static junit.framework.TestCase.assertTrue;
@@ -163,7 +164,6 @@ public class HquarterDtoLazyMapper_AfterUnassigning_Tests extends ATestsWithTarg
 
     }
 
-    @Ignore
     @Test
     public void unassignMiddleSlotTest(){
         hquartersDelegate.assign(mean.getId(), slot1.getId());
@@ -183,7 +183,7 @@ public class HquarterDtoLazyMapper_AfterUnassigning_Tests extends ATestsWithTarg
 
 
         HquarterDtoFull hquarterDtoFull = hquarterDtoFullMapper.mapToDto(hQuarter1);
-        assertTrue(hquarterDtoFull.getWeeks().size()==6);
+        assertTrue(hquarterDtoFull.getWeeks().size()==4);
         Stack<String> tasksTitles = new Stack<>();
         tasksTitles.push("task 9");
         tasksTitles.push("task 8");
@@ -195,28 +195,40 @@ public class HquarterDtoLazyMapper_AfterUnassigning_Tests extends ATestsWithTarg
         tasksTitles.push("task 2");
         tasksTitles.push("task 1");
         boolean odd = true;
-        for(WeekWithTasksDto weekWithTasksDto : hquarterDtoFull.getWeeks()) {
-            if(odd) {
-                assertTrue(weekWithTasksDto.getDays().get(DaysOfWeek.mon).size() == 1);
-                assertTrue(weekWithTasksDto.getDays().get(DaysOfWeek.mon).get(0).getTitle().equals(tasksTitles.pop()));
-                assertTrue(weekWithTasksDto.getDays().get(DaysOfWeek.tue) == null);
-                assertTrue(weekWithTasksDto.getDays().get(DaysOfWeek.wed) == null);
-                assertTrue(weekWithTasksDto.getDays().get(DaysOfWeek.thu) == null);
-                assertTrue(weekWithTasksDto.getDays().get(DaysOfWeek.fri).size() == 1);
-                assertTrue(weekWithTasksDto.getDays().get(DaysOfWeek.fri).get(0).getTitle().equals(tasksTitles.pop()));
-                assertTrue(weekWithTasksDto.getDays().get(DaysOfWeek.sat) == null);
-                assertTrue(weekWithTasksDto.getDays().get(DaysOfWeek.sun).size() == 1);
-                assertTrue(weekWithTasksDto.getDays().get(DaysOfWeek.sun).get(0).getTitle().equals(tasksTitles.pop()));
-            } else {
-                for(DaysOfWeek dayOfWeek : DaysOfWeek.values()){
-                    assertTrue(weekWithTasksDto.getDays().get(dayOfWeek) == null);
-                }
-            }
-            odd = !odd;
+        //for(WeekWithTasksDto weekWithTasksDto : hquarterDtoFull.getWeeks()) {
+        List<WeekWithTasksDto> weeks = hquarterDtoFull.getWeeks();
+        for(int i = 0; i<3; i++) {
+            assertTrue(weeks.get(i).getDays().get(DaysOfWeek.mon).size() == 1);
+            assertTrue(weeks.get(i).getDays().get(DaysOfWeek.mon).get(0).getTitle().equals(tasksTitles.pop()));
+            assertTrue(weeks.get(i).getDays().get(DaysOfWeek.tue) == null);
+            assertTrue(weeks.get(i).getDays().get(DaysOfWeek.wed) == null);
+            assertTrue(weeks.get(i).getDays().get(DaysOfWeek.thu) == null);
+            assertTrue(weeks.get(i).getDays().get(DaysOfWeek.fri).size() == 1);
+            assertTrue(weeks.get(i).getDays().get(DaysOfWeek.fri).get(0).getTitle().equals(tasksTitles.pop()));
+            assertTrue(weeks.get(i).getDays().get(DaysOfWeek.sat) == null);
+            assertTrue(weeks.get(i).getDays().get(DaysOfWeek.sun).size() == 1);
+            assertTrue(weeks.get(i).getDays().get(DaysOfWeek.sun).get(0).getTitle().equals(tasksTitles.pop()));
+//            if(odd) {
+//                assertTrue(weekWithTasksDto.getDays().get(DaysOfWeek.mon).size() == 1);
+//                assertTrue(weekWithTasksDto.getDays().get(DaysOfWeek.mon).get(0).getTitle().equals(tasksTitles.pop()));
+//                assertTrue(weekWithTasksDto.getDays().get(DaysOfWeek.tue) == null);
+//                assertTrue(weekWithTasksDto.getDays().get(DaysOfWeek.wed) == null);
+//                assertTrue(weekWithTasksDto.getDays().get(DaysOfWeek.thu) == null);
+//                assertTrue(weekWithTasksDto.getDays().get(DaysOfWeek.fri).size() == 1);
+//                assertTrue(weekWithTasksDto.getDays().get(DaysOfWeek.fri).get(0).getTitle().equals(tasksTitles.pop()));
+//                assertTrue(weekWithTasksDto.getDays().get(DaysOfWeek.sat) == null);
+//                assertTrue(weekWithTasksDto.getDays().get(DaysOfWeek.sun).size() == 1);
+//                assertTrue(weekWithTasksDto.getDays().get(DaysOfWeek.sun).get(0).getTitle().equals(tasksTitles.pop()));
+//            } else {
+//                for(DaysOfWeek dayOfWeek : DaysOfWeek.values()){
+//                    assertTrue(weekWithTasksDto.getDays().get(dayOfWeek) == null);
+//                }
+//            }
+            //odd = !odd;
         }
 
         HquarterDtoFull hquarterDtoFull2 = hquarterDtoFullMapper.mapToDto(hQuarter2);
-        assertTrue(hquarterDtoFull2.getWeeks().size()==6);
+        assertTrue(hquarterDtoFull2.getWeeks().size()==4);
         Stack<String> tasksTitles2 = new Stack<>();
         tasksTitles2.push("task 2-9");
         tasksTitles2.push("task 2-8");
@@ -228,29 +240,21 @@ public class HquarterDtoLazyMapper_AfterUnassigning_Tests extends ATestsWithTarg
         tasksTitles2.push("task 2-2");
         tasksTitles2.push("task 2-1");
         odd = true;
-        for(WeekWithTasksDto weekWithTasksDto : hquarterDtoFull2.getWeeks()) {
-            if(odd) {
-                assertTrue(weekWithTasksDto.getDays().get(DaysOfWeek.mon).size() == 1);
-                assertTrue(weekWithTasksDto.getDays().get(DaysOfWeek.mon).get(0).getTitle().equals(tasksTitles2.pop()));
-                assertTrue(weekWithTasksDto.getDays().get(DaysOfWeek.tue) == null);
-                assertTrue(weekWithTasksDto.getDays().get(DaysOfWeek.wed) == null);
-                assertTrue(weekWithTasksDto.getDays().get(DaysOfWeek.thu).size() == 1);
-                assertTrue(weekWithTasksDto.getDays().get(DaysOfWeek.thu).get(0).getTitle().equals(tasksTitles2.pop()));
-                assertTrue(weekWithTasksDto.getDays().get(DaysOfWeek.fri).size() == 1);
-                assertTrue(weekWithTasksDto.getDays().get(DaysOfWeek.fri).get(0).getTitle().equals(tasksTitles2.pop()));
-                assertTrue(weekWithTasksDto.getDays().get(DaysOfWeek.sat) == null);
-                assertTrue(weekWithTasksDto.getDays().get(DaysOfWeek.sun) == null);
-            } else {
-                for(DaysOfWeek dayOfWeek : DaysOfWeek.values()){
-                    assertTrue(weekWithTasksDto.getDays().get(dayOfWeek) == null);
-                }
-            }
-            odd = !odd;
+        List<WeekWithTasksDto> weeks2 = hquarterDtoFull2.getWeeks();
+        for (int i = 0; i < 3; i++) {
+            assertTrue(weeks2.get(i).getDays().get(DaysOfWeek.mon).size() == 1);
+            assertTrue(weeks2.get(i).getDays().get(DaysOfWeek.mon).get(0).getTitle().equals(tasksTitles2.pop()));
+            assertTrue(weeks2.get(i).getDays().get(DaysOfWeek.tue) == null);
+            assertTrue(weeks2.get(i).getDays().get(DaysOfWeek.wed) == null);
+            assertTrue(weeks2.get(i).getDays().get(DaysOfWeek.thu).size() == 1);
+            assertTrue(weeks2.get(i).getDays().get(DaysOfWeek.thu).get(0).getTitle().equals(tasksTitles2.pop()));
+            assertTrue(weeks2.get(i).getDays().get(DaysOfWeek.fri).size() == 1);
+            assertTrue(weeks2.get(i).getDays().get(DaysOfWeek.fri).get(0).getTitle().equals(tasksTitles2.pop()));
+            assertTrue(weeks2.get(i).getDays().get(DaysOfWeek.sat) == null);
+            assertTrue(weeks2.get(i).getDays().get(DaysOfWeek.sun) == null);
         }
-
     }
 
-    @Ignore
     @Test
     public void unassignAll(){
         hquartersDelegate.assign(mean.getId(), slot1.getId());
@@ -280,7 +284,7 @@ public class HquarterDtoLazyMapper_AfterUnassigning_Tests extends ATestsWithTarg
         assertTrue(slotDAO.getById(slot3.getId()).getLayer()==null);
 
         HquarterDtoFull hquarterDtoFull = hquarterDtoFullMapper.mapToDto(hQuarter1);
-        assertTrue(hquarterDtoFull.getWeeks().size()==6);
+        assertTrue(hquarterDtoFull.getWeeks().size()==4);
         for(WeekWithTasksDto weekWithTasksDto : hquarterDtoFull.getWeeks()) {
             for(DaysOfWeek dayOfWeek : DaysOfWeek.values()){
                 assertTrue(weekWithTasksDto.getDays().get(dayOfWeek) == null);
@@ -288,7 +292,7 @@ public class HquarterDtoLazyMapper_AfterUnassigning_Tests extends ATestsWithTarg
         }
 
         HquarterDtoFull hquarterDtoFull2 = hquarterDtoFullMapper.mapToDto(hQuarter2);
-        assertTrue(hquarterDtoFull2.getWeeks().size()==6);
+        assertTrue(hquarterDtoFull2.getWeeks().size()==4);
         for(WeekWithTasksDto weekWithTasksDto : hquarterDtoFull2.getWeeks()) {
             for(DaysOfWeek dayOfWeek : DaysOfWeek.values()){
                 assertTrue(weekWithTasksDto.getDays().get(dayOfWeek) == null);

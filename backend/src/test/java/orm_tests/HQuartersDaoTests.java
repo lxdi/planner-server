@@ -30,24 +30,47 @@ public class HQuartersDaoTests extends ATestsWithTargetsMeansQuartalsGenerated {
         super.init();
     }
 
-    @Ignore
     @Test
     public void allHquartersTest(){
         List<HQuarter> HQuarters = hquarterDAO.getAllHQuartals();
-        assertTrue(HQuarters.size()==16);
-        int checks = 4;
+        assertTrue(HQuarters.size()==24);
+        int checks = 12;
         for (HQuarter HQuarter : HQuarters) {
             String startWeekDateStr = fromDate(HQuarter.getStartWeek().getStartDay());
             if (startWeekDateStr.contains("2018-01-01")) {
                 checks--;
             }
+            if (startWeekDateStr.contains("2018-01-29")) {
+                checks--;
+            }
+            if (startWeekDateStr.contains("2018-02-26")) {
+                checks--;
+            }
             if (startWeekDateStr.contains("2018-03-26")) {
+                checks--;
+            }
+            if (startWeekDateStr.contains("2018-04-23")) {
+                checks--;
+            }
+            if (startWeekDateStr.contains("2018-05-21")) {
                 checks--;
             }
             if (startWeekDateStr.contains("2018-06-18")) {
                 checks--;
             }
+            if (startWeekDateStr.contains("2018-07-16")) {
+                checks--;
+            }
+            if (startWeekDateStr.contains("2018-08-13")) {
+                checks--;
+            }
             if (startWeekDateStr.contains("2018-09-10")) {
+                checks--;
+            }
+            if (startWeekDateStr.contains("2018-10-08")) {
+                checks--;
+            }
+            if (startWeekDateStr.contains("2018-11-05")) {
                 checks--;
             }
         }
@@ -75,28 +98,5 @@ public class HQuartersDaoTests extends ATestsWithTargetsMeansQuartalsGenerated {
 
         assertTrue(hquarterDAO.getHQuartersInYear(2019).size()==12);
     }
-
-//    @Test
-//    public void deleteMeanWithQuarter(){
-//        int quartersAtTheBeginning = hquartalDAO.getAllHQuartals().size();
-//
-//        Mean meanParent = meansDao.meanByTitle(parentMeanTitle);
-//        meansDao.assignQuarter(thirdHQuarter, meanParent, 1);
-//
-//        meansDao.deleteMean(meansDao.meanByTitle(parentMeanTitle).getId());
-//
-//        assertTrue(hquartalDAO.getAllHQuartals().size()==quartersAtTheBeginning);
-//    }
-//
-//    @Test(expected = RuntimeException.class)
-//    public void assigningMeanOnOccupiedPlace(){
-//        Mean meanParent = meansDao.meanByTitle(parentMeanTitle);
-//        Mean meanChild = meansDao.meanByTitle(childMeanTitle);
-//        Mean meanChild2 = meansDao.meanByTitle(child2MeanTitle);
-//
-//        meansDao.assignQuarter(hquartalDAO.getById(this.secondHQuarter.getId()), meanParent, 1);
-//        meansDao.assignQuarter(hquartalDAO.getById(this.secondHQuarter.getId()), meanChild, 2);
-//        meansDao.assignQuarter(hquartalDAO.getById(this.secondHQuarter.getId()), meanChild2, 1);
-//    }
 
 }
