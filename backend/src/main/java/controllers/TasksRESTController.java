@@ -65,4 +65,10 @@ public class TasksRESTController {
         return new ResponseEntity<TaskDtoLazy>(tasksDtoMapper.mapToDto(task), HttpStatus.OK);
     }
 
+    @RequestMapping(path = "/task/{meanid}/update/progress" , method = RequestMethod.POST)
+    public ResponseEntity<Integer> updateProgress(@PathVariable("meanid") int meanid){
+        //TODO
+        return new ResponseEntity<>(0, HttpStatus.OK);
+    }
+
 }

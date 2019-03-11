@@ -25,6 +25,8 @@ public class TaskMapper {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     Date date;
 
+    int repetitions;
+
     public long getId() {
         return id;
     }
@@ -62,5 +64,12 @@ public class TaskMapper {
     }
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    public int getRepetitions() {
+        return repetitions;
+    }
+    public void setRepetitions(int repetitions) {
+        this.repetitions = repetitions;
     }
 }
