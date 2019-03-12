@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import services.BitUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,10 +66,16 @@ public class TasksRESTController {
         return new ResponseEntity<TaskDtoLazy>(tasksDtoMapper.mapToDto(task), HttpStatus.OK);
     }
 
-    @RequestMapping(path = "/task/{meanid}/update/progress" , method = RequestMethod.POST)
-    public ResponseEntity<Integer> updateProgress(@PathVariable("meanid") int meanid){
+    @RequestMapping(path = "/task/{taskid}/progress/update" , method = RequestMethod.POST)
+    public ResponseEntity updateProgress(@PathVariable("taskid") int taskid){
         //TODO
-        return new ResponseEntity<>(0, HttpStatus.OK);
+        int repetitions = tasksDAO.getRepetitions(taskid);
+        if(BitUtils.getBit(repetitions, 31)==0){
+            throw new RuntimeException("No repetitions for the task");
+        }
+        BitUtils.setBit(repetitions, BitUtils.getLastBit(repetitions)+1);
+        tasksDAO.updateRepetitions(taskid, repetitions);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }

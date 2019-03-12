@@ -25,6 +25,9 @@ public class Task implements Comparable<Task>{
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     List<Topic> topics = new ArrayList<>();
 
+    @ManyToOne
+    RepetitionPlan repetitionPlan;
+
     public Task(){}
 
     public Task(String title, Subject subject, int position){
@@ -67,6 +70,13 @@ public class Task implements Comparable<Task>{
     }
     public void setTopics(List<Topic> topics) {
         this.topics = topics;
+    }
+
+    public RepetitionPlan getRepetitionPlan() {
+        return repetitionPlan;
+    }
+    public void setRepetitionPlan(RepetitionPlan repetitionPlan) {
+        this.repetitionPlan = repetitionPlan;
     }
 
     @Override

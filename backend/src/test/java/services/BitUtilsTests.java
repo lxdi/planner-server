@@ -13,6 +13,7 @@ public class BitUtilsTests {
         assertTrue(Integer.toBinaryString(BitUtils.setBit(3, 2)).equals("111"));
         assertTrue(Integer.toBinaryString(BitUtils.setBit(3, 0)).equals("11"));
         assertTrue(Integer.toBinaryString(BitUtils.setBit(1, 0)).equals("1"));
+        assertTrue(Integer.toBinaryString(BitUtils.setBit(0, 31)).equals("10000000000000000000000000000000"));
     }
 
     @Test
@@ -21,6 +22,8 @@ public class BitUtilsTests {
         assertTrue(BitUtils.getBit(BitUtils.setBit(3, 2), 1)==1);
         assertTrue(BitUtils.getBit(BitUtils.setBit(3, 2), 2)==1);
         assertTrue(BitUtils.getBit(BitUtils.setBit(3, 2), 3)==0);
+        assertTrue(BitUtils.getBit(BitUtils.setBit(0, 31), 31)==1);
+        assertTrue(BitUtils.getBit(BitUtils.setBit(0, 31), 30)==0);
         assertTrue(BitUtils.getBit(0, 0)==0);
     }
 

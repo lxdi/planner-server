@@ -64,7 +64,7 @@ public class HquartersDelegate {
 
         List<HQuarter> hQuarters = new ArrayList<>();
         hQuarters.addAll(getOrCreateHquarters(currentYear));
-        hQuarters.addAll(getOrCreateHquarters(currentYear+1));
+        //hQuarters.addAll(getOrCreateHquarters(currentYear+1));
 
         Map<Long, List<Slot>> slotsByHquarterId = new HashMap<>();
         for(Slot slot : slotDAO.getSlotsForHquarters(hQuarters)){

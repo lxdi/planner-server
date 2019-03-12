@@ -83,4 +83,19 @@ public class TasksDao implements ITasksDAO {
         return query.list();
     }
 
+    @Override
+    public int getRepetitions(long taskid) {
+        return (int) sessionFactory.getCurrentSession()
+                .createQuery("select repetitions from TaskMapper where task.id = :id")
+                .setParameter("id", taskid).uniqueResult();
+    }
+
+    @Override
+    public void updateRepetitions(long taskid, int reps) {
+        this.sessionFactory.getCurrentSession()
+                .createQuery("update TaskMapper set repetitions=:reps where task.id = :taskid")
+                .setParameter("reps", reps)
+                .setParameter("taskid", taskid).executeUpdate();
+    }
+
 }

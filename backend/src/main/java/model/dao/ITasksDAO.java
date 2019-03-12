@@ -18,5 +18,7 @@ public interface ITasksDAO {
     List<Task> allTasks();
     List<Task> tasksBySubject(Subject subject);
     List<Task> tasksByLayer(Layer layer);
+    int getRepetitions(long taskid);
+    void updateRepetitions(long taskid, int reps);
 
 }

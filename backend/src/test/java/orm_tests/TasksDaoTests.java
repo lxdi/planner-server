@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import orm_tests.conf.AbstractTestsWithTargets;
+import services.BitUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,6 +30,9 @@ public class TasksDaoTests extends AbstractTestsWithTargets {
 
     @Autowired
     ITopicDAO topicDAO;
+
+    @Autowired
+    ITaskMappersDAO taskMappersDAO;
 
     Task task;
 
@@ -147,6 +151,34 @@ public class TasksDaoTests extends AbstractTestsWithTargets {
         assertTrue(taskLoaded.getTopics().size()==1);
         assertTrue(topicDAO.getById(topic.getId())==null || topicDAO.getById(topic2.getId())==null);
 
+    }
+
+    @Test
+    public void getRepetitionsTest(){
+        Task task = new Task();
+        tasksDAO.saveOrUpdate(task);
+
+        TaskMapper taskMapper = new TaskMapper();
+        taskMapper.setRepetitions(BitUtils.setBit(0, 31));
+        taskMapper.setTask(task);
+        taskMappersDAO.saveOrUpdate(taskMapper);
+
+        assertTrue(BitUtils.getBit(tasksDAO.getRepetitions(task.getId()), 31)==1);
+    }
+
+    @Test
+    public void updateRepetitionsTest(){
+        Task task = new Task();
+        tasksDAO.saveOrUpdate(task);
+
+        TaskMapper taskMapper = new TaskMapper();
+        taskMapper.setRepetitions(BitUtils.setBit(0, 31));
+        taskMapper.setTask(task);
+        taskMappersDAO.saveOrUpdate(taskMapper);
+
+        assertTrue(BitUtils.getBit(tasksDAO.getRepetitions(task.getId()), 0)==0);
+        tasksDAO.updateRepetitions(task.getId(), BitUtils.setBit(0, 0));
+        assertTrue(BitUtils.getBit(tasksDAO.getRepetitions(task.getId()), 0)==1);
     }
 
     private void createTestData(){

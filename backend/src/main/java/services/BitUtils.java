@@ -31,7 +31,7 @@ public class BitUtils {
                 }
             }
         }
-        return -1;
+        return -2;
     }
 
 }
