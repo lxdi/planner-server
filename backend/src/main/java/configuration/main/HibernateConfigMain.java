@@ -1,4 +1,4 @@
-package configuration;
+package configuration.main;
 
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;

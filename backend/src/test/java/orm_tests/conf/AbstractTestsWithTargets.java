@@ -1,34 +1,19 @@
 package orm_tests.conf;
 
-import configuration.HibernateConfigMain;
-import controllers.delegates.DefaultSettingsPropagator;
-import controllers.delegates.HquartersDelegate;
-import controllers.delegates.MeansDelegate;
-import controllers.delegates.TaskMappersService;
+import configuration.main.SpringConfig;
 import model.dao.*;
-import model.dto.hquarter.HquarterDtoLazyMapper;
-import model.dto.hquarter.HquarterDtoFullMapper;
-import model.dto.layer.LayersDtoMapper;
-import model.dto.mean.MeansDtoFullMapper;
-import model.dto.mean.MeansDtoLazyMapper;
-import model.dto.slot.SlotDtoLazyMapper;
-import model.dto.slot.SlotDtoMapper;
-import model.dto.slot.SlotPositionMapper;
-import model.dto.subject.SubjectDtoMapper;
-import model.dto.target.TargetsDtoMapper;
-import model.dto.task.TasksDtoMapper;
-import model.dto.topic.TopicMapper;
 import model.entities.Realm;
 import model.entities.Target;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mock.jndi.SimpleNamingContextBuilder;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
-import services.QuarterGenerator;
-import services.WeeksGenerator;
+
+import javax.naming.NamingException;
 
 import static org.junit.Assert.assertTrue;
 
@@ -38,21 +23,19 @@ import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader=AnnotationConfigContextLoader.class,
-        classes = {HibernateConfigMain.class, EmbeddedDBConf.class,
-                RealmDao.class, TargetsDao.class, TargetsDtoMapper.class,
-                MeansDao.class, MeansDtoLazyMapper.class, MeansDtoFullMapper.class, MeansDelegate.class,
-                WeekDao.class, WeeksGenerator.class,
-                TasksDao.class, TasksDtoMapper.class,
-                HQuarterDao.class, HquarterDtoLazyMapper.class,  QuarterGenerator.class, HquarterDtoFullMapper.class,
-                LayerDao.class, LayersDtoMapper.class,
-                SubjectDao.class, SubjectDtoMapper.class,
-                SlotDao.class, SlotDtoMapper.class,
-                SlotPositionMapper.class,
-                TaskMapperDao.class,
-                HquartersDelegate.class, DefaultSettingsPropagator.class, TaskMappersService.class, SlotDtoLazyMapper.class,
-                TopicDao.class, TopicMapper.class})
+        classes = {SpringConfig.class})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public abstract class AbstractTestsWithTargets {
+
+    static {
+        SimpleNamingContextBuilder builder = new SimpleNamingContextBuilder();
+        builder.bind("java:comp/env/use_database", "false");
+        try {
+            builder.activate();
+        } catch (NamingException e) {
+            e.printStackTrace();
+        }
+    }
 
     @Autowired
     protected IRealmDAO realmDAO;

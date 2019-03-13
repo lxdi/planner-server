@@ -1,4 +1,4 @@
-package configuration;
+package configuration.db;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -69,11 +69,12 @@ public class HibernateConfig {
             Context initCtx = new InitialContext();
             Context envCtx = (Context) initCtx.lookup("java:comp/env");
             properties.put("use_database", envCtx.lookup("use_database"));
-            properties.put("url", envCtx.lookup("url"));
-            properties.put("show_sql", envCtx.lookup("show_sql"));
-            properties.put("username", envCtx.lookup("username"));
-            properties.put("password", envCtx.lookup("password"));
-
+            if(properties.getProperty("use_database").equals("true")){
+                properties.put("url", envCtx.lookup("url"));
+                properties.put("show_sql", envCtx.lookup("show_sql"));
+                properties.put("username", envCtx.lookup("username"));
+                properties.put("password", envCtx.lookup("password"));
+            }
         } catch (NamingException e) {
             e.printStackTrace();
             properties.put("use_database", "false");

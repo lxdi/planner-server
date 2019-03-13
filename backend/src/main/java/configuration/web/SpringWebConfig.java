@@ -1,4 +1,4 @@
-package configuration;
+package configuration.web;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -15,8 +15,7 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 @Configuration
 @EnableWebMvc
-@ComponentScan(basePackages = {"configuration", "controllers" , "model", "services"})
-public class SpringConfig extends WebMvcConfigurerAdapter {
+public class SpringWebConfig extends WebMvcConfigurerAdapter {
 
     @Bean
     public ViewResolver viewResolver() {
