@@ -6,6 +6,8 @@ import {SwitchButton} from './ui/changebutton';
 import {state} from './state';
 import {Button} from 'react-bootstrap'
 
+import {FinishingTaskModal} from './ui/means/finishing-task-modal'
+
 import './data/realms-dao'
 import './data/targets-dao'
 import './data/means-dao'
@@ -70,6 +72,7 @@ class Main extends React.Component {
 		}
 		return (
 			<div>
+				<FinishingTaskModal/>
 				<div align = "center" >
 					{switchButton}
 					<div align='right' class='mode-button-div'>

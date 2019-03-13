@@ -60,7 +60,7 @@ const getDaysOfWeekContentUI = function(currentweek){
       for(var taskidx in currentweek.days[week[dayOfWeekidx]]){
         const task = currentweek.days[week[dayOfWeekidx]][taskidx]
         dayTasksUI.push(<li key={"task_"+task.id}>
-                        <a href='#' onClick={()=>fireEvent('task-modal', 'open', [null, task, true])}>{task.title}</a>
+                        <a href='#' onClick={()=>fireEvent('task-modal', 'open', [null, task, true, true])}>{task.title}</a>
                       </li>)
       }
     }
