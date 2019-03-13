@@ -43,4 +43,12 @@ public class DateUtils {
         return new Date(cal.getTime().getTime());
     }
 
+    public static Date currentDate(){
+        return new Date(new java.util.Date().getTime());
+    }
+
+    public static String currentDateString(){
+        return fromDate(currentDate());
+    }
+
 }

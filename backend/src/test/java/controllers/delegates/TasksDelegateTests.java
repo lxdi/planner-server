@@ -1,13 +1,7 @@
 package controllers.delegates;
 
-import model.dao.IRepPlanDAO;
-import model.dao.ISpacedRepDAO;
-import model.dao.ITaskMappersDAO;
-import model.dao.ITasksDAO;
-import model.entities.RepetitionPlan;
-import model.entities.SpacedRepetitions;
-import model.entities.Task;
-import model.entities.TaskMapper;
+import model.dao.*;
+import model.entities.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +9,7 @@ import services.DateUtils;
 import test_configs.SpringTestConfig;
 
 import java.sql.Date;
+import java.util.List;
 
 import static junit.framework.TestCase.assertTrue;
 
@@ -34,6 +29,9 @@ public class TasksDelegateTests extends SpringTestConfig {
 
     @Autowired
     ISpacedRepDAO spacedRepDAO;
+
+    @Autowired
+    IRepDAO repDAO;
 
     Task task;
     TaskMapper taskMapper;
@@ -72,6 +70,20 @@ public class TasksDelegateTests extends SpringTestConfig {
         SpacedRepetitions spacedRepetitions = spacedRepDAO.getSRforTask(task.getId());
         assertTrue(spacedRepetitions!=null);
         assertTrue(spacedRepetitions.getRepetitionPlan().getId()==repPlan.getId());
+    }
+
+    @Test
+    public void finishRepetitionTest(){
+        tasksDelegate.finishTaskWithRepetition(task.getId(), repPlan.getId());
+
+        tasksDelegate.finishRepetition(task.getId());
+
+        SpacedRepetitions spacedRepetitions = spacedRepDAO.getSRforTask(task.getId());
+        List<Repetition> repetitions = repDAO.getRepsbySpacedRepId(spacedRepetitions.getId());
+
+        assertTrue(repetitions.size()==1);
+        assertTrue(DateUtils.fromDate(repetitions.get(0).getDate()).equals(DateUtils.currentDateString()));
+
     }
 
 }

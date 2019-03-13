@@ -1,16 +1,15 @@
 package controllers.delegates;
 
-import model.dao.IRepPlanDAO;
-import model.dao.ISpacedRepDAO;
-import model.dao.ITaskMappersDAO;
-import model.dao.ITasksDAO;
+import model.dao.*;
 import model.dto.task.TaskDtoLazy;
 import model.dto.task.TasksDtoMapper;
+import model.entities.Repetition;
 import model.entities.SpacedRepetitions;
 import model.entities.Task;
 import model.entities.TaskMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import services.DateUtils;
 
 import java.sql.Date;
 
@@ -31,6 +30,9 @@ public class TasksDelegate {
 
     @Autowired
     IRepPlanDAO repPlanDAO;
+
+    @Autowired
+    IRepDAO repDAO;
 
     public TaskDtoLazy createTask(TaskDtoLazy taskDto){
         Task task = tasksDtoMapper.mapToEntity(taskDto);
@@ -69,11 +71,23 @@ public class TasksDelegate {
         }
     }
 
+    public void finishRepetition(long taskid){
+        //Task task = tasksDAO.getById(taskid);
+        SpacedRepetitions spacedRepetitions = spacedRepDAO.getSRforTask(taskid);
+        if(spacedRepetitions==null){
+            throw new NullPointerException("No repetitions for this task");
+        }
+        Repetition repetition = new Repetition();
+        repetition.setSpacedRepetitions(spacedRepetitions);
+        repetition.setDate(DateUtils.currentDate());
+        repDAO.save(repetition);
+    }
+
     private void finishTask(TaskMapper taskMapper){
         if(taskMapper==null){
             throw new NullPointerException("There must be a taskMapper for the task");
         }
-        taskMapper.setFinishDate(new Date(new java.util.Date().getTime()));
+        taskMapper.setFinishDate(DateUtils.currentDate());
         taskMappersDAO.saveOrUpdate(taskMapper);
     }
 
