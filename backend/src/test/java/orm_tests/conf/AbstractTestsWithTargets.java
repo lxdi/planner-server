@@ -4,7 +4,7 @@ import configuration.HibernateConfigMain;
 import controllers.delegates.DefaultSettingsPropagator;
 import controllers.delegates.HquartersDelegate;
 import controllers.delegates.MeansDelegate;
-import controllers.delegates.TaskMappersController;
+import controllers.delegates.TaskMappersService;
 import model.dao.*;
 import model.dto.hquarter.HquarterDtoLazyMapper;
 import model.dto.hquarter.HquarterDtoFullMapper;
@@ -49,7 +49,7 @@ import static org.junit.Assert.assertTrue;
                 SlotDao.class, SlotDtoMapper.class,
                 SlotPositionMapper.class,
                 TaskMapperDao.class,
-                HquartersDelegate.class, DefaultSettingsPropagator.class, TaskMappersController.class, SlotDtoLazyMapper.class,
+                HquartersDelegate.class, DefaultSettingsPropagator.class, TaskMappersService.class, SlotDtoLazyMapper.class,
                 TopicDao.class, TopicMapper.class})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public abstract class AbstractTestsWithTargets {

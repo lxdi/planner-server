@@ -153,34 +153,6 @@ public class TasksDaoTests extends AbstractTestsWithTargets {
 
     }
 
-    @Test
-    public void getRepetitionsTest(){
-        Task task = new Task();
-        tasksDAO.saveOrUpdate(task);
-
-        TaskMapper taskMapper = new TaskMapper();
-        taskMapper.setRepetitions(BitUtils.setBit(0, 31));
-        taskMapper.setTask(task);
-        taskMappersDAO.saveOrUpdate(taskMapper);
-
-        assertTrue(BitUtils.getBit(tasksDAO.getRepetitions(task.getId()), 31)==1);
-    }
-
-    @Test
-    public void updateRepetitionsTest(){
-        Task task = new Task();
-        tasksDAO.saveOrUpdate(task);
-
-        TaskMapper taskMapper = new TaskMapper();
-        taskMapper.setRepetitions(BitUtils.setBit(0, 31));
-        taskMapper.setTask(task);
-        taskMappersDAO.saveOrUpdate(taskMapper);
-
-        assertTrue(BitUtils.getBit(tasksDAO.getRepetitions(task.getId()), 0)==0);
-        tasksDAO.updateRepetitions(task.getId(), BitUtils.setBit(0, 0));
-        assertTrue(BitUtils.getBit(tasksDAO.getRepetitions(task.getId()), 0)==1);
-    }
-
     private void createTestData(){
         Mean mean = new Mean("test mean", realm);
         meansDAO.saveOrUpdate(mean);

@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Stack;
 
 @Service
-public class TaskMappersController {
+public class TaskMappersService {
 
     @Autowired
     ISlotDAO slotDAO;
@@ -36,7 +36,6 @@ public class TaskMappersController {
                 if(taskMapper!=null){
                     taskMapper.setSlotPosition(null);
                     taskMapper.setWeek(null);
-                    taskMapper.setDate(null);
                     taskMappersDAO.saveOrUpdate(taskMapper);
                 }
             }
@@ -102,7 +101,6 @@ public class TaskMappersController {
                         }
                         taskMapper.setSlotPosition(slotPositions.get(isp));
                         taskMapper.setWeek(weeks.get(iw));
-                        taskMapper.setDate(DateUtils.addDays(weeks.get(iw).getStartDay(), taskMapper.getSlotPosition().getDaysOfWeek().getId()));
                         taskMappersDAO.saveOrUpdate(taskMapper);
                         currentTask = !taskStack.isEmpty()? taskStack.pop():null;
                         if(currentTask==null){

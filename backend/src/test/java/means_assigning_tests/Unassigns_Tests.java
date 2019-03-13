@@ -1,4 +1,4 @@
-package taskmappers_controller_tests;
+package means_assigning_tests;
 
 import controllers.delegates.HquartersDelegate;
 import model.dao.*;
@@ -12,7 +12,7 @@ import java.util.List;
 
 import static junit.framework.TestCase.assertTrue;
 
-public class TaskMappersController_Unassigns_Tests extends ATestsWithTargetsMeansQuartalsGenerated {
+public class Unassigns_Tests extends ATestsWithTargetsMeansQuartalsGenerated {
 
     @Autowired
     HquartersDelegate hquartersDelegate;

@@ -2,7 +2,7 @@ package means_restcontroller_tests;
 
 import controllers.MeansRESTController;
 import controllers.delegates.MeansDelegate;
-import controllers.delegates.TaskMappersController;
+import controllers.delegates.TaskMappersService;
 import model.dto.mean.MeansDtoLazyMapper;
 import model.entities.Mean;
 import org.junit.Before;
@@ -26,7 +26,7 @@ public class MeansRESTController_Delete_Tests extends ATestsWithTargetsMeansQuar
     MeansDtoLazyMapper meansDtoLazyMapper;
 
     @Autowired
-    TaskMappersController taskMappersController;
+    TaskMappersService taskMappersController;
 
     @Autowired
     MeansDelegate meansDelegate;

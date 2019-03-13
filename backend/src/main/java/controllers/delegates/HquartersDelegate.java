@@ -42,7 +42,7 @@ public class HquartersDelegate {
     SlotPositionMapper slotPositionMapper;
 
     @Autowired
-    TaskMappersController taskMappersController;
+    TaskMappersService taskMappersService;
 
     @Autowired
     DefaultSettingsPropagator defaultSettingsPropagator;
@@ -131,7 +131,7 @@ public class HquartersDelegate {
         Slot slot = slotDAO.getById(slotid);
         slot.setMean(mean);
         slotDAO.saveOrUpdate(slot);
-        taskMappersController.rescheduleTaskMappers(mean, false);
+        taskMappersService.rescheduleTaskMappers(mean, false);
         return slotDtoMapper.mapToDto(slot);
     }
 
@@ -141,7 +141,7 @@ public class HquartersDelegate {
         slot.setLayer(null);
         slot.setMean(null);
         slotDAO.saveOrUpdate(slot);
-        taskMappersController.rescheduleTaskMappers(mean, false);
+        taskMappersService.rescheduleTaskMappers(mean, false);
         return slotDtoMapper.mapToDto(slot);
     }
 

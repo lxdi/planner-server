@@ -17,7 +17,6 @@ import model.entities.Realm;
 import model.entities.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +55,7 @@ public class MeansDelegate {
     IRealmDAO realmDAO;
 
     @Autowired
-    TaskMappersController taskMappersController;
+    TaskMappersService taskMappersService;
 
 
     public MeansDelegate(){}
@@ -127,7 +126,7 @@ public class MeansDelegate {
         //TODO validate before saving
         meansDAO.saveOrUpdate(mean);
         saveLayers(meanDtoFull.getLayers(), mean.getId());
-        taskMappersController.rescheduleTaskMappers(mean, true);
+        taskMappersService.rescheduleTaskMappers(mean, true);
         return mean;
     }
 

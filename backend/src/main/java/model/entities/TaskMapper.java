@@ -23,9 +23,7 @@ public class TaskMapper {
 
     @Basic
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    Date date;
-
-    int repetitions;
+    Date finishDate;
 
     public long getId() {
         return id;
@@ -59,17 +57,10 @@ public class TaskMapper {
         this.week = week;
     }
 
-    public Date getDate() {
-        return date;
+    public Date getFinishDate() {
+        return finishDate;
     }
-    public void setDate(Date date) {
-        this.date = date;
-    }
-
-    public int getRepetitions() {
-        return repetitions;
-    }
-    public void setRepetitions(int repetitions) {
-        this.repetitions = repetitions;
+    public void setFinishDate(Date finishDate) {
+        this.finishDate = finishDate;
     }
 }

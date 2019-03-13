@@ -1,4 +1,4 @@
-package taskmappers_controller_tests;
+package means_assigning_tests;
 
 import controllers.delegates.HquartersDelegate;
 import model.dao.*;
@@ -7,13 +7,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import orm_tests.conf.ATestsWithTargetsMeansQuartalsGenerated;
-import services.DateUtils;
 
 import java.util.List;
 
 import static junit.framework.TestCase.assertTrue;
 
-public class TaskMappersController_Assigning_in_the_middle_Tests extends ATestsWithTargetsMeansQuartalsGenerated {
+public class Unassigns_with2hquarters_Tests extends ATestsWithTargetsMeansQuartalsGenerated {
 
     @Autowired
     HquartersDelegate hquartersDelegate;
@@ -159,10 +158,10 @@ public class TaskMappersController_Assigning_in_the_middle_Tests extends ATestsW
     }
 
     @Test
-    public void assigningMiddleTest(){
+    public void unassignMiddleSlotTest(){
         hquartersDelegate.assign(mean.getId(), slot1.getId());
-        hquartersDelegate.assign(mean.getId(), slot3.getId());
         hquartersDelegate.assign(mean.getId(), slot2.getId());
+        hquartersDelegate.assign(mean.getId(), slot3.getId());
 
         assertTrue(slotDAO.getById(slot1.getId()).getMean().getId()==mean.getId());
         assertTrue(slotDAO.getById(slot1.getId()).getLayer().getId()==layerDAO.getLayerAtPriority(mean, 1).getId());
@@ -173,7 +172,19 @@ public class TaskMappersController_Assigning_in_the_middle_Tests extends ATestsW
         assertTrue(slotDAO.getById(slot3.getId()).getMean().getId()==mean.getId());
         assertTrue(slotDAO.getById(slot3.getId()).getLayer()==null);
 
+        hquartersDelegate.unassign(slot2.getId());
+
+        assertTrue(slotDAO.getById(slot1.getId()).getMean().getId()==mean.getId());
+        assertTrue(slotDAO.getById(slot1.getId()).getLayer().getId()==layerDAO.getLayerAtPriority(mean, 1).getId());
+
+        assertTrue(slotDAO.getById(slot2.getId()).getMean()==null);
+        assertTrue(slotDAO.getById(slot2.getId()).getLayer()==null);
+
+        assertTrue(slotDAO.getById(slot3.getId()).getMean().getId()==mean.getId());
+        assertTrue(slotDAO.getById(slot3.getId()).getLayer().getId()==layerDAO.getLayerAtPriority(mean, 2).getId());
+
         List<Week> weeksHq1 = weekDAO.weeksOfHquarter(hQuarter1);
+        List<Week> weeksHq2 = weekDAO.weeksOfHquarter(hQuarter2);
 
         checkTaskMapper(taskMappersDAO.taskMapperForTask(tasksDAO.byTitle("task 1")), weeksHq1.get(0), slotPosition11);
         checkTaskMapper(taskMappersDAO.taskMapperForTask(tasksDAO.byTitle("task 2")), weeksHq1.get(0), slotPosition12);
@@ -185,32 +196,16 @@ public class TaskMappersController_Assigning_in_the_middle_Tests extends ATestsW
         checkTaskMapper(taskMappersDAO.taskMapperForTask(tasksDAO.byTitle("task 8")), weeksHq1.get(2), slotPosition12);
         checkTaskMapper(taskMappersDAO.taskMapperForTask(tasksDAO.byTitle("task 9")), weeksHq1.get(2), slotPosition13);
 
-        checkTaskMapper(taskMappersDAO.taskMapperForTask(tasksDAO.byTitle("task 2-1")), weeksHq1.get(0), slotPosition21);
-        checkTaskMapper(taskMappersDAO.taskMapperForTask(tasksDAO.byTitle("task 2-2")), weeksHq1.get(0), slotPosition22);
-        checkTaskMapper(taskMappersDAO.taskMapperForTask(tasksDAO.byTitle("task 2-3")), weeksHq1.get(0), slotPosition23);
-        checkTaskMapper(taskMappersDAO.taskMapperForTask(tasksDAO.byTitle("task 2-4")), weeksHq1.get(1), slotPosition21);
-        checkTaskMapper(taskMappersDAO.taskMapperForTask(tasksDAO.byTitle("task 2-5")), weeksHq1.get(1), slotPosition22);
-        checkTaskMapper(taskMappersDAO.taskMapperForTask(tasksDAO.byTitle("task 2-6")), weeksHq1.get(1), slotPosition23);
-        checkTaskMapper(taskMappersDAO.taskMapperForTask(tasksDAO.byTitle("task 2-7")), weeksHq1.get(2), slotPosition21);
-        checkTaskMapper(taskMappersDAO.taskMapperForTask(tasksDAO.byTitle("task 2-8")), weeksHq1.get(2), slotPosition22);
-        checkTaskMapper(taskMappersDAO.taskMapperForTask(tasksDAO.byTitle("task 2-9")), weeksHq1.get(2), slotPosition23);
+        checkTaskMapper(taskMappersDAO.taskMapperForTask(tasksDAO.byTitle("task 2-1")), weeksHq2.get(0), slotPosition31);
+        checkTaskMapper(taskMappersDAO.taskMapperForTask(tasksDAO.byTitle("task 2-2")), weeksHq2.get(0), slotPosition32);
+        checkTaskMapper(taskMappersDAO.taskMapperForTask(tasksDAO.byTitle("task 2-3")), weeksHq2.get(0), slotPosition33);
+        checkTaskMapper(taskMappersDAO.taskMapperForTask(tasksDAO.byTitle("task 2-4")), weeksHq2.get(1), slotPosition31);
+        checkTaskMapper(taskMappersDAO.taskMapperForTask(tasksDAO.byTitle("task 2-5")), weeksHq2.get(1), slotPosition32);
+        checkTaskMapper(taskMappersDAO.taskMapperForTask(tasksDAO.byTitle("task 2-6")), weeksHq2.get(1), slotPosition33);
+        checkTaskMapper(taskMappersDAO.taskMapperForTask(tasksDAO.byTitle("task 2-7")), weeksHq2.get(2), slotPosition31);
+        checkTaskMapper(taskMappersDAO.taskMapperForTask(tasksDAO.byTitle("task 2-8")), weeksHq2.get(2), slotPosition32);
+        checkTaskMapper(taskMappersDAO.taskMapperForTask(tasksDAO.byTitle("task 2-9")), weeksHq2.get(2), slotPosition33);
 
-        TaskMapper task1 = taskMappersDAO.taskMapperForTask(tasksDAO.byTitle("task 1"));
-        Week week = weeksHq1.get(0);
-        SlotPosition slotPosition = task1.getSlotPosition();
-        assertTrue(DateUtils.fromDate(task1.getDate()).equals(DateUtils.fromDate(DateUtils.addDays(week.getStartDay(), slotPosition.getDaysOfWeek().getId()))));
-
-    }
-
-    @Test
-    public void deletingTaskAfterAssigning(){
-        hquartersDelegate.assign(mean.getId(), slot1.getId());
-        hquartersDelegate.assign(mean.getId(), slot3.getId());
-        hquartersDelegate.assign(mean.getId(), slot2.getId());
-
-        tasksDAO.delete(tasksDAO.byTitle("task 1").getId());
-
-        assertTrue(tasksDAO.byTitle("task 1")==null);
     }
 
     private void checkTaskMapper(TaskMapper taskMapper, Week week, SlotPosition slotPosition){
