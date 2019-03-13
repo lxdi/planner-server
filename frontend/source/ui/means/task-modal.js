@@ -22,6 +22,7 @@ export class TaskModal extends React.Component {
     registerEvent('task-modal', 'close', ()=>this.setState(createState(false, false, false, null, null, null)))
 
     registerReaction('task-modal', 'tasks-dao', 'task-deleted', (stateSetter)=>fireEvent('task-modal', 'close'))
+    registerReaction('task-modal', 'tasks-dao', 'task-finished', (stateSetter)=>this.setState({}))
   }
 
   render(){
@@ -75,7 +76,7 @@ const modalContent = function(component){
                   changeEditHandler = {()=>component.setState({})}
                   deleteHandler={()=>fireEvent('tasks-dao', 'delete-task', [component.state.subject, component.state.task])}>
                 <form>
-                    {component.state.mode.finishing?<Button onClick={()=>fireEvent('finishing-task-modal', 'open', [component.state.task])}>Complete Task</Button>:null}
+                    {component.state.mode.finishing?<Button disabled={component.state.task.finished} onClick={()=>fireEvent('finishing-task-modal', 'open', [component.state.task])}>Complete Task</Button>:null}
                     <FormGroup controlId="formBasicText">
                     <div style={{display:'inline-block', paddingRight:'5px'}}><ControlLabel>Title:</ControlLabel></div>
                     <div style={{display:'inline-block'}}>{statefulTextfield(component, component.state.task, 'title')}</div>

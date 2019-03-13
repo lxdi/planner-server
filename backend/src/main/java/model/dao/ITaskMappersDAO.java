@@ -5,6 +5,7 @@ import model.entities.Task;
 import model.entities.TaskMapper;
 import model.entities.Week;
 
+import java.sql.Date;
 import java.util.List;
 
 public interface ITaskMappersDAO {
@@ -14,5 +15,6 @@ public interface ITaskMappersDAO {
     TaskMapper taskMapperForTask(Task task);
     TaskMapper taskMapperByWeekAndSlotPosition(Week week, SlotPosition slotPosition);
     List<TaskMapper> taskMappersByWeeksAndSlotPositions(List<Week> weeks, List<SlotPosition> slotPositions);
+    Date finishDateByTaskid(long taskid);
 
 }

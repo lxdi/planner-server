@@ -18,6 +18,8 @@ public class TaskDtoLazy {
 
     List<TopicDto> topics = new ArrayList<>();
 
+    boolean finished = false;
+
     public long getId() {
         return id;
     }
@@ -51,5 +53,12 @@ public class TaskDtoLazy {
     }
     public void setTopics(List<TopicDto> topics) {
         this.topics = topics;
+    }
+
+    public boolean getFinished() {
+        return finished;
+    }
+    public void setFinished(boolean finished) {
+        this.finished = finished;
     }
 }

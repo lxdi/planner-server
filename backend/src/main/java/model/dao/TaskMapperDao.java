@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Date;
 import java.util.List;
 
 @Service
@@ -50,6 +51,13 @@ public class TaskMapperDao implements ITaskMappersDAO{
                 .setParameter("weeks", weeks)
                 .setParameter("sps", slotPositions)
                 .list();
+    }
+
+    @Override
+    public Date finishDateByTaskid(long taskid) {
+        return (Date) this.sessionFactory.getCurrentSession().
+                createQuery("select finishDate from TaskMapper where task.id = :taskid")
+                .setParameter("taskid", taskid).uniqueResult();
     }
 
 
