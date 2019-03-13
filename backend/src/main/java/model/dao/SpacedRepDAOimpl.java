@@ -21,8 +21,16 @@ public class SpacedRepDAOimpl implements ISpacedRepDAO {
     @Override
     public SpacedRepetitions getSRforTaskMapper(long tmId) {
         return (SpacedRepetitions) sessionFactory.getCurrentSession()
-                .createQuery("from SpacedRepetitions where taskMapper.id = tmId")
+                .createQuery("from SpacedRepetitions where taskMapper.id = :tmId")
                 .setParameter("tmId", tmId)
+                .uniqueResult();
+    }
+
+    @Override
+    public SpacedRepetitions getSRforTask(long taskid) {
+        return (SpacedRepetitions) sessionFactory.getCurrentSession()
+                .createQuery("from SpacedRepetitions where taskMapper.task.id = :taskid")
+                .setParameter("taskid", taskid)
                 .uniqueResult();
     }
 }

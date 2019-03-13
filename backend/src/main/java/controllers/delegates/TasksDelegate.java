@@ -48,13 +48,13 @@ public class TasksDelegate {
         return tasksDtoMapper.mapToDto(task);
     }
 
-    public void finishTask(int taskid){
+    public void finishTask(long taskid){
         Task task = tasksDAO.getById(taskid);
         TaskMapper taskMapper = taskMappersDAO.taskMapperForTask(task);
         finishTask(taskMapper);
     }
 
-    public void finishTaskWithRepetition(int taskid, long repid){
+    public void finishTaskWithRepetition(long taskid, long repid){
         Task task = tasksDAO.getById(taskid);
         TaskMapper taskMapper = taskMappersDAO.taskMapperForTask(task);
         finishTask(taskMapper);
