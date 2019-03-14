@@ -1,13 +1,17 @@
 package controllers.delegates;
 
-import model.dao.IRepPlanDAO;
+import model.dao.IRepDAO;
 import model.dto.task.TaskDtoLazy;
-import model.entities.RepetitionPlan;
+import model.dto.task.TasksDtoMapper;
+import model.entities.Repetition;
+import model.entities.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import services.DateUtils;
 
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -15,21 +19,34 @@ import java.util.Map;
 public class SpacedRepetitionsService {
 
     @Autowired
-    IRepPlanDAO repPlanDAO;
+    IRepDAO repDAO;
+
+    @Autowired
+    TasksDtoMapper tasksDtoMapper;
 
     public Map<Integer, List<TaskDtoLazy>> getActualTaskToRepeat(){
-//        List<RepetitionPlan> repPlans = repPlanDAO.getAll();
-//        for(RepetitionPlan repetitionPlan : repPlans){
-//            for(int weeksRep : repetitionPlan.getPlan()){
-//                Date repetitionDate =
-//            }
-//        }
-        //TODO
+        Map<Integer, List<TaskDtoLazy>> result = new HashMap<>();
+//        result.put(-2, new ArrayList<>());
+//        result.put(-1, new ArrayList<>());
+//        result.put(0, new ArrayList<>());
+//        result.put(1, new ArrayList<>());
 
-        Date fromDate = DateUtils.currentDate();
-        Date toDate = DateUtils.addWeeks(DateUtils.currentDate(), 1);
+        Date fromDate = DateUtils.addDays(DateUtils.currentDate(), -3);
+        Date toDate = DateUtils.addDays(DateUtils.currentDate(), +3);
+        setTasks(fromDate, toDate, 0, result);
+        setTasks(DateUtils.addWeeks(fromDate, 1), DateUtils.addWeeks(toDate, 1), 1, result);
+        setTasks(DateUtils.addWeeks(fromDate, -1), DateUtils.addWeeks(toDate, -1), -1, result);
+        setTasks(DateUtils.addWeeks(fromDate, -2), DateUtils.addWeeks(toDate, -2), -2, result);
 
-        return null;
+        return result;
+    }
+
+    private void setTasks(Date from, Date to, int weeknum, Map<Integer, List<TaskDtoLazy>> result){
+        List<Task> repeatRightNow = new ArrayList<>();
+        repDAO.getUnFinishedWithPlanDateInRange(from, to)
+                .forEach((rep)->repeatRightNow.add(rep.getSpacedRepetitions().getTaskMapper().getTask()));
+        result.putIfAbsent(weeknum, new ArrayList<>());
+        repeatRightNow.forEach((task)->result.get(weeknum).add(tasksDtoMapper.mapToDto(task)));
     }
 
 }

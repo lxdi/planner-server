@@ -30,9 +30,9 @@ public class RepDaoImpl implements IRepDAO {
     }
 
     @Override
-    public List<Repetition> getWithPlanDateInRange(Date from, Date to) {
+    public List<Repetition> getUnFinishedWithPlanDateInRange(Date from, Date to) {
         return this.sessionFactory.getCurrentSession()
-                .createQuery("from Repetition where planDate >= :from and planDate <= :to")
+                .createQuery("from Repetition where planDate >= :from and planDate <= :to and factDate is null order by planDate asc")
                 .setParameter("from", from)
                 .setParameter("to", to)
                 .getResultList();

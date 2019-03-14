@@ -29,4 +29,14 @@ public class DateUtilsTests {
                 .equals("2019-03-14"));
     }
 
+    @Test
+    public void weeksShiftingTest(){
+        Date fromDate = DateUtils.addDays(DateUtils.toDate("2019-03-14"), -3);
+        Date toDate = DateUtils.addDays(DateUtils.toDate("2019-03-14"), +3);
+        assertTrue(DateUtils.fromDate(fromDate).equals("2019-03-11"));
+        assertTrue(DateUtils.fromDate(toDate).equals("2019-03-17"));
+        assertTrue(!DateUtils.fromDate(fromDate).equals(DateUtils.fromDate(DateUtils.addWeeks(toDate, -1))));
+        assertTrue(DateUtils.fromDate(DateUtils.addWeeks(toDate, -1)).equals("2019-03-10"));
+    }
+
 }

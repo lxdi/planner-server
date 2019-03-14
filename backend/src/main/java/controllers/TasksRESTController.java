@@ -1,5 +1,6 @@
 package controllers;
 
+import controllers.delegates.SpacedRepetitionsService;
 import controllers.delegates.TasksDelegate;
 import model.dto.task.TaskDtoLazy;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * Created by Alexander on 27.04.2018.
  */
@@ -20,6 +24,9 @@ public class TasksRESTController {
 
     @Autowired
     TasksDelegate tasksDelegate;
+
+    @Autowired
+    SpacedRepetitionsService spacedRepetitionsService;
 
     public TasksRESTController(){
     }
@@ -55,5 +62,11 @@ public class TasksRESTController {
         tasksDelegate.finishTaskWithRepetition(taskid, repid);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @RequestMapping(path = "/task/get/to/repeat/all" , method = RequestMethod.GET)
+    public ResponseEntity<Map<Integer, List<TaskDtoLazy>>> getTasksToRepeat(){
+        return new ResponseEntity<>(spacedRepetitionsService.getActualTaskToRepeat(), HttpStatus.OK);
+    }
+
 
 }

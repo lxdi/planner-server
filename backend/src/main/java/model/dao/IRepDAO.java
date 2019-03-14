@@ -9,6 +9,6 @@ public interface IRepDAO {
 
     void save(Repetition repetition);
     List<Repetition> getRepsbySpacedRepId(long srId);
-    List<Repetition> getWithPlanDateInRange(Date from, Date to);
+    List<Repetition> getUnFinishedWithPlanDateInRange(Date from, Date to);
 
 }
