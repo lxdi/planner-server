@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Date;
 import java.util.List;
 
 @Service
@@ -25,6 +26,15 @@ public class RepDaoImpl implements IRepDAO {
         return this.sessionFactory.getCurrentSession()
                 .createQuery("from Repetition where spacedRepetitions.id = :srId")
                 .setParameter("srId", srId)
+                .getResultList();
+    }
+
+    @Override
+    public List<Repetition> getWithPlanDateInRange(Date from, Date to) {
+        return this.sessionFactory.getCurrentSession()
+                .createQuery("from Repetition where planDate >= :from and planDate <= :to")
+                .setParameter("from", from)
+                .setParameter("to", to)
                 .getResultList();
     }
 }

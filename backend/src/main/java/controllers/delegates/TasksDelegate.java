@@ -3,15 +3,15 @@ package controllers.delegates;
 import model.dao.*;
 import model.dto.task.TaskDtoLazy;
 import model.dto.task.TasksDtoMapper;
-import model.entities.Repetition;
-import model.entities.SpacedRepetitions;
-import model.entities.Task;
-import model.entities.TaskMapper;
+import model.entities.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import services.DateUtils;
 
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 
 @Service
 public class TasksDelegate {
@@ -56,7 +56,7 @@ public class TasksDelegate {
         finishTask(taskMapper);
     }
 
-    public void finishTaskWithRepetition(long taskid, long repid){
+    public void finishTaskWithRepetition(long taskid, long repPlanid){
         Task task = tasksDAO.getById(taskid);
         TaskMapper taskMapper = taskMappersDAO.taskMapperForTask(task);
         finishTask(taskMapper);
@@ -64,8 +64,9 @@ public class TasksDelegate {
         if(spacedRepetitions == null){
             spacedRepetitions = new SpacedRepetitions();
             spacedRepetitions.setTaskMapper(taskMapper);
-            spacedRepetitions.setRepetitionPlan(repPlanDAO.getById(repid));
+            spacedRepetitions.setRepetitionPlan(repPlanDAO.getById(repPlanid));
             spacedRepDAO.save(spacedRepetitions);
+            planRepetitions(spacedRepetitions);
         } else {
             //TODO clean spacedRep
         }
@@ -73,14 +74,15 @@ public class TasksDelegate {
 
     public void finishRepetition(long taskid){
         //Task task = tasksDAO.getById(taskid);
-        SpacedRepetitions spacedRepetitions = spacedRepDAO.getSRforTask(taskid);
-        if(spacedRepetitions==null){
-            throw new NullPointerException("No repetitions for this task");
-        }
-        Repetition repetition = new Repetition();
-        repetition.setSpacedRepetitions(spacedRepetitions);
-        repetition.setDate(DateUtils.currentDate());
-        repDAO.save(repetition);
+//        SpacedRepetitions spacedRepetitions = spacedRepDAO.getSRforTask(taskid);
+//        if(spacedRepetitions==null){
+//            throw new NullPointerException("No repetitions for this task");
+//        }
+//        Repetition repetition = new Repetition();
+//        repetition.setSpacedRepetitions(spacedRepetitions);
+//        repetition.setPlanDate(DateUtils.currentDate());
+//        repDAO.save(repetition);
+        //TODO
     }
 
     private void finishTask(TaskMapper taskMapper){
@@ -89,6 +91,19 @@ public class TasksDelegate {
         }
         taskMapper.setFinishDate(DateUtils.currentDate());
         taskMappersDAO.saveOrUpdate(taskMapper);
+    }
+
+    private List<Repetition> planRepetitions(SpacedRepetitions spacedRepetitions){
+        List<Repetition> repetitions = new ArrayList<>();
+        RepetitionPlan repetitionPlan = spacedRepetitions.getRepetitionPlan();
+        for(int weeksToRep : repetitionPlan.getPlan()){
+            Repetition repetition = new Repetition();
+            repetition.setSpacedRepetitions(spacedRepetitions);
+            Date planDate = DateUtils.addWeeks(spacedRepetitions.getTaskMapper().getFinishDate(), weeksToRep);
+            repetition.setPlanDate(planDate);
+            repDAO.save(repetition);
+        }
+        return repetitions;
     }
 
 }

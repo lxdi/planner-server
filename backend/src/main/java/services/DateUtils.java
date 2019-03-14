@@ -51,4 +51,11 @@ public class DateUtils {
         return fromDate(currentDate());
     }
 
+    public static Date addWeeks(Date date, int weeks){
+//        Calendar c = Calendar.getInstance();
+//        c.setTime(date);
+//        c.add(Calendar.DATE, weeks*7);
+        return addDays(date, weeks*7);
+    }
+
 }

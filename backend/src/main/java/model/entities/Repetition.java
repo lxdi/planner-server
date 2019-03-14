@@ -17,7 +17,11 @@ public class Repetition {
 
     @Basic
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    Date date;
+    Date planDate;
+
+    @Basic
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    Date factDate;
 
     public long getId() {
         return id;
@@ -33,10 +37,18 @@ public class Repetition {
         this.spacedRepetitions = spacedRepetitions;
     }
 
-    public Date getDate() {
-        return date;
+    public Date getPlanDate() {
+        return planDate;
     }
-    public void setDate(Date date) {
-        this.date = date;
+    public void setPlanDate(Date planDate) {
+        this.planDate = planDate;
+    }
+
+    public Date getFactDate() {
+        return factDate;
+    }
+
+    public void setFactDate(Date factDate) {
+        this.factDate = factDate;
     }
 }

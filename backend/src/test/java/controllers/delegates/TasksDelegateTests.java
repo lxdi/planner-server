@@ -3,6 +3,7 @@ package controllers.delegates;
 import model.dao.*;
 import model.entities.*;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import services.DateUtils;
@@ -35,7 +36,7 @@ public class TasksDelegateTests extends SpringTestConfig {
 
     Task task;
     TaskMapper taskMapper;
-    RepetitionPlan repPlan;
+    RepetitionPlan defaultRepPlan;
 
     @Before
     public void init(){
@@ -46,8 +47,7 @@ public class TasksDelegateTests extends SpringTestConfig {
         taskMapper.setTask(task);
         taskMappersDAO.saveOrUpdate(taskMapper);
 
-        repPlan = new RepetitionPlan();
-        repPlanDAO.save(repPlan);
+        defaultRepPlan = repPlanDAO.getAll().get(0);
     }
 
     @Test
@@ -62,27 +62,34 @@ public class TasksDelegateTests extends SpringTestConfig {
     @Test
     public void finishTaskWithRepTest(){
 
-        tasksDelegate.finishTaskWithRepetition(task.getId(), repPlan.getId());
+        tasksDelegate.finishTaskWithRepetition(task.getId(), defaultRepPlan.getId());
+        SpacedRepetitions spacedRepetitions = spacedRepDAO.getSRforTask(task.getId());
+        List<Repetition> repetitions = repDAO.getRepsbySpacedRepId(spacedRepetitions.getId());
 
         assertTrue(DateUtils.fromDate(taskMappersDAO.taskMapperForTask(task).getFinishDate())
                 .equals(DateUtils.fromDate(new Date(new java.util.Date().getTime()))));
 
-        SpacedRepetitions spacedRepetitions = spacedRepDAO.getSRforTask(task.getId());
         assertTrue(spacedRepetitions!=null);
-        assertTrue(spacedRepetitions.getRepetitionPlan().getId()==repPlan.getId());
+        assertTrue(spacedRepetitions.getRepetitionPlan().getId()== defaultRepPlan.getId());
+
+        assertTrue(repetitions.size()==4);
+
+        assertTrue(DateUtils.fromDate(repetitions.get(0).getPlanDate())
+                .equals(DateUtils.fromDate(DateUtils.addWeeks(DateUtils.currentDate(), 6))));
     }
 
+    @Ignore
     @Test
     public void finishRepetitionTest(){
-        tasksDelegate.finishTaskWithRepetition(task.getId(), repPlan.getId());
+        tasksDelegate.finishTaskWithRepetition(task.getId(), defaultRepPlan.getId());
 
         tasksDelegate.finishRepetition(task.getId());
 
         SpacedRepetitions spacedRepetitions = spacedRepDAO.getSRforTask(task.getId());
         List<Repetition> repetitions = repDAO.getRepsbySpacedRepId(spacedRepetitions.getId());
 
-        assertTrue(repetitions.size()==1);
-        assertTrue(DateUtils.fromDate(repetitions.get(0).getDate()).equals(DateUtils.currentDateString()));
+        assertTrue(repetitions.size()==4);
+        assertTrue(DateUtils.fromDate(repetitions.get(0).getPlanDate()).equals(DateUtils.currentDateString()));
 
     }
 

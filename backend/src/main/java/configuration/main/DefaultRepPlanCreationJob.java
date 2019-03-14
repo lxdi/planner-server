@@ -22,6 +22,7 @@ public class DefaultRepPlanCreationJob implements ApplicationListener<ContextRef
         if(repPlans.size()==0){
             RepetitionPlan defaultRepPlan = new RepetitionPlan();
             defaultRepPlan.setTitle(DEFAULT_REP_PLAN_TITLE);
+            defaultRepPlan.setPlan(new int[]{6, 12, 24, 48});
             repPlanDAO.save(defaultRepPlan);
         }
     }
