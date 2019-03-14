@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 
 @Service
 @Transactional
@@ -23,4 +25,11 @@ public class RepPlanDaoImpl implements IRepPlanDAO {
     public RepetitionPlan getById(long id) {
         return factory.getCurrentSession().get(RepetitionPlan.class, id);
     }
+
+    @Override
+    public List<RepetitionPlan> getAll() {
+        return this.factory.getCurrentSession().createQuery("from RepetitionPlan").getResultList();
+    }
+
+
 }
