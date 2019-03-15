@@ -1,6 +1,6 @@
 import {registerEvent, registerReaction, fireEvent, viewStateVal} from '../controllers/eventor'
 import {insertObj, deleteObj, swapObjs} from '../utils/drag-utils'
-import {sendDelete, sendPost} from './postoffice'
+import {sendDelete, sendPost, sendGet} from './postoffice'
 
 registerEvent('tasks-dao', 'add-task', (stateSetter, subject, task)=>{
   if(subject.tasks==null){
@@ -76,6 +76,15 @@ registerEvent('tasks-dao', 'finish-task', (stateSetter, task, repPlan)=>{
 })
 
 registerEvent('tasks-dao', 'task-finished', (task)=>task)
+
+registerEvent('tasks-dao', 'actual-tasks-rq', (stateSetter)=>{
+  sendGet('/task/get/to/repeat/all', (data)=>{
+    stateSetter('actual-tasks', data)
+    fireEvent('tasks-dao', 'actual-tasks-rs')
+  })
+})
+
+registerEvent('tasks-dao', 'actual-tasks-rs', ()=>{})
 
 const getMaxTaskPosition = function(tasks){
     var result = 0

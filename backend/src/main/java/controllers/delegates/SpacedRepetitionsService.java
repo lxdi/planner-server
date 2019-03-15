@@ -26,13 +26,10 @@ public class SpacedRepetitionsService {
 
     public Map<Integer, List<TaskDtoLazy>> getActualTaskToRepeat(){
         Map<Integer, List<TaskDtoLazy>> result = new HashMap<>();
-//        result.put(-2, new ArrayList<>());
-//        result.put(-1, new ArrayList<>());
-//        result.put(0, new ArrayList<>());
-//        result.put(1, new ArrayList<>());
 
         Date fromDate = DateUtils.addDays(DateUtils.currentDate(), -3);
         Date toDate = DateUtils.addDays(DateUtils.currentDate(), +3);
+
         setTasks(fromDate, toDate, 0, result);
         setTasks(DateUtils.addWeeks(fromDate, 1), DateUtils.addWeeks(toDate, 1), 1, result);
         setTasks(DateUtils.addWeeks(fromDate, -1), DateUtils.addWeeks(toDate, -1), -1, result);

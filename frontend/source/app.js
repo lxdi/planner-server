@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import {Main} from './ui/main'
+import {ActualTasks} from './ui/means/actual-tasks'
 import {FinishingTaskModal} from './ui/means/finishing-task-modal'
 
 import './data/realms-dao'
@@ -18,9 +19,19 @@ const app = document.getElementById("app");
 
 function rerender(){
 	ReactDOM.render(
-		<div>
+		<div style={{margin:'3px'}}>
 				<FinishingTaskModal/>
-				<Main />
+				<table style={{width:'100%'}}>
+					<tr>
+						<td style={{width:'50px', border:'1px solid lightgrey', verticalAlign:'top'}}>
+							<ActualTasks/>
+						</td>
+						<td>
+							<Main />
+						</td>
+					</tr>
+				</table>
 		</div>, app);
 }
+
 rerender();

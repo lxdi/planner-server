@@ -31,7 +31,7 @@ export class Main extends React.Component {
 
 	render() {
 		return (
-			<div>
+			<div style={{border:"1px solid lightgrey"}}>
 				<div align = "center" >
 					{getSwitchButton()}
 					<div align='right' class='mode-button-div'>
@@ -44,6 +44,10 @@ export class Main extends React.Component {
 	}
 }
 
+// <div style = {{height:'20px', border:'1px solid red'}}>
+//
+// </div>
+
 const getFramesTable = function(){
   if(!viewStateVal('main-ui', 'three-frames')){
     var leftFrame = null
@@ -55,9 +59,6 @@ const getFramesTable = function(){
       leftFrame = <Frame name="Means" />
       rightFrame = <Frame name="Schedule" />
     }
-    // switchButton = <div class='switch-button-div'>
-    //                   {<SwitchButton rerender={rerender} />}
-    //               </div>
     return <table class='frames-table'>
               <tr>
                 <td class='frame-td'>{leftFrame}</td>
