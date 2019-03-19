@@ -2,9 +2,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {Button} from 'react-bootstrap'
 
-import {registerEvent, registerReaction, fireEvent, viewStateVal} from '../../controllers/eventor'
+import {registerEvent, registerReaction, fireEvent, viewStateVal} from '../controllers/eventor'
 
-export class ActualTasks extends React.Component {
+export class LeftSideBarContent extends React.Component {
   constructor(props){
     super(props)
 
@@ -29,12 +29,14 @@ const content = function(reactcomp){
               </div>
               {getSwitchButton()}
               {divisor()}
-              {getSquare(0, 'blue')}
-              {divisor()}
-              {getSquare(actualTasksMap['-2'].length, 'red')}
-              {getSquare(actualTasksMap['-1'].length, 'orange')}
-              {getSquare(actualTasksMap['0'].length, 'green')}
-              {getSquare(actualTasksMap['1'].length, 'grey')}
+              <div onClick={()=>fireEvent('actual-tasks-modal', 'open')}>
+                {getSquare(0, 'blue')}
+                {divisor()}
+                {getSquare(actualTasksMap['-2'].length, 'red')}
+                {getSquare(actualTasksMap['-1'].length, 'orange')}
+                {getSquare(actualTasksMap['0'].length, 'green')}
+                {getSquare(actualTasksMap['1'].length, 'grey')}
+              </div>
             </div>
 }
 

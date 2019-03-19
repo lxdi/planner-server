@@ -2,8 +2,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import {Main} from './ui/main'
-import {ActualTasks} from './ui/means/actual-tasks'
+import {LeftSideBarContent} from './ui/left-side-bar-content'
 import {FinishingTaskModal} from './ui/means/finishing-task-modal'
+import {ActualTasksModal} from './ui/means/actual-tasks-modal'
 
 import './data/realms-dao'
 import './data/targets-dao'
@@ -21,10 +22,11 @@ function rerender(){
 	ReactDOM.render(
 		<div style={{margin:'3px'}}>
 				<FinishingTaskModal/>
+				<ActualTasksModal/>
 				<table style={{width:'100%'}}>
 					<tr>
 						<td style={{width:'50px', border:'1px solid lightgrey', verticalAlign:'top'}}>
-							<ActualTasks/>
+							<LeftSideBarContent/>
 						</td>
 						<td>
 							<Main />
