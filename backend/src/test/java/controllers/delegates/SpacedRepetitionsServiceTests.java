@@ -50,18 +50,18 @@ public class SpacedRepetitionsServiceTests extends SpringTestConfig {
         repetitionDone.setFactDate(DateUtils.addDays(DateUtils.currentDate(), 4));
         repDAO.save(repetitionDone);
 
-        Map<Integer, List<TaskDtoLazy>> tasks = spacedRepetitionsService.getActualTaskToRepeat();
+        Map<Integer, List<Map<String, Object>>> tasks = spacedRepetitionsService.getActualTaskToRepeat();
 
         assertTrue(tasks.get(-1).size()==1);
-        assertTrue(tasks.get(-1).get(0).getId()==task4.getId());
+        assertTrue((long)tasks.get(-1).get(0).get("id")==task4.getId());
 
         assertTrue(tasks.get(0).size()==3);
-        assertTrue(tasks.get(0).get(0).getId()==task3.getId());
-        assertTrue(tasks.get(0).get(1).getId()==task1.getId());
-        assertTrue(tasks.get(0).get(2).getId()==task2.getId());
+        assertTrue((long)tasks.get(0).get(0).get("id")==task3.getId());
+        assertTrue((long)tasks.get(0).get(1).get("id")==task1.getId());
+        assertTrue((long)tasks.get(0).get(2).get("id")==task2.getId());
 
         assertTrue(tasks.get(1).size()==1);
-        assertTrue(tasks.get(1).get(0).getId()==task5.getId());
+        assertTrue((long)tasks.get(1).get(0).get("id")==task5.getId());
     }
 
     private Task initEntChain(Date planDate){

@@ -64,7 +64,7 @@ public class TasksRESTController {
     }
 
     @RequestMapping(path = "/task/get/to/repeat/all" , method = RequestMethod.GET)
-    public ResponseEntity<Map<Integer, List<TaskDtoLazy>>> getTasksToRepeat(){
+    public ResponseEntity<Map<Integer, List<Map<String, Object>>>> getTasksToRepeat(){
         return new ResponseEntity<>(spacedRepetitionsService.getActualTaskToRepeat(), HttpStatus.OK);
     }
 

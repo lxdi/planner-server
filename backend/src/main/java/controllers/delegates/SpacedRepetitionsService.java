@@ -1,5 +1,6 @@
 package controllers.delegates;
 
+import com.sogoodlabs.common_mapper.CommonMapper;
 import model.dao.IRepDAO;
 import model.dto.task.TaskDtoLazy;
 import model.dto.task.TasksDtoMapper;
@@ -22,10 +23,10 @@ public class SpacedRepetitionsService {
     IRepDAO repDAO;
 
     @Autowired
-    TasksDtoMapper tasksDtoMapper;
+    CommonMapper commonMapper;
 
-    public Map<Integer, List<TaskDtoLazy>> getActualTaskToRepeat(){
-        Map<Integer, List<TaskDtoLazy>> result = new HashMap<>();
+    public Map<Integer, List<Map<String, Object>>> getActualTaskToRepeat(){
+        Map<Integer, List<Map<String, Object>>> result = new HashMap<>();
 
         Date fromDate = DateUtils.addDays(DateUtils.currentDate(), -3);
         Date toDate = DateUtils.addDays(DateUtils.currentDate(), +3);
@@ -38,12 +39,14 @@ public class SpacedRepetitionsService {
         return result;
     }
 
-    private void setTasks(Date from, Date to, int weeknum, Map<Integer, List<TaskDtoLazy>> result){
-        List<Task> repeatRightNow = new ArrayList<>();
-        repDAO.getUnFinishedWithPlanDateInRange(from, to)
-                .forEach((rep)->repeatRightNow.add(rep.getSpacedRepetitions().getTaskMapper().getTask()));
+    private void setTasks(Date from, Date to, int weeknum, Map<Integer, List<Map<String, Object>>> result){
         result.putIfAbsent(weeknum, new ArrayList<>());
-        repeatRightNow.forEach((task)->result.get(weeknum).add(tasksDtoMapper.mapToDto(task)));
+        repDAO.getUnFinishedWithPlanDateInRange(from, to)
+                .forEach((rep)->{
+                    Map<String, Object> taskDto = commonMapper.mapToDto(rep.getSpacedRepetitions().getTaskMapper().getTask(), new HashMap<>());
+                    taskDto.put("repetitionid", rep.getId());
+                    result.get(weeknum).add(taskDto);
+                });
     }
 
 }
