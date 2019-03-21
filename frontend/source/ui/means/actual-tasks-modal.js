@@ -17,8 +17,35 @@ export class ActualTasksModal extends React.Component{
     return <CommonModal isOpen={this.state.isOpen}
                 cancelHandler={()=>fireEvent('actual-tasks-modal', 'close')}>
             <div>
-              TEST
+              {this.state.isOpen?content(this):null}
             </div>
           </CommonModal>
   }
+}
+
+const content = function(reactcomp){
+  const tdStyle = {padding:'5px'}
+  return <table border="1" style={{width:'100%'}}>
+          <tr>
+            <td style={Object.assign({border:'1px solid red'}, tdStyle)}>2 week late</td>
+            <td style={Object.assign({border:'1px solid orange'}, tdStyle)}>1 week late</td>
+            <td style={Object.assign({border:'1px solid green'}, tdStyle)}>About a week</td>
+            <td style={Object.assign({border:'1px solid grey'}, tdStyle)}>Upcoming</td>
+          </tr>
+          <tr>
+            <td>{tasksListUI(viewStateVal('tasks-dao', 'actual-tasks')[-2])}</td>
+            <td>{tasksListUI(viewStateVal('tasks-dao', 'actual-tasks')[-1])}</td>
+            <td>{tasksListUI(viewStateVal('tasks-dao', 'actual-tasks')[-0])}</td>
+            <td>{tasksListUI(viewStateVal('tasks-dao', 'actual-tasks')[1])}</td>
+          </tr>
+        </table>
+}
+
+const tasksListUI = function(tasks){
+  const result = []
+  tasks.forEach((task)=>result.push(
+    <div key={task.id}>
+          <a href='#' onClick={()=>fireEvent('task-modal', 'open', [null, task, true, true])}>{task.title}</a>
+    </div>))
+  return <div> {result}</div>
 }
