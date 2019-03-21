@@ -5,11 +5,11 @@
   position: absolute;
 } */
 
-.mode-button-div {
+/* .mode-button-div {
   float:right;
   display: inline-block;
   margin: 5px;
-}
+} */
 
 .switch-button-div {
   display: inline-block;
@@ -39,7 +39,7 @@
     min-height: 200px;
     border: 1px solid #000000;
     overflow: auto;
-    height:90vh;
+    height:97vh;
 }
 
 .frame_title {
@@ -64,6 +64,41 @@
 
 .hquarter-modal-style {
   width:90%
+}
+
+.left-bar-button {
+  width:45px;
+  height:45px;
+  background-color: white;
+  border: 1px solid lightgrey;
+  border-radius: 8px;
+  color:grey
+}
+
+.left-bar-button:active {
+  background-color: lightgrey;
+  color:white
+}
+
+.left-bar-button:hover {
+  border: 1px solid grey;
+}
+
+.left-bar-button-switch {
+  width:45px;
+  height:45px;
+  background-color: CornflowerBlue ;
+  border: 1px solid lightgrey;
+  border-radius: 8px;
+  color:white
+}
+
+.left-bar-button-switch:active {
+  background-color: blue;
+}
+
+.left-bar-button-switch:hover {
+  border: 1px solid grey;
 }
 
 #Targets {
