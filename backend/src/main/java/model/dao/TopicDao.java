@@ -1,10 +1,13 @@
 package model.dao;
 
+import model.entities.Task;
 import model.entities.Topic;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Transactional
@@ -21,5 +24,13 @@ public class TopicDao implements ITopicDAO{
     @Override
     public Topic getById(long id) {
         return this.sessionFactory.getCurrentSession().get(Topic.class, id);
+    }
+
+    @Override
+    public List<Topic> getByTaskId(long taskid) {
+        return this.sessionFactory.getCurrentSession()
+                .createQuery("from Topic where task.id = :taskid")
+                .setParameter("taskid", taskid)
+                .getResultList();
     }
 }

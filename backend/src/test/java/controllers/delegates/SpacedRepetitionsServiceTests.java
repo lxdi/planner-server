@@ -2,10 +2,7 @@ package controllers.delegates;
 
 import model.dao.*;
 import model.dto.task.TaskDtoLazy;
-import model.entities.Repetition;
-import model.entities.SpacedRepetitions;
-import model.entities.Task;
-import model.entities.TaskMapper;
+import model.entities.*;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import services.DateUtils;
@@ -34,6 +31,9 @@ public class SpacedRepetitionsServiceTests extends SpringTestConfig {
     @Autowired
     SpacedRepetitionsService spacedRepetitionsService;
 
+    @Autowired
+    ITopicDAO topicDAO;
+
     @Test
     public void getActualTaskToRepeatTest(){
 
@@ -44,6 +44,10 @@ public class SpacedRepetitionsServiceTests extends SpringTestConfig {
         Task task4 = initEntChain(DateUtils.addDays(DateUtils.currentDate(), -5));
 
         Task task5 = initEntChain(DateUtils.addDays(DateUtils.currentDate(), 6));
+
+        Topic topicForTask5 = new Topic();
+        topicForTask5.setTask(task5);
+        topicDAO.saveOrUpdate(topicForTask5);
 
         Repetition repetitionDone = new Repetition();
         repetitionDone.setPlanDate(DateUtils.addDays(DateUtils.currentDate(), 3));
@@ -62,6 +66,8 @@ public class SpacedRepetitionsServiceTests extends SpringTestConfig {
 
         assertTrue(tasks.get(1).size()==1);
         assertTrue((long)tasks.get(1).get(0).get("id")==task5.getId());
+        assertTrue(((List)tasks.get(1).get(0).get("topics")).size()==1);
+        assertTrue((long)((Map)((List)tasks.get(1).get(0).get("topics")).get(0)).get("id")==topicForTask5.getId());
     }
 
     private Task initEntChain(Date planDate){

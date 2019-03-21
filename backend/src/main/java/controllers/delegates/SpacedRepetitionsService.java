@@ -2,10 +2,9 @@ package controllers.delegates;
 
 import com.sogoodlabs.common_mapper.CommonMapper;
 import model.dao.IRepDAO;
-import model.dto.task.TaskDtoLazy;
-import model.dto.task.TasksDtoMapper;
-import model.entities.Repetition;
-import model.entities.Task;
+import model.dao.ITopicDAO;
+import model.dto.additional_mapping_beans.AdditionalTasksMapping;
+import model.entities.Topic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import services.DateUtils;
@@ -24,6 +23,9 @@ public class SpacedRepetitionsService {
 
     @Autowired
     CommonMapper commonMapper;
+
+    @Autowired
+    AdditionalTasksMapping additionalTasksMapping;
 
     public Map<Integer, List<Map<String, Object>>> getActualTaskToRepeat(){
         Map<Integer, List<Map<String, Object>>> result = new HashMap<>();
@@ -45,8 +47,11 @@ public class SpacedRepetitionsService {
                 .forEach((rep)->{
                     Map<String, Object> taskDto = commonMapper.mapToDto(rep.getSpacedRepetitions().getTaskMapper().getTask(), new HashMap<>());
                     taskDto.put("repetitionid", rep.getId());
+                    additionalTasksMapping.fillTopicsInTaskDto(taskDto);
                     result.get(weeknum).add(taskDto);
                 });
     }
+
+
 
 }
