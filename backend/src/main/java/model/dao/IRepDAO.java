@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface IRepDAO {
 
+    Repetition findOne(long id);
     void save(Repetition repetition);
     List<Repetition> getRepsbySpacedRepId(long srId);
     List<Repetition> getUnFinishedWithPlanDateInRange(Date from, Date to);

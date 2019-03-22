@@ -57,9 +57,15 @@ public class TasksRESTController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @RequestMapping(path = "/task/{taskid}/finish/with/repetition/{repid}" , method = RequestMethod.POST)
-    public ResponseEntity finishTaskWithRepetition(@PathVariable("taskid") int taskid, @PathVariable("repid") long repid){
-        tasksDelegate.finishTaskWithRepetition(taskid, repid);
+    @RequestMapping(path = "/task/{taskid}/finish/with/repetition/{repPlanId}" , method = RequestMethod.POST)
+    public ResponseEntity finishTaskWithRepetition(@PathVariable("taskid") long taskid, @PathVariable("repPlanId") long repPlanId){
+        tasksDelegate.finishTaskWithRepetition(taskid, repPlanId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @RequestMapping(path = "/task/finish/repetition/{repId}" , method = RequestMethod.POST)
+    public ResponseEntity finishRepetition(@PathVariable("repId") long repId){
+        tasksDelegate.finishRepetition(repId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

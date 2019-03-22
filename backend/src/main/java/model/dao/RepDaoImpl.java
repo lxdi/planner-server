@@ -17,6 +17,11 @@ public class RepDaoImpl implements IRepDAO {
     SessionFactory sessionFactory;
 
     @Override
+    public Repetition findOne(long id) {
+        return this.sessionFactory.getCurrentSession().get(Repetition.class, id);
+    }
+
+    @Override
     public void save(Repetition repetition) {
         this.sessionFactory.getCurrentSession().saveOrUpdate(repetition);
     }

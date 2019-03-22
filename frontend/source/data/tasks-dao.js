@@ -86,6 +86,14 @@ registerEvent('tasks-dao', 'actual-tasks-rq', (stateSetter)=>{
 
 registerEvent('tasks-dao', 'actual-tasks-rs', ()=>{})
 
+registerEvent('tasks-dao', 'finish-repetition', (stateSetter, task, repetition)=>{
+  sendGet('/task/'+task.id+'/finish/repetition/'+repetition.id, (data)=>{
+    fireEvent('tasks-dao', 'repetition-finished', [task, repetition])
+  })
+})
+
+registerEvent('tasks-dao', 'repetition-finished', (stateSetter, task, repetition)=>{})
+
 const getMaxTaskPosition = function(tasks){
     var result = 0
     if(tasks!=null){

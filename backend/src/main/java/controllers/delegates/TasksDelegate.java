@@ -72,17 +72,10 @@ public class TasksDelegate {
         }
     }
 
-    public void finishRepetition(long taskid){
-        //Task task = tasksDAO.getById(taskid);
-//        SpacedRepetitions spacedRepetitions = spacedRepDAO.getSRforTask(taskid);
-//        if(spacedRepetitions==null){
-//            throw new NullPointerException("No repetitions for this task");
-//        }
-//        Repetition repetition = new Repetition();
-//        repetition.setSpacedRepetitions(spacedRepetitions);
-//        repetition.setPlanDate(DateUtils.currentDate());
-//        repDAO.save(repetition);
-        //TODO
+    public void finishRepetition(long repId){
+        Repetition repetition = repDAO.findOne(repId);
+        repetition.setFactDate(DateUtils.currentDate());
+        repDAO.save(repetition);
     }
 
     private void finishTask(TaskMapper taskMapper){

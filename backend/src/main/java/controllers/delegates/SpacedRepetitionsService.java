@@ -46,7 +46,7 @@ public class SpacedRepetitionsService {
         repDAO.getUnFinishedWithPlanDateInRange(from, to)
                 .forEach((rep)->{
                     Map<String, Object> taskDto = commonMapper.mapToDto(rep.getSpacedRepetitions().getTaskMapper().getTask(), new HashMap<>());
-                    taskDto.put("repetitionid", rep.getId());
+                    taskDto.put("repetition", commonMapper.mapToDto(rep, new HashMap<>()));
                     additionalTasksMapping.fillTopicsInTaskDto(taskDto);
                     result.get(weeknum).add(taskDto);
                 });

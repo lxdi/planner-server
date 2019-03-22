@@ -76,7 +76,7 @@ const modalContent = function(component){
                   changeEditHandler = {()=>component.setState({})}
                   deleteHandler={()=>fireEvent('tasks-dao', 'delete-task', [component.state.subject, component.state.task])}>
                 <form>
-                    {component.state.mode.progress?<Button disabled={component.state.task.finished} onClick={()=>fireEvent('task-progress-modal', 'open', [component.state.task])}>Progress</Button>:null}
+                    {progressButton(component)}
                     <FormGroup controlId="formBasicText">
                     <div style={{display:'inline-block', paddingRight:'5px'}}><ControlLabel>Title:</ControlLabel></div>
                     <div style={{display:'inline-block'}}>{statefulTextfield(component, component.state.task, 'title')}</div>
@@ -84,6 +84,12 @@ const modalContent = function(component){
                     </FormGroup>
                   </form>
                 </CommonCrudeTemplate>
+}
+
+const progressButton = function(component){
+  if(component.state.mode.progress){
+      return <Button disabled={component.state.task.finished} onClick={()=>fireEvent('task-progress-modal', 'open', [component.state.task, component.state.task.repetition])}>Progress</Button>
+  }
 }
 
 const topicsUI = function(component){

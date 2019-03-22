@@ -78,19 +78,15 @@ public class TasksDelegateTests extends SpringTestConfig {
                 .equals(DateUtils.fromDate(DateUtils.addWeeks(DateUtils.currentDate(), 6))));
     }
 
-    @Ignore
     @Test
     public void finishRepetitionTest(){
-        tasksDelegate.finishTaskWithRepetition(task.getId(), defaultRepPlan.getId());
+        Repetition repetition = new Repetition();
+        repDAO.save(repetition);
 
-        tasksDelegate.finishRepetition(task.getId());
+        tasksDelegate.finishRepetition(repetition.getId());
 
-        SpacedRepetitions spacedRepetitions = spacedRepDAO.getSRforTask(task.getId());
-        List<Repetition> repetitions = repDAO.getRepsbySpacedRepId(spacedRepetitions.getId());
-
-        assertTrue(repetitions.size()==4);
-        assertTrue(DateUtils.fromDate(repetitions.get(0).getPlanDate()).equals(DateUtils.currentDateString()));
-
+        repetition = repDAO.findOne(repetition.getId());
+        assertTrue(DateUtils.fromDate(repetition.getFactDate()).equals(DateUtils.currentDateString()));
     }
 
 }
