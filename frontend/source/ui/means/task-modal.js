@@ -5,10 +5,10 @@ import {CommonModal} from './../common-modal'
 import {CommonCrudeTemplate} from './../common-crud-template'
 import {registerEvent, registerReaction, fireEvent, viewStateVal} from '../../controllers/eventor'
 
-const createState = function(isOpen, isStatic, isEdit, subject, task, finishing){
+const createState = function(isOpen, isStatic, isEdit, subject, task, progress){
   return {
     isOpen: isOpen,
-    mode: {isStatic: isStatic, isEdit: isEdit, finishing:finishing},
+    mode: {isStatic: isStatic, isEdit: isEdit, progress:progress},
     subject: subject,
     task: task
   }
@@ -18,7 +18,7 @@ export class TaskModal extends React.Component {
   constructor(props){
     super(props)
     this.state = createState(false, false, false, null, null)
-    registerEvent('task-modal', 'open', (stateSetter, subject, task, isViewOnly, withFinishing)=>this.setState(getState(subject, task, isViewOnly, withFinishing)))
+    registerEvent('task-modal', 'open', (stateSetter, subject, task, isViewOnly, withprogress)=>this.setState(getState(subject, task, isViewOnly, withprogress)))
     registerEvent('task-modal', 'close', ()=>this.setState(createState(false, false, false, null, null, null)))
 
     registerReaction('task-modal', 'tasks-dao', 'task-deleted', (stateSetter)=>fireEvent('task-modal', 'close'))
@@ -37,7 +37,7 @@ export class TaskModal extends React.Component {
   }
 }
 
-const getState = function(subject, task, isViewOnly, withFinishing){
+const getState = function(subject, task, isViewOnly, withprogress){
   var state = null
   if(task.id == null || task.id == 0){
     state = createState(true, true, true, subject, task)
@@ -48,8 +48,8 @@ const getState = function(subject, task, isViewOnly, withFinishing){
     state.mode.isStatic = true
     state.mode.isEdit = false
   }
-  if(withFinishing==true){
-    state.mode.finishing = true
+  if(withprogress==true){
+    state.mode.progress = true
   }
   return state
 }
@@ -76,7 +76,7 @@ const modalContent = function(component){
                   changeEditHandler = {()=>component.setState({})}
                   deleteHandler={()=>fireEvent('tasks-dao', 'delete-task', [component.state.subject, component.state.task])}>
                 <form>
-                    {component.state.mode.finishing?<Button disabled={component.state.task.finished} onClick={()=>fireEvent('finishing-task-modal', 'open', [component.state.task])}>Complete Task</Button>:null}
+                    {component.state.mode.progress?<Button disabled={component.state.task.finished} onClick={()=>fireEvent('task-progress-modal', 'open', [component.state.task])}>Progress</Button>:null}
                     <FormGroup controlId="formBasicText">
                     <div style={{display:'inline-block', paddingRight:'5px'}}><ControlLabel>Title:</ControlLabel></div>
                     <div style={{display:'inline-block'}}>{statefulTextfield(component, component.state.task, 'title')}</div>

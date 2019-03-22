@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 
 import {Main} from './ui/main'
 import {LeftSideBarContent} from './ui/left-side-bar-content'
-import {FinishingTaskModal} from './ui/means/finishing-task-modal'
+import {TaskProgressModal} from './ui/means/task-progress-modal'
 import {ActualTasksModal} from './ui/means/actual-tasks-modal'
 
 import './data/realms-dao'
@@ -21,7 +21,7 @@ const app = document.getElementById("app");
 function rerender(){
 	ReactDOM.render(
 		<div style={{margin:'3px'}}>
-				<FinishingTaskModal/>
+				<TaskProgressModal/>
 				<ActualTasksModal/>
 				<table style={{width:'100%'}}>
 					<tr>
