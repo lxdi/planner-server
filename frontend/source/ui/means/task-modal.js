@@ -21,7 +21,7 @@ export class TaskModal extends React.Component {
     registerEvent('task-modal', 'open', (stateSetter, subject, task, isViewOnly, withprogress)=>this.setState(getState(subject, task, isViewOnly, withprogress)))
     registerEvent('task-modal', 'close', ()=>this.setState(createState(false, false, false, null, null, null)))
 
-    registerReaction('task-modal', 'tasks-dao', 'task-deleted', (stateSetter)=>fireEvent('task-modal', 'close'))
+    registerReaction('task-modal', 'tasks-dao', ['task-deleted', 'repetition-finished'], (stateSetter)=>fireEvent('task-modal', 'close'))
     registerReaction('task-modal', 'tasks-dao', 'task-finished', (stateSetter)=>this.setState({}))
   }
 

@@ -10,6 +10,8 @@ export class LeftSideBarContent extends React.Component {
 
     registerReaction('actual-tasks-ui', 'tasks-dao', ['actual-tasks-rs'], ()=>this.setState({}))
     registerReaction('actual-tasks-ui', 'main-ui', ['switch-mode'], ()=>this.setState({}))
+
+    registerReaction('actual-tasks-ui', 'tasks-dao', ['repetition-finished'], (stateSetter)=>this.setState({}))
   }
 
   render(){
