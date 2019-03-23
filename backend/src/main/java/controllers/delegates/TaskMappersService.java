@@ -4,7 +4,6 @@ import model.dao.*;
 import model.entities.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import services.DateUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -56,23 +55,23 @@ public class TaskMappersService {
         List<Layer> layers = layerDAO.getLyersOfMean(mean);
         List<Slot> slots = slotDAO.slotsWithMean(mean);
 
-        int i =0, j=0;
-        for(; i<layers.size() && j<slots.size(); i++, j++){
-            if(isFullReschedule || slots.get(j).getLayer()==null || slots.get(j).getLayer().getId()!=layers.get(i).getId()){
-                createTaskMappers(layers.get(i), slots.get(j));
-                slots.get(j).setLayer(layers.get(i));
-                slotDAO.saveOrUpdate(slots.get(j));
+        int i=0;
+        for(; i<layers.size() && i<slots.size(); i++){
+            if(isFullReschedule || slots.get(i).getLayer()==null || slots.get(i).getLayer().getId()!=layers.get(i).getId()){
+                createTaskMappers(layers.get(i), slots.get(i));
+                slots.get(i).setLayer(layers.get(i));
+                slotDAO.saveOrUpdate(slots.get(i));
             }
         }
 
         if(i<layers.size()){
-            for(;i<layers.size();i++){
-                unassignTasksForLayer(layers.get(i));
+            for(int j = i;j<layers.size();j++){
+                unassignTasksForLayer(layers.get(j));
             }
         }
 
-        if(j<slots.size()){
-            for(;j<slots.size();j++){
+        if(i<slots.size()){
+            for(int j = i;j<slots.size();j++){
                 if(slots.get(j).getLayer()!=null) {
                     slots.get(j).setLayer(null);
                     slotDAO.saveOrUpdate(slots.get(j));
@@ -82,18 +81,19 @@ public class TaskMappersService {
     }
 
     private void createTaskMappers(Layer layerToMap, Slot slot){
+        int optimalTasks = 8;
         if(layerToMap!=null){
             List<Task> tasks = tasksDAO.tasksByLayer(layerToMap);
             Collections.sort(tasks);
+            int fullWeekMappingUntil = tasks.size()-optimalTasks;
             if(tasks.size()>0) {
                 Stack<Task> taskStack = tasksInStack(tasks);
-                HQuarter hQuarter = slot.getHquarter();
-                List<Week> weeks = weekDAO.weeksOfHquarter(hQuarter);
+                List<Week> weeks = weekDAO.weeksOfHquarter(slot.getHquarter());
                 List<SlotPosition> slotPositions = slotDAO.getSlotPositionsForSlot(slot);
                 Collections.sort(slotPositions);
                 Task currentTask = !taskStack.isEmpty()? taskStack.pop():null;
                 for(int iw = 0; iw<weeks.size(); iw++){
-                    for(int isp=0; isp<slotPositions.size(); isp++){
+                    for(int isp = 0; isp<slotPositions.size()-ifMappingOnFullWeek(iw, fullWeekMappingUntil); isp++){
                         TaskMapper taskMapper = taskMappersDAO.taskMapperForTask(currentTask);
                         if(taskMapper==null){
                             taskMapper = new TaskMapper();
@@ -110,6 +110,14 @@ public class TaskMappersService {
                     }
                 }
             }
+        }
+    }
+
+    private int ifMappingOnFullWeek(int weekNumFromZero, int atLeastTo){
+        if(weekNumFromZero+1<=atLeastTo){
+            return 0;
+        } else {
+            return 1;
         }
     }
 
