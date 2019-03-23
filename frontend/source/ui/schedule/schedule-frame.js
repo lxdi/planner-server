@@ -37,7 +37,7 @@ export class ScheduleFrame extends React.Component{
           {this.state.edit?<Button bsStyle="default" bsSize="xsmall" onClick={()=>loadPrevNextManually(this, 'prev')}>Load prev</Button>:null}
           {this.state.edit?<Button bsStyle="default" bsSize="xsmall" onClick={()=>loadPrevNextManually(this, 'next')}>Load next</Button>:null}
         </ButtonGroup>
-        <div style={{height:'78vh', borderTop:'1px solid lightgrey', borderBottom:'1px solid lightgrey', marginTop:'3px'}}>
+        <div style={{height:'85vh', borderTop:'1px solid lightgrey', borderBottom:'1px solid lightgrey', marginTop:'3px'}}>
           {viewStateVal('means-dao', 'means')!=null?hquartersUI(this):null}
         </div>
       </div>

@@ -101,6 +101,15 @@
   border: 1px solid grey;
 }
 
+.actual-tasks-indicators-group {
+  border-radius: 8px;
+  border: 1px solid lightgrey
+}
+
+.actual-tasks-indicators-group:hover {
+  border: 1px solid grey;
+}
+
 #Targets {
   border: 1px solid green;
 }
