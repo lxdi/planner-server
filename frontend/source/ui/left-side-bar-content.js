@@ -26,11 +26,6 @@ const content = function(reactcomp){
     return 'Loading...'
   }
   return <div>
-              <div style={{margin:'2px', width:'45px', height:'45px'}}>
-                <button class="left-bar-button" onClick = {()=>fireEvent('main-ui', 'switch-mode')}>Mode</button>
-              </div>
-              {getSwitchButton()}
-              {divisor()}
               <a href="#" style={{textDecoration:'none'}}>
                 <div onClick={()=>fireEvent('actual-tasks-modal', 'open')} class="actual-tasks-indicators-group">
                   {getSquare(0, 'blue')}
@@ -41,11 +36,18 @@ const content = function(reactcomp){
                   {getSquare(actualTasksMap['1'].length, 'grey')}
                 </div>
               </a>
+              {divisor()}
+              <div style={{margin:'2px', width:'45px', height:'45px', fontSize:'10pt'}}>
+                <button class="left-bar-button" onClick = {()=>fireEvent('main-ui', 'switch-mode')}>
+                {viewModeButtonLabel()}
+                </button>
+              </div>
+              {getSwitchButton()}
             </div>
 }
 
 const getSquare = function(num, color){
-	return <div style={{border:'1px solid '+color, margin:'2px', width:'45px', height:'45px', borderRadius:'8px', textAlign:'center', color:color, fontSize:'13pt'}}>{num}</div>
+	return <div style={{border:'1px solid '+color, margin:'2px', width:'45px', height:'30px', borderRadius:'8px', textAlign:'center', color:color, fontSize:'13pt'}}>{num}</div>
 }
 
 const divisor = function(){
@@ -59,5 +61,13 @@ const getSwitchButton = function(){
                   </div>
   } else {
     return <div></div>
+  }
+}
+
+const viewModeButtonLabel = function(){
+  if(!viewStateVal('main-ui', 'three-frames')){
+    return ' |  | '
+  } else {
+    return ' |  |  | '
   }
 }
