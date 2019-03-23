@@ -29,14 +29,16 @@ const content = function(reactcomp){
               </div>
               {getSwitchButton()}
               {divisor()}
-              <div onClick={()=>fireEvent('actual-tasks-modal', 'open')}>
-                {getSquare(0, 'blue')}
-                {divisor()}
-                {getSquare(actualTasksMap['-2'].length, 'red')}
-                {getSquare(actualTasksMap['-1'].length, 'orange')}
-                {getSquare(actualTasksMap['0'].length, 'green')}
-                {getSquare(actualTasksMap['1'].length, 'grey')}
-              </div>
+              <a href="#" style={{textDecoration:'none'}}>
+                <div onClick={()=>fireEvent('actual-tasks-modal', 'open')} class="actual-tasks-indicators-group">
+                  {getSquare(0, 'blue')}
+                  {divisor()}
+                  {getSquare(actualTasksMap['-2'].length, 'red')}
+                  {getSquare(actualTasksMap['-1'].length, 'orange')}
+                  {getSquare(actualTasksMap['0'].length, 'green')}
+                  {getSquare(actualTasksMap['1'].length, 'grey')}
+                </div>
+              </a>
             </div>
 }
 

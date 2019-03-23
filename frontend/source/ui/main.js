@@ -38,18 +38,6 @@ export class Main extends React.Component {
 	}
 }
 
-// <div align = "center" >
-// 	{getSwitchButton()}
-// 	<div align='right' class='mode-button-div'>
-// 		<Button onClick = {()=>fireEvent('main-ui', 'switch-mode')}>Mode</Button>
-// 	</div>
-// </div>
-
-
-// <div style = {{height:'20px', border:'1px solid red'}}>
-//
-// </div>
-
 const getFramesTable = function(){
   if(!viewStateVal('main-ui', 'three-frames')){
     var leftFrame = null

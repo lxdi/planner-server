@@ -25,7 +25,7 @@ function rerender(){
 				<ActualTasksModal/>
 				<table style={{width:'100%'}}>
 					<tr>
-						<td style={{width:'50px', border:'1px solid lightgrey', verticalAlign:'top'}}>
+						<td style={{width:'50px', verticalAlign:'top'}}>
 							<LeftSideBarContent/>
 						</td>
 						<td>
