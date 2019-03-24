@@ -4,6 +4,7 @@ import model.dto.topic.TopicDto;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Alexander on 26.04.2018.
@@ -17,6 +18,8 @@ public class TaskDtoLazy {
     int position;
 
     List<TopicDto> topics = new ArrayList<>();
+
+    List<Map<String, Object>> testings = new ArrayList<>();
 
     boolean finished = false;
 
@@ -60,5 +63,12 @@ public class TaskDtoLazy {
     }
     public void setFinished(boolean finished) {
         this.finished = finished;
+    }
+
+    public List<Map<String, Object>> getTestings() {
+        return testings;
+    }
+    public void setTestings(List<Map<String, Object>> testings) {
+        this.testings = testings;
     }
 }

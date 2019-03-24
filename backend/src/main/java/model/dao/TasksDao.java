@@ -24,6 +24,9 @@ public class TasksDao implements ITasksDAO {
     @Autowired
     ITaskMappersDAO taskMappersDAO;
 
+    @Autowired
+    ITaskTestingDAO taskTestingDAO;
+
     @Override
     public Task getById(long id) {
         return sessionFactory.getCurrentSession().get(Task.class, id);
@@ -61,8 +64,8 @@ public class TasksDao implements ITasksDAO {
         if(taskMapper!=null){
             taskMappersDAO.delete(taskMapper);
         }
+        taskTestingDAO.getByTask(id).forEach(testing -> taskTestingDAO.delete(testing.getId()));
         sessionFactory.getCurrentSession().delete(task);
-        //sessionFactory.getCurrentSession().delete(this.getById(id));
     }
 
     @Override
