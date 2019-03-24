@@ -14,6 +14,9 @@ const createState = function(isOpen, isStatic, isEdit, subject, task, progress){
   }
 }
 
+var newTopicId = 1
+var newTestingId = 1
+
 export class TaskModal extends React.Component {
   constructor(props){
     super(props)
@@ -66,8 +69,6 @@ const okHandler = function(subject, task){
   fireEvent('task-modal', 'close')
 }
 
-var newTopicId = 1
-
 const modalContent = function(component){
   if(component.state.task.title == null){
     component.state.task.title = ''
@@ -81,6 +82,7 @@ const modalContent = function(component){
                     <div style={{display:'inline-block', paddingRight:'5px'}}><ControlLabel>Title:</ControlLabel></div>
                     <div style={{display:'inline-block'}}>{statefulTextfield(component, component.state.task, 'title')}</div>
                     {topicsUI(component)}
+                    {testingsUI(component)}
                     </FormGroup>
                   </form>
                 </CommonCrudeTemplate>
@@ -116,6 +118,50 @@ const topicsUI = function(component){
         </div>
 }
 
+const addTopicButton = function(component){
+  if(component.state.mode.isEdit){
+    return <Button onClick={()=>{component.state.task.topics.push({tempId:'new_'+newTopicId++, title:'', source:''}); component.setState({})}}>+ Add topic</Button>
+  }
+}
+
+const removeTopicLink = function(component, topics, topic){
+  if(component.state.mode.isEdit){
+    return <a href="#" onClick={()=>{topics.splice(topics.indexOf(topic), 1); component.setState({})}}>Remove</a>
+  }
+}
+
+//-------------------------------------------------------
+
+const testingsUI = function(component){
+  const result = []
+  const commonStyle = {display:'inline-block', paddingLeft:'5px', borderLeft:'1px solid grey'}
+  const styleFields = {width:'45%'}
+  const styleRemoveLink = {width:'10%'}
+  Object.assign(styleFields, commonStyle)
+  Object.assign(styleRemoveLink, commonStyle)
+  const testings = component.state.task.testings
+  for(var indx in testings){
+    const testing = testings[indx]
+    const key = testing.id==null?testing.tempId:testing.id
+    result.push(<div key={key} style={{borderBottom:'1px solid lightgrey', marginBottom:'3px'}}>
+                    <div style={styleFields}>{statefulTextfield(component, testing, 'question')}</div>
+                    <div style={styleRemoveLink}>{removeTopicLink(component, testings, testing)}</div>
+                </div>)
+  }
+  return <div style={{border:'1px solid lightgrey', padding:'5px', borderRadius:'10px'}}>
+          <div><strong>Testings:</strong></div>
+          {result}
+          {addTestingButton(component)}
+        </div>
+}
+
+const addTestingButton = function(component){
+  if(component.state.mode.isEdit){
+    return <Button onClick={()=>{component.state.task.testings.push({tempId:'new_'+newTestingId++, question:''}); component.setState({})}}>+ Add testing</Button>
+  }
+}
+
+//----------------------------------------------------
 const statefulTextfield = function(component, obj, valName){
   if(component.state.mode.isEdit){
     return textField(component, obj, valName)
@@ -130,16 +176,4 @@ const textField = function(component, obj, valName){
       value={obj[valName]}
       placeholder={"Enter "+valName}
       onChange={(e)=>{obj[valName] = e.target.value; component.setState({})}}/>
-}
-
-const addTopicButton = function(component){
-  if(component.state.mode.isEdit){
-    return <Button onClick={()=>{component.state.task.topics.push({tempId:'new_'+newTopicId++, title:'', source:''}); component.setState({})}}>+ Add topic</Button>
-  }
-}
-
-const removeTopicLink = function(component, topics, topic){
-  if(component.state.mode.isEdit){
-    return <a href="#" onClick={()=>{topics.splice(topics.indexOf(topic), 1); component.setState({})}}>Remove</a>
-  }
 }

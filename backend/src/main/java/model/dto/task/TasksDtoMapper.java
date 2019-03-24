@@ -11,11 +11,16 @@ import model.entities.Task;
 import model.entities.TaskTesting;
 import model.entities.Topic;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.expression.Expression;
+import org.springframework.expression.ExpressionParser;
+import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.stereotype.Service;
+import services.StringUtils;
 
 import java.sql.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Stack;
 
 /**
  * Created by Alexander on 26.04.2018.
@@ -23,6 +28,8 @@ import java.util.List;
 
 @Service
 public class TasksDtoMapper implements IMapper<TaskDtoLazy, Task> {
+
+    private static final String LAYER_NAME_PREFIX = "Layer-";
 
     @Autowired
     ISubjectDAO subjectDAO;
@@ -44,6 +51,7 @@ public class TasksDtoMapper implements IMapper<TaskDtoLazy, Task> {
         dto.setId(task.getId());
         dto.setTitle(task.getTitle());
         dto.setPosition(task.getPosition());
+        dto.setFullname(getFullname(task));
         if(task.getSubject()!=null){
             dto.setSubjectid(task.getSubject().getId());
         }
@@ -61,6 +69,14 @@ public class TasksDtoMapper implements IMapper<TaskDtoLazy, Task> {
             dto.setFinished(true);
         }
         return dto;
+    }
+
+    private String getFullname(Task task){
+        String[] expressions = new String[]{
+                "subject?.layer?.mean?.realm?.title", "subject?.layer?.mean?.title",
+                "'"+LAYER_NAME_PREFIX+"' + subject?.layer?.priority", "subject?.title", "title"
+        };
+        return StringUtils.getFullName(task, expressions);
     }
 
     public Task mapToEntity(TaskDtoLazy dto){

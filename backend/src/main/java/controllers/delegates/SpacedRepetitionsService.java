@@ -2,9 +2,8 @@ package controllers.delegates;
 
 import com.sogoodlabs.common_mapper.CommonMapper;
 import model.dao.IRepDAO;
-import model.dao.ITopicDAO;
-import model.dto.additional_mapping_beans.AdditionalTasksMapping;
-import model.entities.Topic;
+import model.dto.additional_mapping.AdditionalTasksMapping;
+import model.entities.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import services.DateUtils;
@@ -45,9 +44,12 @@ public class SpacedRepetitionsService {
         result.putIfAbsent(weeknum, new ArrayList<>());
         repDAO.getUnFinishedWithPlanDateInRange(from, to)
                 .forEach((rep)->{
-                    Map<String, Object> taskDto = commonMapper.mapToDto(rep.getSpacedRepetitions().getTaskMapper().getTask(), new HashMap<>());
+                    Task task = rep.getSpacedRepetitions().getTaskMapper().getTask();
+                    Map<String, Object> taskDto = commonMapper.mapToDto(task, new HashMap<>());
                     taskDto.put("repetition", commonMapper.mapToDto(rep, new HashMap<>()));
                     additionalTasksMapping.fillTopicsInTaskDto(taskDto);
+                    additionalTasksMapping.fillTestingsInTaskDto(taskDto);
+                    additionalTasksMapping.fillFullName(taskDto, task);
                     result.get(weeknum).add(taskDto);
                 });
     }

@@ -110,6 +110,10 @@
   border: 1px solid grey;
 }
 
+.actual-tasks-modal-style {
+  width:70%;
+}
+
 #Targets {
   border: 1px solid green;
 }

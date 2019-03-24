@@ -17,7 +17,8 @@ export class ActualTasksModal extends React.Component{
 
   render(){
     return <CommonModal isOpen={this.state.isOpen} title="Actual tasks"
-                cancelHandler={()=>fireEvent('actual-tasks-modal', 'close')}>
+                cancelHandler={()=>fireEvent('actual-tasks-modal', 'close')}
+                styleClass='actual-tasks-modal-style'>
             <div>
               {this.state.isOpen?content(this):null}
             </div>
@@ -50,7 +51,7 @@ const tasksListUI = function(tasks){
   const result = []
   tasks.forEach((task)=>result.push(
     <div key={task.id}>
-          <a href='#' onClick={()=>fireEvent('task-modal', 'open', [null, task, true, true])}>{task.title}</a>
+          <a href='#' onClick={()=>fireEvent('task-modal', 'open', [null, task, true, true])}>{task.fullname}</a>
     </div>))
   return <div> {result}</div>
 }

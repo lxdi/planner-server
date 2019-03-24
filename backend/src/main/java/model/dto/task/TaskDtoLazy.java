@@ -23,6 +23,8 @@ public class TaskDtoLazy {
 
     boolean finished = false;
 
+    String fullname;
+
     public long getId() {
         return id;
     }
@@ -70,5 +72,12 @@ public class TaskDtoLazy {
     }
     public void setTestings(List<Map<String, Object>> testings) {
         this.testings = testings;
+    }
+
+    public String getFullname() {
+        return fullname;
+    }
+    public void setFullname(String fullname) {
+        this.fullname = fullname;
     }
 }

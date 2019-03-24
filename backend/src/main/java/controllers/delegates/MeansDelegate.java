@@ -1,5 +1,6 @@
 package controllers.delegates;
 
+import com.sogoodlabs.common_mapper.CommonMapper;
 import model.dao.*;
 import model.dto.layer.LayerDtoLazy;
 import model.dto.layer.LayersDtoMapper;
@@ -11,15 +12,14 @@ import model.dto.subject.SubjectDtoLazy;
 import model.dto.subject.SubjectDtoMapper;
 import model.dto.task.TaskDtoLazy;
 import model.dto.task.TasksDtoMapper;
-import model.entities.Layer;
-import model.entities.Mean;
-import model.entities.Realm;
-import model.entities.Subject;
+import model.entities.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class MeansDelegate {
@@ -56,6 +56,12 @@ public class MeansDelegate {
 
     @Autowired
     TaskMappersService taskMappersService;
+
+    @Autowired
+    ITaskTestingDAO taskTestingDAO;
+
+    @Autowired
+    CommonMapper commonMapper;
 
 
     public MeansDelegate(){}
@@ -163,7 +169,24 @@ public class MeansDelegate {
             for(TaskDtoLazy taskDto : tasksDto){
                 if(taskDto!=null) {
                     taskDto.setSubjectid(subjectid);
-                    tasksDAO.saveOrUpdate(tasksDtoMapper.mapToEntity(taskDto));
+                    Task task = tasksDtoMapper.mapToEntity(taskDto);
+                    tasksDAO.saveOrUpdate(task);
+                    saveTaskTestings(taskDto.getTestings(), task.getId());
+                }
+            }
+        }
+    }
+
+    private void saveTaskTestings(List<Map<String, Object>> taskTestingsDtoList, long taskid){
+        if(taskTestingsDtoList!=null && taskTestingsDtoList.size()>0){
+            for(Map<String, Object> testingDto: taskTestingsDtoList){
+                if(testingDto!=null) {
+                    testingDto.put("taskid", taskid);
+                    TaskTesting taskTesting = (TaskTesting) commonMapper.mapToEntity(testingDto, new TaskTesting());
+                    if(taskTesting.getTask()==null){
+                        throw new NullPointerException();
+                    }
+                    taskTestingDAO.save(taskTesting);
                 }
             }
         }
