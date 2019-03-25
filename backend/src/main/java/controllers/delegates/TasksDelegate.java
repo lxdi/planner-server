@@ -83,7 +83,7 @@ public class TasksDelegate {
                     if(testingDto.get("taskid")==null || Long.parseLong(""+testingDto.get("taskid"))!=taskid){
                         throw new UnsupportedOperationException("This taskTesting is not for the current task");
                     }
-                    taskTestingDAO.save((TaskTesting) commonMapper.mapToEntity(testingDto, new TaskTesting()));
+                    taskTestingDAO.save(commonMapper.mapToEntity(testingDto, new TaskTesting()));
                 }
             });
         }
@@ -101,7 +101,7 @@ public class TasksDelegate {
                 throw new UnsupportedOperationException("Testing to add must be new");
             }
             testingDto.put("taskid", taskid);
-            TaskTesting taskTesting = (TaskTesting) commonMapper.mapToEntity(testingDto, new TaskTesting());
+            TaskTesting taskTesting = commonMapper.mapToEntity(testingDto, new TaskTesting());
             if (taskTesting.getTask() == null) {
                 throw new NullPointerException("TaskTesting must have a task");
             }

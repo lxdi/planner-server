@@ -182,7 +182,7 @@ public class MeansDelegate {
             for(Map<String, Object> testingDto: taskTestingsDtoList){
                 if(testingDto!=null) {
                     testingDto.put("taskid", taskid);
-                    TaskTesting taskTesting = (TaskTesting) commonMapper.mapToEntity(testingDto, new TaskTesting());
+                    TaskTesting taskTesting = commonMapper.mapToEntity(testingDto, new TaskTesting());
                     if(taskTesting.getTask()==null){
                         throw new NullPointerException();
                     }
