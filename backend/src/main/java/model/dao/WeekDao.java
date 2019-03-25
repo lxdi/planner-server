@@ -83,4 +83,12 @@ public class WeekDao implements IWeekDAO {
                 .setParameter("hqEndWeekDay", hQuarter.getEndWeek().getStartDay());
         return query.list();
     }
+
+    @Override
+    public Week weekOfDate(Date date) {
+        return (Week) this.sessionFactory.getCurrentSession()
+                .createQuery("from Week where startDay <= :curDate and endDay >= :curDate")
+                .setParameter("curDate", date)
+                .uniqueResult();
+    }
 }

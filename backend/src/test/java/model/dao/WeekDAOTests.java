@@ -6,6 +6,7 @@ import model.entities.HQuarter;
 import model.entities.Week;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import services.DateUtils;
 import test_configs.AbstractTestsWithTargets;
 import services.QuarterGenerator;
 
@@ -71,6 +72,22 @@ public class WeekDAOTests extends AbstractTestsWithTargets {
             Week week= weeks.get(i);
             assertTrue(week.getStartDay().after(weekPrev.getStartDay()));
         }
+    }
+
+    @Test
+    public void weekOfDateTest(){
+        quarterGenerator.generateYear(2019);
+        checkDayInWeek("2019-03-26", "2019-03-25", "2019-03-31");
+        checkDayInWeek("2019-03-25", "2019-03-25", "2019-03-31");
+        checkDayInWeek("2019-03-31", "2019-03-25", "2019-03-31");
+        checkDayInWeek("2019-05-02", "2019-04-29", "2019-05-05");
+    }
+
+    private void checkDayInWeek(String dateString, String startDayExpected, String endDayExpected){
+        Date date = DateUtils.toDate(dateString);
+        Week week = weekDAO.weekOfDate(date);
+        assertTrue(DateUtils.fromDate(week.getStartDay()).equals(startDayExpected));
+        assertTrue(DateUtils.fromDate(week.getEndDay()).equals(endDayExpected));
     }
 
 }

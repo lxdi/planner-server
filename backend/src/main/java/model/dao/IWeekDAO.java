@@ -18,5 +18,6 @@ public interface IWeekDAO {
     Week weekByStartDate(Date date);
     Week weekByYearAndNumber(int year, int number);
     List<Week> weeksOfHquarter(HQuarter hQuarter);
+    Week weekOfDate(Date date);
 
 }
