@@ -1,5 +1,6 @@
 package controllers.delegates;
 
+import com.sogoodlabs.common_mapper.CommonMapper;
 import model.dao.*;
 import model.dto.task.TaskDtoLazy;
 import model.dto.task.TasksDtoMapper;
@@ -9,9 +10,7 @@ import org.springframework.stereotype.Service;
 import services.DateUtils;
 
 import java.sql.Date;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class TasksDelegate {
@@ -33,6 +32,12 @@ public class TasksDelegate {
 
     @Autowired
     IRepDAO repDAO;
+
+    @Autowired
+    CommonMapper commonMapper;
+
+    @Autowired
+    ITaskTestingDAO taskTestingDAO;
 
     public TaskDtoLazy createTask(TaskDtoLazy taskDto){
         Task task = tasksDtoMapper.mapToEntity(taskDto);
@@ -56,7 +61,7 @@ public class TasksDelegate {
         finishTask(taskMapper);
     }
 
-    public void finishTaskWithRepetition(long taskid, long repPlanid){
+    public void finishTaskWithRepetition(long taskid, long repPlanid, List<Map<String, Object>> testingsDto){
         Task task = tasksDAO.getById(taskid);
         TaskMapper taskMapper = taskMappersDAO.taskMapperForTask(task);
         finishTask(taskMapper);
@@ -70,12 +75,39 @@ public class TasksDelegate {
         } else {
             //TODO clean spacedRep
         }
+        if(testingsDto!=null){
+            testingsDto.forEach(testingDto -> {
+                if(testingDto.get("id")==null)
+                    addNewTestingToTask(taskid, testingDto);
+                else {
+                    if(testingDto.get("taskid")==null || Long.parseLong(""+testingDto.get("taskid"))!=taskid){
+                        throw new UnsupportedOperationException("This taskTesting is not for the current task");
+                    }
+                    taskTestingDAO.save((TaskTesting) commonMapper.mapToEntity(testingDto, new TaskTesting()));
+                }
+            });
+        }
     }
 
     public void finishRepetition(long repId){
         Repetition repetition = repDAO.findOne(repId);
         repetition.setFactDate(DateUtils.currentDate());
         repDAO.save(repetition);
+    }
+
+    public Map<String, Object> addNewTestingToTask(long taskid, Map<String, Object> testingDto){
+        if(testingDto!=null) {
+            if (testingDto.get("id") != null) {
+                throw new UnsupportedOperationException("Testing to add must be new");
+            }
+            testingDto.put("taskid", taskid);
+            TaskTesting taskTesting = (TaskTesting) commonMapper.mapToEntity(testingDto, new TaskTesting());
+            if (taskTesting.getTask() == null) {
+                throw new NullPointerException("TaskTesting must have a task");
+            }
+            taskTestingDAO.save(taskTesting);
+            return commonMapper.mapToDto(taskTesting, new HashMap<>());
+        } else return null;
     }
 
     private void finishTask(TaskMapper taskMapper){
@@ -98,5 +130,6 @@ public class TasksDelegate {
         }
         return repetitions;
     }
+
 
 }

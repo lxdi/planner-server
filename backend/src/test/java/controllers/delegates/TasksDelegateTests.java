@@ -10,7 +10,7 @@ import services.DateUtils;
 import test_configs.SpringTestConfig;
 
 import java.sql.Date;
-import java.util.List;
+import java.util.*;
 
 import static junit.framework.TestCase.assertTrue;
 
@@ -33,6 +33,9 @@ public class TasksDelegateTests extends SpringTestConfig {
 
     @Autowired
     IRepDAO repDAO;
+
+    @Autowired
+    ITaskTestingDAO taskTestingDAO;
 
     Task task;
     TaskMapper taskMapper;
@@ -62,7 +65,7 @@ public class TasksDelegateTests extends SpringTestConfig {
     @Test
     public void finishTaskWithRepTest(){
 
-        tasksDelegate.finishTaskWithRepetition(task.getId(), defaultRepPlan.getId());
+        tasksDelegate.finishTaskWithRepetition(task.getId(), defaultRepPlan.getId(), null);
         SpacedRepetitions spacedRepetitions = spacedRepDAO.getSRforTask(task.getId());
         List<Repetition> repetitions = repDAO.getRepsbySpacedRepId(spacedRepetitions.getId());
 
@@ -79,6 +82,39 @@ public class TasksDelegateTests extends SpringTestConfig {
     }
 
     @Test
+    public void finishTaskWithRepWithTestingsTest(){
+
+        TaskTesting existingTesting = new TaskTesting();
+        existingTesting.setTask(task);
+        taskTestingDAO.save(existingTesting);
+
+        List<Map<String, Object>> testingsDto = new ArrayList<>(Arrays.asList(
+                createTaskTestingDTO(0, "testing1 q", null),
+                createTaskTestingDTO(existingTesting.getId(), "testing2 q", task.getId())));
+
+        tasksDelegate.finishTaskWithRepetition(task.getId(), defaultRepPlan.getId(), testingsDto);
+        SpacedRepetitions spacedRepetitions = spacedRepDAO.getSRforTask(task.getId());
+        List<Repetition> repetitions = repDAO.getRepsbySpacedRepId(spacedRepetitions.getId());
+
+        assertTrue(DateUtils.fromDate(taskMappersDAO.taskMapperForTask(task).getFinishDate())
+                .equals(DateUtils.fromDate(new Date(new java.util.Date().getTime()))));
+
+        assertTrue(spacedRepetitions!=null);
+        assertTrue(spacedRepetitions.getRepetitionPlan().getId()== defaultRepPlan.getId());
+
+        assertTrue(repetitions.size()==4);
+
+        assertTrue(DateUtils.fromDate(repetitions.get(0).getPlanDate())
+                .equals(DateUtils.fromDate(DateUtils.addWeeks(DateUtils.currentDate(), 6))));
+
+        List<TaskTesting> testings = taskTestingDAO.getByTask(task.getId());
+
+        assertTrue(testings.size()==2);
+        assertTrue(testings.get(0).getQuestion().equals("testing2 q"));
+        assertTrue(testings.get(1).getQuestion().equals("testing1 q"));
+    }
+
+    @Test
     public void finishRepetitionTest(){
         Repetition repetition = new Repetition();
         repDAO.save(repetition);
@@ -87,6 +123,49 @@ public class TasksDelegateTests extends SpringTestConfig {
 
         repetition = repDAO.findOne(repetition.getId());
         assertTrue(DateUtils.fromDate(repetition.getFactDate()).equals(DateUtils.currentDateString()));
+    }
+
+    @Test
+    public void addNewTestingToTaskTest(){
+        Task task = new Task();
+        tasksDAO.saveOrUpdate(task);
+
+        Map<String, Object> testingDto = new HashMap<>();
+        testingDto.put("question", "test q");
+
+        tasksDelegate.addNewTestingToTask(task.getId(), testingDto);
+
+        List<TaskTesting> testings = taskTestingDAO.getByTask(task.getId());
+
+        assertTrue(testings.size()==1);
+        assertTrue(testings.get(0).getQuestion().equals("test q"));
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void addExistingTestingToTaskTest(){
+        Task task = new Task();
+        tasksDAO.saveOrUpdate(task);
+
+        TaskTesting taskTesting = new TaskTesting();
+        taskTestingDAO.save(taskTesting);
+
+        Map<String, Object> testingDto = new HashMap<>();
+        testingDto.put("id", taskTesting.getId());
+        testingDto.put("question", "test q");
+
+        tasksDelegate.addNewTestingToTask(task.getId(), testingDto);
+    }
+
+    private Map<String, Object> createTaskTestingDTO(long id, String question, Long taskid){
+        Map<String, Object> result = new HashMap<>();
+        if(id>0){
+            result.put("id", id);
+        }
+        if(taskid!=null){
+            result.put("taskid", taskid);
+        }
+        result.put("question", question);
+        return result;
     }
 
 }

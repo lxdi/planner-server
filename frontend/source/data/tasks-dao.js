@@ -61,14 +61,14 @@ registerEvent('tasks-dao', 'move-task', (stateSetter, targetSubject, targetTask)
   }
 })
 
-registerEvent('tasks-dao', 'finish-task', (stateSetter, task, repPlan)=>{
+registerEvent('tasks-dao', 'finish-task', (stateSetter, task, repPlan, testings)=>{
   if(repPlan==null){
     sendPost('/task/'+task.id+'/finish', null, ()=>{
       task.finished = true
       fireEvent('tasks-dao', 'task-finished', [task])
     })
   } else {
-    sendPost('/task/'+task.id+'/finish/with/repetition/'+repPlan.id, null, ()=>{
+    sendPost('/task/'+task.id+'/finish/with/repetition/'+repPlan.id, testings, ()=>{
       task.finished = true
       fireEvent('tasks-dao', 'task-finished', [task])
     })

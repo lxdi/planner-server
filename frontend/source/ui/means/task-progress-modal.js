@@ -3,10 +3,11 @@ import ReactDOM from 'react-dom';
 import {ButtonToolbar, DropdownButton, MenuItem, Button} from 'react-bootstrap'
 
 import {CommonModal} from './../common-modal'
+import {TestingsList} from './testings-list'
 
 import {registerEvent, registerReaction, fireEvent, viewStateVal} from '../../controllers/eventor'
 
-
+//props: testings
 export class TaskProgressModal extends React.Component {
   constructor(props){
     super(props)
@@ -23,7 +24,7 @@ export class TaskProgressModal extends React.Component {
   render(){
     return <CommonModal
                 isOpen = {this.state.isOpen}
-                okHandler = {()=>okHandler(this)}
+                okHandler = {isValid(this)?()=>okHandler(this):null}
                 cancelHandler = {()=>fireEvent('task-progress-modal', 'close')}
                 title={isFinishingTask(this)? "Finish task": "Finish repetition"}>
                 {isFinishingTask(this)?finishTaskContent(this):finishRepetitionContent(this)}
@@ -37,10 +38,19 @@ const isFinishingTask = function(reactcomp){
 
 const okHandler = function(reactcomp){
   if(isFinishingTask(reactcomp)){
-    fireEvent('tasks-dao', 'finish-task', [reactcomp.state.task, reactcomp.state.repPlan])
+    fireEvent('tasks-dao', 'finish-task', [reactcomp.state.task, reactcomp.state.repPlan, reactcomp.state.task.testings])
   } else {
     fireEvent('tasks-dao', 'finish-repetition', [reactcomp.state.task, reactcomp.state.repetition])
   }
+}
+
+const isValid = function(component){
+  if(component.state.isSpacedRep){
+    if(component.state.repPlan==null){
+      return false
+    }
+  }
+  return true
 }
 
 //------------------------------------------------------------------------
@@ -50,6 +60,9 @@ const finishTaskContent = function(reactcomp){
           {spacedRepRadioButton(reactcomp)}
           <div>
             {reactcomp.state.isSpacedRep?repPlanChooserUI(reactcomp):null}
+          </div>
+          <div>
+            {reactcomp.state.isSpacedRep?<TestingsList testings={reactcomp.state.task.testings} isEdit={true} />:null}
           </div>
         </div>
 }
@@ -67,14 +80,17 @@ const repPlanChooserUI = function(reactcomp){
     fireEvent('rep-plans-dao', 'plans-request')
     return 'Loading...'
   }
+  const divStyle = reactcomp.state.repPlan==null?{display:'inline-block', border:'1px solid red'}:null
   return <div>
-              <ButtonToolbar>
-                <DropdownButton bsSize="small"
-                        title={reactcomp.state.repPlan!=null?reactcomp.state.repPlan.title:'Select Repetition plan'}
-                        id="dropdown-size-small" onSelect={(repPlan)=>reactcomp.setState({repPlan: repPlan})}>
-                  {availableRepPlans(repPlans)}
-                </DropdownButton>
-              </ButtonToolbar>
+              <div style={divStyle}>
+                <ButtonToolbar>
+                  <DropdownButton bsSize="small"
+                          title={reactcomp.state.repPlan!=null?reactcomp.state.repPlan.title:'Select Repetition plan'}
+                          id="dropdown-size-small" onSelect={(repPlan)=>reactcomp.setState({repPlan: repPlan})}>
+                    {availableRepPlans(repPlans)}
+                  </DropdownButton>
+                </ButtonToolbar>
+              </div>
           </div>
 }
 

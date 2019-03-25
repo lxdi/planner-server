@@ -58,8 +58,10 @@ public class TasksRESTController {
     }
 
     @RequestMapping(path = "/task/{taskid}/finish/with/repetition/{repPlanId}" , method = RequestMethod.POST)
-    public ResponseEntity finishTaskWithRepetition(@PathVariable("taskid") long taskid, @PathVariable("repPlanId") long repPlanId){
-        tasksDelegate.finishTaskWithRepetition(taskid, repPlanId);
+    public ResponseEntity finishTaskWithRepetition(@PathVariable("taskid") long taskid,
+                                                   @PathVariable("repPlanId") long repPlanId,
+                                                   @RequestBody List<Map<String, Object>> testingsDto){
+        tasksDelegate.finishTaskWithRepetition(taskid, repPlanId, testingsDto);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -73,6 +75,11 @@ public class TasksRESTController {
     public ResponseEntity<Map<Integer, List<Map<String, Object>>>> getTasksToRepeat(){
         return new ResponseEntity<>(spacedRepetitionsService.getActualTaskToRepeat(), HttpStatus.OK);
     }
+
+//    @RequestMapping(path = "/task/testing/add/{taskid}" , method = RequestMethod.POST)
+//    public ResponseEntity<Map<String, Object>> addNewTestingToTask(@PathVariable("taskid") long taskid, @RequestBody Map<String, Object> testingDto){
+//        return new ResponseEntity(tasksDelegate.addNewTestingToTask(taskid, testingDto), HttpStatus.OK);
+//    }
 
 
 }
