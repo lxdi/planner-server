@@ -28,7 +28,7 @@ export class ActualTasksModal extends React.Component{
 
 const content = function(reactcomp){
   return <div>
-            <div style={{border:'1px solid lightgrey', borderRadius:'10px', padding:'5px', marginTop:'5px'}}>
+            <div style={{border:'1px solid blue', borderRadius:'10px', padding:'5px', marginTop:'5px'}}>
               {currentTasks(reactcomp)}
             </div>
             <div style={{border:'1px solid lightgrey', borderRadius:'10px', padding:'5px', marginTop:'5px'}}>
@@ -41,9 +41,7 @@ const currentTasks = function(reactcomp){
   const result = []
   const tasks = viewStateVal('tasks-dao', 'actual-tasks')[100]
   for(var i in tasks){
-    result.push(<div key={tasks[i].id}>
-                    <a href='#' onClick={()=>fireEvent('task-modal', 'open', [null, tasks[i], true, true])}>{tasks[i].fullname}</a>
-                </div>)
+    result.push(taskLink(tasks[i], true))
   }
   return <div>
             <div>Current tasks</div>
@@ -74,9 +72,16 @@ const spacedRepetitionsUI = function(reactcomp){
 
 const tasksListUI = function(tasks){
   const result = []
-  tasks.forEach((task)=>result.push(
-    <div key={task.id}>
-          <a href='#' onClick={()=>fireEvent('task-modal', 'open', [null, task, true, true])}>{task.fullname}</a>
-    </div>))
+  tasks.forEach((task)=>result.push(taskLink(task, false)))
   return <div> {result}</div>
+}
+
+const taskLink = function(task, highlight){
+  const backgroundColor = highlight && task.finished?'lightgreen':null
+  return     <div key={task.id} style={{border:'1px solid lightgrey', borderRadius:'3px', padding:'3px', backgroundColor:backgroundColor}}
+                      onMouseEnter={()=>fireEvent('overlay-info', 'show', [task.fullname])}
+  										onMouseOver={(e)=>fireEvent('overlay-info', 'update-pos', [e.nativeEvent.clientX+15, e.nativeEvent.clientY-10])}
+  										onMouseLeave={()=>fireEvent('overlay-info', 'hide')}>
+            <a href='#' onClick={()=>fireEvent('task-modal', 'open', [null, task, true, true])}>{task.title}</a>
+      </div>
 }

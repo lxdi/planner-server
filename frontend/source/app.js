@@ -5,6 +5,7 @@ import {Main} from './ui/main'
 import {LeftSideBarContent} from './ui/left-side-bar-content'
 import {TaskProgressModal} from './ui/means/task-progress-modal'
 import {ActualTasksModal} from './ui/means/actual-tasks-modal'
+import {OverlayInfo} from './ui/overlay'
 
 import './data/realms-dao'
 import './data/targets-dao'
@@ -23,6 +24,7 @@ function rerender(){
 		<div style={{margin:'3px'}}>
 				<TaskProgressModal/>
 				<ActualTasksModal/>
+				<OverlayInfo />
 				<table style={{width:'100%'}}>
 					<tr>
 						<td style={{width:'50px', verticalAlign:'top'}}>

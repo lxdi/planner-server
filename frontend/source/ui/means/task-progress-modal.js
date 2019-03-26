@@ -56,6 +56,11 @@ const isValid = function(component){
 //------------------------------------------------------------------------
 
 const finishTaskContent = function(reactcomp){
+  if(reactcomp.state.isSpacedRep){
+    if(reactcomp.state.task.testings==null){
+      reactcomp.state.task.testings = []
+    }
+  }
   return <div>
           {spacedRepRadioButton(reactcomp)}
           <div>

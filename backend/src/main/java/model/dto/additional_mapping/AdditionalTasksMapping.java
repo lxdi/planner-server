@@ -1,9 +1,11 @@
 package model.dto.additional_mapping;
 
 import com.sogoodlabs.common_mapper.CommonMapper;
+import model.dao.ITaskMappersDAO;
 import model.dao.ITaskTestingDAO;
 import model.dao.ITopicDAO;
 import model.entities.Task;
+import model.entities.TaskMapper;
 import model.entities.TaskTesting;
 import model.entities.Topic;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +20,11 @@ import java.util.Map;
 @Service
 public class AdditionalTasksMapping {
 
-    private static final String LAYER_NAME_PREFIX = "Layer-";
+    public static final String LAYER_NAME_PREFIX = "Layer-";
+    public static final String FULLNAME_FIELD_NAME = "fullname";
+    public static final String TOPICS_FIELD_NAME = "topics";
+    public static final String TESTINGS_FIELD_NAME = "testings";
+    public static final String FINISHED_FIELD_NAME = "finished";
 
     @Autowired
     CommonMapper commonMapper;
@@ -29,12 +35,15 @@ public class AdditionalTasksMapping {
     @Autowired
     ITaskTestingDAO testingDAO;
 
+    @Autowired
+    ITaskMappersDAO taskMappersDAO;
+
     public void fillTopicsInTaskDto(Map<String, Object> taskDto){
-        fillList(taskDto, "topics", topicDAO.getByTaskId((Long) taskDto.get("id")));
+        fillList(taskDto, TOPICS_FIELD_NAME, topicDAO.getByTaskId((Long) taskDto.get("id")));
     }
 
     public void fillTestingsInTaskDto(Map<String, Object> taskDto){
-        fillList(taskDto, "testings", testingDAO.getByTask((Long) taskDto.get("id")));
+        fillList(taskDto, TESTINGS_FIELD_NAME, testingDAO.getByTask((Long) taskDto.get("id")));
     }
 
     public void fillFullName(Map<String, Object> taskDto, Task task){
@@ -42,7 +51,15 @@ public class AdditionalTasksMapping {
                 "subject?.layer?.mean?.realm?.title", "subject?.layer?.mean?.title",
                 "'"+LAYER_NAME_PREFIX+"' + subject?.layer?.priority", "subject?.title", "title"
         };
-        taskDto.put("fullname", StringUtils.getFullName(task, expressions));
+        taskDto.put(FULLNAME_FIELD_NAME, StringUtils.getFullName(task, expressions));
+    }
+
+    public void fillIsFinished(Task task, Map<String, Object> taskDto){
+        if(this.taskMappersDAO.finishDateByTaskid(task.getId())!=null){
+            taskDto.put(FINISHED_FIELD_NAME, true);
+        } else {
+            taskDto.put(FINISHED_FIELD_NAME, false);
+        }
     }
 
     private void fillList(Map<String, Object> taskDto, String listName, List objectsList){

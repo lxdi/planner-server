@@ -69,6 +69,7 @@ public class SpacedRepetitionsService {
         additionalTasksMapping.fillTopicsInTaskDto(taskDto);
         additionalTasksMapping.fillTestingsInTaskDto(taskDto);
         additionalTasksMapping.fillFullName(taskDto, task);
+        additionalTasksMapping.fillIsFinished(task, taskDto);
         return taskDto;
     }
 

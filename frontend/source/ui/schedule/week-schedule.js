@@ -59,9 +59,13 @@ const getDaysOfWeekContentUI = function(currentweek){
     if(currentweek.days!=null && currentweek.days[week[dayOfWeekidx]]!=null){
       for(var taskidx in currentweek.days[week[dayOfWeekidx]]){
         const task = currentweek.days[week[dayOfWeekidx]][taskidx]
-        dayTasksUI.push(<li key={"task_"+task.id}>
-                        <a href='#' onClick={()=>fireEvent('task-modal', 'open', [null, task, true, true])}>{task.title}{task.finished==true?'(done)':null}</a>
-                      </li>)
+        const backgroundColor = task.finished?'lightgreen':null
+        dayTasksUI.push(<div key={"task_"+task.id} style={{border:'1px solid lightgrey', borderRadius:'3px', paddingLeft:'3px', backgroundColor:backgroundColor}}
+                                  onMouseEnter={()=>fireEvent('overlay-info', 'show', [task.fullname])}
+                                  onMouseOver={(e)=>fireEvent('overlay-info', 'update-pos', [e.nativeEvent.clientX+15, e.nativeEvent.clientY-10])}
+                                  onMouseLeave={()=>fireEvent('overlay-info', 'hide')}>
+                        <a href='#' onClick={()=>fireEvent('task-modal', 'open', [null, task, true, true])}>{task.title}</a>
+                      </div>)
       }
     }
     result.push(<td key={"tasks_content_"+week[dayOfWeekidx]} style={{borderRight:'1px solid lightgrey'}}>
