@@ -3,6 +3,9 @@ package services;
 import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 
 public class DateUtils {
@@ -56,6 +59,13 @@ public class DateUtils {
 //        c.setTime(date);
 //        c.add(Calendar.DATE, weeks*7);
         return addDays(date, weeks*7);
+    }
+
+    public static int differenceInDays(Date date1, Date date2){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
+        LocalDate date1LD = LocalDate.parse(fromDate(date1), formatter);
+        LocalDate date2LD = LocalDate.parse(fromDate(date2), formatter);
+        return Integer.parseInt(""+ChronoUnit.DAYS.between(date1LD, date2LD));
     }
 
 }

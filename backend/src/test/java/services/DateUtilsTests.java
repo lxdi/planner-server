@@ -3,6 +3,7 @@ package services;
 import org.junit.Test;
 
 import java.sql.Date;
+import java.time.temporal.ChronoUnit;
 
 import static org.junit.Assert.assertTrue;
 
@@ -37,6 +38,18 @@ public class DateUtilsTests {
         assertTrue(DateUtils.fromDate(toDate).equals("2019-03-17"));
         assertTrue(!DateUtils.fromDate(fromDate).equals(DateUtils.fromDate(DateUtils.addWeeks(toDate, -1))));
         assertTrue(DateUtils.fromDate(DateUtils.addWeeks(toDate, -1)).equals("2019-03-10"));
+    }
+
+    @Test
+    public void differenceInDaysTest(){
+        assertTrue(DateUtils.differenceInDays(
+                DateUtils.toDate("2019-03-31"), DateUtils.toDate("2019-03-25"))==-6);
+        assertTrue(DateUtils.differenceInDays(
+                DateUtils.toDate("2019-03-25"), DateUtils.toDate("2019-03-26"))==1);
+        assertTrue(DateUtils.differenceInDays(
+                DateUtils.toDate("2019-03-25"), DateUtils.toDate("2019-03-25"))==0);
+        assertTrue(DateUtils.differenceInDays(
+                DateUtils.toDate("2019-03-25"), DateUtils.toDate("2019-03-31"))==6);
     }
 
 }

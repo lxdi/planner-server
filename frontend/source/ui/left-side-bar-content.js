@@ -28,7 +28,7 @@ const content = function(reactcomp){
   return <div>
               <a href="#" style={{textDecoration:'none'}}>
                 <div onClick={()=>fireEvent('actual-tasks-modal', 'open')} class="actual-tasks-indicators-group">
-                  {getSquare(0, 'blue')}
+                  {getSquare(actualTasksMap['100'].length, 'blue')}
                   {divisor()}
                   {getSquare(actualTasksMap['-2'].length, 'red')}
                   {getSquare(actualTasksMap['-1'].length, 'orange')}
@@ -68,6 +68,10 @@ const viewModeButtonLabel = function(){
   if(!viewStateVal('main-ui', 'three-frames')){
     return ' |  | '
   } else {
-    return ' |  |  | '
+    return <div>
+                 <span style={{color:'green'}}> | </span>
+                 <span style={{color:'blue'}}> | </span>
+                 <span style={{color:'orange'}}> | </span>
+            </div>
   }
 }

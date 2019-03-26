@@ -213,6 +213,6 @@ const formatDateNumber = function(num){
 const isCurrentHquarter = function(hquarter){
   const todayTime = new Date().getTime()
   const beginTime = Date.parse(hquarter.startWeek.startDay)
-  const endTime = Date.parse(hquarter.endWeek.startDay)
+  const endTime = Date.parse(hquarter.endWeek.endDay)
   return todayTime>beginTime && todayTime<endTime
 }

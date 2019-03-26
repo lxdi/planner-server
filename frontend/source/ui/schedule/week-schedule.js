@@ -75,7 +75,7 @@ const isCurrentWeek = function(week, nextWeek){
   const tzOffset = new Date(week.startDay).getTimezoneOffset() * 60000
   const todayTime = new Date().getTime() - tzOffset
   const startTimeCur = Date.parse(week.startDay)
-  const startTimeNext = nextWeek!=null? Date.parse(nextWeek.startDay):0
+  const startTimeNext = nextWeek!=null? Date.parse(nextWeek.startDay):Number.MAX_SAFE_INTEGER
   return todayTime>=startTimeCur && todayTime<startTimeNext
 }
 

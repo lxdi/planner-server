@@ -2,13 +2,14 @@ package model.dao;
 
 import model.dao.ITaskMappersDAO;
 import model.dao.ITasksDAO;
-import model.entities.Task;
-import model.entities.TaskMapper;
+import model.entities.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import test_configs.AbstractTestsWithTargets;
 import services.DateUtils;
+
+import java.util.List;
 
 import static junit.framework.TestCase.assertTrue;
 
@@ -19,6 +20,12 @@ public class TaskMapperDaoTests extends AbstractTestsWithTargets {
 
     @Autowired
     ITaskMappersDAO taskMappersDAO;
+
+    @Autowired
+    ISlotDAO slotDAO;
+
+    @Autowired
+    IWeekDAO weekDAO;
 
     @Before
     public void init(){
@@ -60,5 +67,25 @@ public class TaskMapperDaoTests extends AbstractTestsWithTargets {
         taskMappersDAO.saveOrUpdate(taskMapper);
 
         assertTrue(taskMappersDAO.finishDateByTaskid(task.getId())==null);
+    }
+
+    @Test
+    public void byWeekAndDayTest(){
+        SlotPosition slotPosition = new SlotPosition();
+        slotPosition.setDaysOfWeek(DaysOfWeek.fri);
+        slotDAO.saveOrUpdate(slotPosition);
+
+        Week week = new Week();
+        weekDAO.saveOrUpdate(week);
+
+        TaskMapper taskMapper = new TaskMapper();
+        taskMapper.setSlotPosition(slotPosition);
+        taskMapper.setWeek(week);
+        taskMappersDAO.saveOrUpdate(taskMapper);
+
+        List<TaskMapper> taskMappers = taskMappersDAO.byWeekAndDay(week, DaysOfWeek.fri);
+
+        assertTrue(taskMappers.get(0).getId() == taskMapper.getId());
+
     }
 }

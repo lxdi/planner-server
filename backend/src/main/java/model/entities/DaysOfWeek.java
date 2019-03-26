@@ -2,7 +2,7 @@ package model.entities;
 
 public enum DaysOfWeek {
 
-    mon(1, "Monday"), tue(2, "Tuesday"), wed(3, "Wednesday"), thu(4, "Thursday"), fri(5, "Friday"), sat(6, "Saturday"), sun(7, "Sunday");
+    mon(0, "Monday"), tue(1, "Tuesday"), wed(2, "Wednesday"), thu(3, "Thursday"), fri(4, "Friday"), sat(5, "Saturday"), sun(6, "Sunday");
 
     int id;
     String fullname;
@@ -15,7 +15,6 @@ public enum DaysOfWeek {
     public int getId() {
         return id;
     }
-
     public void setId(int id) {
         this.id = id;
     }
@@ -23,8 +22,16 @@ public enum DaysOfWeek {
     public String getFullname() {
         return fullname;
     }
-
     public void setFullname(String fullname) {
         this.fullname = fullname;
+    }
+
+    public static DaysOfWeek findById(int id){
+        for(DaysOfWeek day : DaysOfWeek.values()){
+            if(day.getId()==id){
+                return day;
+            }
+        }
+        return null;
     }
 }

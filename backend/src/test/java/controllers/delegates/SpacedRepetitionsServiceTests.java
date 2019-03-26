@@ -6,9 +6,11 @@ import model.entities.*;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import services.DateUtils;
+import services.WeeksGenerator;
 import test_configs.SpringTestConfig;
 
 import java.sql.Date;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
@@ -34,6 +36,15 @@ public class SpacedRepetitionsServiceTests extends SpringTestConfig {
     @Autowired
     ITopicDAO topicDAO;
 
+    @Autowired
+    WeeksGenerator weeksGenerator;
+
+    @Autowired
+    IWeekDAO weekDAO;
+
+    @Autowired
+    ISlotDAO slotDAO;
+
     @Test
     public void getActualTaskToRepeatTest(){
 
@@ -54,6 +65,24 @@ public class SpacedRepetitionsServiceTests extends SpringTestConfig {
         repetitionDone.setFactDate(DateUtils.addDays(DateUtils.currentDate(), 4));
         repDAO.save(repetitionDone);
 
+        Task currentTask = new Task();
+        tasksDAO.saveOrUpdate(currentTask);
+
+        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+        weeksGenerator.generateYear(currentYear);
+        Week currentWeek = weekDAO.weekOfDate(DateUtils.currentDate());
+        DaysOfWeek currentDayOfWeek = DaysOfWeek.findById(DateUtils.differenceInDays(currentWeek.getStartDay(), DateUtils.currentDate()));
+
+        SlotPosition slotPosition = new SlotPosition();
+        slotPosition.setDaysOfWeek(currentDayOfWeek);
+        slotDAO.saveOrUpdate(slotPosition);
+
+        TaskMapper taskMapper = new TaskMapper();
+        taskMapper.setWeek(currentWeek);
+        taskMapper.setSlotPosition(slotPosition);
+        taskMapper.setTask(currentTask);
+        taskMappersDAO.saveOrUpdate(taskMapper);
+
         Map<Integer, List<Map<String, Object>>> tasks = spacedRepetitionsService.getActualTaskToRepeat();
 
         assertTrue(tasks.get(-1).size()==1);
@@ -68,6 +97,9 @@ public class SpacedRepetitionsServiceTests extends SpringTestConfig {
         assertTrue((long)tasks.get(1).get(0).get("id")==task5.getId());
         assertTrue(((List)tasks.get(1).get(0).get("topics")).size()==1);
         assertTrue((long)((Map)((List)tasks.get(1).get(0).get("topics")).get(0)).get("id")==topicForTask5.getId());
+
+        assertTrue(tasks.get(100).size()==1);
+        assertTrue((long)tasks.get(100).get(0).get("id")==currentTask.getId());
     }
 
     private Task initEntChain(Date planDate){

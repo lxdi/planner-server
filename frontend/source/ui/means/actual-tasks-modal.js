@@ -27,6 +27,31 @@ export class ActualTasksModal extends React.Component{
 }
 
 const content = function(reactcomp){
+  return <div>
+            <div style={{border:'1px solid lightgrey', borderRadius:'10px', padding:'5px', marginTop:'5px'}}>
+              {currentTasks(reactcomp)}
+            </div>
+            <div style={{border:'1px solid lightgrey', borderRadius:'10px', padding:'5px', marginTop:'5px'}}>
+              {spacedRepetitionsUI(reactcomp)}
+            </div>
+          </div>
+}
+
+const currentTasks = function(reactcomp){
+  const result = []
+  const tasks = viewStateVal('tasks-dao', 'actual-tasks')[100]
+  for(var i in tasks){
+    result.push(<div key={tasks[i].id}>
+                    <a href='#' onClick={()=>fireEvent('task-modal', 'open', [null, tasks[i], true, true])}>{tasks[i].fullname}</a>
+                </div>)
+  }
+  return <div>
+            <div>Current tasks</div>
+            {result}
+          </div>
+}
+
+const spacedRepetitionsUI = function(reactcomp){
   const tdStyle = {padding:'5px'}
   return <div>
             Spaced repetitions

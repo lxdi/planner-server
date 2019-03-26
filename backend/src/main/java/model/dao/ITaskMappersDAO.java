@@ -1,9 +1,6 @@
 package model.dao;
 
-import model.entities.SlotPosition;
-import model.entities.Task;
-import model.entities.TaskMapper;
-import model.entities.Week;
+import model.entities.*;
 
 import java.sql.Date;
 import java.util.List;
@@ -16,5 +13,6 @@ public interface ITaskMappersDAO {
     TaskMapper taskMapperByWeekAndSlotPosition(Week week, SlotPosition slotPosition);
     List<TaskMapper> taskMappersByWeeksAndSlotPositions(List<Week> weeks, List<SlotPosition> slotPositions);
     Date finishDateByTaskid(long taskid);
+    List<TaskMapper> byWeekAndDay(Week week, DaysOfWeek daysOfWeek);
 
 }

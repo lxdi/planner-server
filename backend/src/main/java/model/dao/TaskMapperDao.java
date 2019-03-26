@@ -1,9 +1,6 @@
 package model.dao;
 
-import model.entities.SlotPosition;
-import model.entities.Task;
-import model.entities.TaskMapper;
-import model.entities.Week;
+import model.entities.*;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -58,6 +55,15 @@ public class TaskMapperDao implements ITaskMappersDAO{
         return (Date) this.sessionFactory.getCurrentSession().
                 createQuery("select finishDate from TaskMapper where task.id = :taskid")
                 .setParameter("taskid", taskid).uniqueResult();
+    }
+
+    @Override
+    public List<TaskMapper> byWeekAndDay(Week week, DaysOfWeek daysOfWeek) {
+        return this.sessionFactory.getCurrentSession()
+                .createQuery("from TaskMapper where week = :week and slotPosition.daysOfWeek = :daysOfWeek")
+                .setParameter("week", week)
+                .setParameter("daysOfWeek", daysOfWeek)
+                .getResultList();
     }
 
 
