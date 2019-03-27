@@ -2,6 +2,9 @@ package controllers.delegates;
 
 import model.dao.*;
 import model.entities.*;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -42,6 +45,9 @@ public class TasksDelegateTests extends SpringTestConfig {
     Task task;
     TaskMapper taskMapper;
     RepetitionPlan defaultRepPlan;
+
+    @Autowired
+    SessionFactory sessionFactory;
 
     @Before
     public void init(){
@@ -84,7 +90,6 @@ public class TasksDelegateTests extends SpringTestConfig {
     }
 
     @Test
-    @Ignore
     public void finishTaskWithRepWithTestingsTest(){
 
         TaskTesting existingTesting = new TaskTesting();
@@ -95,7 +100,10 @@ public class TasksDelegateTests extends SpringTestConfig {
                 createTaskTestingDTO(0, "testing1 q", null),
                 createTaskTestingDTO(existingTesting.getId(), "testing2 q", task.getId())));
 
+        sessionFactory.getCurrentSession().clear();
+
         tasksDelegate.finishTaskWithRepetition(task.getId(), defaultRepPlan.getId(), testingsDto);
+
         SpacedRepetitions spacedRepetitions = spacedRepDAO.getSRforTask(task.getId());
         List<Repetition> repetitions = repDAO.getRepsbySpacedRepId(spacedRepetitions.getId());
 

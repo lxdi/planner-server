@@ -2,6 +2,9 @@ package model.dto.task;
 
 import model.dao.*;
 import model.entities.*;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,36 +38,46 @@ public class TaskDtoMapperTests extends SpringTestConfig {
     @Autowired
     ISubjectDAO subjectDAO;
 
+    @Autowired
+    SessionFactory sessionFactory;
+
     @Test
     public void mapToDtoTest(){
+
+        Session session = sessionFactory.openSession();
+        Transaction transaction = session.beginTransaction();
+
         Realm realm = new Realm();
         realm.setTitle("realm");
-        realmDAO.saveOrUpdate(realm);
+        session.saveOrUpdate(realm);
 
         Mean mean = new Mean();
         mean.setTitle("mean");
         mean.setRealm(realm);
-        meansDAO.saveOrUpdate(mean);
+        session.saveOrUpdate(mean);
 
         Layer layer = new Layer();
         layer.setPriority(1);
         layer.setMean(mean);
-        layerDAO.saveOrUpdate(layer);
+        session.saveOrUpdate(layer);
 
         Subject subject = new Subject();
         subject.setTitle("subject");
         subject.setLayer(layer);
-        subjectDAO.saveOrUpdate(subject);
+        session.saveOrUpdate(subject);
 
         Task task = new Task();
         task.setTitle("task");
         task.setSubject(subject);
-        tasksDAO.saveOrUpdate(task);
+        session.saveOrUpdate(task);
 
         TaskTesting taskTesting1 = new TaskTesting();
         taskTesting1.setQuestion("test question");
         taskTesting1.setTask(task);
-        taskTestingDAO.save(taskTesting1);
+        session.save(taskTesting1);
+
+        transaction.commit();
+        session.close();
 
         TaskDtoLazy result = tasksDtoMapper.mapToDto(tasksDAO.getById(task.getId()));
 

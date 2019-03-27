@@ -126,13 +126,13 @@ public class TasksDaoTests extends AbstractTestsWithTargets {
         createTestData();
 
         Set<Topic> topics = new HashSet<>();
-        task.getTopics().forEach(topics::add);
-        Iterator<Topic> iterator = topics.iterator();
+        //task.getTopics().forEach(topics::add);
+        Iterator<Topic> iterator = task.getTopics().iterator();
         iterator.next();
         iterator.remove();
         //topics.remove(0);
 
-        task.setTopics(topics);
+        //task.setTopics(topics);
         tasksDAO.saveOrUpdate(task);
 
         Task taskLoaded = tasksDAO.getById(task.getId());
@@ -145,16 +145,15 @@ public class TasksDaoTests extends AbstractTestsWithTargets {
     @Test
     public void updating3Topics(){
         createTestData();
-        createTestData();
 
-        Set<Topic> topics = new HashSet<>();
-        task.getTopics().forEach(topics::add);
-        Iterator<Topic> iterator = topics.iterator();
+//        Set<Topic> topics = new HashSet<>();
+//        task.getTopics().forEach(topics::add);
+        Iterator<Topic> iterator = task.getTopics().iterator();
         iterator.next();
         iterator.remove();
         //topics.remove(0);
 
-        task.setTopics(topics);
+        //task.setTopics(topics);
         tasksDAO.saveOrUpdate(task);
 
         Task taskLoaded = tasksDAO.getById(task.getId());

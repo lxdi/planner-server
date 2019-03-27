@@ -147,7 +147,7 @@ public class HquartersDelegate_Assigning_in_the_middle_Tests extends ATestsWithT
 
         //--
         Subject subject21 = new Subject(layer2, 1);
-        subject1.setLayer(layer2);
+        subject21.setLayer(layer2);
         subjectDAO.saveOrUpdate(subject21);
 
         createTask("task 2-1", subject21, 1);
@@ -171,8 +171,6 @@ public class HquartersDelegate_Assigning_in_the_middle_Tests extends ATestsWithT
         hquartersDelegate.assign(mean.getId(), slot1.getId());
         hquartersDelegate.assign(mean.getId(), slot3.getId());
         hquartersDelegate.assign(mean.getId(), slot2.getId());
-
-        assertTrue(meansDAO.meanById(mean.getId()).getLayers().size()==2);
 
         assertTrue(slotDAO.getById(slot1.getId()).getMean().getId()==mean.getId());
         assertTrue(slotDAO.getById(slot1.getId()).getLayer().getId()==layerDAO.getLayerAtPriority(mean, 1).getId());

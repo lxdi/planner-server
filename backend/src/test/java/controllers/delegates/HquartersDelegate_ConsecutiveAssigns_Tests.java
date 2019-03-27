@@ -123,7 +123,7 @@ public class HquartersDelegate_ConsecutiveAssigns_Tests extends ATestsWithTarget
 
         //--
         Subject subject21 = new Subject(layer2, 1);
-        subject1.setLayer(layer2);
+        subject21.setLayer(layer2);
         subjectDAO.saveOrUpdate(subject21);
 
         createTask("task 2-1", subject21, 1);

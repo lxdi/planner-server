@@ -64,7 +64,7 @@ public class TasksDao implements ITasksDAO {
         if(taskMapper!=null){
             taskMappersDAO.delete(taskMapper);
         }
-        //taskTestingDAO.getByTask(id).forEach(testing -> taskTestingDAO.delete(testing.getId()));
+        taskTestingDAO.getByTask(id).forEach(testing -> taskTestingDAO.delete(testing.getId()));
         sessionFactory.getCurrentSession().delete(task);
     }
 

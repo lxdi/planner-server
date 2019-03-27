@@ -120,10 +120,10 @@ public class HquarterDtoFullMapper implements IMapper<HquarterDtoFull, HQuarter>
         HQuarter hquarter = new HQuarter();
         hquarter.setId(dto.getId());
         if(dto.getStartWeek()!=null) {
-            hquarter.setStartWeek(weekDAO.getById((Long) dto.getStartWeek().get("id")));
+            hquarter.setStartWeek(weekDAO.getById(Long.parseLong(""+dto.getStartWeek().get("id"))));
         }
         if(dto.getEndWeek()!=null) {
-            hquarter.setEndWeek(weekDAO.getById((Long) dto.getEndWeek().get("id")));
+            hquarter.setEndWeek(weekDAO.getById(Long.parseLong(""+dto.getEndWeek().get("id"))));
         }
         return hquarter;
     }

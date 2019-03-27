@@ -6,6 +6,7 @@ import model.dao.IMeansDAO;
 import model.dao.ISlotDAO;
 import model.dao.IWeekDAO;
 import model.entities.*;
+import org.hibernate.SessionFactory;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -52,6 +53,9 @@ public class HquartersRESTControllerTests extends AbstractTestsWithTargets {
     @Autowired
     HquartersDelegate hquartersDelegate;
 
+    @Autowired
+    SessionFactory sessionFactory;
+
     @Before
     public void init(){
         super.init();
@@ -68,7 +72,6 @@ public class HquartersRESTControllerTests extends AbstractTestsWithTargets {
     }
 
     @Test
-    @Ignore
     public void updateWithSlotsTest() throws Exception {
         HQuarter hQuarter = quarterDAO.getAllHQuartals().get(0);
         hQuarter.setStartWeek(weekDAO.weekByYearAndNumber(2018, 2));
@@ -91,6 +94,9 @@ public class HquartersRESTControllerTests extends AbstractTestsWithTargets {
                         +", null]"
                     +"}, null]"
                 +"}";
+
+
+        sessionFactory.getCurrentSession().clear();
 
         MvcResult result = mockMvc.perform(post("/hquarter/update")
                 .contentType(MediaType.APPLICATION_JSON).content(content))

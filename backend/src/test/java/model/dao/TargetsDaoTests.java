@@ -1,8 +1,10 @@
 package model.dao;
 
 import model.entities.Target;
+import org.hibernate.SessionFactory;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import test_configs.AbstractTestsWithTargets;
 
@@ -17,6 +19,9 @@ import static org.junit.Assert.assertTrue;
 @Transactional
 public class TargetsDaoTests extends AbstractTestsWithTargets {
 
+    @Autowired
+    SessionFactory sessionFactory;
+
     @Test
     public void gettingAllTargetsTest(){
         List<Target> targets = targetsDAO.allTargets();
@@ -24,17 +29,15 @@ public class TargetsDaoTests extends AbstractTestsWithTargets {
     }
 
     @Test
-    @Ignore
     public void saveOrUpdateTest(){
-//        Target parentTarget = new Target("new parent");
-//        parentTarget.setId(10);
-        Target target = new Target("new child", realm);
-        //target.setParent(parentTarget);
-        target.setId(2);
 
+        sessionFactory.getCurrentSession().clear();
+
+        Target target = new Target("new child", realm);
+        target.setId(2);
         targetsDAO.saveOrUpdate(target);
+
         assertTrue(targetsDAO.targetById(2).getTitle().equals("new child"));
-        //assertTrue(targetsDAO.targetById(1).getTitle().equals("new parent"));
     }
 
     @Test

@@ -4,6 +4,7 @@ import controllers.delegates.MeansDelegate;
 import controllers.delegates.TaskMappersService;
 import model.dto.mean.MeansDtoLazyMapper;
 import model.entities.Mean;
+import org.hibernate.SessionFactory;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -38,6 +39,9 @@ public class MeansRESTController_Update_Tests extends ATestsWithTargetsMeansQuar
     @Autowired
     MeansDelegate meansDelegate;
 
+    @Autowired
+    SessionFactory sessionFactory;
+
     private MockMvc mockMvc;
     private MeansRESTController meansRESTController;
 
@@ -49,8 +53,9 @@ public class MeansRESTController_Update_Tests extends ATestsWithTargetsMeansQuar
     }
 
     @Test
-    @Ignore
     public void updateTest() throws Exception {
+        sessionFactory.getCurrentSession().clear();
+
         String content = "{\"id\":1,\"title\":\"Parent mean changed\",\"parentid\":0, \"targetsIds\":[1], \"realmid\":1}";
         MvcResult result = mockMvc.perform(post("/mean/update")
                 .contentType(MediaType.APPLICATION_JSON).content(content))

@@ -3,6 +3,9 @@ package model.dto.additional_mapping;
 import model.dao.*;
 import model.dto.task.TasksDtoMapper;
 import model.entities.*;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +47,9 @@ public class AdditionalTasksMappingTests extends SpringTestConfig {
     @Autowired
     AdditionalTasksMapping additionalTasksMapping;
 
+    @Autowired
+    SessionFactory sessionFactory;
+
     @Test
     public void fillFullnameTest(){
         Realm realm = new Realm();
@@ -84,18 +90,26 @@ public class AdditionalTasksMappingTests extends SpringTestConfig {
 
     @Test
     public void fillTopicsTest(){
+
+        Session session = sessionFactory.openSession();
+        Transaction transaction = session.beginTransaction();
+
         Task task = new Task();
-        tasksDAO.saveOrUpdate(task);
+        session.saveOrUpdate(task);
+        //tasksDAO.saveOrUpdate(task);
 
         Topic topic = new Topic();
         topic.setTask(task);
         topic.setTitle("topic");
-        topicDAO.saveOrUpdate(topic);
+        session.saveOrUpdate(topic);
 
         Topic topic2 = new Topic();
         topic2.setTask(task);
         topic2.setTitle("topic2");
-        topicDAO.saveOrUpdate(topic2);
+        session.saveOrUpdate(topic2);
+
+        transaction.commit();
+        session.close();
 
         Map<String, Object> result = new HashMap<>();
         result.put("id", task.getId());

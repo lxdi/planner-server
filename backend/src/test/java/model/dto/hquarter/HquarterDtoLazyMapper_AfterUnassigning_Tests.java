@@ -148,7 +148,7 @@ public class HquarterDtoLazyMapper_AfterUnassigning_Tests extends ATestsWithTarg
 
         //--
         Subject subject21 = new Subject(layer2, 1);
-        subject1.setLayer(layer2);
+        subject21.setLayer(layer2);
         subjectDAO.saveOrUpdate(subject21);
 
         createTask("task 2-1", subject21, 1);
