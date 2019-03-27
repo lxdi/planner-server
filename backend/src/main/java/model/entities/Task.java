@@ -2,7 +2,9 @@ package model.entities;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Alexander on 05.03.2018.
@@ -23,10 +25,10 @@ public class Task implements Comparable<Task>{
 
     //@Cascade(org.hibernate.annotations.CascadeType.ALL)
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-    List<Topic> topics = new ArrayList<>();
+    Set<Topic> topics = new HashSet<>();
 
-    @ManyToOne
-    RepetitionPlan repetitionPlan;
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    Set<TaskTesting> testings = new HashSet<>();
 
     public Task(){}
 
@@ -65,18 +67,18 @@ public class Task implements Comparable<Task>{
         this.position = position;
     }
 
-    public List<Topic> getTopics() {
+    public Set<Topic> getTopics() {
         return topics;
     }
-    public void setTopics(List<Topic> topics) {
+    public void setTopics(Set<Topic> topics) {
         this.topics = topics;
     }
 
-    public RepetitionPlan getRepetitionPlan() {
-        return repetitionPlan;
+    public Set<TaskTesting> getTestings() {
+        return testings;
     }
-    public void setRepetitionPlan(RepetitionPlan repetitionPlan) {
-        this.repetitionPlan = repetitionPlan;
+    public void setTestings(Set<TaskTesting> testings) {
+        this.testings = testings;
     }
 
     @Override

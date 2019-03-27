@@ -7,6 +7,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import test_configs.SpringTestConfig;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -95,9 +96,11 @@ public class AdditionalTasksMappingTests extends SpringTestConfig {
         Map<String, Object> result = new HashMap<>();
         result.put("id", task.getId());
 
-        additionalTasksMapping.fillTopicsInTaskDto(result);
+        additionalTasksMapping.fillTopicsInTaskDto(result, tasksDAO.getById(task.getId()));
 
         assertTrue(((List)result.get("topics")).size()==2);
+        List<Map<String, Object>> topicsDto = (List)result.get("topics");
+        topicsDto.sort(Comparator.comparingLong(dto -> (long) dto.get("id")));
         assertTrue(((Map<String,Object>)((List)result.get("topics")).get(0)).get("title").equals("topic"));
         assertTrue(((Map<String,Object>)((List)result.get("topics")).get(1)).get("title").equals("topic2"));
 

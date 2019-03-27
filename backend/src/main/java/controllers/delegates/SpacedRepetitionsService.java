@@ -44,21 +44,30 @@ public class SpacedRepetitionsService {
 
         getCurrentTasks().forEach(task->result.get(100).add(getTaskDto(task, null)));
 
-        setTasks(fromDate, toDate, 0, result);
-        setTasks(DateUtils.addWeeks(fromDate, 1), DateUtils.addWeeks(toDate, 1), 1, result);
-        setTasks(DateUtils.addWeeks(fromDate, -1), DateUtils.addWeeks(toDate, -1), -1, result);
-        setTasks(DateUtils.addWeeks(fromDate, -2), DateUtils.addWeeks(toDate, -2), -2, result);
+        List<Repetition> reps = repDAO.getUnFinishedWithPlanDateInRange(DateUtils.addWeeks(fromDate, -2), DateUtils.addWeeks(toDate, 1));
+
+        setTasks(fromDate, toDate, 0, result, reps);
+        setTasks(DateUtils.addWeeks(fromDate, 1), DateUtils.addWeeks(toDate, 1), 1, result, reps);
+        setTasks(DateUtils.addWeeks(fromDate, -1), DateUtils.addWeeks(toDate, -1), -1, result, reps);
+        setTasks(DateUtils.addWeeks(fromDate, -2), DateUtils.addWeeks(toDate, -2), -2, result, reps);
 
         return result;
     }
 
-    private void setTasks(Date from, Date to, int weeknum, Map<Integer, List<Map<String, Object>>> result){
+    private void setTasks(Date from, Date to, int weeknum, Map<Integer, List<Map<String, Object>>> result, List<Repetition> repetitions){
         result.putIfAbsent(weeknum, new ArrayList<>());
-        repDAO.getUnFinishedWithPlanDateInRange(from, to)
-                .forEach((rep)->{
-                    Task task = rep.getSpacedRepetitions().getTaskMapper().getTask();
-                    result.get(weeknum).add(getTaskDto(task, rep));
-                });
+//        repDAO.getUnFinishedWithPlanDateInRange(from, to)
+//                .forEach((rep)->{
+//                    Task task = rep.getSpacedRepetitions().getTaskMapper().getTask();
+//                    result.get(weeknum).add(getTaskDto(task, rep));
+//                });
+        repetitions.forEach(rep -> {
+            if(rep.getPlanDate().compareTo(from)>=0 && rep.getPlanDate().compareTo(to)<=0){
+                Task task = rep.getSpacedRepetitions().getTaskMapper().getTask();
+                result.get(weeknum).add(getTaskDto(task, rep));
+            }
+        });
+
     }
 
     private Map<String, Object> getTaskDto(Task task, Repetition repetition){
@@ -66,10 +75,10 @@ public class SpacedRepetitionsService {
         if(repetition!=null){
             taskDto.put("repetition", commonMapper.mapToDto(repetition, new HashMap<>()));
         }
-        additionalTasksMapping.fillTopicsInTaskDto(taskDto);
-        additionalTasksMapping.fillTestingsInTaskDto(taskDto);
+        additionalTasksMapping.fillTopicsInTaskDto(taskDto, task);
+        additionalTasksMapping.fillTestingsInTaskDto(taskDto, task);
         additionalTasksMapping.fillFullName(taskDto, task);
-        additionalTasksMapping.fillIsFinished(task, taskDto);
+        additionalTasksMapping.fillIsFinished(taskDto, task);
         return taskDto;
     }
 

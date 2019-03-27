@@ -7,9 +7,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import test_configs.AbstractTestsWithTargets;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import static junit.framework.TestCase.assertTrue;
 
@@ -87,7 +85,7 @@ public class TasksDaoTests extends AbstractTestsWithTargets {
         Task taskLoaded = tasksDAO.getById(task.getId());
 
         assertTrue(taskLoaded.getTopics().size()==2);
-        assertTrue(taskLoaded.getTopics().get(0).getTask()==taskLoaded);
+        assertTrue(((Topic)taskLoaded.getTopics().toArray()[0]).getTask()==taskLoaded);
 
     }
 
@@ -106,14 +104,16 @@ public class TasksDaoTests extends AbstractTestsWithTargets {
     public void updatingTopics(){
         createTestData();
 
-        task.getTopics().remove(0);
-        task.getTopics().get(0).setTitle("title changed");
+        Iterator<Topic> iterator = task.getTopics().iterator();
+        iterator.next();
+        iterator.remove();
+        iterator.next().setTitle("title changed");
         tasksDAO.saveOrUpdate(task);
 
         Task taskLoaded = tasksDAO.getById(task.getId());
 
         assertTrue(taskLoaded.getTopics().size()==1);
-        assertTrue(taskLoaded.getTopics().get(0).getTitle().equals("title changed"));
+        assertTrue(((Topic)taskLoaded.getTopics().toArray()[0]).getTitle().equals("title changed"));
         assertTrue(topicDAO.getById(topic.getId())==null || topicDAO.getById(topic2.getId())==null);
 
     }
@@ -122,9 +122,12 @@ public class TasksDaoTests extends AbstractTestsWithTargets {
     public void updating2Topics(){
         createTestData();
 
-        List<Topic> topics = new ArrayList<>();
+        Set<Topic> topics = new HashSet<>();
         task.getTopics().forEach(topics::add);
-        topics.remove(0);
+        Iterator<Topic> iterator = topics.iterator();
+        iterator.next();
+        iterator.remove();
+        //topics.remove(0);
 
         task.setTopics(topics);
         tasksDAO.saveOrUpdate(task);
@@ -141,9 +144,12 @@ public class TasksDaoTests extends AbstractTestsWithTargets {
         createTestData();
         createTestData();
 
-        List<Topic> topics = new ArrayList<>();
+        Set<Topic> topics = new HashSet<>();
         task.getTopics().forEach(topics::add);
-        topics.remove(0);
+        Iterator<Topic> iterator = topics.iterator();
+        iterator.next();
+        iterator.remove();
+        //topics.remove(0);
 
         task.setTopics(topics);
         tasksDAO.saveOrUpdate(task);

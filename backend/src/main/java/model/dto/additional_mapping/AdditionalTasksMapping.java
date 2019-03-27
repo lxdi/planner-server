@@ -12,10 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import services.StringUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class AdditionalTasksMapping {
@@ -38,12 +35,12 @@ public class AdditionalTasksMapping {
     @Autowired
     ITaskMappersDAO taskMappersDAO;
 
-    public void fillTopicsInTaskDto(Map<String, Object> taskDto){
-        fillList(taskDto, TOPICS_FIELD_NAME, topicDAO.getByTaskId((Long) taskDto.get("id")));
+    public void fillTopicsInTaskDto(Map<String, Object> taskDto, Task task){
+        fillList(taskDto, TOPICS_FIELD_NAME, task.getTopics());
     }
 
-    public void fillTestingsInTaskDto(Map<String, Object> taskDto){
-        fillList(taskDto, TESTINGS_FIELD_NAME, testingDAO.getByTask((Long) taskDto.get("id")));
+    public void fillTestingsInTaskDto(Map<String, Object> taskDto, Task task){
+        fillList(taskDto, TESTINGS_FIELD_NAME, task.getTestings());
     }
 
     public void fillFullName(Map<String, Object> taskDto, Task task){
@@ -54,7 +51,7 @@ public class AdditionalTasksMapping {
         taskDto.put(FULLNAME_FIELD_NAME, StringUtils.getFullName(task, expressions));
     }
 
-    public void fillIsFinished(Task task, Map<String, Object> taskDto){
+    public void fillIsFinished(Map<String, Object> taskDto, Task task){
         if(this.taskMappersDAO.finishDateByTaskid(task.getId())!=null){
             taskDto.put(FINISHED_FIELD_NAME, true);
         } else {
@@ -62,7 +59,7 @@ public class AdditionalTasksMapping {
         }
     }
 
-    private void fillList(Map<String, Object> taskDto, String listName, List objectsList){
+    private void fillList(Map<String, Object> taskDto, String listName, Set objectsList){
         if(objectsList.size()>0){
             taskDto.putIfAbsent(listName, new ArrayList<>());
             objectsList.forEach(obj->((List)taskDto.get(listName)).add(commonMapper.mapToDto(obj, new HashMap<>())));
