@@ -1,5 +1,6 @@
 package model.dto.hquarter;
 
+import com.sogoodlabs.common_mapper.CommonMapper;
 import model.dao.ISlotDAO;
 import model.dao.ITaskMappersDAO;
 import model.dao.IWeekDAO;
@@ -10,6 +11,7 @@ import model.dto.task.TasksDtoMapper;
 import model.entities.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
+@Transactional
 public class HquarterDtoFullMapper implements IMapper<HquarterDtoFull, HQuarter> {
 
     @Autowired
@@ -36,6 +39,9 @@ public class HquarterDtoFullMapper implements IMapper<HquarterDtoFull, HQuarter>
 
     @Autowired
     HquarterDtoLazyMapper hquarterDtoLazyMapper;
+
+    @Autowired
+    CommonMapper commonMapper;
 
     @Override
     public HquarterDtoFull mapToDto(HQuarter entity) {
@@ -114,10 +120,10 @@ public class HquarterDtoFullMapper implements IMapper<HquarterDtoFull, HQuarter>
         HQuarter hquarter = new HQuarter();
         hquarter.setId(dto.getId());
         if(dto.getStartWeek()!=null) {
-            hquarter.setStartWeek(dto.getStartWeek());
+            hquarter.setStartWeek(weekDAO.getById((Long) dto.getStartWeek().get("id")));
         }
         if(dto.getEndWeek()!=null) {
-            hquarter.setEndWeek(dto.getEndWeek());
+            hquarter.setEndWeek(weekDAO.getById((Long) dto.getEndWeek().get("id")));
         }
         return hquarter;
     }

@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import services.DateUtils;
 import test_configs.SpringTestConfig;
 
@@ -14,6 +15,7 @@ import java.util.*;
 
 import static junit.framework.TestCase.assertTrue;
 
+@Transactional
 public class TasksDelegateTests extends SpringTestConfig {
 
     @Autowired
@@ -82,6 +84,7 @@ public class TasksDelegateTests extends SpringTestConfig {
     }
 
     @Test
+    @Ignore
     public void finishTaskWithRepWithTestingsTest(){
 
         TaskTesting existingTesting = new TaskTesting();

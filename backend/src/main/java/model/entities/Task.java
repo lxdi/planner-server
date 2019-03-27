@@ -19,15 +19,15 @@ public class Task implements Comparable<Task>{
     String title;
 
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     Subject subject;
     int position;
 
     //@Cascade(org.hibernate.annotations.CascadeType.ALL)
-    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     Set<Topic> topics = new HashSet<>();
 
-    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     Set<TaskTesting> testings = new HashSet<>();
 
     public Task(){}

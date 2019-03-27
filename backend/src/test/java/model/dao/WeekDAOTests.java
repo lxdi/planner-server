@@ -6,6 +6,7 @@ import model.entities.HQuarter;
 import model.entities.Week;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import services.DateUtils;
 import test_configs.AbstractTestsWithTargets;
 import services.QuarterGenerator;
@@ -19,6 +20,8 @@ import static services.DateUtils.toDate;
 /**
  * Created by Alexander on 23.04.2018.
  */
+
+@Transactional
 public class WeekDAOTests extends AbstractTestsWithTargets {
 
     @Autowired

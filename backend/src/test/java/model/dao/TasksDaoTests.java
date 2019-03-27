@@ -3,14 +3,17 @@ package model.dao;
 import model.dao.*;
 import model.entities.*;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import test_configs.AbstractTestsWithTargets;
 
 import java.util.*;
 
 import static junit.framework.TestCase.assertTrue;
 
+@Transactional
 public class TasksDaoTests extends AbstractTestsWithTargets {
 
     @Autowired

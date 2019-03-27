@@ -4,12 +4,14 @@ import model.dao.*;
 import model.entities.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Stack;
 
 @Service
+@Transactional
 public class TaskMappersService {
 
     @Autowired

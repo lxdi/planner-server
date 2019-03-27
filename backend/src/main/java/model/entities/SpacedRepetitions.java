@@ -9,10 +9,10 @@ public class SpacedRepetitions {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     TaskMapper taskMapper;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     RepetitionPlan repetitionPlan;
 
     public long getId() {

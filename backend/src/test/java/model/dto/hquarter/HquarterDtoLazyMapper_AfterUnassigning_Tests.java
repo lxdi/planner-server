@@ -4,8 +4,10 @@ import controllers.delegates.HquartersDelegate;
 import model.dao.*;
 import model.entities.*;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import test_configs.ATestsWithTargetsMeansQuartalsGenerated;
 
 import java.util.List;
@@ -13,6 +15,8 @@ import java.util.Stack;
 
 import static junit.framework.TestCase.assertTrue;
 
+
+@Transactional
 public class HquarterDtoLazyMapper_AfterUnassigning_Tests extends ATestsWithTargetsMeansQuartalsGenerated {
 
 

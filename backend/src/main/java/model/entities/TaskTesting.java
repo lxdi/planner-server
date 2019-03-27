@@ -9,7 +9,7 @@ public class TaskTesting {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     Task task;
 
     String question;

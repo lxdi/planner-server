@@ -69,8 +69,8 @@ public class HquarterDtoLazyMapperTests extends AbstractTestsWithTargets {
     @Test
     public void mapToDtoWithDependenciesTest(){
         HquarterDtoFull dtoLazy = hquarterDtoFullMapper.mapToDto(hQuarter);
-        assertTrue(dtoLazy.getStartWeek().getId() == startWeek.getId());
-        assertTrue(fromDate(dtoLazy.getStartWeek().getStartDay()).equals(startDateStr));
+        assertTrue((long)dtoLazy.getStartWeek().get("id") == startWeek.getId());
+        assertTrue(dtoLazy.getStartWeek().get("startDay").equals(startDateStr));
         assertTrue(dtoLazy.getSlots().size()==1);
         assertTrue(dtoLazy.getSlots().get(0).getId() == slot.getId());
         assertTrue(dtoLazy.getSlots().get(0).getSlotPositions().size()==1);

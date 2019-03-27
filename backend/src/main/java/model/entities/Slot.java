@@ -10,13 +10,13 @@ public class Slot {
     long id;
     int position;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     Mean mean;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     Layer layer;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     HQuarter hquarter;
 
     public Slot(){}

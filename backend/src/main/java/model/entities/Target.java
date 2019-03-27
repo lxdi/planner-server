@@ -14,17 +14,17 @@ public class Target {
     private long id;
     private String title;
 
-    @ManyToOne//(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH})
+    @ManyToOne(fetch = FetchType.LAZY)//(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH})
     //@org.hibernate.annotations.Cascade( {org.hibernate.annotations.CascadeType.SAVE_UPDATE})
     private Target parent;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     Target next;
 
 //    @OneToMany(mappedBy = "parent")
 //    private List<Target> children = new ArrayList<>();
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     Realm realm;
 
     public Target(){

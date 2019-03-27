@@ -9,7 +9,7 @@ public class SlotPosition implements Comparable<SlotPosition> {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     Slot slot;
 
     @Enumerated(EnumType.STRING)

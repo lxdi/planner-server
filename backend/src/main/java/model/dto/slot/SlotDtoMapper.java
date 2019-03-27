@@ -9,10 +9,12 @@ import model.entities.Slot;
 import model.entities.SlotPosition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@Transactional
 public class SlotDtoMapper implements IMapper<SlotDto, Slot> {
 
     @Autowired

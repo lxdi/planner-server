@@ -6,6 +6,7 @@ import model.entities.Week;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import test_configs.ATestsWithTargetsMeansQuartalsGenerated;
 
 import java.util.List;
@@ -14,7 +15,7 @@ import static junit.framework.TestCase.assertTrue;
 import static services.DateUtils.fromDate;
 import static services.DateUtils.toDate;
 
-
+@Transactional
 public class HQuartersDaoTests extends ATestsWithTargetsMeansQuartalsGenerated {
 
     @Autowired

@@ -12,7 +12,7 @@ public class Repetition {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     SpacedRepetitions spacedRepetitions;
 
     @Basic

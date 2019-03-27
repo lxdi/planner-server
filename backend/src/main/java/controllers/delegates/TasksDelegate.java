@@ -7,12 +7,14 @@ import model.dto.task.TasksDtoMapper;
 import model.entities.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import services.DateUtils;
 
 import java.sql.Date;
 import java.util.*;
 
 @Service
+@Transactional
 public class TasksDelegate {
 
     @Autowired

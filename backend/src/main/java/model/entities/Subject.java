@@ -13,10 +13,10 @@ public class Subject {
     String title;
     int position;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     Layer layer;
 
-    @OneToMany(mappedBy = "subject", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "subject", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<Task> tasks = new ArrayList();
 
     public Subject(){}

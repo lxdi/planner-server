@@ -15,6 +15,7 @@ import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import services.StringUtils;
 
 import java.sql.Date;
@@ -27,6 +28,7 @@ import java.util.Stack;
  */
 
 @Service
+@Transactional
 public class TasksDtoMapper implements IMapper<TaskDtoLazy, Task> {
 
     private static final String LAYER_NAME_PREFIX = "Layer-";

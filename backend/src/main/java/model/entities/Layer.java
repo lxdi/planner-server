@@ -14,11 +14,10 @@ public class Layer {
     int priority;
     boolean done;
 
-    @ManyToOne
-    @JoinColumn(name="mean")
+    @ManyToOne(fetch = FetchType.LAZY)
     Mean mean;
 
-    @OneToMany(mappedBy = "layer", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "layer", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<Subject> subjects = new ArrayList();
 
     public Layer(){}

@@ -8,8 +8,10 @@ import model.entities.Subject;
 import model.entities.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
+@Transactional
 public class SubjectDtoMapper implements IMapper<SubjectDtoLazy, Subject> {
 
     @Autowired

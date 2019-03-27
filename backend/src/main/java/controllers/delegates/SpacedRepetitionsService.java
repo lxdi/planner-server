@@ -8,6 +8,7 @@ import model.dto.additional_mapping.AdditionalTasksMapping;
 import model.entities.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import services.DateUtils;
 
 import java.sql.Date;
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
+@Transactional
 public class SpacedRepetitionsService {
 
     @Autowired

@@ -20,11 +20,11 @@ public class Mean {
     String title;
     String criteria;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     Mean next;
 
     @Fetch(FetchMode.SUBSELECT) // TODO duplicates was added in targets
-    @ManyToMany(fetch = FetchType.EAGER)//(cascade = CascadeType.PERSIST)
+    @ManyToMany(fetch = FetchType.LAZY)//(cascade = CascadeType.PERSIST)
     @JoinTable(
             name = "mean_target",
             joinColumns = @JoinColumn(name = "mean_id"),
@@ -32,16 +32,16 @@ public class Mean {
     )
     List<Target> targets = new ArrayList<>();
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     Mean parent;
 //    @OneToMany(mappedBy = "parent")
 //    List<Mean> children;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     Realm realm;
 
-    @OneToMany(mappedBy = "mean", cascade = CascadeType.REMOVE)
-    private List<Layer> layers = new ArrayList();
+    @OneToMany(mappedBy = "mean", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    List<Layer> layers = new ArrayList();
 
     boolean hideChildren = false;
 

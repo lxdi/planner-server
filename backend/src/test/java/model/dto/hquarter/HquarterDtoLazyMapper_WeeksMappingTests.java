@@ -6,6 +6,7 @@ import model.entities.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import test_configs.ATestsWithTargetsMeansQuartalsGenerated;
 
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.Stack;
 import static junit.framework.TestCase.assertTrue;
 import static services.DateUtils.toDate;
 
+@Transactional
 public class HquarterDtoLazyMapper_WeeksMappingTests extends ATestsWithTargetsMeansQuartalsGenerated {
 
     @Autowired

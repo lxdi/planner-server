@@ -12,12 +12,14 @@ import model.dto.slot.SlotPositionMapper;
 import model.entities.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import services.DateUtils;
 import services.QuarterGenerator;
 
 import java.util.*;
 
 @Service
+@Transactional
 public class HquartersDelegate {
 
     @Autowired

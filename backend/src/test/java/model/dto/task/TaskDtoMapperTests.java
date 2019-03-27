@@ -2,12 +2,16 @@ package model.dto.task;
 
 import model.dao.*;
 import model.entities.*;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import test_configs.SpringTestConfig;
 
 import static org.junit.Assert.assertTrue;
 
+
+@Transactional
 public class TaskDtoMapperTests extends SpringTestConfig {
 
     @Autowired

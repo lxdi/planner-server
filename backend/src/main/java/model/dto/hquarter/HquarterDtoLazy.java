@@ -5,13 +5,14 @@ import model.entities.Week;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 
 public class HquarterDtoLazy {
 
     long id;
-    Week startWeek;
-    Week endWeek;
+    Map<String, Object> startWeek;
+    Map<String, Object> endWeek;
 
     List<SlotDtoLazy> slotsLazy = new ArrayList<>();
 
@@ -22,19 +23,17 @@ public class HquarterDtoLazy {
         this.id = id;
     }
 
-    public Week getStartWeek() {
+    public Map<String, Object> getStartWeek() {
         return startWeek;
     }
-
-    public void setStartWeek(Week startWeek) {
+    public void setStartWeek(Map<String, Object> startWeek) {
         this.startWeek = startWeek;
     }
 
-    public Week getEndWeek() {
+    public Map<String, Object> getEndWeek() {
         return endWeek;
     }
-
-    public void setEndWeek(Week endWeek) {
+    public void setEndWeek(Map<String, Object> endWeek) {
         this.endWeek = endWeek;
     }
 

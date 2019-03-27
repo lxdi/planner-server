@@ -1,7 +1,9 @@
 package model.dao;
 
 import model.entities.Target;
+import org.junit.Ignore;
 import org.junit.Test;
+import org.springframework.transaction.annotation.Transactional;
 import test_configs.AbstractTestsWithTargets;
 
 import java.util.List;
@@ -12,6 +14,7 @@ import static org.junit.Assert.assertTrue;
  * Created by Alexander on 10.03.2018.
  */
 
+@Transactional
 public class TargetsDaoTests extends AbstractTestsWithTargets {
 
     @Test
@@ -21,6 +24,7 @@ public class TargetsDaoTests extends AbstractTestsWithTargets {
     }
 
     @Test
+    @Ignore
     public void saveOrUpdateTest(){
 //        Target parentTarget = new Target("new parent");
 //        parentTarget.setId(10);

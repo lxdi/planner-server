@@ -5,12 +5,14 @@ import model.entities.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import test_configs.ATestsWithTargetsMeansQuartalsGenerated;
 
 import java.util.List;
 
 import static junit.framework.TestCase.assertTrue;
 
+@Transactional
 public class HquartersDelegate_Assign_NotFullLayer_Tests extends ATestsWithTargetsMeansQuartalsGenerated {
 
     @Autowired

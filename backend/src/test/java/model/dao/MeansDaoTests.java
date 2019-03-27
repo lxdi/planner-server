@@ -6,6 +6,7 @@ import model.entities.Slot;
 import model.entities.Target;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import test_configs.AbstractTestsWithTargetsWithMeans;
 
 import java.util.List;
@@ -15,6 +16,8 @@ import static org.junit.Assert.assertTrue;
 /**
  * Created by Alexander on 08.04.2018.
  */
+
+@Transactional
 public class MeansDaoTests extends AbstractTestsWithTargetsWithMeans {
 
     @Autowired

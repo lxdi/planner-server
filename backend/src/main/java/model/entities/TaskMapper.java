@@ -12,13 +12,13 @@ public class TaskMapper {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     Task task;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     SlotPosition slotPosition;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     Week week;
 
     @Basic

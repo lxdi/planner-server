@@ -6,6 +6,7 @@ import model.entities.HQuarter;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import test_configs.AbstractTestsWithTargets;
 import services.DateUtils;
 import services.QuarterGenerator;
@@ -14,6 +15,7 @@ import java.util.List;
 
 import static junit.framework.TestCase.assertTrue;
 
+@Transactional
 public class HquartersDelegateTests extends AbstractTestsWithTargets {
 
     @Autowired
@@ -41,7 +43,7 @@ public class HquartersDelegateTests extends AbstractTestsWithTargets {
         List<HquarterDtoLazy> hQuartersLazy2017 = hquartersDelegate.getPrev(firstHquarter.getId(), 4);
 
         assertTrue(hQuartersLazy2017.size()==4);
-        assertTrue(DateUtils.fromDate(hQuartersLazy2017.get(0).getStartWeek().getStartDay()).equals("2017-08-14"));
+        assertTrue(hQuartersLazy2017.get(0).getStartWeek().get("startDay").equals("2017-08-14"));
 
     }
 
@@ -56,7 +58,7 @@ public class HquartersDelegateTests extends AbstractTestsWithTargets {
         List<HquarterDtoLazy> hQuartersLazy2019 = hquartersDelegate.getNext(lastHquarter.getId(), 4);
 
         assertTrue(hQuartersLazy2019.size()==4);
-        assertTrue(DateUtils.fromDate(hQuartersLazy2019.get(0).getStartWeek().getStartDay()).equals("2019-01-07"));
+        assertTrue(hQuartersLazy2019.get(0).getStartWeek().get("startDay").equals("2019-01-07"));
 
     }
 

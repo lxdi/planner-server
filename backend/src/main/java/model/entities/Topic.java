@@ -12,7 +12,7 @@ public class Topic {
     String title;
     String source;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     Task task;
 
     public Topic(){}

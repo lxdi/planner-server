@@ -15,10 +15,10 @@ public class HQuarter implements Comparable<HQuarter>{
 //    int startMonth;
 //    int startDay;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     Week startWeek;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     Week endWeek;
 
     boolean custom = false;

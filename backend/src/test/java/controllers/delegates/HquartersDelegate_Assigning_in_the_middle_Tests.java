@@ -2,15 +2,21 @@ package controllers.delegates;
 
 import model.dao.*;
 import model.entities.*;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import test_configs.ATestsWithTargetsMeansQuartalsGenerated;
 
 import java.util.List;
 
 import static junit.framework.TestCase.assertTrue;
 
+@Transactional
 public class HquartersDelegate_Assigning_in_the_middle_Tests extends ATestsWithTargetsMeansQuartalsGenerated {
 
     @Autowired
@@ -39,6 +45,9 @@ public class HquartersDelegate_Assigning_in_the_middle_Tests extends ATestsWithT
 
     @Autowired
     IWeekDAO weekDAO;
+
+    @Autowired
+    SessionFactory sessionFactory;
 
     Mean mean;
     HQuarter hQuarter1;
@@ -158,9 +167,12 @@ public class HquartersDelegate_Assigning_in_the_middle_Tests extends ATestsWithT
 
     @Test
     public void assigningMiddleTest(){
+
         hquartersDelegate.assign(mean.getId(), slot1.getId());
         hquartersDelegate.assign(mean.getId(), slot3.getId());
         hquartersDelegate.assign(mean.getId(), slot2.getId());
+
+        assertTrue(meansDAO.meanById(mean.getId()).getLayers().size()==2);
 
         assertTrue(slotDAO.getById(slot1.getId()).getMean().getId()==mean.getId());
         assertTrue(slotDAO.getById(slot1.getId()).getLayer().getId()==layerDAO.getLayerAtPriority(mean, 1).getId());

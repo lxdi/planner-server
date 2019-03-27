@@ -6,12 +6,14 @@ import model.dto.IMapper;
 import model.entities.Target;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Created by Alexander on 10.03.2018.
  */
 
 @Component
+@Transactional
 public class TargetsDtoMapper implements IMapper<TargetDtoLazy, Target> {
 
     @Autowired
