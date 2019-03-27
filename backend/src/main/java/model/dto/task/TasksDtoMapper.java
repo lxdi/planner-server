@@ -61,8 +61,10 @@ public class TasksDtoMapper implements IMapper<TaskDtoLazy, Task> {
             }
         }
 
-        taskTestingDAO.getByTask(task.getId()).forEach(testing ->
-            dto.getTestings().add(commonMapper.mapToDto(testing, new HashMap<>())));
+//        taskTestingDAO.getByTask(task.getId()).forEach(testing ->
+//            dto.getTestings().add(commonMapper.mapToDto(testing, new HashMap<>())));
+        task.getTestings().forEach(testing ->
+                dto.getTestings().add(commonMapper.mapToDto(testing, new HashMap<>())));
 
         Date finishDate = taskMappersDAO.finishDateByTaskid(task.getId());
         if(finishDate!=null){

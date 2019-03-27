@@ -171,7 +171,7 @@ public class MeansDelegate {
                     taskDto.setSubjectid(subjectid);
                     Task task = tasksDtoMapper.mapToEntity(taskDto);
                     tasksDAO.saveOrUpdate(task);
-                    saveTaskTestings(taskDto.getTestings(), task.getId());
+                    //saveTaskTestings(taskDto.getTestings(), task.getId());
                 }
             }
         }

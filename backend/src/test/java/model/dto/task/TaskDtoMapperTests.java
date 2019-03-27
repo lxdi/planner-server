@@ -62,7 +62,7 @@ public class TaskDtoMapperTests extends SpringTestConfig {
         taskTesting1.setTask(task);
         taskTestingDAO.save(taskTesting1);
 
-        TaskDtoLazy result = tasksDtoMapper.mapToDto(task);
+        TaskDtoLazy result = tasksDtoMapper.mapToDto(tasksDAO.getById(task.getId()));
 
         assertTrue(result.getTestings().size()==1);
         assertTrue((long)result.getTestings().get(0).get("id")==taskTesting1.getId());
