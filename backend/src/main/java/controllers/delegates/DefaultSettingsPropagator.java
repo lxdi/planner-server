@@ -25,7 +25,7 @@ public class DefaultSettingsPropagator {
     public void propagateSettingsFrom(HQuarter defaultHquarter){
         List<Slot> defaultSlots = slotDAO.getSlotsForHquarter(defaultHquarter);
         if(defaultSlots.size()>0) {
-            for(HQuarter hQuarter : quarterDAO.getDefaultHquarters()) {
+            for(HQuarter hQuarter : quarterDAO.getWorkingHquarters()) {
                 //List<Slot> slots = slotDAO.getSlotsForHquarter(hQuarter);
                 for(Slot defaultSlot :  defaultSlots){
                     Slot slot = slotDAO.getByHquarterAndPosition(hQuarter, defaultSlot.getPosition());

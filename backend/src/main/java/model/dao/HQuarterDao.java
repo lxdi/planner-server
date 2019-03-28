@@ -37,9 +37,9 @@ public class HQuarterDao implements IHQuarterDAO {
     }
 
     @Override
-    public List<HQuarter> getDefaultHquarters() {
+    public List<HQuarter> getWorkingHquarters() {
         return sessionFactory.getCurrentSession()
-                .createQuery("from HQuarter hq where hq.custom = false")
+                .createQuery("from HQuarter hq where hq.custom = false and startWeek is not null")
                 .list();
     }
 
