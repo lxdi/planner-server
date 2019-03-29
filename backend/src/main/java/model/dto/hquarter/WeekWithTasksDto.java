@@ -11,12 +11,12 @@ import java.util.Map;
 public class WeekWithTasksDto {
 
     Date startDay;
+    Date endDay;
     Map<DaysOfWeek, List<TaskDtoLazy>> days = new HashMap<>();
 
     public Map<DaysOfWeek, List<TaskDtoLazy>> getDays() {
         return days;
     }
-
     public void setDays(Map<DaysOfWeek, List<TaskDtoLazy>> days) {
         this.days = days;
     }
@@ -24,8 +24,14 @@ public class WeekWithTasksDto {
     public Date getStartDay() {
         return startDay;
     }
-
     public void setStartDay(Date startDay) {
         this.startDay = startDay;
+    }
+
+    public Date getEndDay() {
+        return endDay;
+    }
+    public void setEndDay(Date endDay) {
+        this.endDay = endDay;
     }
 }

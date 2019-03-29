@@ -1,5 +1,6 @@
 package controllers;
 
+import controllers.delegates.SubjectsDelegate;
 import model.dao.ILayerDAO;
 import model.dao.ISubjectDAO;
 import model.dao.ITasksDAO;
@@ -24,40 +25,24 @@ import java.util.List;
 public class SubjectsRESTController {
 
     @Autowired
-    ISubjectDAO subjectDAO;
+    SubjectsDelegate subjectsDelegate;
 
-    @Autowired
-    ILayerDAO layerDAO;
+    public SubjectsRESTController(){}
 
-    @Autowired
-    SubjectDtoMapper subjectDtoMapper;
+    public SubjectsRESTController(SubjectsDelegate subjectsDelegate){
+        this.subjectsDelegate = subjectsDelegate;
+    }
 
-    @Autowired
-    ITasksDAO tasksDAO;
 
     @Deprecated
     @RequestMapping(path = "/get/bylayer/{layerid}" , method = RequestMethod.GET)
     public ResponseEntity<List<SubjectDtoLazy>> layersOfMean(@PathVariable("layerid") long layerid){
-        List<SubjectDtoLazy> result = new ArrayList<>();
-        for(Subject subject : subjectDAO.subjectsByLayer(layerDAO.layerById(layerid))){
-            result.add(subjectDtoMapper.mapToDto(subject));
-        }
-        return new ResponseEntity<List<SubjectDtoLazy>>(result, HttpStatus.OK);
+        return new ResponseEntity<List<SubjectDtoLazy>>(subjectsDelegate.layersOfMean(layerid), HttpStatus.OK);
     }
 
     @RequestMapping(path = "/delete/{subjectid}" , method = RequestMethod.DELETE)
     public ResponseEntity<SubjectDtoLazy> delete(@PathVariable("subjectid") long subjectid){
-        Subject subject = subjectDAO.getById(subjectid);
-        if(subject!=null) {
-            List<Task> tasks = tasksDAO.tasksBySubject(subject);
-            if (tasks != null && tasks.size() > 0) {
-                tasks.forEach(t -> tasksDAO.delete(t.getId()));
-            }
-            subjectDAO.delete(subject.getId());
-            return new ResponseEntity<>(subjectDtoMapper.mapToDto(subject), HttpStatus.OK);
-        } else {
-            throw new RuntimeException("Subject doesn't exist");
-        }
+            return new ResponseEntity<>(subjectsDelegate.delete(subjectid), HttpStatus.OK);
     }
 
 }

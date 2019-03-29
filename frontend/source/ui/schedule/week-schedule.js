@@ -18,7 +18,7 @@ export class WeekSchedule extends React.Component {
     const hquarter = this.props.hquarter
     if(hquarter.weeks!=null && hquarter.weeks.length>0){
       for(var i in hquarter.weeks){
-        result.push(getWeekUI(hquarter.weeks[i], hquarter.weeks[parseInt(i)+1]))
+        result.push(getWeekUI(hquarter.weeks[i]))
       }
     }
     return <table style={{borderCollapse:'collapse', border: borderStyle, width:'100%'}}>
@@ -28,10 +28,10 @@ export class WeekSchedule extends React.Component {
 
 }
 
-const getWeekUI = function(currentweek, nextweek){
+const getWeekUI = function(currentweek){
   const result = []
   result.push(<tr key={"titles_"+currentweek.id} style={{borderTop:'1px solid lightgrey'}}>
-                <td style={{fontWeight:isCurrentWeek(currentweek, nextweek)?'bold':null, borderRight:'1px solid lightgrey', borderBottom:'1px solid grey',  width:'5%'}} rowspan="2">{currentweek.startDay}</td>
+                <td style={{fontWeight:isCurrentWeek(currentweek)?'bold':null, borderRight:'1px solid lightgrey', borderBottom:'1px solid grey',  width:'5%'}} rowspan="2">{currentweek.startDay}</td>
                 {getDaysOfWeekUI(currentweek)}
               </tr>)
   result.push(<tr key={"content_"+currentweek.id} style={{borderBottom:'1px solid grey'}}>
@@ -75,12 +75,12 @@ const getDaysOfWeekContentUI = function(currentweek){
   return result
 }
 
-const isCurrentWeek = function(week, nextWeek){
+const isCurrentWeek = function(week){
   const tzOffset = new Date(week.startDay).getTimezoneOffset() * 60000
   const todayTime = new Date().getTime() - tzOffset
   const startTimeCur = Date.parse(week.startDay)
-  const startTimeNext = nextWeek!=null? Date.parse(nextWeek.startDay):Number.MAX_SAFE_INTEGER
-  return todayTime>=startTimeCur && todayTime<startTimeNext
+  const endTimeCur = Date.parse(week.endDay)+86400000 //86400000 - one day in millisecs
+  return todayTime>=startTimeCur && todayTime<endTimeCur
 }
 
 const isCurrentDay = function(week, offset){

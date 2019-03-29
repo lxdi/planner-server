@@ -1,10 +1,12 @@
 package controllers;
 
+import controllers.delegates.TargetsDelegate;
 import model.dto.target.TargetsDtoMapper;
 import model.entities.Realm;
 import model.entities.Target;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -23,6 +25,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 public class TargetsRESTControllerTest extends AbstractTestsWithTargets {
 
+   @Autowired
+   TargetsDelegate targetsDelegate;
+
    private MockMvc mockMvc;
    private TargetsRESTController targetsRESTController;
 
@@ -39,7 +44,7 @@ public class TargetsRESTControllerTest extends AbstractTestsWithTargets {
       List<Target> listoftargets = new ArrayList<>(Arrays.asList(target1, target2 , target3));
 
 
-      targetsRESTController = new TargetsRESTController(targetsDAO, new TargetsDtoMapper(), null);
+      targetsRESTController = new TargetsRESTController(targetsDelegate);
       mockMvc = MockMvcBuilders.standaloneSetup(targetsRESTController).build();
    }
 

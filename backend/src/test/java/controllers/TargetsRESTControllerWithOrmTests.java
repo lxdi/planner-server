@@ -1,5 +1,6 @@
 package controllers;
 
+import controllers.delegates.TargetsDelegate;
 import model.dto.target.TargetsDtoMapper;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,13 +27,16 @@ public class TargetsRESTControllerWithOrmTests extends AbstractTestsWithTargets 
     @Autowired
     TargetsDtoMapper targetsDtoMapper;
 
+    @Autowired
+    TargetsDelegate targetsDelegate;
+
     private MockMvc mockMvc;
     private TargetsRESTController targetsRESTController;
 
     @Before
     public void init(){
         super.init();
-        targetsRESTController = new TargetsRESTController(targetsDAO, targetsDtoMapper, realmDAO);
+        targetsRESTController = new TargetsRESTController(targetsDelegate);
         mockMvc = MockMvcBuilders.standaloneSetup(targetsRESTController).build();
     }
 

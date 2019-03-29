@@ -74,6 +74,7 @@ public class HquarterDtoFullMapper implements IMapper<HquarterDtoFull, HQuarter>
             for (Week week : weeks) {
                 WeekWithTasksDto weekWithTasksDto = new WeekWithTasksDto();
                 weekWithTasksDto.setStartDay(week.getStartDay());
+                weekWithTasksDto.setEndDay(week.getEndDay());
                 if(taskMappersByWeekId.get(week.getId())!=null){
                     for(TaskMapper taskMapper : taskMappersByWeekId.get(week.getId())){
                         if (weekWithTasksDto.getDays().get(taskMapper.getSlotPosition().getDaysOfWeek()) == null) {
