@@ -7,10 +7,10 @@ import model.entities.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import services.StringUtils;
 import test_configs.AbstractTestsWithTargets;
 
 import static junit.framework.TestCase.assertTrue;
-import static services.DateUtils.fromDate;
 import static services.DateUtils.toDate;
 
 public class HquarterDtoLazyMapperTests extends AbstractTestsWithTargets {
@@ -60,7 +60,7 @@ public class HquarterDtoLazyMapperTests extends AbstractTestsWithTargets {
 
         slotPosition = new SlotPosition();
         slotPosition.setSlot(slot);
-        slotPosition.setDaysOfWeek(DaysOfWeek.thu);
+        slotPosition.setDayOfWeek(DaysOfWeek.thu);
         slotPosition.setPosition(2);
         slotDAO.saveOrUpdate(slotPosition);
 
@@ -72,9 +72,10 @@ public class HquarterDtoLazyMapperTests extends AbstractTestsWithTargets {
         assertTrue((long)dtoLazy.getStartWeek().get("id") == startWeek.getId());
         assertTrue(dtoLazy.getStartWeek().get("startDay").equals(startDateStr));
         assertTrue(dtoLazy.getSlots().size()==1);
-        assertTrue(dtoLazy.getSlots().get(0).getId() == slot.getId());
-        assertTrue(dtoLazy.getSlots().get(0).getSlotPositions().size()==1);
-        assertTrue(dtoLazy.getSlots().get(0).getSlotPositions().get(0).getId()==slotPosition.getId());
+        assertTrue((long)dtoLazy.getSlots().get(0).get("id") == slot.getId());
+
+        assertTrue((int)StringUtils.getValue(dtoLazy, "getSlots().get(0).get('slotPositions').size()")==1);
+        assertTrue((long)StringUtils.getValue(dtoLazy, "getSlots().get(0).get('slotPositions').get(0).get('id')")==slotPosition.getId());
     }
 
 

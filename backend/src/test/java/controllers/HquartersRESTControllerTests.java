@@ -9,7 +9,6 @@ import model.entities.*;
 import org.hibernate.SessionFactory;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -126,7 +125,7 @@ public class HquartersRESTControllerTests extends AbstractTestsWithTargets {
         slotDAO.saveOrUpdate(slot);
 
         SlotPosition slotPosition = new SlotPosition();
-        slotPosition.setDaysOfWeek(DaysOfWeek.mon);
+        slotPosition.setDayOfWeek(DaysOfWeek.mon);
         slotPosition.setPosition(1);
         slotPosition.setSlot(slot);
         slotDAO.saveOrUpdate(slotPosition);

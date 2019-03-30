@@ -45,6 +45,9 @@ public class EntityByIdImpl implements IEntityById {
     @Autowired
     IHQuarterDAO hquarterDao;
 
+    @Autowired
+    ISlotDAO slotDAO;
+
     @Override
     public Object get(long id, Class aClass) {
         if(id==0){
@@ -86,6 +89,12 @@ public class EntityByIdImpl implements IEntityById {
         }
         if(aClass == HQuarter.class){
             result = hquarterDao.getById(id);
+        }
+        if(aClass == Slot.class){
+            result = slotDAO.getById(id);
+        }
+        if(aClass == SlotPosition.class){
+            result = slotDAO.getSlotPositionById(id);
         }
 
         if(result ==null){

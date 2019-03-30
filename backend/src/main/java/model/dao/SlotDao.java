@@ -84,7 +84,7 @@ public class SlotDao implements ISlotDAO {
     @Override
     public SlotPosition getSlotPosition(Slot slot, DaysOfWeek dayOfWeek, int position) {
         return (SlotPosition) sessionFactory.getCurrentSession()
-                .createQuery("from SlotPosition sp from sp.slot = :slot and sp.daysOfWeek and sp.position")
+                .createQuery("from SlotPosition sp from sp.slot = :slot and sp.dayOfWeek and sp.position")
                 .uniqueResult();
     }
 

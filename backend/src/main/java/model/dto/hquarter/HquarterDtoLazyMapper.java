@@ -3,9 +3,7 @@ package model.dto.hquarter;
 import com.sogoodlabs.common_mapper.CommonMapper;
 import model.dao.ISlotDAO;
 import model.dto.IMapper;
-import model.dto.slot.SlotDtoLazy;
-import model.dto.slot.SlotDtoLazyMapper;
-import model.dto.slot.SlotDtoMapper;
+import model.dto.SlotMapper;
 import model.entities.HQuarter;
 import model.entities.Slot;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +21,7 @@ public class HquarterDtoLazyMapper implements IMapper<HquarterDtoLazy, HQuarter>
     ISlotDAO slotDAO;
 
     @Autowired
-    SlotDtoLazyMapper slotDtoLazyMapper;
+    SlotMapper slotMapper;
 
     @Autowired
     CommonMapper commonMapper;
@@ -59,7 +57,7 @@ public class HquarterDtoLazyMapper implements IMapper<HquarterDtoLazy, HQuarter>
     public void addSlots(HquarterDtoLazy dto, List<Slot> slots){
         if (slots!=null && slots.size() > 0) {
             for (Slot slot : slots) {
-                dto.getSlotsLazy().add(slotDtoLazyMapper.mapToDto(slot));
+                dto.getSlotsLazy().add(slotMapper.mapToDtoLazy(slot));
             }
         }
     }

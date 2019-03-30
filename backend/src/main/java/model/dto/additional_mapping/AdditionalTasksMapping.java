@@ -60,8 +60,8 @@ public class AdditionalTasksMapping {
     }
 
     private void fillList(Map<String, Object> taskDto, String listName, List objectsList){
+        taskDto.putIfAbsent(listName, new ArrayList<>());
         if(objectsList.size()>0){
-            taskDto.putIfAbsent(listName, new ArrayList<>());
             objectsList.forEach(obj->((List)taskDto.get(listName)).add(commonMapper.mapToDto(obj, new HashMap<>())));
         }
     }

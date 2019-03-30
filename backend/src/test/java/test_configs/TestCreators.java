@@ -89,12 +89,34 @@ public class TestCreators {
         return taskTesting;
     }
 
-    private void save(Object object){
+    public Slot createSlot(Layer layer, Mean mean, HQuarter hQuarter){
+        Slot slot = new Slot();
+        slot.setLayer(layer);
+        slot.setMean(mean);
+        slot.setHquarter(hQuarter);
+        save(slot);
+        return slot;
+    }
+
+    public SlotPosition createSlotPosition(Slot slot){
+        SlotPosition slotPosition = new SlotPosition();
+        slotPosition.setSlot(slot);
+        save(slotPosition);
+        return slotPosition;
+    }
+
+    public void save(Object object){
         Session session = sessionFactory.openSession();
         session.beginTransaction();
         session.saveOrUpdate(object);
         session.getTransaction().commit();
         session.close();
+    }
+
+    public void save(Object... objs){
+        for(Object obj : objs){
+            this.save(obj);
+        }
     }
 
 

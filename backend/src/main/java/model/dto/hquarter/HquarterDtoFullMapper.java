@@ -5,8 +5,8 @@ import model.dao.ISlotDAO;
 import model.dao.ITaskMappersDAO;
 import model.dao.IWeekDAO;
 import model.dto.IMapper;
+import model.dto.SlotMapper;
 import model.dto.additional_mapping.AdditionalTasksMapping;
-import model.dto.slot.SlotDtoMapper;
 import model.entities.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,7 +25,7 @@ public class HquarterDtoFullMapper implements IMapper<HquarterDtoFull, HQuarter>
     ISlotDAO slotDAO;
 
     @Autowired
-    SlotDtoMapper slotDtoMapper;
+    SlotMapper slotMapper;
 
     @Autowired
     IWeekDAO weekDAO;
@@ -49,7 +49,7 @@ public class HquarterDtoFullMapper implements IMapper<HquarterDtoFull, HQuarter>
         List<Slot> slotList = slotDAO.getSlotsForHquarter(entity);
         if(slotList.size()>0){
             for(Slot slot : slotList){
-                dto.getSlots().add(slotDtoMapper.mapToDto(slot));
+                dto.getSlots().add(slotMapper.mapToDtoFull(slot));
             }
         }
         fillWeekWithTasks(dto, entity);
@@ -76,15 +76,15 @@ public class HquarterDtoFullMapper implements IMapper<HquarterDtoFull, HQuarter>
                 weekWithTasksDto.setEndDay(week.getEndDay());
                 if(taskMappersByWeekId.get(week.getId())!=null){
                     for(TaskMapper taskMapper : taskMappersByWeekId.get(week.getId())){
-                        if (weekWithTasksDto.getDays().get(taskMapper.getSlotPosition().getDaysOfWeek()) == null) {
-                            weekWithTasksDto.getDays().put(taskMapper.getSlotPosition().getDaysOfWeek(), new ArrayList<>());
+                        if (weekWithTasksDto.getDays().get(taskMapper.getSlotPosition().getDayOfWeek()) == null) {
+                            weekWithTasksDto.getDays().put(taskMapper.getSlotPosition().getDayOfWeek(), new ArrayList<>());
                         }
                         Map<String, Object> taskDto = commonMapper.mapToDto(taskMapper.getTask());
                         additionalTasksMapping.fillFullName(taskDto, taskMapper.getTask());
                         additionalTasksMapping.fillIsFinished(taskDto, taskMapper.getTask());
                         additionalTasksMapping.fillTestingsInTaskDto(taskDto, taskMapper.getTask());
                         additionalTasksMapping.fillTopicsInTaskDto(taskDto, taskMapper.getTask());
-                        weekWithTasksDto.getDays().get(taskMapper.getSlotPosition().getDaysOfWeek()).add(taskDto);
+                        weekWithTasksDto.getDays().get(taskMapper.getSlotPosition().getDayOfWeek()).add(taskDto);
                     }
                 }
                 dto.getWeeks().add(weekWithTasksDto);
@@ -108,10 +108,10 @@ public class HquarterDtoFullMapper implements IMapper<HquarterDtoFull, HQuarter>
 //                    for (SlotPosition slotPosition : slotPositions.get(slot)) {
 //                        TaskMapper taskMapper = taskMappersDAO.taskMapperByWeekAndSlotPosition(week, slotPosition);
 //                        if(taskMapper!=null) {
-//                            if (weekWithTasksDto.getDays().get(taskMapper.getSlotPosition().getDaysOfWeek()) == null) {
-//                                weekWithTasksDto.getDays().put(taskMapper.getSlotPosition().getDaysOfWeek(), new ArrayList<>());
+//                            if (weekWithTasksDto.getDays().get(taskMapper.getSlotPosition().getDayOfWeek()) == null) {
+//                                weekWithTasksDto.getDays().put(taskMapper.getSlotPosition().getDayOfWeek(), new ArrayList<>());
 //                            }
-//                            weekWithTasksDto.getDays().get(taskMapper.getSlotPosition().getDaysOfWeek()).add(tasksDtoMapper.mapToDto(taskMapper.getTask()));
+//                            weekWithTasksDto.getDays().get(taskMapper.getSlotPosition().getDayOfWeek()).add(tasksDtoMapper.mapToDto(taskMapper.getTask()));
 //                        }
 //                    }
 //                }

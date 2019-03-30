@@ -13,15 +13,15 @@ public class SlotPosition implements Comparable<SlotPosition> {
     Slot slot;
 
     @Enumerated(EnumType.STRING)
-    DaysOfWeek daysOfWeek;
+    DaysOfWeek dayOfWeek;
 
     int position;
 
     public SlotPosition(){}
 
-    public SlotPosition(Slot slot, DaysOfWeek daysOfWeek, int position){
+    public SlotPosition(Slot slot, DaysOfWeek dayOfWeek, int position){
         this.slot = slot;
-        this.daysOfWeek = daysOfWeek;
+        this.dayOfWeek = dayOfWeek;
         this.position = position;
     }
 
@@ -39,11 +39,11 @@ public class SlotPosition implements Comparable<SlotPosition> {
         this.slot = slot;
     }
 
-    public DaysOfWeek getDaysOfWeek() {
-        return daysOfWeek;
+    public DaysOfWeek getDayOfWeek() {
+        return dayOfWeek;
     }
-    public void setDaysOfWeek(DaysOfWeek daysOfWeek) {
-        this.daysOfWeek = daysOfWeek;
+    public void setDayOfWeek(DaysOfWeek dayOfWeek) {
+        this.dayOfWeek = dayOfWeek;
     }
 
     public int getPosition() {
@@ -55,13 +55,13 @@ public class SlotPosition implements Comparable<SlotPosition> {
 
     @Override
     public int compareTo(SlotPosition slotPosition) {
-        if(this.daysOfWeek.id>slotPosition.daysOfWeek.id){
+        if(this.dayOfWeek.id>slotPosition.dayOfWeek.id){
             return 1;
         }
-        if(this.daysOfWeek.id<slotPosition.daysOfWeek.id){
+        if(this.dayOfWeek.id<slotPosition.dayOfWeek.id){
             return -1;
         }
-        if(this.daysOfWeek.id==slotPosition.daysOfWeek.id){
+        if(this.dayOfWeek.id==slotPosition.dayOfWeek.id){
             if(this.position>slotPosition.position){
                 return 1;
             }

@@ -40,15 +40,15 @@ public class DefaultSettingsPropagator {
                         slotPositionsPool.push(slotPosition);
                     }
                     for(SlotPosition defaultSlotPosition : slotDAO.getSlotPositionsForSlot(defaultSlot)){
-                        //SlotPosition slotPosition = slotDAO.getSlotPosition(slot, defaultSlotPosition.getDaysOfWeek(), defaultSlotPosition.getPosition());
+                        //SlotPosition slotPosition = slotDAO.getSlotPosition(slot, defaultSlotPosition.getDayOfWeek(), defaultSlotPosition.getPosition());
                         SlotPosition slotPosition = !slotPositionsPool.isEmpty()? slotPositionsPool.pop():null;
                         if(slotPosition==null){
                             slotPosition = new SlotPosition();
                             slotPosition.setSlot(slot);
                             //slotDAO.saveOrUpdate(slotPosition);
                         }
-                        if(slotPosition.getDaysOfWeek()!=defaultSlotPosition.getDaysOfWeek() || slotPosition.getPosition()!=defaultSlotPosition.getPosition()){
-                            slotPosition.setDaysOfWeek(defaultSlotPosition.getDaysOfWeek());
+                        if(slotPosition.getDayOfWeek()!=defaultSlotPosition.getDayOfWeek() || slotPosition.getPosition()!=defaultSlotPosition.getPosition()){
+                            slotPosition.setDayOfWeek(defaultSlotPosition.getDayOfWeek());
                             slotPosition.setPosition(defaultSlotPosition.getPosition());
                             slotDAO.saveOrUpdate(slotPosition);
                         }

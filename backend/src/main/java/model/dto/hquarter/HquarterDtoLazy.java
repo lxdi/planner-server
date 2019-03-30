@@ -1,8 +1,5 @@
 package model.dto.hquarter;
 
-import model.dto.slot.SlotDtoLazy;
-import model.entities.Week;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -14,7 +11,7 @@ public class HquarterDtoLazy {
     Map<String, Object> startWeek;
     Map<String, Object> endWeek;
 
-    List<SlotDtoLazy> slotsLazy = new ArrayList<>();
+    List<Map<String, Object>> slotsLazy = new ArrayList<>();
 
     public long getId() {
         return id;
@@ -37,11 +34,10 @@ public class HquarterDtoLazy {
         this.endWeek = endWeek;
     }
 
-    public List<SlotDtoLazy> getSlotsLazy() {
+    public List<Map<String, Object>> getSlotsLazy() {
         return slotsLazy;
     }
-
-    public void setSlotsLazy(List<SlotDtoLazy> slotsLazy) {
+    public void setSlotsLazy(List<Map<String, Object>> slotsLazy) {
         this.slotsLazy = slotsLazy;
     }
 }

@@ -73,7 +73,7 @@ public class SpacedRepetitionsServiceTests extends SpringTestConfig {
         DaysOfWeek currentDayOfWeek = DaysOfWeek.findById(DateUtils.differenceInDays(currentWeek.getStartDay(), DateUtils.currentDate()));
 
         SlotPosition slotPosition = new SlotPosition();
-        slotPosition.setDaysOfWeek(currentDayOfWeek);
+        slotPosition.setDayOfWeek(currentDayOfWeek);
         slotDAO.saveOrUpdate(slotPosition);
 
         TaskMapper taskMapper = new TaskMapper();

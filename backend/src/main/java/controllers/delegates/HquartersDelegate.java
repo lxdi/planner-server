@@ -1,14 +1,12 @@
 package controllers.delegates;
 
+import com.sogoodlabs.common_mapper.CommonMapper;
 import model.dao.*;
+import model.dto.SlotMapper;
 import model.dto.hquarter.HquarterDtoFull;
 import model.dto.hquarter.HquarterDtoLazy;
 import model.dto.hquarter.HquarterDtoLazyMapper;
 import model.dto.hquarter.HquarterDtoFullMapper;
-import model.dto.slot.SlotDto;
-import model.dto.slot.SlotDtoMapper;
-import model.dto.slot.SlotPositionDtoLazy;
-import model.dto.slot.SlotPositionMapper;
 import model.entities.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,12 +36,6 @@ public class HquartersDelegate {
     HquarterDtoFullMapper hquarterDtoFullMapper;
 
     @Autowired
-    SlotDtoMapper slotDtoMapper;
-
-    @Autowired
-    SlotPositionMapper slotPositionMapper;
-
-    @Autowired
     TaskMappersService taskMappersService;
 
     @Autowired
@@ -51,6 +43,12 @@ public class HquartersDelegate {
 
     @Autowired
     QuarterGenerator quarterGenerator;
+
+    @Autowired
+    SlotMapper slotMapper;
+
+    @Autowired
+    CommonMapper commonMapper;
 
     public List<HquarterDtoLazy> getAllQuarters(){
         List<HquarterDtoLazy> result = new ArrayList<>();
@@ -128,23 +126,23 @@ public class HquartersDelegate {
         return hquarterDtoFullMapper.mapToDto(hQuarter);
     }
 
-    public SlotDto assign(long meanid, long slotid){
+    public Map<String, Object> assign(long meanid, long slotid){
         Mean mean = meansDAO.meanById(meanid);
         Slot slot = slotDAO.getById(slotid);
         slot.setMean(mean);
         slotDAO.saveOrUpdate(slot);
         taskMappersService.rescheduleTaskMappers(mean, false);
-        return slotDtoMapper.mapToDto(slot);
+        return slotMapper.mapToDtoFull(slot);
     }
 
-    public SlotDto unassign(long slotid){
+    public Map<String, Object> unassign(long slotid){
         Slot slot = slotDAO.getById(slotid);
         Mean mean = slot.getMean();
         slot.setLayer(null);
         slot.setMean(null);
         slotDAO.saveOrUpdate(slot);
         taskMappersService.rescheduleTaskMappers(mean, false);
-        return slotDtoMapper.mapToDto(slot);
+        return slotMapper.mapToDtoFull(slot);
     }
 
     public HquarterDtoFull getDefault(){
@@ -196,27 +194,27 @@ public class HquartersDelegate {
         return hQuarter;
     }
 
-    private void saveSlots(List<SlotDto> slotsDto, long hquarterid){
+    private void saveSlots(List<Map<String, Object>> slotsDto, long hquarterid){
         if(slotsDto!=null){
-            for(SlotDto slotDto : slotsDto){
+            for(Map<String, Object> slotDto : slotsDto){
                 if(slotDto!=null) {
-                    slotDto.setHquarterid(hquarterid);
-                    Slot slot = slotDtoMapper.mapToEntity(slotDto);
+                    slotDto.put("hquarterid", hquarterid);
+                    Slot slot = slotMapper.mapToEntity(slotDto);
                     //TODO validate before saving
                     slotDAO.saveOrUpdate(slot);
-                    saveSlotPositions(slotDto.getSlotPositions(), slot.getId());
+                    saveSlotPositions((List<Map<String, Object>>) slotDto.get("slotPositions"), slot.getId());
                 }
             }
         }
     }
 
-    private void saveSlotPositions(List<SlotPositionDtoLazy> slotsPosDto, long slotid){
+    private void saveSlotPositions(List<Map<String, Object>> slotsPosDto, long slotid){
         if(slotsPosDto!=null && slotsPosDto.size()>0){
-            for(SlotPositionDtoLazy slotPosDto : slotsPosDto){
+            for(Map<String, Object> slotPosDto : slotsPosDto){
                 if(slotPosDto!=null) {
-                    slotPosDto.setSlotid(slotid);
+                    slotPosDto.put("slotid", slotid);
                     //TODO validate before saving
-                    slotDAO.saveOrUpdate(slotPositionMapper.mapToEntity(slotPosDto));
+                    slotDAO.saveOrUpdate(commonMapper.mapToEntity(slotPosDto, new SlotPosition()));
                 }
             }
         }

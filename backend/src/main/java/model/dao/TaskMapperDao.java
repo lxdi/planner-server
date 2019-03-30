@@ -58,11 +58,11 @@ public class TaskMapperDao implements ITaskMappersDAO{
     }
 
     @Override
-    public List<TaskMapper> byWeekAndDay(Week week, DaysOfWeek daysOfWeek) {
+    public List<TaskMapper> byWeekAndDay(Week week, DaysOfWeek dayOfWeek) {
         return this.sessionFactory.getCurrentSession()
-                .createQuery("from TaskMapper where week = :week and slotPosition.daysOfWeek = :daysOfWeek")
+                .createQuery("from TaskMapper where week = :week and slotPosition.dayOfWeek = :dayOfWeek")
                 .setParameter("week", week)
-                .setParameter("daysOfWeek", daysOfWeek)
+                .setParameter("dayOfWeek", dayOfWeek)
                 .getResultList();
     }
 

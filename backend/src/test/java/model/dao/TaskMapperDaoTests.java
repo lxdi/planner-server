@@ -1,7 +1,5 @@
 package model.dao;
 
-import model.dao.ITaskMappersDAO;
-import model.dao.ITasksDAO;
 import model.entities.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -72,7 +70,7 @@ public class TaskMapperDaoTests extends AbstractTestsWithTargets {
     @Test
     public void byWeekAndDayTest(){
         SlotPosition slotPosition = new SlotPosition();
-        slotPosition.setDaysOfWeek(DaysOfWeek.fri);
+        slotPosition.setDayOfWeek(DaysOfWeek.fri);
         slotDAO.saveOrUpdate(slotPosition);
 
         Week week = new Week();
