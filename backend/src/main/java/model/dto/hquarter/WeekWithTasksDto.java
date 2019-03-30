@@ -1,6 +1,5 @@
 package model.dto.hquarter;
 
-import model.dto.task.TaskDtoLazy;
 import model.entities.DaysOfWeek;
 
 import java.util.Date;
@@ -12,12 +11,12 @@ public class WeekWithTasksDto {
 
     Date startDay;
     Date endDay;
-    Map<DaysOfWeek, List<TaskDtoLazy>> days = new HashMap<>();
+    Map<DaysOfWeek, List<Map<String, Object>>> days = new HashMap<>();
 
-    public Map<DaysOfWeek, List<TaskDtoLazy>> getDays() {
+    public Map<DaysOfWeek, List<Map<String, Object>>> getDays() {
         return days;
     }
-    public void setDays(Map<DaysOfWeek, List<TaskDtoLazy>> days) {
+    public void setDays(Map<DaysOfWeek, List<Map<String, Object>>> days) {
         this.days = days;
     }
 

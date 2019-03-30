@@ -2,7 +2,6 @@ package controllers;
 
 import controllers.delegates.SpacedRepetitionsService;
 import controllers.delegates.TasksDelegate;
-import model.dto.task.TaskDtoLazy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,8 +35,8 @@ public class TasksRESTController {
     }
 
     @RequestMapping(path = "/task/create" , method = RequestMethod.PUT)
-    public ResponseEntity<TaskDtoLazy> createTask(@RequestBody TaskDtoLazy taskDto){
-        return new ResponseEntity<TaskDtoLazy>(tasksDelegate.createTask(taskDto), HttpStatus.OK);
+    public ResponseEntity<Map<String, Object>> createTask(@RequestBody Map<String, Object> taskDto){
+        return new ResponseEntity<>(tasksDelegate.createTask(taskDto), HttpStatus.OK);
     }
 
     @RequestMapping(path = "/task/delete/{taskId}" , method = RequestMethod.DELETE)
@@ -47,8 +46,8 @@ public class TasksRESTController {
     }
 
     @RequestMapping(path = "/task/update" , method = RequestMethod.POST)
-    public ResponseEntity<TaskDtoLazy> update(@RequestBody TaskDtoLazy taskDto){
-        return new ResponseEntity<TaskDtoLazy>(tasksDelegate.update(taskDto), HttpStatus.OK);
+    public ResponseEntity<Map<String, Object>> update(@RequestBody Map<String, Object> taskDto){
+        return new ResponseEntity<>(tasksDelegate.update(taskDto), HttpStatus.OK);
     }
 
     @RequestMapping(path = "/task/{taskid}/finish" , method = RequestMethod.POST)

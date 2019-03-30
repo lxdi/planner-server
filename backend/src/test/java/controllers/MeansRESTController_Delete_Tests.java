@@ -2,7 +2,6 @@ package controllers;
 
 import controllers.delegates.MeansDelegate;
 import controllers.delegates.TaskMappersService;
-import model.dto.mean.MeansDtoLazyMapper;
 import model.entities.Mean;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,9 +22,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @Transactional
 public class MeansRESTController_Delete_Tests extends ATestsWithTargetsMeansQuartalsGenerated {
-
-    @Autowired
-    MeansDtoLazyMapper meansDtoLazyMapper;
 
     @Autowired
     TaskMappersService taskMappersController;

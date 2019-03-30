@@ -47,43 +47,51 @@ public class EntityByIdImpl implements IEntityById {
 
     @Override
     public Object get(long id, Class aClass) {
+        if(id==0){
+            return null;
+        }
+        Object result = null;
         if(aClass == Realm.class){
-            return realmDAO.realmById(id);
+            result = realmDAO.realmById(id);
         }
         if(aClass == Target.class){
-            return targetsDAO.targetById(id);
+            result = targetsDAO.targetById(id);
         }
         if(aClass == Mean.class){
-            return meansDAO.meanById(id);
+            result = meansDAO.meanById(id);
         }
         if(aClass == Layer.class){
-            return layerDAO.layerById(id);
+            result = layerDAO.layerById(id);
         }
         if(aClass == Subject.class){
-            return subjectDAO.getById(id);
+            result = subjectDAO.getById(id);
         }
         if(aClass == Task.class){
-            return tasksDAO.getById(id);
+            result = tasksDAO.getById(id);
         }
         if(aClass == Topic.class){
-            return topicDAO.getById(id);
+            result = topicDAO.getById(id);
         }
         if(aClass == RepetitionPlan.class){
-            return repPlanDAO.getById(id);
+            result = repPlanDAO.getById(id);
         }
         if(aClass == TaskTesting.class){
-            return testingDAO.findOne(id);
+            result = testingDAO.findOne(id);
         }
         if(aClass == Repetition.class){
-            return repDAO.findOne(id);
+            result = repDAO.findOne(id);
         }
         if(aClass == Week.class){
-            return weekDAO.getById(id);
+            result = weekDAO.getById(id);
         }
         if(aClass == HQuarter.class){
-            return hquarterDao.getById(id);
+            result = hquarterDao.getById(id);
         }
 
-        throw new NullPointerException("Unknown class in EntityByID - " + aClass.getName());
+        if(result ==null){
+            throw new NullPointerException("Entity not found; class: "+aClass.getName()+"; id: "+id);
+        }
+
+        return result;
     }
 }

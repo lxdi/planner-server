@@ -12,7 +12,7 @@ import javax.naming.NamingException;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader= AnnotationConfigContextLoader.class,
-        classes = {SpringConfig.class})
+        classes = {SpringConfig.class, TestCreators.class})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 abstract public class SpringTestConfig {
 

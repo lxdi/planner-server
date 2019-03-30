@@ -5,9 +5,8 @@ import model.dao.ISlotDAO;
 import model.dao.ITaskMappersDAO;
 import model.dao.IWeekDAO;
 import model.dto.IMapper;
-import model.dto.slot.SlotDtoLazy;
+import model.dto.additional_mapping.AdditionalTasksMapping;
 import model.dto.slot.SlotDtoMapper;
-import model.dto.task.TasksDtoMapper;
 import model.entities.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,13 +34,13 @@ public class HquarterDtoFullMapper implements IMapper<HquarterDtoFull, HQuarter>
     ITaskMappersDAO taskMappersDAO;
 
     @Autowired
-    TasksDtoMapper tasksDtoMapper;
-
-    @Autowired
     HquarterDtoLazyMapper hquarterDtoLazyMapper;
 
     @Autowired
     CommonMapper commonMapper;
+
+    @Autowired
+    AdditionalTasksMapping additionalTasksMapping;
 
     @Override
     public HquarterDtoFull mapToDto(HQuarter entity) {
@@ -80,7 +79,12 @@ public class HquarterDtoFullMapper implements IMapper<HquarterDtoFull, HQuarter>
                         if (weekWithTasksDto.getDays().get(taskMapper.getSlotPosition().getDaysOfWeek()) == null) {
                             weekWithTasksDto.getDays().put(taskMapper.getSlotPosition().getDaysOfWeek(), new ArrayList<>());
                         }
-                        weekWithTasksDto.getDays().get(taskMapper.getSlotPosition().getDaysOfWeek()).add(tasksDtoMapper.mapToDto(taskMapper.getTask()));
+                        Map<String, Object> taskDto = commonMapper.mapToDto(taskMapper.getTask());
+                        additionalTasksMapping.fillFullName(taskDto, taskMapper.getTask());
+                        additionalTasksMapping.fillIsFinished(taskDto, taskMapper.getTask());
+                        additionalTasksMapping.fillTestingsInTaskDto(taskDto, taskMapper.getTask());
+                        additionalTasksMapping.fillTopicsInTaskDto(taskDto, taskMapper.getTask());
+                        weekWithTasksDto.getDays().get(taskMapper.getSlotPosition().getDaysOfWeek()).add(taskDto);
                     }
                 }
                 dto.getWeeks().add(weekWithTasksDto);

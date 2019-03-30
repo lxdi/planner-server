@@ -8,11 +8,11 @@ import java.util.Map;
 @Service
 public class BasicDtoValidator {
 
-    public boolean checkIfIdAbsent(Map<String, Object> dto){
+    public boolean checkIdPresence(Map<String, Object> dto){
         if(dto.get("id")!=null && Long.parseLong(""+dto.get("id"))>0){
-            return false;
+            return true;
         }
-        return true;
+        return false;
     }
 
     public boolean checkForRealm(Map<String, Object> dto){

@@ -2,8 +2,6 @@ package controllers.delegates;
 
 import com.sogoodlabs.common_mapper.CommonMapper;
 import model.dao.*;
-import model.dto.task.TaskDtoLazy;
-import model.dto.task.TasksDtoMapper;
 import model.entities.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,9 +17,6 @@ public class TasksDelegate {
 
     @Autowired
     ITasksDAO tasksDAO;
-
-    @Autowired
-    TasksDtoMapper tasksDtoMapper;
 
     @Autowired
     ITaskMappersDAO taskMappersDAO;
@@ -41,20 +36,20 @@ public class TasksDelegate {
     @Autowired
     ITaskTestingDAO taskTestingDAO;
 
-    public TaskDtoLazy createTask(TaskDtoLazy taskDto){
-        Task task = tasksDtoMapper.mapToEntity(taskDto);
+    public Map<String, Object> createTask(Map<String, Object> taskDto){
+        Task task = commonMapper.mapToEntity(taskDto, new Task());
         tasksDAO.saveOrUpdate(task);
-        return tasksDtoMapper.mapToDto(task);
+        return commonMapper.mapToDto(task);
     }
 
     public void delete(long id){
         tasksDAO.delete(id);
     }
 
-    public TaskDtoLazy update(TaskDtoLazy taskDto){
-        Task task = tasksDtoMapper.mapToEntity(taskDto);
+    public Map<String, Object> update(Map<String, Object> taskDto){
+        Task task = commonMapper.mapToEntity(taskDto, new Task());
         tasksDAO.saveOrUpdate(task);
-        return tasksDtoMapper.mapToDto(task);
+        return commonMapper.mapToDto(task);
     }
 
     public void finishTask(long taskid){

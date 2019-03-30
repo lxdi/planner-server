@@ -2,7 +2,6 @@ package controllers;
 
 import controllers.delegates.MeansDelegate;
 import controllers.delegates.TaskMappersService;
-import model.dto.mean.MeansDtoLazyMapper;
 import model.entities.Mean;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,9 +24,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @Transactional
 public class MeansRESTController_Creating_Tests extends ATestsWithTargetsMeansQuartalsGenerated {
-
-    @Autowired
-    MeansDtoLazyMapper meansDtoLazyMapper;
 
     @Autowired
     TaskMappersService taskMappersController;
@@ -83,7 +79,7 @@ public class MeansRESTController_Creating_Tests extends ATestsWithTargetsMeansQu
                     .andExpect(status().isOk()).andReturn();
         } catch (Exception ex){
             if(ex instanceof NestedServletException){
-                assertTrue(ex.getMessage().contains("Realm doesn't exist with id = 100500"));
+                assertTrue(ex.getMessage().contains("Entity not found; class: model.entities.Realm; id: 100500"));
                 return;
             }
         }

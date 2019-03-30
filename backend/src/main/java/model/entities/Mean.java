@@ -1,5 +1,6 @@
 package model.entities;
 
+import com.sogoodlabs.common_mapper.annotations.MapForLazy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
@@ -74,6 +75,27 @@ public class Mean {
         this.title = title;
     }
 
+    public Realm getRealm() {
+        return realm;
+    }
+    public void setRealm(Realm realm) {
+        this.realm = realm;
+    }
+
+    public boolean getHideChildren() {
+        return hideChildren;
+    }
+    public void setHideChildren(boolean hideChildren) {
+        this.hideChildren = hideChildren;
+    }
+
+    public Mean getNext() {
+        return next;
+    }
+    public void setNext(Mean next) {
+        this.next = next;
+    }
+
     public String getCriteria() {
         return criteria;
     }
@@ -88,13 +110,6 @@ public class Mean {
         this.targets = targets;
     }
 
-    public Realm getRealm() {
-        return realm;
-    }
-    public void setRealm(Realm realm) {
-        this.realm = realm;
-    }
-
     public List<Layer> getLayers() {
         return layers;
     }
@@ -102,18 +117,5 @@ public class Mean {
         this.layers = layers;
     }
 
-    public Mean getNext() {
-        return next;
-    }
-    public void setNext(Mean next) {
-        this.next = next;
-    }
 
-    public boolean isHideChildren() {
-        return hideChildren;
-    }
-
-    public void setHideChildren(boolean hideChildren) {
-        this.hideChildren = hideChildren;
-    }
 }

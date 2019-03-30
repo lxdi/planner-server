@@ -1,12 +1,13 @@
 package controllers;
 
-import controllers.MeansRESTController;
 import controllers.delegates.MeansDelegate;
-import model.dto.mean.MeanDtoLazy;
 import org.junit.Test;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -19,9 +20,9 @@ public class MeansRESTController_hideChildren_Test {
 
         MeansDelegate meansDelegate = new MeansDelegate(){
             @Override
-            public MeanDtoLazy hideChildren(long id, boolean val){
-                MeanDtoLazy meanDtoLazy = new MeanDtoLazy();
-                meanDtoLazy.setHideChildren(val);
+            public Map<String, Object> hideChildren(long id, boolean val){
+                Map<String, Object> meanDtoLazy = new HashMap<>();
+                meanDtoLazy.put("hideChildren", val);
                 return meanDtoLazy;
             }
         };

@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Stack;
 
 import static junit.framework.TestCase.assertTrue;
-import static services.DateUtils.toDate;
 
 @Transactional
 public class HquarterDtoLazyMapper_WeeksMappingTests extends ATestsWithTargetsMeansQuartalsGenerated {
@@ -38,9 +37,6 @@ public class HquarterDtoLazyMapper_WeeksMappingTests extends ATestsWithTargetsMe
 
     @Autowired
     ITasksDAO tasksDAO;
-
-    @Autowired
-    ITaskMappersDAO taskMappersDAO;
 
     @Autowired
     IWeekDAO weekDAO;
@@ -144,25 +140,25 @@ public class HquarterDtoLazyMapper_WeeksMappingTests extends ATestsWithTargetsMe
 
         //check first week
         assertTrue(weeks.get(0).getDays().get(DaysOfWeek.mon).size() == 1);
-        assertTrue(weeks.get(0).getDays().get(DaysOfWeek.mon).get(0).getTitle().equals(tasksTitles.pop()));
+        assertTrue(weeks.get(0).getDays().get(DaysOfWeek.mon).get(0).get("title").equals(tasksTitles.pop()));
         assertTrue(weeks.get(0).getDays().get(DaysOfWeek.tue) == null);
         assertTrue(weeks.get(0).getDays().get(DaysOfWeek.wed) == null);
         assertTrue(weeks.get(0).getDays().get(DaysOfWeek.thu) == null);
         assertTrue(weeks.get(0).getDays().get(DaysOfWeek.fri).size() == 1);
-        assertTrue(weeks.get(0).getDays().get(DaysOfWeek.fri).get(0).getTitle().equals(tasksTitles.pop()));
+        assertTrue(weeks.get(0).getDays().get(DaysOfWeek.fri).get(0).get("title").equals(tasksTitles.pop()));
         assertTrue(weeks.get(0).getDays().get(DaysOfWeek.sat) == null);
         assertTrue(weeks.get(0).getDays().get(DaysOfWeek.sun).size() == 1);
-        assertTrue(weeks.get(0).getDays().get(DaysOfWeek.sun).get(0).getTitle().equals(tasksTitles.pop()));
+        assertTrue(weeks.get(0).getDays().get(DaysOfWeek.sun).get(0).get("title").equals(tasksTitles.pop()));
 
         //check others
         for (int i = 1; i < 4; i++) {
             assertTrue(weeks.get(i).getDays().get(DaysOfWeek.mon).size() == 1);
-            assertTrue(weeks.get(i).getDays().get(DaysOfWeek.mon).get(0).getTitle().equals(tasksTitles.pop()));
+            assertTrue(weeks.get(i).getDays().get(DaysOfWeek.mon).get(0).get("title").equals(tasksTitles.pop()));
             assertTrue(weeks.get(i).getDays().get(DaysOfWeek.tue) == null);
             assertTrue(weeks.get(i).getDays().get(DaysOfWeek.wed) == null);
             assertTrue(weeks.get(i).getDays().get(DaysOfWeek.thu) == null);
             assertTrue(weeks.get(i).getDays().get(DaysOfWeek.fri).size() == 1);
-            assertTrue(weeks.get(i).getDays().get(DaysOfWeek.fri).get(0).getTitle().equals(tasksTitles.pop()));
+            assertTrue(weeks.get(i).getDays().get(DaysOfWeek.fri).get(0).get("title").equals(tasksTitles.pop()));
             assertTrue(weeks.get(i).getDays().get(DaysOfWeek.sat) == null);
             assertTrue(weeks.get(i).getDays().get(DaysOfWeek.sun) == null);
         }

@@ -24,11 +24,11 @@ public class Task implements Comparable<Task>{
     int position;
 
     //@Cascade(org.hibernate.annotations.CascadeType.ALL)
-    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    Set<Topic> topics = new HashSet<>();
-
-    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    Set<TaskTesting> testings = new HashSet<>();
+//    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+//    Set<Topic> topics = new HashSet<>();
+//
+//    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+//    Set<TaskTesting> testings = new HashSet<>();
 
     public Task(){}
 
@@ -67,19 +67,19 @@ public class Task implements Comparable<Task>{
         this.position = position;
     }
 
-    public Set<Topic> getTopics() {
-        return topics;
-    }
-    public void setTopics(Set<Topic> topics) {
-        this.topics = topics;
-    }
-
-    public Set<TaskTesting> getTestings() {
-        return testings;
-    }
-    public void setTestings(Set<TaskTesting> testings) {
-        this.testings = testings;
-    }
+//    public Set<Topic> getTopics() {
+//        return topics;
+//    }
+//    public void setTopics(Set<Topic> topics) {
+//        this.topics = topics;
+//    }
+//
+//    public Set<TaskTesting> getTestings() {
+//        return testings;
+//    }
+//    public void setTestings(Set<TaskTesting> testings) {
+//        this.testings = testings;
+//    }
 
     @Override
     public int compareTo(Task task) {

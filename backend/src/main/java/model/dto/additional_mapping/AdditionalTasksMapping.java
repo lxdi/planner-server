@@ -29,12 +29,18 @@ public class AdditionalTasksMapping {
     @Autowired
     ITaskMappersDAO taskMappersDAO;
 
+    @Autowired
+    ITopicDAO topicDAO;
+
+    @Autowired
+    ITaskTestingDAO testingDAO;
+
     public void fillTopicsInTaskDto(Map<String, Object> taskDto, Task task){
-        fillList(taskDto, TOPICS_FIELD_NAME, task.getTopics());
+        fillList(taskDto, TOPICS_FIELD_NAME, topicDAO.getByTaskId(task.getId()));
     }
 
     public void fillTestingsInTaskDto(Map<String, Object> taskDto, Task task){
-        fillList(taskDto, TESTINGS_FIELD_NAME, task.getTestings());
+        fillList(taskDto, TESTINGS_FIELD_NAME, testingDAO.getByTask(task.getId()));
     }
 
     public void fillFullName(Map<String, Object> taskDto, Task task){
@@ -53,7 +59,7 @@ public class AdditionalTasksMapping {
         }
     }
 
-    private void fillList(Map<String, Object> taskDto, String listName, Set objectsList){
+    private void fillList(Map<String, Object> taskDto, String listName, List objectsList){
         if(objectsList.size()>0){
             taskDto.putIfAbsent(listName, new ArrayList<>());
             objectsList.forEach(obj->((List)taskDto.get(listName)).add(commonMapper.mapToDto(obj, new HashMap<>())));

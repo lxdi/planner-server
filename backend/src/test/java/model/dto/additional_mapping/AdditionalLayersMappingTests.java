@@ -3,8 +3,10 @@ package model.dto.additional_mapping;
 
 import model.dao.ILayerDAO;
 import model.dao.ISubjectDAO;
+import model.dao.ITasksDAO;
 import model.entities.Layer;
 import model.entities.Subject;
+import model.entities.Task;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +31,9 @@ public class AdditionalLayersMappingTests extends SpringTestConfig {
     @Autowired
     ISubjectDAO subjectDAO;
 
+    @Autowired
+    ITasksDAO tasksDAO;
+
     @Test
     public void mapSubjectsTest(){
         Layer layer = createLayer();
@@ -36,7 +41,12 @@ public class AdditionalLayersMappingTests extends SpringTestConfig {
         Layer layer3 = createLayer();
 
         Subject subject1 = createSubject(layer);
+        Task task11 = createTask(subject1);
+        Task task12 = createTask(subject1);
+
         Subject subject2 = createSubject(layer);
+        Task task21 = createTask(subject2);
+
         Subject subject3 = createSubject(layer2);
 
         Map<String, Object> layerDto = new HashMap<>();
@@ -49,14 +59,25 @@ public class AdditionalLayersMappingTests extends SpringTestConfig {
         additionalLayersMapping.mapSubjects(layer3, layer3Dto);
 
         assertTrue(((int)StringUtils.getValue(layerDto, "get('subjects').size()"))==2);
-        assertTrue(((long)StringUtils.getValue(layerDto, "get('subjects').get(0).getId()"))==subject1.getId());
-        assertTrue(((long)StringUtils.getValue(layerDto, "get('subjects').get(1).getId()"))==subject2.getId());
+
+        assertTrue(((long)StringUtils.getValue(layerDto, "get('subjects').get(0).get('id')"))==subject1.getId());
+        assertTrue(((int)StringUtils.getValue(layerDto, "get('subjects').get(0).get('tasks').size()"))==2);
+        assertTrue(((long)StringUtils.getValue(layerDto, "get('subjects').get(0).get('tasks').get(0).get('id')"))==task11.getId());
+        assertTrue(((long)StringUtils.getValue(layerDto, "get('subjects').get(0).get('tasks').get(1).get('id')"))==task12.getId());
+
+        assertTrue(((long)StringUtils.getValue(layerDto, "get('subjects').get(1).get('id')"))==subject2.getId());
 
         assertTrue(((int)StringUtils.getValue(layer2Dto, "get('subjects').size()"))==1);
-        assertTrue(((long)StringUtils.getValue(layer2Dto, "get('subjects').get(0).getId()"))==subject3.getId());
+        assertTrue(((long)StringUtils.getValue(layer2Dto, "get('subjects').get(0).get('id')"))==subject3.getId());
 
         assertTrue(((int)StringUtils.getValue(layer3Dto, "get('subjects').size()"))==0);
 
+    }
+
+    private Layer createLayer(){
+        Layer layer = new Layer();
+        layerDAO.saveOrUpdate(layer);
+        return layer;
     }
 
     private Subject createSubject(Layer layer){
@@ -66,10 +87,11 @@ public class AdditionalLayersMappingTests extends SpringTestConfig {
         return subject;
     }
 
-    private Layer createLayer(){
-        Layer layer = new Layer();
-        layerDAO.saveOrUpdate(layer);
-        return layer;
+    private Task createTask(Subject subject){
+        Task task = new Task();
+        task.setSubject(subject);
+        tasksDAO.saveOrUpdate(task);
+        return task;
     }
 
 }

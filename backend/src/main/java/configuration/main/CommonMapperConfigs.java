@@ -20,7 +20,9 @@ public class CommonMapperConfigs {
 
     @Bean
     public CommonMapper commonMapper(){
-        return new CommonMapper(entityById){
+        com.sogoodlabs.common_mapper.Configuration mapperConfig = new com.sogoodlabs.common_mapper.Configuration();
+        mapperConfig.mapEmptyFields = true;
+        return new CommonMapper(entityById, mapperConfig){
             @Override
             public boolean customMapping(Object entity, Map<String, Object> result, Method method, Object fromGetter){
                 if(fromGetter instanceof Date){ //Dates mapping

@@ -2,14 +2,9 @@ package controllers.delegates;
 
 import com.sogoodlabs.common_mapper.CommonMapper;
 import model.dao.*;
-import model.dto.mean.MeanDtoFull;
-import model.dto.mean.MeanDtoLazy;
-import model.dto.mean.MeansDtoFullMapper;
-import model.dto.mean.MeansDtoLazyMapper;
-import model.dto.subject.SubjectDtoLazy;
-import model.dto.subject.SubjectDtoMapper;
-import model.dto.task.TaskDtoLazy;
-import model.dto.task.TasksDtoMapper;
+import model.dto.BasicDtoValidator;
+import model.dto.MeansMapper;
+import model.dto.TasksMapperService;
 import model.entities.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,52 +25,47 @@ public class MeansDelegate {
     ILayerDAO layerDAO;
 
     @Autowired
-    MeansDtoLazyMapper meansDtoLazyMapper;
-
-    @Autowired
-    MeansDtoFullMapper meansDtoFullMapper;
-
-    @Autowired
     ISubjectDAO subjectDAO;
-
-    @Autowired
-    SubjectDtoMapper subjectDtoMapper;
 
     @Autowired
     ITasksDAO tasksDAO;
 
     @Autowired
-    TasksDtoMapper tasksDtoMapper;
-
-    @Autowired
-    IRealmDAO realmDAO;
-
-    @Autowired
     TaskMappersService taskMappersService;
+
+    @Autowired
+    CommonMapper commonMapper;
+
+    @Autowired
+    BasicDtoValidator basicDtoValidator;
+
+    @Autowired
+    MeansMapper meansMapper;
+
+    @Autowired
+    TasksMapperService tasksMapperService;
 
     @Autowired
     ITaskTestingDAO taskTestingDAO;
 
     @Autowired
-    CommonMapper commonMapper;
+    ITopicDAO topicDAO;
 
 
     public MeansDelegate(){}
 
-    public List<MeanDtoLazy> getAllMeans(){
-        List<MeanDtoLazy> result = new ArrayList<>();
-        meansDAO.getAllMeans().forEach(m -> result.add(meansDtoLazyMapper.mapToDto(m)));
+    public List<Map<String, Object>> getAllMeans(){
+        List<Map<String, Object>> result = new ArrayList<>();
+        meansDAO.getAllMeans().forEach(m -> result.add(meansMapper.mapToDtoLazy(m)));
         return result;
     }
 
-    public MeanDtoFull create(MeanDtoFull meanDtoFull){
-        if(!(meanDtoFull.getId()==0 && meanDtoFull.getNextid()==null && meanDtoFull.getRealmid()>0)){
+    public Map<String, Object> create(Map<String, Object> meanDtoFull){
+        if(basicDtoValidator.checkIdPresence(meanDtoFull) || !basicDtoValidator.checkForRealm(meanDtoFull)){
             throw new RuntimeException("Not valid Mean to create");
         }
-        Realm realm = realmDAO.realmById(meanDtoFull.getRealmid());
-        Mean mean = meansDtoFullMapper.mapToEntity(meanDtoFull);
-        Mean prevMean = meansDAO.getLastOfChildren(mean.getParent(), realm);
-        meansDAO.validateMean(mean);
+        Mean mean = meansMapper.mapToEntity(meanDtoFull);
+        Mean prevMean = meansDAO.getLastOfChildren(mean.getParent(), mean.getRealm());
         //TODO do not save the mean if layers are not valid
         meansDAO.saveOrUpdate(mean);
 
@@ -83,51 +73,56 @@ public class MeansDelegate {
             prevMean.setNext(mean);
             meansDAO.saveOrUpdate(prevMean);
         }
-
-        saveLayers(meanDtoFull.getLayers(), mean.getId());
-        return meansDtoFullMapper.mapToDto(mean);
+        if(meanDtoFull.get("layers")!=null){
+            saveLayers((List<Map<String, Object>>) meanDtoFull.get("layers"), mean.getId());
+        }
+        return meansMapper.mapToDtoFull(mean);
     }
 
     public void delete(long id){
         meansDAO.deleteMean(id);
     }
 
-    public MeanDtoFull update(MeanDtoFull meanDtoLazy){
-        return meansDtoFullMapper.mapToDto(updateMean(meanDtoLazy));
+    public Map<String, Object> update(Map<String, Object> meanDtoFull){
+        if(!basicDtoValidator.checkIdPresence(meanDtoFull) || !basicDtoValidator.checkForRealm(meanDtoFull)){
+            throw new RuntimeException("Not valid Mean to update");
+        }
+        return meansMapper.mapToDtoFull(
+                                updateMean(meanDtoFull));
     }
 
-    public List<MeanDtoLazy> reposition(List<MeanDtoLazy> meanDtoLazyList){
-        for(MeanDtoLazy dto : meanDtoLazyList){
-            Mean mean = meansDAO.meanById(dto.getId());
-            mean.setNext(dto.getNextid()!=null?meansDAO.meanById(dto.getNextid()):null);
-            mean.setParent(dto.getParentid()!=null?meansDAO.meanById(dto.getParentid()):null);
+    public List<Map<String, Object>> reposition(List<Map<String, Object>> meanDtoLazyList){
+        for(Map<String, Object> dto : meanDtoLazyList){
+            Mean mean = meansDAO.meanById(Long.parseLong(""+dto.get("id")));
+            mean.setNext(dto.get("nextid")!=null?meansDAO.meanById(Long.parseLong(""+dto.get("nextid"))):null);
+            mean.setParent(dto.get("parentid")!=null?meansDAO.meanById(Long.parseLong(""+dto.get("parentid"))):null);
             meansDAO.saveOrUpdate(mean);
         }
         return meanDtoLazyList;
     }
 
-    public MeanDtoFull getFull(long meanid){
+    public Map<String, Object> getFull(long meanid){
         Mean mean = meansDAO.meanById(meanid);
-        return meansDtoFullMapper.mapToDto(mean);
+        Map<String, Object> result = meansMapper.mapToDtoFull(mean);
+        return result;
     }
 
-    public MeanDtoLazy hideChildren(long id, boolean val){
+    public Map<String, Object> hideChildren(long id, boolean val){
         Mean mean = meansDAO.meanById(id);
         mean.setHideChildren(val);
         meansDAO.saveOrUpdate(mean);
-        return meansDtoLazyMapper.mapToDto(mean);
+        //TODO map with additinal
+        return meansMapper.mapToDtoLazy(mean);
     }
 
 
-    private Mean updateMean(MeanDtoFull meanDtoFull){
-        if(!(meanDtoFull.getId()>0)){
-            throw new RuntimeException("Not valid Mean Dto to update");
-        }
-        Mean mean = meansDtoFullMapper.mapToEntity(meanDtoFull);
-        meansDAO.validateMean(mean);
+    private Mean updateMean(Map<String, Object> meanDtoFull){
+        Mean mean = meansMapper.mapToEntity(meanDtoFull);
         //TODO validate before saving
         meansDAO.saveOrUpdate(mean);
-        saveLayers(meanDtoFull.getLayers(), mean.getId());
+        if(meanDtoFull.get("layers")!=null){
+            saveLayers((List<Map<String, Object>>) meanDtoFull.get("layers"), mean.getId());
+        }
         taskMappersService.rescheduleTaskMappers(mean, true);
         return mean;
     }
@@ -140,34 +135,50 @@ public class MeansDelegate {
                     Layer layer = commonMapper.mapToEntity(layerDto, new Layer());
                     //TODO validate before saving
                     layerDAO.saveOrUpdate(layer);
-                    saveSubjects((List<SubjectDtoLazy>)layerDto.get("subjects"), layer.getId());
+                    saveSubjects((List<Map<String, Object>>) layerDto.get("subjects"), layer.getId());
                 }
             }
         }
     }
 
-    private void saveSubjects(List<SubjectDtoLazy> subjectsDto, long layerid){
+    private void saveSubjects(List<Map<String, Object>> subjectsDto, long layerid){
         if(subjectsDto!=null){
-            for(SubjectDtoLazy subjectDto : subjectsDto){
+            for(Map<String, Object> subjectDto : subjectsDto){
                 if(subjectDto!=null) {
-                    subjectDto.setLayerid(layerid);
-                    Subject subject = subjectDtoMapper.mapToEntity(subjectDto);
+                    subjectDto.put("layerid", layerid);
+                    Subject subject = commonMapper.mapToEntity(subjectDto, new Subject());
                     //TODO validate before saving
                     subjectDAO.saveOrUpdate(subject);
-                    saveTasks(subjectDto.getTasks(), subject.getId());
+                    saveTasks((List<Map<String, Object>>) subjectDto.get("tasks"), subject.getId());
                 }
             }
         }
     }
 
-    private void saveTasks(List<TaskDtoLazy> tasksDto, long subjectid){
+    private void saveTasks(List<Map<String, Object>> tasksDto, long subjectid){
         if(tasksDto!=null){
-            for(TaskDtoLazy taskDto : tasksDto){
+            for(Map<String, Object> taskDto : tasksDto){
                 if(taskDto!=null) {
-                    taskDto.setSubjectid(subjectid);
-                    Task task = tasksDtoMapper.mapToEntity(taskDto);
+                    taskDto.putIfAbsent("subjectid", subjectid);
+                    Task task = tasksMapperService.mapToEntity(taskDto);
                     tasksDAO.saveOrUpdate(task);
-                    //saveTaskTestings(taskDto.getTestings(), task.getId());
+                    saveTaskTopics((List<Map<String, Object>>) taskDto.get("topics"), task.getId());
+                    saveTaskTestings((List<Map<String, Object>>) taskDto.get("testings"), task.getId());
+                }
+            }
+        }
+    }
+
+    private void saveTaskTopics(List<Map<String, Object>> topicsDtos, long taskid){
+        if(topicsDtos!=null && topicsDtos.size()>0){
+            for(Map<String, Object> topoicDto: topicsDtos){
+                if(topoicDto!=null) {
+                    topoicDto.put("taskid", taskid);
+                    Topic topic = commonMapper.mapToEntity(topoicDto, new Topic());
+                    if(topic.getTask()==null){
+                        throw new NullPointerException();
+                    }
+                    topicDAO.saveOrUpdate(topic);
                 }
             }
         }

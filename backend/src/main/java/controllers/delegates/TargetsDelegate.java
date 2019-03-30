@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -33,7 +32,7 @@ public class TargetsDelegate {
     }
 
     public Map<String, Object> createTarget(Map<String, Object> targetDto) {
-        if(!basicDtoValidator.checkIfIdAbsent(targetDto) || !basicDtoValidator.checkForRealm(targetDto)){
+        if(basicDtoValidator.checkIdPresence(targetDto) || !basicDtoValidator.checkForRealm(targetDto)){
             throw new RuntimeException("Not valid Target Dto received to create");
         }
         Target target = commonMapper.mapToEntity(targetDto, new Target());
@@ -53,7 +52,7 @@ public class TargetsDelegate {
     }
 
     public Map<String, Object> update(Map<String, Object> targetDto) {
-        if(basicDtoValidator.checkIfIdAbsent(targetDto) || !basicDtoValidator.checkForRealm(targetDto)){
+        if(!basicDtoValidator.checkIdPresence(targetDto) || !basicDtoValidator.checkForRealm(targetDto)){
             throw new RuntimeException("Not valid Target Dto received to update");
         }
         Target target = commonMapper.mapToEntity(targetDto, new Target());

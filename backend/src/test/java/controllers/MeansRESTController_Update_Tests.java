@@ -1,12 +1,9 @@
 package controllers;
 
 import controllers.delegates.MeansDelegate;
-import controllers.delegates.TaskMappersService;
-import model.dto.mean.MeansDtoLazyMapper;
 import model.entities.Mean;
 import org.hibernate.SessionFactory;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -18,7 +15,6 @@ import org.springframework.web.util.NestedServletException;
 import test_configs.ATestsWithTargetsMeansQuartalsGenerated;
 
 import static org.junit.Assert.assertTrue;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -29,12 +25,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @Transactional
 public class MeansRESTController_Update_Tests extends ATestsWithTargetsMeansQuartalsGenerated {
-
-    @Autowired
-    MeansDtoLazyMapper meansDtoLazyMapper;
-
-    @Autowired
-    TaskMappersService taskMappersController;
 
     @Autowired
     MeansDelegate meansDelegate;

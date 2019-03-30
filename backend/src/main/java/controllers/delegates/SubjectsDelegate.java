@@ -1,11 +1,10 @@
 package controllers.delegates;
 
 
+import com.sogoodlabs.common_mapper.CommonMapper;
 import model.dao.ILayerDAO;
 import model.dao.ISubjectDAO;
 import model.dao.ITasksDAO;
-import model.dto.subject.SubjectDtoLazy;
-import model.dto.subject.SubjectDtoMapper;
 import model.entities.Subject;
 import model.entities.Task;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Transactional
 @Service
@@ -26,20 +26,20 @@ public class SubjectsDelegate {
     ILayerDAO layerDAO;
 
     @Autowired
-    SubjectDtoMapper subjectDtoMapper;
-
-    @Autowired
     ITasksDAO tasksDAO;
 
-    public List<SubjectDtoLazy> layersOfMean(long layerid){
-        List<SubjectDtoLazy> result = new ArrayList<>();
+    @Autowired
+    CommonMapper commonMapper;
+
+    public List<Map<String, Object>> layersOfMean(long layerid){
+        List<Map<String, Object>> result = new ArrayList<>();
         for(Subject subject : subjectDAO.subjectsByLayer(layerDAO.layerById(layerid))){
-            result.add(subjectDtoMapper.mapToDto(subject));
+            result.add(commonMapper.mapToDto(subject));
         }
         return result;
     }
 
-    public SubjectDtoLazy delete(long subjectid){
+    public Map<String, Object> delete(long subjectid){
         Subject subject = subjectDAO.getById(subjectid);
         if(subject!=null) {
             List<Task> tasks = tasksDAO.tasksBySubject(subject);
@@ -47,7 +47,7 @@ public class SubjectsDelegate {
                 tasks.forEach(t -> tasksDAO.delete(t.getId()));
             }
             subjectDAO.delete(subject.getId());
-            return subjectDtoMapper.mapToDto(subject);
+            return commonMapper.mapToDto(subject);
         } else {
             throw new RuntimeException("Subject doesn't exist");
         }
