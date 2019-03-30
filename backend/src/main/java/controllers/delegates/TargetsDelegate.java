@@ -1,17 +1,17 @@
 package controllers.delegates;
 
-import model.dao.IRealmDAO;
+import com.sogoodlabs.common_mapper.CommonMapper;
 import model.dao.ITargetsDAO;
-import model.dto.target.TargetDtoLazy;
-import model.dto.target.TargetsDtoMapper;
-import model.entities.Realm;
+import model.dto.BasicDtoValidator;
 import model.entities.Target;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Transactional
@@ -21,55 +21,57 @@ public class TargetsDelegate {
     ITargetsDAO targetsDAO;
 
     @Autowired
-    TargetsDtoMapper targetsDtoMapper;
+    CommonMapper commonMapper;
 
     @Autowired
-    IRealmDAO realmDAO;
+    BasicDtoValidator basicDtoValidator;
 
-    public List<TargetDtoLazy> getAllTargets(){
-        List<TargetDtoLazy> result = new ArrayList<>();
-        targetsDAO.allTargets().forEach(t -> result.add(targetsDtoMapper.mapToDto(t)));
+    public List<Map<String, Object>> getAllTargets(){
+        List<Map<String, Object>> result = new ArrayList<>();
+        targetsDAO.allTargets().forEach(t -> result.add(commonMapper.mapToDto(t)));
         return result;
     }
 
-    public TargetDtoLazy createTarget(TargetDtoLazy targetDto) {
-        if(!(targetDto.getId()==0 && targetDto.getNextid()==null && targetDto.getRealmid()>0)){
+    public Map<String, Object> createTarget(Map<String, Object> targetDto) {
+        if(!basicDtoValidator.checkIfIdAbsent(targetDto) || !basicDtoValidator.checkForRealm(targetDto)){
             throw new RuntimeException("Not valid Target Dto received to create");
         }
-        Realm realm = realmDAO.realmById(targetDto.getRealmid());
-        Target target = targetsDtoMapper.mapToEntity(targetDto);
-        Target prevTarget = targetsDAO.getLastOfChildren(target.getParent(), realm);
+        Target target = commonMapper.mapToEntity(targetDto, new Target());
+        Target prevTarget = targetsDAO.getLastOfChildren(target.getParent(), target.getRealm());
         targetsDAO.saveOrUpdate(target);
-        TargetDtoLazy dtoLazy = targetsDtoMapper.mapToDto(target);
+        Map<String, Object> resultDto = commonMapper.mapToDto(target);
         if(prevTarget!=null){
             prevTarget.setNext(target);
             targetsDAO.saveOrUpdate(prevTarget);
-            dtoLazy.setPrevid(prevTarget.getId());
+            resultDto.put("previd", prevTarget.getId());
         }
-        return dtoLazy;
+        return resultDto;
     }
 
     public void delete(long id){
         targetsDAO.deleteTarget(id);
     }
 
-    public TargetDtoLazy update(TargetDtoLazy targetDto) {
-        Target target = targetsDtoMapper.mapToEntity(targetDto);
+    public Map<String, Object> update(Map<String, Object> targetDto) {
+        if(basicDtoValidator.checkIfIdAbsent(targetDto) || !basicDtoValidator.checkForRealm(targetDto)){
+            throw new RuntimeException("Not valid Target Dto received to update");
+        }
+        Target target = commonMapper.mapToEntity(targetDto, new Target());
         targetsDAO.saveOrUpdate(target);
-        return targetsDtoMapper.mapToDto(target);
+        return commonMapper.mapToDto(target);
     }
 
 
-    public List<TargetDtoLazy> updateList(List<TargetDtoLazy> targetDtoLazies){
+    public List<Map<String, Object>> updateList(List<Map<String, Object>> targetDtoLazies){
         List<Target> updated = new ArrayList<>();
-        for(TargetDtoLazy targetDtoLazy : targetDtoLazies) {
-            Target target = targetsDtoMapper.mapToEntity(targetDtoLazy);
+        for(Map<String, Object> targetDtoLazy : targetDtoLazies) {
+            Target target = commonMapper.mapToEntity(targetDtoLazy, new Target());
             targetsDAO.saveOrUpdate(target);
             updated.add(target);
         }
-        List<TargetDtoLazy> result = new ArrayList<>();
+        List<Map<String, Object>> result = new ArrayList<>();
         for(Target target: updated) {
-            result.add(targetsDtoMapper.mapToDto(target));
+            result.add(commonMapper.mapToDto(target));
         }
         return result;
     }

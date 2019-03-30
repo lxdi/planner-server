@@ -1,6 +1,6 @@
 package controllers;
 
-import model.dto.layer.LayersDtoMapper;
+import controllers.delegates.LayersDelegate;
 import model.entities.Layer;
 import model.entities.Mean;
 import org.junit.Before;
@@ -15,7 +15,6 @@ import test_configs.ATestsWithTargetsWithMeansWithLayers;
 
 import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -26,12 +25,12 @@ public class LayersRESTControllerTests extends ATestsWithTargetsWithMeansWithLay
     private LayersRESTController layersRESTController;
 
     @Autowired
-    LayersDtoMapper layersDtoMapper;
+    LayersDelegate layersDelegate;
 
     @Before
     public void init(){
         super.init();
-        layersRESTController = new LayersRESTController(layerDAO, meansDao, layersDtoMapper);
+        layersRESTController = new LayersRESTController(layersDelegate);
         mockMvc = MockMvcBuilders.standaloneSetup(layersRESTController).build();
     }
 

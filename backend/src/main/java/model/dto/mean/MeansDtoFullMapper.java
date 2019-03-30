@@ -1,20 +1,21 @@
 package model.dto.mean;
 
+import com.sogoodlabs.common_mapper.CommonMapper;
 import model.dao.ILayerDAO;
 import model.dao.IMeansDAO;
 import model.dao.IRealmDAO;
 import model.dao.ITargetsDAO;
 import model.dto.IMapper;
-import model.dto.layer.LayersDtoMapper;
+import model.dto.additional_mapping.AdditionalLayersMapping;
 import model.entities.Layer;
 import model.entities.Mean;
 import model.entities.Realm;
-import model.entities.Target;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Alexander on 10.03.2018.
@@ -40,7 +41,10 @@ public class MeansDtoFullMapper implements IMapper<MeanDtoFull, Mean> {
     ILayerDAO layerDAO;
 
     @Autowired
-    LayersDtoMapper layersDtoMapper;
+    CommonMapper commonMapper;
+
+    @Autowired
+    AdditionalLayersMapping additionalLayersMapping;
 
     public MeanDtoFull mapToDto(Mean mean){
         MeanDtoFull meanDtoLazy = new MeanDtoFull();
@@ -49,7 +53,9 @@ public class MeansDtoFullMapper implements IMapper<MeanDtoFull, Mean> {
         List<Layer> layers = layerDAO.getLyersOfMean(mean);
         if(layers.size()>0){
             for(Layer layer : layers){
-                meanDtoLazy.getLayers().add(layersDtoMapper.mapToDto(layer));
+                Map<String, Object> layerDto = commonMapper.mapToDto(layer);
+                additionalLayersMapping.mapSubjects(layer, layerDto);
+                meanDtoLazy.getLayers().add(commonMapper.mapToDto(layer));
             }
         }
         Mean prevMean = meansDAO.getPrevMean(mean);

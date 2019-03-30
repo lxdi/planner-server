@@ -1,7 +1,6 @@
 package controllers;
 
 import controllers.delegates.TargetsDelegate;
-import model.dto.target.TargetsDtoMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,9 +22,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 
 public class TargetsRESTControllerWithOrmTests extends AbstractTestsWithTargets {
-
-    @Autowired
-    TargetsDtoMapper targetsDtoMapper;
 
     @Autowired
     TargetsDelegate targetsDelegate;

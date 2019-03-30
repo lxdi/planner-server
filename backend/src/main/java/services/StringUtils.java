@@ -23,4 +23,9 @@ public class StringUtils {
         return sb.toString();
     }
 
+    public static Object getValue(Object obj, String expr){
+        ExpressionParser parser = new SpelExpressionParser();
+        return parser.parseExpression(expr).getValue(obj);
+    }
+
 }

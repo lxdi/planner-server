@@ -1,7 +1,6 @@
 package controllers;
 
 import controllers.delegates.TargetsDelegate;
-import model.dto.target.TargetsDtoMapper;
 import model.entities.Realm;
 import model.entities.Target;
 import org.junit.Before;

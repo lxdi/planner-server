@@ -27,12 +27,6 @@ public class AdditionalTasksMapping {
     CommonMapper commonMapper;
 
     @Autowired
-    ITopicDAO topicDAO;
-
-    @Autowired
-    ITaskTestingDAO testingDAO;
-
-    @Autowired
     ITaskMappersDAO taskMappersDAO;
 
     public void fillTopicsInTaskDto(Map<String, Object> taskDto, Task task){

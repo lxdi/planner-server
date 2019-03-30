@@ -1,6 +1,5 @@
 package model.dto.mean;
 
-import model.dto.layer.LayerDtoLazy;
 
 import java.util.ArrayList;
 import java.util.List;

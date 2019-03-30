@@ -2,8 +2,6 @@ package controllers.delegates;
 
 import com.sogoodlabs.common_mapper.CommonMapper;
 import model.dao.*;
-import model.dto.layer.LayerDtoLazy;
-import model.dto.layer.LayersDtoMapper;
 import model.dto.mean.MeanDtoFull;
 import model.dto.mean.MeanDtoLazy;
 import model.dto.mean.MeansDtoFullMapper;
@@ -18,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,9 +28,6 @@ public class MeansDelegate {
 
     @Autowired
     ILayerDAO layerDAO;
-
-    @Autowired
-    LayersDtoMapper layersDtoMapper;
 
     @Autowired
     MeansDtoLazyMapper meansDtoLazyMapper;
@@ -138,15 +132,15 @@ public class MeansDelegate {
         return mean;
     }
 
-    private void saveLayers(List<LayerDtoLazy> layersDto, long meanId){
+    private void saveLayers(List<Map<String, Object>> layersDto, long meanId){
         if(layersDto!=null){
-            for(LayerDtoLazy layerDto : layersDto){
+            for(Map<String, Object> layerDto : layersDto){
                 if(layerDto!=null) {
-                    layerDto.setMeanid(meanId);
-                    Layer layer = layersDtoMapper.mapToEntity(layerDto);
+                    layerDto.put("meanid", meanId);
+                    Layer layer = commonMapper.mapToEntity(layerDto, new Layer());
                     //TODO validate before saving
                     layerDAO.saveOrUpdate(layer);
-                    saveSubjects(layerDto.getSubjects(), layer.getId());
+                    saveSubjects((List<SubjectDtoLazy>)layerDto.get("subjects"), layer.getId());
                 }
             }
         }

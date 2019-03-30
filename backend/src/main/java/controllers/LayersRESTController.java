@@ -1,10 +1,6 @@
 package controllers;
 
-import model.dao.ILayerDAO;
-import model.dao.IMeansDAO;
-import model.dto.layer.LayerDtoLazy;
-import model.dto.layer.LayersDtoMapper;
-import model.entities.Layer;
+import controllers.delegates.LayersDelegate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,60 +10,38 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping(path = "/layer")
 public class LayersRESTController {
 
     @Autowired
-    ILayerDAO layerDAO;
-
-    @Autowired
-    IMeansDAO meansDAO;
-
-    @Autowired
-    LayersDtoMapper mapper;
+    LayersDelegate layersDelegate;
 
     public LayersRESTController(){}
 
-    public LayersRESTController(ILayerDAO layerDAO, IMeansDAO meansDAO, LayersDtoMapper layersDtoMapper){
-        this.layerDAO = layerDAO;
-        this.meansDAO = meansDAO;
-        this.mapper = layersDtoMapper;
+    public LayersRESTController(LayersDelegate layersDelegate){
+        this.layersDelegate = layersDelegate;
     }
 
     @Deprecated
     @RequestMapping(path = "/create" , method = RequestMethod.PUT)
-    public ResponseEntity<LayerDtoLazy> createLayer(@RequestBody LayerDtoLazy layerDto){
-        //Layer layer = layerDAO.create(meansDAO.meanById(meanid));
-        Layer layer = mapper.mapToEntity(layerDto);
-        layerDAO.saveOrUpdate(layer);
-        return new ResponseEntity<LayerDtoLazy>(mapper.mapToDto(layer), HttpStatus.OK);
+    public ResponseEntity<Map<String, Object>> createLayer(@RequestBody Map<String, Object> layerDto){
+        return new ResponseEntity<>(layersDelegate.createLayer(layerDto), HttpStatus.OK);
     }
 
     @Deprecated
     @RequestMapping(path = "/create/list" , method = RequestMethod.PUT)
-    public ResponseEntity<List<LayerDtoLazy>> createLayers(@RequestBody List<LayerDtoLazy> layersDto){
-        List<LayerDtoLazy> result = new ArrayList<>();
-        for(LayerDtoLazy layerDto : layersDto){
-            Layer layer = mapper.mapToEntity(layerDto);
-            layerDAO.saveOrUpdate(layer);
-            result.add(mapper.mapToDto(layer));
-        }
-        //TODO return all layers of a mean, not only created ones
-        return new ResponseEntity<>(result, HttpStatus.OK);
+    public ResponseEntity<List<Map<String, Object>>> createLayers(@RequestBody List<Map<String, Object>> layersDto){
+        return new ResponseEntity<>(layersDelegate.createLayers(layersDto), HttpStatus.OK);
     }
 
 
     @RequestMapping(path = "/get/bymean/{meanid}" , method = RequestMethod.GET)
-    public ResponseEntity<List<LayerDtoLazy>> layersOfMean(@PathVariable("meanid") long meanid){
-        List<LayerDtoLazy> result = new ArrayList<>();
-        for(Layer layer : layerDAO.getLyersOfMean(meansDAO.meanById(meanid))){
-            result.add(mapper.mapToDto(layer));
-        }
-        return new ResponseEntity<List<LayerDtoLazy>>(result, HttpStatus.OK);
+    public ResponseEntity<List<Map<String, Object>>> layersOfMean(@PathVariable("meanid") long meanid){
+        return new ResponseEntity(layersDelegate.layersOfMean(meanid), HttpStatus.OK);
     }
 
 }
