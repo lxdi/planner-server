@@ -28,8 +28,8 @@ const isLayerValid = function(alerts, layer){
         }
       }
   }
-  if(tasksCount>9){
-    alerts.push('Layer ' + layer.priority + ' has more than 9 tasks')
+  if(tasksCount>12){
+    alerts.push('Layer ' + layer.priority + ' has more than 12 tasks')
     return false
   }
   return true

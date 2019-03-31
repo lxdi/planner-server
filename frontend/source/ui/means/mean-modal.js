@@ -201,7 +201,7 @@ const layersUI = function(mean, isEdit){
         for(var layerPriority in mean.layers){
           const layer = mean.layers[layerPriority]
           layersHTML.push(<ListGroupItem key={'layer_'+layerPriority}>
-                              <div>Layer {layer.priority}</div>
+                              <div style={{fontWeight:'bold', fontSize:'12pt'}}>Layer {layer.priority}</div>
                               <div>{subjectsUI(layer, isEdit)}</div>
                             </ListGroupItem>)
         }
@@ -226,7 +226,7 @@ const subjectsUI = function(layer, isEdit){
                               onDragStart={()=>fireEvent('subjects-dao', 'add-subject-to-drag', [layer, subject])}
                               onDragEnd={()=>fireEvent('subjects-dao', 'release-draggable-subject')}
                               onDragOver={(e)=>moveEvent(e, layer, subject, 'subject', isEdit)}>
-                              <div><a href='#' onClick={()=>fireEvent('subject-modal', 'open', [layer, subject])}>{subject.title}</a></div>
+                              <div style={{fontWeight:'bold'}}><a href='#' style={{color:'green'}} onClick={()=>fireEvent('subject-modal', 'open', [layer, subject])}>{subject.title}</a></div>
                             </div>
                             {tasksUI(subject, isEdit)}
                           </div>)
