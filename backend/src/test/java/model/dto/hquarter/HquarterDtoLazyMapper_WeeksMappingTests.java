@@ -2,15 +2,17 @@ package model.dto.hquarter;
 
 import controllers.delegates.HquartersDelegate;
 import model.dao.*;
+import model.dto.HquarterMapper;
 import model.entities.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+import services.StringUtils;
 import test_configs.ATestsWithTargetsMeansQuartalsGenerated;
+import test_configs.WeeksMappingChecker;
 
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 
 import static junit.framework.TestCase.assertTrue;
 
@@ -42,7 +44,7 @@ public class HquarterDtoLazyMapper_WeeksMappingTests extends ATestsWithTargetsMe
     IWeekDAO weekDAO;
 
     @Autowired
-    HquarterDtoFullMapper hquarterDtoFullMapper;
+    HquarterMapper hquarterMapper;
 
     Mean mean;
     HQuarter hQuarter1;
@@ -123,8 +125,8 @@ public class HquarterDtoLazyMapper_WeeksMappingTests extends ATestsWithTargetsMe
 
     @Test
     public void weeksDtoWithTasksMappingTest(){
-        HquarterDtoFull hquarterDtoFull = hquarterDtoFullMapper.mapToDto(hQuarter1);
-        assertTrue(hquarterDtoFull.getWeeks().size()==4);
+        Map<String, Object> hquarterDtoFull = hquarterMapper.mapToDtoFull(hQuarter1);
+        assertTrue(((List)hquarterDtoFull.get("weeks")).size()==4);
         Stack<String> tasksTitles = new Stack<>();
         tasksTitles.push("task 9");
         tasksTitles.push("task 8");
@@ -136,33 +138,24 @@ public class HquarterDtoLazyMapper_WeeksMappingTests extends ATestsWithTargetsMe
         tasksTitles.push("task 2");
         tasksTitles.push("task 1");
 
-        List<WeekWithTasksDto> weeks = hquarterDtoFull.getWeeks();
+        List<Map<String, Object>> weeks = (List<Map<String, Object>>) hquarterDtoFull.get("weeks");
 
         //check first week
-        assertTrue(weeks.get(0).getDays().get(DaysOfWeek.mon).size() == 1);
-        assertTrue(weeks.get(0).getDays().get(DaysOfWeek.mon).get(0).get("title").equals(tasksTitles.pop()));
-        assertTrue(weeks.get(0).getDays().get(DaysOfWeek.tue) == null);
-        assertTrue(weeks.get(0).getDays().get(DaysOfWeek.wed) == null);
-        assertTrue(weeks.get(0).getDays().get(DaysOfWeek.thu) == null);
-        assertTrue(weeks.get(0).getDays().get(DaysOfWeek.fri).size() == 1);
-        assertTrue(weeks.get(0).getDays().get(DaysOfWeek.fri).get(0).get("title").equals(tasksTitles.pop()));
-        assertTrue(weeks.get(0).getDays().get(DaysOfWeek.sat) == null);
-        assertTrue(weeks.get(0).getDays().get(DaysOfWeek.sun).size() == 1);
-        assertTrue(weeks.get(0).getDays().get(DaysOfWeek.sun).get(0).get("title").equals(tasksTitles.pop()));
+        Map<DaysOfWeek, List<String>> mappingFirstWeek = new HashMap();
+        mappingFirstWeek.put(DaysOfWeek.mon, new ArrayList<>(Arrays.asList(tasksTitles.pop())));
+        mappingFirstWeek.put(DaysOfWeek.fri, new ArrayList<>(Arrays.asList(tasksTitles.pop())));
+        mappingFirstWeek.put(DaysOfWeek.sun, new ArrayList<>(Arrays.asList(tasksTitles.pop())));
+        WeeksMappingChecker.checkWeek(mappingFirstWeek, weeks, 0);
 
         //check others
         for (int i = 1; i < 4; i++) {
-            assertTrue(weeks.get(i).getDays().get(DaysOfWeek.mon).size() == 1);
-            assertTrue(weeks.get(i).getDays().get(DaysOfWeek.mon).get(0).get("title").equals(tasksTitles.pop()));
-            assertTrue(weeks.get(i).getDays().get(DaysOfWeek.tue) == null);
-            assertTrue(weeks.get(i).getDays().get(DaysOfWeek.wed) == null);
-            assertTrue(weeks.get(i).getDays().get(DaysOfWeek.thu) == null);
-            assertTrue(weeks.get(i).getDays().get(DaysOfWeek.fri).size() == 1);
-            assertTrue(weeks.get(i).getDays().get(DaysOfWeek.fri).get(0).get("title").equals(tasksTitles.pop()));
-            assertTrue(weeks.get(i).getDays().get(DaysOfWeek.sat) == null);
-            assertTrue(weeks.get(i).getDays().get(DaysOfWeek.sun) == null);
+            Map<DaysOfWeek, List<String>> mappingWeek = new HashMap();
+            mappingWeek.put(DaysOfWeek.mon, new ArrayList<>(Arrays.asList(tasksTitles.pop())));
+            mappingWeek.put(DaysOfWeek.fri, new ArrayList<>(Arrays.asList(tasksTitles.pop())));
+            WeeksMappingChecker.checkWeek(mappingWeek, weeks, i);
         }
     }
+
 
     private Task createTask(String title, Subject subject, int position){
         Task task = new Task(title, subject, position);

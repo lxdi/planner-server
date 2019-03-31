@@ -3,12 +3,15 @@ package model.dto.hquarter;
 import model.dao.IHQuarterDAO;
 import model.dao.ISlotDAO;
 import model.dao.IWeekDAO;
+import model.dto.HquarterMapper;
 import model.entities.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import services.StringUtils;
 import test_configs.AbstractTestsWithTargets;
+
+import java.util.Map;
 
 import static junit.framework.TestCase.assertTrue;
 import static services.DateUtils.toDate;
@@ -22,13 +25,10 @@ public class HquarterDtoLazyMapperTests extends AbstractTestsWithTargets {
     ISlotDAO slotDAO;
 
     @Autowired
-    HquarterDtoLazyMapper hquarterDtoLazyMapper;
-
-    @Autowired
-    HquarterDtoFullMapper hquarterDtoFullMapper;
-
-    @Autowired
     IWeekDAO weekDAO;
+
+    @Autowired
+    HquarterMapper hquarterMapper;
 
     HQuarter hQuarter;
     SlotPosition slotPosition;
@@ -68,14 +68,11 @@ public class HquarterDtoLazyMapperTests extends AbstractTestsWithTargets {
 
     @Test
     public void mapToDtoWithDependenciesTest(){
-        HquarterDtoFull dtoLazy = hquarterDtoFullMapper.mapToDto(hQuarter);
-        assertTrue((long)dtoLazy.getStartWeek().get("id") == startWeek.getId());
-        assertTrue(dtoLazy.getStartWeek().get("startDay").equals(startDateStr));
-        assertTrue(dtoLazy.getSlots().size()==1);
-        assertTrue((long)dtoLazy.getSlots().get(0).get("id") == slot.getId());
-
-        assertTrue((int)StringUtils.getValue(dtoLazy, "getSlots().get(0).get('slotPositions').size()")==1);
-        assertTrue((long)StringUtils.getValue(dtoLazy, "getSlots().get(0).get('slotPositions').get(0).get('id')")==slotPosition.getId());
+        Map<String, Object> dtoLazy = hquarterMapper.mapToDtoLazy(hQuarter);
+        assertTrue((long)StringUtils.getValue(dtoLazy, "get('startWeek').get('id')")== startWeek.getId());
+        assertTrue(StringUtils.getValue(dtoLazy, "get('startWeek').get('startDay')").equals(startDateStr));
+        assertTrue((int)StringUtils.getValue(dtoLazy, "get('slotsLazy').size()")==1);
+        assertTrue((long)StringUtils.getValue(dtoLazy, "get('slotsLazy').get(0).get('id')")==slot.getId());
     }
 
 

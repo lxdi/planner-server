@@ -2,11 +2,8 @@ package controllers.delegates;
 
 import com.sogoodlabs.common_mapper.CommonMapper;
 import model.dao.*;
+import model.dto.HquarterMapper;
 import model.dto.SlotMapper;
-import model.dto.hquarter.HquarterDtoFull;
-import model.dto.hquarter.HquarterDtoLazy;
-import model.dto.hquarter.HquarterDtoLazyMapper;
-import model.dto.hquarter.HquarterDtoFullMapper;
 import model.entities.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,12 +27,6 @@ public class HquartersDelegate {
     ISlotDAO slotDAO;
 
     @Autowired
-    HquarterDtoLazyMapper hquarterDtoLazyMapper;
-
-    @Autowired
-    HquarterDtoFullMapper hquarterDtoFullMapper;
-
-    @Autowired
     TaskMappersService taskMappersService;
 
     @Autowired
@@ -50,16 +41,19 @@ public class HquartersDelegate {
     @Autowired
     CommonMapper commonMapper;
 
-    public List<HquarterDtoLazy> getAllQuarters(){
-        List<HquarterDtoLazy> result = new ArrayList<>();
+    @Autowired
+    HquarterMapper hquarterMapper;
+
+    public List<Map<String, Object>> getAllQuarters(){
+        List<Map<String, Object>> result = new ArrayList<>();
         for(HQuarter hQuarter : quarterDAO.getAllHQuartals()){
-            result.add(hquarterDtoLazyMapper.mapToDto(hQuarter));
+            result.add(hquarterMapper.mapToDtoLazy(hQuarter));
         }
         return result;
     }
 
-    public List<HquarterDtoLazy> getCurrentHquarters(){
-        List<HquarterDtoLazy> result = new ArrayList<>();
+    public List<Map<String, Object>> getCurrentHquarters(){
+        List<Map<String, Object>> result = new ArrayList<>();
         int currentYear = Calendar.getInstance().get(Calendar.YEAR);
 
         List<HQuarter> hQuarters = new ArrayList<>();
@@ -67,44 +61,31 @@ public class HquartersDelegate {
         //hQuarters.addAll(getOrCreateHquarters(currentYear+1));
 
         Map<Long, List<Slot>> slotsByHquarterId = new HashMap<>();
-        for(Slot slot : slotDAO.getSlotsForHquarters(hQuarters)){
+        slotDAO.getSlotsForHquarters(hQuarters).forEach(slot -> {
             slotsByHquarterId.putIfAbsent(slot.getHquarter().getId(), new ArrayList<>());
             slotsByHquarterId.get(slot.getHquarter().getId()).add(slot);
-        }
-        for(HQuarter hQuarter : hQuarters){
-            HquarterDtoLazy dto = hquarterDtoLazyMapper.mapToDtoWithoutSlots(hQuarter);
-            hquarterDtoLazyMapper.addSlots(dto, slotsByHquarterId.get(hQuarter.getId()));
-            result.add(dto);
-        }
+        });
+
+        hQuarters.forEach(hq -> result.add(hquarterMapper.mapToDtoLazy(hq, slotsByHquarterId.get(hq.getId()))));
         return result;
     }
 
-    public List<HquarterDtoFull> getCurrentHquartersFull(){
-        List<HquarterDtoFull> result = new ArrayList<>();
-        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
-
-        List<HQuarter> hQuarters = new ArrayList<>();
-        hQuarters.addAll(getOrCreateHquarters(currentYear));
-        hQuarters.addAll(getOrCreateHquarters(currentYear+1));
-
-        for(HQuarter hQuarter : hQuarters){
-            HquarterDtoFull dto = hquarterDtoFullMapper.mapToDto(hQuarter);
-            result.add(dto);
-        }
-        return result;
+    public List<Map<String, Object>> getCurrentHquartersFull(){
+        return getHquartersForGivenYearsOffset(0, 1);
     }
 
-    public List<HquarterDtoFull> getHquartersFullCurrentYear(){
-        List<HquarterDtoFull> result = new ArrayList<>();
+    public List<Map<String, Object>> getHquartersFullCurrentYear(){
+        return getHquartersForGivenYearsOffset(0);
+    }
+
+    private List<Map<String, Object>> getHquartersForGivenYearsOffset(int... offsets){
+        List<Map<String, Object>> result = new ArrayList<>();
         int currentYear = Calendar.getInstance().get(Calendar.YEAR);
 
         List<HQuarter> hQuarters = new ArrayList<>();
-        hQuarters.addAll(getOrCreateHquarters(currentYear));
+        Arrays.stream(offsets).forEach(offset -> hQuarters.addAll(getOrCreateHquarters(currentYear+offset)));
 
-        for(HQuarter hQuarter : hQuarters){
-            HquarterDtoFull dto = hquarterDtoFullMapper.mapToDto(hQuarter);
-            result.add(dto);
-        }
+        hQuarters.forEach(hq -> result.add(hquarterMapper.mapToDtoFull(hq)));
         return result;
     }
 
@@ -117,13 +98,13 @@ public class HquartersDelegate {
         return result;
     }
 
-    public HquarterDtoFull get(long id){
-        return hquarterDtoFullMapper.mapToDto(quarterDAO.getById(id));
+    public Map<String, Object> get(long id){
+        return hquarterMapper.mapToDtoFull(quarterDAO.getById(id));
     }
 
-    public HquarterDtoFull update(HquarterDtoFull hquarterDto){
+    public Map<String, Object> update(Map<String, Object> hquarterDto){
         HQuarter hQuarter = saveHQuarter(hquarterDto);
-        return hquarterDtoFullMapper.mapToDto(hQuarter);
+        return hquarterMapper.mapToDtoFull(hQuarter);
     }
 
     public Map<String, Object> assign(long meanid, long slotid){
@@ -145,19 +126,21 @@ public class HquartersDelegate {
         return slotMapper.mapToDtoFull(slot);
     }
 
-    public HquarterDtoFull getDefault(){
-        return hquarterDtoFullMapper.mapToDto(quarterDAO.getDefault());
+    public Map<String, Object> getDefault(){
+        return hquarterMapper.mapToDtoFull(quarterDAO.getDefault());
     }
 
-    public HquarterDtoFull setDefault(HquarterDtoFull hquarterDtoFull){
-        assert hquarterDtoFull.getStartWeek()==null && hquarterDtoFull.getEndWeek()==null;
+    public Map<String, Object> setDefault(Map<String, Object> hquarterDtoFull){
+        if(hquarterDtoFull.get("startWeek")!=null || hquarterDtoFull.get("endWeek")!=null){
+            throw new UnsupportedOperationException("Not valid hquarter to set for default");
+        }
         HQuarter defaultHquarter = saveHQuarter(hquarterDtoFull);
         defaultSettingsPropagator.propagateSettingsFrom(defaultHquarter);
-        return hquarterDtoFullMapper.mapToDto(defaultHquarter);
+        return hquarterMapper.mapToDtoFull(defaultHquarter);
     }
 
-    public List<HquarterDtoLazy> getPrev(long currentHqId, int prevCount){
-        List<HquarterDtoLazy> result = new ArrayList<>();
+    public List<Map<String, Object>> getPrev(long currentHqId, int prevCount){
+        List<Map<String, Object>> result = new ArrayList<>();
         List<HQuarter> hQuarters = quarterDAO.getPrev(currentHqId, prevCount);
         if(hQuarters.size()==0){
             int year = DateUtils.getYear(quarterDAO.getById(currentHqId).getStartWeek().getStartDay());
@@ -166,13 +149,13 @@ public class HquartersDelegate {
         }
         Collections.sort(hQuarters);
         for(HQuarter hQuarter : hQuarters){
-            result.add(hquarterDtoLazyMapper.mapToDto(hQuarter));
+            result.add(hquarterMapper.mapToDtoLazy(hQuarter));
         }
         return result;
     }
 
-    public List<HquarterDtoLazy> getNext(long currentHqId, int nextCount){
-        List<HquarterDtoLazy> result = new ArrayList<>();
+    public List<Map<String, Object>> getNext(long currentHqId, int nextCount){
+        List<Map<String, Object>> result = new ArrayList<>();
         List<HQuarter> hQuarters = quarterDAO.getNext(currentHqId, nextCount);
         if(hQuarters.size()==0){
             int year = DateUtils.getYear(quarterDAO.getById(currentHqId).getStartWeek().getStartDay());
@@ -180,17 +163,17 @@ public class HquartersDelegate {
             hQuarters = quarterDAO.getNext(currentHqId, nextCount);
         }
         for(HQuarter hQuarter : hQuarters){
-            result.add(hquarterDtoLazyMapper.mapToDto(hQuarter));
+            result.add(hquarterMapper.mapToDtoLazy(hQuarter));
         }
         return result;
     }
 
 
-    private HQuarter saveHQuarter(HquarterDtoFull hquarterDtoFull){
-        HQuarter hQuarter = hquarterDtoFullMapper.mapToEntity(hquarterDtoFull);
+    private HQuarter saveHQuarter(Map<String, Object> hquarterDtoFull){
+        HQuarter hQuarter = hquarterMapper.mapToEntity(hquarterDtoFull);
         //TODO validate slots before saving
         quarterDAO.saveOrUpdate(hQuarter);
-        saveSlots(hquarterDtoFull.getSlots(), hQuarter.getId());
+        saveSlots((List<Map<String, Object>>) hquarterDtoFull.get("slots"), hQuarter.getId());
         return hQuarter;
     }
 

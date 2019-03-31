@@ -1,8 +1,6 @@
 package controllers;
 
 import controllers.delegates.HquartersDelegate;
-import model.dto.hquarter.HquarterDtoFull;
-import model.dto.hquarter.HquarterDtoLazy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,45 +30,45 @@ public class HquartersRESTController {
     }
 
     @RequestMapping(path = "/all")
-    public ResponseEntity<List<HquarterDtoLazy>> getAllQuarters(){
-        return new ResponseEntity<List<HquarterDtoLazy>>(hquartersDelegate.getAllQuarters(), HttpStatus.OK);
+    public ResponseEntity<List<Map<String, Object>>> getAllQuarters(){
+        return new ResponseEntity<>(hquartersDelegate.getAllQuarters(), HttpStatus.OK);
     }
 
     @RequestMapping(path = "/currentlist")
-    public ResponseEntity<List<HquarterDtoLazy>> getCurrentList(){
-        return new ResponseEntity<List<HquarterDtoLazy>>(hquartersDelegate.getCurrentHquarters(), HttpStatus.OK);
+    public ResponseEntity<List<Map<String, Object>>> getCurrentList(){
+        return new ResponseEntity<>(hquartersDelegate.getCurrentHquarters(), HttpStatus.OK);
     }
 
     @RequestMapping(path = "/currentlist/full")
-    public ResponseEntity<List<HquarterDtoFull>> getCurrentListFull(){
-        return new ResponseEntity<List<HquarterDtoFull>>(hquartersDelegate.getCurrentHquartersFull(), HttpStatus.OK);
+    public ResponseEntity<List<Map<String, Object>>> getCurrentListFull(){
+        return new ResponseEntity<>(hquartersDelegate.getCurrentHquartersFull(), HttpStatus.OK);
     }
 
     @RequestMapping(path = "/currentlist/full/currentyear")
-    public ResponseEntity<List<HquarterDtoFull>> getHquartersFullCurrentYear(){
-        return new ResponseEntity<List<HquarterDtoFull>>(hquartersDelegate.getHquartersFullCurrentYear(), HttpStatus.OK);
+    public ResponseEntity<List<Map<String, Object>>> getHquartersFullCurrentYear(){
+        return new ResponseEntity<>(hquartersDelegate.getHquartersFullCurrentYear(), HttpStatus.OK);
     }
 
     @RequestMapping(path = "/prev/{hquarterid}/{count}")
-    public ResponseEntity<List<HquarterDtoLazy>> getPrev(
+    public ResponseEntity<List<Map<String, Object>>> getPrev(
             @PathVariable("hquarterid") long hqid, @PathVariable("count") int count){
-        return new ResponseEntity<List<HquarterDtoLazy>>(hquartersDelegate.getPrev(hqid, count), HttpStatus.OK);
+        return new ResponseEntity<>(hquartersDelegate.getPrev(hqid, count), HttpStatus.OK);
     }
 
     @RequestMapping(path = "/next/{hquarterid}/{count}")
-    public ResponseEntity<List<HquarterDtoLazy>> getNext(
+    public ResponseEntity<List<Map<String, Object>>> getNext(
             @PathVariable("hquarterid") long hqid, @PathVariable("count") int count){
-        return new ResponseEntity<List<HquarterDtoLazy>>(hquartersDelegate.getNext(hqid, count), HttpStatus.OK);
+        return new ResponseEntity<>(hquartersDelegate.getNext(hqid, count), HttpStatus.OK);
     }
 
     @RequestMapping(path="/get/{hquarterid}", method = RequestMethod.GET)
-    public ResponseEntity<HquarterDtoFull> get(@PathVariable("hquarterid") long hqid){
+    public ResponseEntity<Map<String, Object>> get(@PathVariable("hquarterid") long hqid){
         return new ResponseEntity<>(hquartersDelegate.get(hqid), HttpStatus.OK);
     }
 
     @RequestMapping(path = "/update", method = RequestMethod.POST)
-    public ResponseEntity<HquarterDtoFull> update(@RequestBody HquarterDtoFull hquarterDto){
-        return new ResponseEntity<HquarterDtoFull>(hquartersDelegate.update(hquarterDto), HttpStatus.OK);
+    public ResponseEntity<Map<String, Object>> update(@RequestBody Map<String, Object> hquarterDto){
+        return new ResponseEntity<>(hquartersDelegate.update(hquarterDto), HttpStatus.OK);
     }
 
     @RequestMapping(path = "/assignmean/{meanid}/toslot/{slotid}", method = RequestMethod.POST)
@@ -84,12 +82,12 @@ public class HquartersRESTController {
     }
 
     @RequestMapping(path="/get/default", method = RequestMethod.GET)
-    public ResponseEntity<HquarterDtoFull> getDefault(){
+    public ResponseEntity<Map<String, Object>> getDefault(){
         return new ResponseEntity<>(hquartersDelegate.getDefault(), HttpStatus.OK);
     }
 
     @RequestMapping(path="/set/default", method = RequestMethod.POST)
-    public ResponseEntity<HquarterDtoFull> setDefault(@RequestBody HquarterDtoFull hquarterDtoLazy){
+    public ResponseEntity<Map<String, Object>> setDefault(@RequestBody Map<String, Object> hquarterDtoLazy){
         return new ResponseEntity<>(hquartersDelegate.setDefault(hquarterDtoLazy), HttpStatus.OK);
     }
 

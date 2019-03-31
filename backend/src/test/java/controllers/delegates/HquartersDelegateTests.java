@@ -1,17 +1,18 @@
 package controllers.delegates;
 
 import model.dao.IHQuarterDAO;
-import model.dto.hquarter.HquarterDtoLazy;
 import model.entities.HQuarter;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+import services.StringUtils;
 import test_configs.AbstractTestsWithTargets;
 import services.DateUtils;
 import services.QuarterGenerator;
 
 import java.util.List;
+import java.util.Map;
 
 import static junit.framework.TestCase.assertTrue;
 
@@ -40,10 +41,10 @@ public class HquartersDelegateTests extends AbstractTestsWithTargets {
         assertTrue(DateUtils.fromDate(firstHquarter.getStartWeek().getStartDay()).equals("2018-01-01"));
         assertTrue(hQuarterDAO.getHQuartersInYear(2017).size()==0);
 
-        List<HquarterDtoLazy> hQuartersLazy2017 = hquartersDelegate.getPrev(firstHquarter.getId(), 4);
+        List<Map<String, Object>> hQuartersLazy2017 = hquartersDelegate.getPrev(firstHquarter.getId(), 4);
 
         assertTrue(hQuartersLazy2017.size()==4);
-        assertTrue(hQuartersLazy2017.get(0).getStartWeek().get("startDay").equals("2017-08-14"));
+        assertTrue(StringUtils.getValue(hQuartersLazy2017, "get(0).get('startWeek').get('startDay')").equals("2017-08-14"));
 
     }
 
@@ -55,10 +56,10 @@ public class HquartersDelegateTests extends AbstractTestsWithTargets {
         assertTrue(DateUtils.fromDate(lastHquarter.getStartWeek().getStartDay()).equals("2018-11-05"));
         assertTrue(hQuarterDAO.getHQuartersInYear(2019).size()==0);
 
-        List<HquarterDtoLazy> hQuartersLazy2019 = hquartersDelegate.getNext(lastHquarter.getId(), 4);
+        List<Map<String, Object>> hQuartersLazy2019 = hquartersDelegate.getNext(lastHquarter.getId(), 4);
 
         assertTrue(hQuartersLazy2019.size()==4);
-        assertTrue(hQuartersLazy2019.get(0).getStartWeek().get("startDay").equals("2019-01-07"));
+        assertTrue(StringUtils.getValue(hQuartersLazy2019, "get(0).get('startWeek').get('startDay')").equals("2019-01-07"));
 
     }
 
