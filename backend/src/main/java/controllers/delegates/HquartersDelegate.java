@@ -18,6 +18,8 @@ import java.util.*;
 @Transactional
 public class HquartersDelegate {
 
+    private static final int TOTAL_NUMBER_OF_HQUARTER_IN_YEAR = 12;
+
     @Autowired
     IMeansDAO meansDAO;
 
@@ -54,14 +56,16 @@ public class HquartersDelegate {
     }
 
     public List<Map<String, Object>> getCurrentHquarters(){
+//        List<Map<String, Object>> result = new ArrayList<>();
+//        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+//
+//        List<HQuarter> hQuarters = new ArrayList<>();
+//        hQuarters.addAll(getOrCreateHquarters(currentYear));
+//        removeFromHquartersListTillDate(hQuarters, DateUtils.currentDate());
+//        addNextYearHqsIfNeeded(hQuarters, currentYear);
+//
         List<Map<String, Object>> result = new ArrayList<>();
-        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
-
-        List<HQuarter> hQuarters = new ArrayList<>();
-        hQuarters.addAll(getOrCreateHquarters(currentYear));
-        removeFromHquartersListTillDate(hQuarters, DateUtils.currentDate());
-        //hQuarters.addAll(getOrCreateHquarters(currentYear+1));
-
+        List<HQuarter> hQuarters = getCurrentHquarters(DateUtils.currentDate());
         Map<Long, List<Slot>> slotsByHquarterId = new HashMap<>();
         slotDAO.getSlotsForHquarters(hQuarters).forEach(slot -> {
             slotsByHquarterId.putIfAbsent(slot.getHquarter().getId(), new ArrayList<>());
@@ -70,6 +74,29 @@ public class HquartersDelegate {
 
         hQuarters.forEach(hq -> result.add(hquarterMapper.mapToDtoLazy(hq, slotsByHquarterId.get(hq.getId()))));
         return result;
+    }
+
+    public List<HQuarter> getCurrentHquarters(Date currentDate){
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(currentDate);
+        int currentYear = calendar.get(Calendar.YEAR);
+
+        List<HQuarter> result = new ArrayList<>();
+        result.addAll(getOrCreateHquarters(currentYear));
+        removeFromHquartersListTillDate(result, DateUtils.currentDate());
+        addNextYearHqsIfNeeded(result, currentYear);
+
+        return result;
+    }
+
+    private void addNextYearHqsIfNeeded(List<HQuarter> hQuarters, int currentYear){
+        int hqsToAddAmount = TOTAL_NUMBER_OF_HQUARTER_IN_YEAR-hQuarters.size();
+        if(hqsToAddAmount>0){
+            List<HQuarter> nextYearHqs = getOrCreateHquarters(currentYear+1);
+            for(int i = 0; i<hqsToAddAmount; i++){
+                hQuarters.add(nextYearHqs.get(i));
+            }
+        }
     }
 
     public void removeFromHquartersListTillDate(List<HQuarter> hQuarters, Date date){
