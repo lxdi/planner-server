@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import services.DateUtils;
 import services.QuarterGenerator;
 
+import java.sql.Date;
 import java.util.*;
 
 @Service
@@ -58,6 +59,7 @@ public class HquartersDelegate {
 
         List<HQuarter> hQuarters = new ArrayList<>();
         hQuarters.addAll(getOrCreateHquarters(currentYear));
+        removeFromHquartersListTillDate(hQuarters, DateUtils.currentDate());
         //hQuarters.addAll(getOrCreateHquarters(currentYear+1));
 
         Map<Long, List<Slot>> slotsByHquarterId = new HashMap<>();
@@ -68,6 +70,22 @@ public class HquartersDelegate {
 
         hQuarters.forEach(hq -> result.add(hquarterMapper.mapToDtoLazy(hq, slotsByHquarterId.get(hq.getId()))));
         return result;
+    }
+
+    public void removeFromHquartersListTillDate(List<HQuarter> hQuarters, Date date){
+        if(hQuarters!=null && hQuarters.size()>0){
+            List<HQuarter> toRemove = new ArrayList<>();
+            for (int i = 0; i < hQuarters.size(); i++) {
+                if (DateUtils.differenceInDays(date, hQuarters.get(i).getStartWeek().getStartDay()) < 0
+                        && DateUtils.differenceInDays(date, hQuarters.get(i).getEndWeek().getEndDay()) < 0) {
+                    toRemove.add(hQuarters.get(i));
+                }
+            }
+            if(toRemove.size()>0){
+                toRemove.remove(toRemove.size()-1);
+            }
+            hQuarters.removeAll(toRemove);
+        }
     }
 
     public List<Map<String, Object>> getCurrentHquartersFull(){

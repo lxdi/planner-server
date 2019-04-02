@@ -2,6 +2,7 @@ package controllers.delegates;
 
 import model.dao.IHQuarterDAO;
 import model.entities.HQuarter;
+import model.entities.Week;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +11,10 @@ import services.StringUtils;
 import test_configs.AbstractTestsWithTargets;
 import services.DateUtils;
 import services.QuarterGenerator;
+import test_configs.TestCreators;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +31,9 @@ public class HquartersDelegateTests extends AbstractTestsWithTargets {
 
     @Autowired
     HquartersDelegate hquartersDelegate;
+
+    @Autowired
+    TestCreators testCreators;
 
     @Before
     public void init(){
@@ -67,5 +74,36 @@ public class HquartersDelegateTests extends AbstractTestsWithTargets {
     public void getCurrentHquartersWithoutSlotsTest(){
         hquartersDelegate.getCurrentHquarters();
     }
+
+    @Test
+    public void removeFromHquartersListTillDateTest(){
+        quarterGenerator.generateYear(2019);
+        List<HQuarter> hQuarters2019 = hQuarterDAO.getHQuartersInYear(2019);
+
+        hquartersDelegate.removeFromHquartersListTillDate(hQuarters2019, DateUtils.toDate("2019-04-02"));
+
+        assertTrue(hQuarters2019.size()==10);
+        assertTrue(DateUtils.fromDate(hQuarters2019.get(0).getStartWeek().getStartDay()).equals("2019-03-04"));
+        assertTrue(DateUtils.fromDate(hQuarters2019.get(1).getStartWeek().getStartDay()).equals("2019-04-01"));
+        assertTrue(DateUtils.fromDate(hQuarters2019.get(2).getStartWeek().getStartDay()).equals("2019-04-29"));
+        assertTrue(DateUtils.fromDate(hQuarters2019.get(3).getStartWeek().getStartDay()).equals("2019-05-27"));
+        assertTrue(DateUtils.fromDate(hQuarters2019.get(4).getStartWeek().getStartDay()).equals("2019-06-24"));
+        assertTrue(DateUtils.fromDate(hQuarters2019.get(5).getStartWeek().getStartDay()).equals("2019-07-22"));
+        assertTrue(DateUtils.fromDate(hQuarters2019.get(6).getStartWeek().getStartDay()).equals("2019-08-19"));
+
+    }
+
+    private HQuarter createHQuareter(String startWeekStartDay, String startWeekEndDay, String endWeekStartDay, String endWeekEndDay){
+        Week startWeek = testCreators.createWeek(startWeekStartDay, startWeekEndDay);
+        Week endWeek = testCreators.createWeek(endWeekStartDay, endWeekEndDay);
+        HQuarter hQuarter = new HQuarter();
+        hQuarter.setStartWeek(startWeek);
+        hQuarter.setEndWeek(endWeek);
+        hQuarterDAO.saveOrUpdate(hQuarter);
+        return hQuarter;
+    }
+
+
+
 
 }

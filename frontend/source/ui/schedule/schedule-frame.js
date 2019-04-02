@@ -107,7 +107,7 @@ const hquarterUI = function(component, hquarter){
                 <tr>
                   <td>
                     <a href='#' onClick={()=>fireEvent('hquarter-modal', 'open', [hquarter])} style={isCurrentHquarter(hquarter)?{fontWeight: 'bold'}:{}}>
-                      {weekToString(hquarter.startWeek)}
+                      {hquarter.startWeek!=null?hquarter.startWeek.startDay:null} to {hquarter.endWeek!=null?hquarter.endWeek.endDay:null}
                     </a>
                   </td>
                 </tr>
