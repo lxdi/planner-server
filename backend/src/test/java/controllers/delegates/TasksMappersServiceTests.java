@@ -96,7 +96,6 @@ public class TasksMappersServiceTests extends SpringTestConfig {
     }
 
     @Test
-    @Ignore
     public void createTaskMappersTest_2(){
         final int numberOfTasks = 9;
         List<Task> tasks = new ArrayList<>();
@@ -118,6 +117,24 @@ public class TasksMappersServiceTests extends SpringTestConfig {
         assertTrue(taskMappers.size()==numberOfTasks);
         taskMappers.forEach(taskmapper -> assertTrue(taskmapper.getWeek().getId()!=weeks.get(0).getId()));
 
+        assertTrue(taskMappersDAO.taskMapperForTask(tasks.get(0)).getSlotPosition().getId()==slotPositions.get(0).getId());
+        assertTrue(taskMappersDAO.taskMapperForTask(tasks.get(0)).getWeek().getId()==weeks.get(1).getId());
+
+        checkTaskMapper(tasks, weeks, slotPositions, 0, 0, 1);
+        checkTaskMapper(tasks, weeks, slotPositions, 1, 1, 1);
+        checkTaskMapper(tasks, weeks, slotPositions, 2, 2, 1);
+        checkTaskMapper(tasks, weeks, slotPositions, 3, 0, 2);
+        checkTaskMapper(tasks, weeks, slotPositions, 4, 1, 2);
+        checkTaskMapper(tasks, weeks, slotPositions, 5, 2, 2);
+        checkTaskMapper(tasks, weeks, slotPositions, 6, 0, 3);
+        checkTaskMapper(tasks, weeks, slotPositions, 7, 1, 3);
+        checkTaskMapper(tasks, weeks, slotPositions, 8, 2, 3);
+
+    }
+
+    private void checkTaskMapper(List<Task> tasks, List<Week> weeks, List<SlotPosition> slotPositions, int itask,  int isp, int iw){
+        assertTrue(taskMappersDAO.taskMapperForTask(tasks.get(itask)).getSlotPosition().getId()==slotPositions.get(isp).getId());
+        assertTrue(taskMappersDAO.taskMapperForTask(tasks.get(itask)).getWeek().getId()==weeks.get(iw).getId());
     }
 
 }

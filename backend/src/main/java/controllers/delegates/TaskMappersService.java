@@ -97,13 +97,20 @@ public class TaskMappersService {
                 Collections.sort(slotPositions);
                 Task currentTask = !taskStack.isEmpty()? taskStack.pop():null;
                 for(int iw = 0; iw<weeks.size(); iw++){
-                    for(int isp = 0; isp<slotPositions.size()-ifMappingOnFullWeek(iw, fullWeekMappingUntil); isp++){
+                    int SPsToMapAmount = slotPositions.size()-ifMappingNotOnFullWeek(iw, fullWeekMappingUntil);
+                    for(int isp = 0; isp<SPsToMapAmount; isp++){
                         if(checkExclusions(weekidSPidsExclusions, weeks.get(iw), slotPositions.get(isp))){
                             fillTaskMapperForTask(currentTask, weeks.get(iw), slotPositions.get(isp));
                             currentTask = !taskStack.isEmpty()? taskStack.pop():null;
                             if(currentTask==null){
                                 iw=weeks.size();
                                 isp=slotPositions.size();
+                            }
+                        } else {
+                            if(SPsToMapAmount<slotPositions.size()){
+                                SPsToMapAmount++;
+                            } else {
+                                fullWeekMappingUntil++;
                             }
                         }
                     }
@@ -135,7 +142,7 @@ public class TaskMappersService {
         return true;
     }
 
-    private int ifMappingOnFullWeek(int weekNumFromZero, int atLeastTo){
+    private int ifMappingNotOnFullWeek(int weekNumFromZero, int atLeastTo){
         if(weekNumFromZero+1<=atLeastTo){
             return 0;
         } else {
