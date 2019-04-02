@@ -8,11 +8,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Stack;
 
 @Service
 @Transactional
 public class TaskMappersService {
+
+    private static final int OPTIMAL_TASKS_AMOUNT = 8;
 
     @Autowired
     ISlotDAO slotDAO;
@@ -60,7 +63,7 @@ public class TaskMappersService {
         int i=0;
         for(; i<layers.size() && i<slots.size(); i++){
             if(isFullReschedule || slots.get(i).getLayer()==null || slots.get(i).getLayer().getId()!=layers.get(i).getId()){
-                createTaskMappers(layers.get(i), slots.get(i));
+                createTaskMappers(layers.get(i), slots.get(i), null);
                 slots.get(i).setLayer(layers.get(i));
                 slotDAO.saveOrUpdate(slots.get(i));
             }
@@ -82,12 +85,11 @@ public class TaskMappersService {
         }
     }
 
-    private void createTaskMappers(Layer layerToMap, Slot slot){
-        int optimalTasks = 8;
+    public void createTaskMappers(Layer layerToMap, Slot slot, Map<Long, List<Long>> weekidSPidsExclusions){
         if(layerToMap!=null){
             List<Task> tasks = tasksDAO.tasksByLayer(layerToMap);
             Collections.sort(tasks);
-            int fullWeekMappingUntil = tasks.size()-optimalTasks;
+            int fullWeekMappingUntil = tasks.size()-OPTIMAL_TASKS_AMOUNT;
             if(tasks.size()>0) {
                 Stack<Task> taskStack = tasksInStack(tasks);
                 List<Week> weeks = weekDAO.weeksOfHquarter(slot.getHquarter());
@@ -96,23 +98,41 @@ public class TaskMappersService {
                 Task currentTask = !taskStack.isEmpty()? taskStack.pop():null;
                 for(int iw = 0; iw<weeks.size(); iw++){
                     for(int isp = 0; isp<slotPositions.size()-ifMappingOnFullWeek(iw, fullWeekMappingUntil); isp++){
-                        TaskMapper taskMapper = taskMappersDAO.taskMapperForTask(currentTask);
-                        if(taskMapper==null){
-                            taskMapper = new TaskMapper();
-                            taskMapper.setTask(currentTask);
-                        }
-                        taskMapper.setSlotPosition(slotPositions.get(isp));
-                        taskMapper.setWeek(weeks.get(iw));
-                        taskMappersDAO.saveOrUpdate(taskMapper);
-                        currentTask = !taskStack.isEmpty()? taskStack.pop():null;
-                        if(currentTask==null){
-                            iw=weeks.size();
-                            isp=slotPositions.size();
+                        if(checkExclusions(weekidSPidsExclusions, weeks.get(iw), slotPositions.get(isp))){
+                            fillTaskMapperForTask(currentTask, weeks.get(iw), slotPositions.get(isp));
+                            currentTask = !taskStack.isEmpty()? taskStack.pop():null;
+                            if(currentTask==null){
+                                iw=weeks.size();
+                                isp=slotPositions.size();
+                            }
                         }
                     }
                 }
             }
         }
+    }
+
+    private TaskMapper fillTaskMapperForTask(Task task, Week week, SlotPosition slotPosition){
+        TaskMapper taskMapper = taskMappersDAO.taskMapperForTask(task);
+        if(taskMapper==null){
+            taskMapper = new TaskMapper();
+            taskMapper.setTask(task);
+        }
+        taskMapper.setSlotPosition(slotPosition);
+        taskMapper.setWeek(week);
+        taskMappersDAO.saveOrUpdate(taskMapper);
+        return taskMapper;
+    }
+
+    private boolean checkExclusions(Map<Long, List<Long>> exclusions, Week week, SlotPosition slotPosition){
+        if(exclusions==null){
+            return true;
+        }
+        List<Long> spIds = exclusions.get(week.getId());
+        if(spIds!=null && spIds.contains(slotPosition.getId())){
+            return false;
+        }
+        return true;
     }
 
     private int ifMappingOnFullWeek(int weekNumFromZero, int atLeastTo){
