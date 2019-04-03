@@ -125,6 +125,14 @@ registerEvent('hquarters-dao', 'get-full', (stateSetter, id)=>{
 
 registerEvent('hquarters-dao', 'got-full', (stateSetter, hquarterfull)=>hquarterfull)
 
+registerEvent('hquarters-dao', 'push-tasks', (stateSetter, weekid, day)=>{
+  sendPost('/hquarter/push/tasks/week/'+weekid+'/on/day/'+day, ()=>{
+    fireEvent('hquarters-dao', 'tasks-pushed')
+  })
+})
+
+registerEvent('hquarters-dao', 'tasks-pushed', (stateSetter)=>{})
+
 
 const importHquarters = function(stateSetter, hquartersDto, isFull){
   var hquarters = viewStateVal('hquarters-dao', 'hquarters')

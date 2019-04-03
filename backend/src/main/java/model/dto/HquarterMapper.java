@@ -117,9 +117,9 @@ public class HquarterMapper {
     }
 
     private Map<String, Object> mapWeeksWithTasksDto(Week week, Map<Long, List<TaskMapper>> taskMappersByWeekId){
-        Map<String, Object> dto = new HashMap<>();
-        dto.put(STARTDAY_FIELD_TITLE, DateUtils.fromDate(week.getStartDay()));
-        dto.put(END_FIELD_TITLE, DateUtils.fromDate(week.getEndDay()));
+        Map<String, Object> dto = commonMapper.mapToDto(week);
+//        dto.put(STARTDAY_FIELD_TITLE, DateUtils.fromDate(week.getStartDay()));
+//        dto.put(END_FIELD_TITLE, DateUtils.fromDate(week.getEndDay()));
         dto.putIfAbsent(DAYS_FIELD_TITLE, new HashMap<>());
         if(taskMappersByWeekId.get(week.getId())!=null){
             for(TaskMapper taskMapper : taskMappersByWeekId.get(week.getId())){

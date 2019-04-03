@@ -1,5 +1,6 @@
 package controllers.delegates;
 
+import model.SortUtils;
 import model.dao.*;
 import model.entities.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,9 @@ public class TaskMappersService {
 
     @Autowired
     ITaskMappersDAO taskMappersDAO;
+
+    @Autowired
+    SortUtils sortUtils;
 
     public void unassignTasksForLayer(Layer layer){
         if(layer!=null) {
@@ -102,13 +106,13 @@ public class TaskMappersService {
     public void createTaskMappers(Layer layerToMap, Slot slot, Map<Long, List<Long>> weekidSPidsExclusions){
         if(layerToMap!=null){
             List<Task> tasks = tasksDAO.tasksByLayer(layerToMap);
-            Collections.sort(tasks);
+            sortUtils.sortTasks(tasks);
             int fullWeekMappingUntil = tasks.size()-OPTIMAL_TASKS_AMOUNT;
             if(tasks.size()>0) {
                 Stack<Task> taskStack = tasksInStack(tasks);
                 List<Week> weeks = weekDAO.weeksOfHquarter(slot.getHquarter());
                 List<SlotPosition> slotPositions = slotDAO.getSlotPositionsForSlot(slot);
-                Collections.sort(slotPositions);
+                sortUtils.sortSlotPositions(slotPositions);
                 Task currentTask = !taskStack.isEmpty()? taskStack.pop():null;
                 for(int iw = 0; iw<weeks.size(); iw++){
                     int SPsToMapAmount = slotPositions.size()-ifMappingNotOnFullWeek(iw, fullWeekMappingUntil);

@@ -44,8 +44,12 @@ const getDaysOfWeekUI = function(currentweek){
   const result = []
   var offset = 0
   for(var dayOfWeekidx in week){
+    const day = week[dayOfWeekidx]
     result.push(<td key={"dayofweek_"+dayOfWeekidx} style={{borderRight:'1px solid lightgrey', width:'12%', fontWeight:isCurrentDay(currentweek, offset)?'bold':null}}>
-                  <div style={{borderBottom: borderStyle, fontStyle: 'italic'}}>{weekFullName[week[dayOfWeekidx]]}</div>
+                  <div style={{borderBottom: borderStyle, fontStyle: 'italic'}}>
+                    {weekFullName[week[dayOfWeekidx]]}
+                    <a href='#' onClick={()=>fireEvent('hquarters-dao', 'push-tasks', [currentweek.id, day])}> (push)</a>
+                  </div>
                 </td>)
     offset++
   }

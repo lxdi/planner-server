@@ -11,7 +11,7 @@ import java.util.Set;
  */
 
 @Entity
-public class Task implements Comparable<Task>{
+public class Task{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -67,36 +67,4 @@ public class Task implements Comparable<Task>{
         this.position = position;
     }
 
-//    public Set<Topic> getTopics() {
-//        return topics;
-//    }
-//    public void setTopics(Set<Topic> topics) {
-//        this.topics = topics;
-//    }
-//
-//    public Set<TaskTesting> getTestings() {
-//        return testings;
-//    }
-//    public void setTestings(Set<TaskTesting> testings) {
-//        this.testings = testings;
-//    }
-
-    @Override
-    public int compareTo(Task task) {
-        if(this.subject.getPosition()>task.subject.getPosition()){
-            return 1;
-        }
-        if(this.subject.getPosition()<task.subject.getPosition()){
-            return -1;
-        }
-        if(this.subject.getPosition()==task.subject.getPosition()){
-            if(this.position>task.position){
-                return 1;
-            }
-            if(this.position<task.position){
-                return -1;
-            }
-        }
-        return 0;
-    }
 }

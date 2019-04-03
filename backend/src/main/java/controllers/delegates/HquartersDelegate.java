@@ -48,9 +48,6 @@ public class HquartersDelegate {
     HquarterMapper hquarterMapper;
 
     @Autowired
-    IWeekDAO weekDAO;
-
-    @Autowired
     ITaskMappersDAO taskMappersDAO;
 
     public List<Map<String, Object>> getAllQuarters(){
