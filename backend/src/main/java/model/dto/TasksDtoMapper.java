@@ -15,7 +15,7 @@ import java.util.Map;
 
 @Service
 @Transactional
-public class TasksMapperService {
+public class TasksDtoMapper {
 
     @Autowired
     CommonMapper commonMapper;

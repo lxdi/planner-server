@@ -91,4 +91,10 @@ public class HquartersRESTController {
         return new ResponseEntity<>(hquartersDelegate.setDefault(hquarterDtoLazy), HttpStatus.OK);
     }
 
+    @RequestMapping(path="/push/tasks/week/{weekid}/on/day/{dayOfWeekShort}", method = RequestMethod.POST)
+    public ResponseEntity<Map<String, Object>> pushTask(@PathVariable("weekid") long weekid, @PathVariable("dayOfWeekShort") String dayOfWeekShort){
+        hquartersDelegate.pushTasks(weekid, dayOfWeekShort);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
 }

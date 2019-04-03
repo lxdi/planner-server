@@ -1,6 +1,7 @@
 package services;
 
 import com.sogoodlabs.common_mapper.CommonMapper;
+import model.entities.DaysOfWeek;
 import model.entities.Subject;
 import model.entities.Task;
 import org.junit.Test;
@@ -50,6 +51,11 @@ public class StringUtilsTests {
         task.setSubject(subject);
 
         assertTrue((long)StringUtils.getValue(task, "subject.id")==543543);
+    }
+
+    @Test
+    public void daysOfWeekTests(){
+        assertTrue(DaysOfWeek.mon == DaysOfWeek.valueOf("mon"));
     }
 
 }

@@ -132,6 +132,32 @@ public class TasksMappersServiceTests extends SpringTestConfig {
 
     }
 
+    @Test
+    public void rescheduleTaskMappersTest(){
+        final int numberOfTasks = 9;
+        List<Task> tasks = new ArrayList<>();
+        for(int i = 0; i<numberOfTasks;i++){
+            tasks.add(testCreators.createTask(subject));
+        }
+        taskMappersService.createTaskMappers(layer, slot, null);
+
+        taskMappersService.rescheduleTaskMappers(weeks.get(0).getId(), "fri");
+
+        List<TaskMapper> taskMappers = taskMappersDAO.taskMappersByWeeksAndSlotPositions(
+                weeks, Arrays.asList(slotPositions.get(0), slotPositions.get(1), slotPositions.get(2))
+        );
+
+        checkTaskMapper(tasks, weeks, slotPositions, 0, 0, 0);
+        checkTaskMapper(tasks, weeks, slotPositions, 1, 2, 0);
+        checkTaskMapper(tasks, weeks, slotPositions, 2, 0, 1);
+        checkTaskMapper(tasks, weeks, slotPositions, 3, 1, 1);
+        checkTaskMapper(tasks, weeks, slotPositions, 4, 2, 1);
+        checkTaskMapper(tasks, weeks, slotPositions, 5, 0, 2);
+        checkTaskMapper(tasks, weeks, slotPositions, 6, 1, 2);
+        checkTaskMapper(tasks, weeks, slotPositions, 7, 0, 3);
+        checkTaskMapper(tasks, weeks, slotPositions, 8, 1, 3);
+    }
+
     private void checkTaskMapper(List<Task> tasks, List<Week> weeks, List<SlotPosition> slotPositions, int itask,  int isp, int iw){
         assertTrue(taskMappersDAO.taskMapperForTask(tasks.get(itask)).getSlotPosition().getId()==slotPositions.get(isp).getId());
         assertTrue(taskMappersDAO.taskMapperForTask(tasks.get(itask)).getWeek().getId()==weeks.get(iw).getId());

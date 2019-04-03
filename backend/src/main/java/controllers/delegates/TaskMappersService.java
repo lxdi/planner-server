@@ -6,10 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Stack;
+import java.util.*;
 
 @Service
 @Transactional
@@ -82,6 +79,23 @@ public class TaskMappersService {
                     slotDAO.saveOrUpdate(slots.get(j));
                 }
             }
+        }
+    }
+
+    public void rescheduleTaskMappers(long weekid, String dayOfWeekShort){
+        //TODO validate pushing
+        Week week = weekDAO.getById(weekid);
+        DaysOfWeek dayOfWeek = DaysOfWeek.valueOf(dayOfWeekShort);
+        taskMappersDAO.byWeekAndDay(week, dayOfWeek).forEach(taskMapper -> {
+            Map<Long, List<Long>> exclusions = new HashMap<>();
+            exclusions.put(weekid, new ArrayList<>(Arrays.asList(taskMapper.getSlotPosition().getId())));
+            this.rescheduleTaskMappers(taskMapper.getSlotPosition().getSlot(), exclusions);
+        });
+    }
+
+    public void rescheduleTaskMappers(Slot slot, Map<Long, List<Long>> weekidSPidsExclusions){
+        if(slot!=null && slot.getLayer()!=null){
+            createTaskMappers(slot.getLayer(), slot, weekidSPidsExclusions);
         }
     }
 

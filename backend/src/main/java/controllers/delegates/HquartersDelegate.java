@@ -47,6 +47,12 @@ public class HquartersDelegate {
     @Autowired
     HquarterMapper hquarterMapper;
 
+    @Autowired
+    IWeekDAO weekDAO;
+
+    @Autowired
+    ITaskMappersDAO taskMappersDAO;
+
     public List<Map<String, Object>> getAllQuarters(){
         List<Map<String, Object>> result = new ArrayList<>();
         for(HQuarter hQuarter : quarterDAO.getAllHQuartals()){
@@ -56,14 +62,6 @@ public class HquartersDelegate {
     }
 
     public List<Map<String, Object>> getCurrentHquarters(){
-//        List<Map<String, Object>> result = new ArrayList<>();
-//        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
-//
-//        List<HQuarter> hQuarters = new ArrayList<>();
-//        hQuarters.addAll(getOrCreateHquarters(currentYear));
-//        removeFromHquartersListTillDate(hQuarters, DateUtils.currentDate());
-//        addNextYearHqsIfNeeded(hQuarters, currentYear);
-//
         List<Map<String, Object>> result = new ArrayList<>();
         List<HQuarter> hQuarters = getCurrentHquarters(DateUtils.currentDate());
         Map<Long, List<Slot>> slotsByHquarterId = new HashMap<>();
@@ -89,16 +87,6 @@ public class HquartersDelegate {
         return result;
     }
 
-    private void addNextYearHqsIfNeeded(List<HQuarter> hQuarters, int currentYear){
-        int hqsToAddAmount = TOTAL_NUMBER_OF_HQUARTER_IN_YEAR-hQuarters.size();
-        if(hqsToAddAmount>0){
-            List<HQuarter> nextYearHqs = getOrCreateHquarters(currentYear+1);
-            for(int i = 0; i<hqsToAddAmount; i++){
-                hQuarters.add(nextYearHqs.get(i));
-            }
-        }
-    }
-
     public void removeFromHquartersListTillDate(List<HQuarter> hQuarters, Date date){
         if(hQuarters!=null && hQuarters.size()>0){
             List<HQuarter> toRemove = new ArrayList<>();
@@ -121,26 +109,6 @@ public class HquartersDelegate {
 
     public List<Map<String, Object>> getHquartersFullCurrentYear(){
         return getHquartersForGivenYearsOffset(0);
-    }
-
-    private List<Map<String, Object>> getHquartersForGivenYearsOffset(int... offsets){
-        List<Map<String, Object>> result = new ArrayList<>();
-        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
-
-        List<HQuarter> hQuarters = new ArrayList<>();
-        Arrays.stream(offsets).forEach(offset -> hQuarters.addAll(getOrCreateHquarters(currentYear+offset)));
-
-        hQuarters.forEach(hq -> result.add(hquarterMapper.mapToDtoFull(hq)));
-        return result;
-    }
-
-    private List<HQuarter> getOrCreateHquarters(int year){
-        List<HQuarter> result = quarterDAO.getHQuartersInYear(year);
-        if(result.size()==0){
-            quarterGenerator.generateYear(year);
-            result = quarterDAO.getHQuartersInYear(year);
-        }
-        return result;
     }
 
     public Map<String, Object> get(long id){
@@ -213,6 +181,10 @@ public class HquartersDelegate {
         return result;
     }
 
+    public void pushTasks(long weekid, String dayOfWeekShort){
+        taskMappersService.rescheduleTaskMappers(weekid, dayOfWeekShort);
+    }
+
 
     private HQuarter saveHQuarter(Map<String, Object> hquarterDtoFull){
         HQuarter hQuarter = hquarterMapper.mapToEntity(hquarterDtoFull);
@@ -246,6 +218,36 @@ public class HquartersDelegate {
                 }
             }
         }
+    }
+
+    private void addNextYearHqsIfNeeded(List<HQuarter> hQuarters, int currentYear){
+        int hqsToAddAmount = TOTAL_NUMBER_OF_HQUARTER_IN_YEAR-hQuarters.size();
+        if(hqsToAddAmount>0){
+            List<HQuarter> nextYearHqs = getOrCreateHquarters(currentYear+1);
+            for(int i = 0; i<hqsToAddAmount; i++){
+                hQuarters.add(nextYearHqs.get(i));
+            }
+        }
+    }
+
+    private List<Map<String, Object>> getHquartersForGivenYearsOffset(int... offsets){
+        List<Map<String, Object>> result = new ArrayList<>();
+        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+
+        List<HQuarter> hQuarters = new ArrayList<>();
+        Arrays.stream(offsets).forEach(offset -> hQuarters.addAll(getOrCreateHquarters(currentYear+offset)));
+
+        hQuarters.forEach(hq -> result.add(hquarterMapper.mapToDtoFull(hq)));
+        return result;
+    }
+
+    private List<HQuarter> getOrCreateHquarters(int year){
+        List<HQuarter> result = quarterDAO.getHQuartersInYear(year);
+        if(result.size()==0){
+            quarterGenerator.generateYear(year);
+            result = quarterDAO.getHQuartersInYear(year);
+        }
+        return result;
     }
 
 }

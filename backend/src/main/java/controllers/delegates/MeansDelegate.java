@@ -4,7 +4,7 @@ import com.sogoodlabs.common_mapper.CommonMapper;
 import model.dao.*;
 import model.dto.BasicDtoValidator;
 import model.dto.MeansMapper;
-import model.dto.TasksMapperService;
+import model.dto.TasksDtoMapper;
 import model.entities.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -43,7 +43,7 @@ public class MeansDelegate {
     MeansMapper meansMapper;
 
     @Autowired
-    TasksMapperService tasksMapperService;
+    TasksDtoMapper tasksDtoMapper;
 
     @Autowired
     ITaskTestingDAO taskTestingDAO;
@@ -160,7 +160,7 @@ public class MeansDelegate {
             for(Map<String, Object> taskDto : tasksDto){
                 if(taskDto!=null) {
                     taskDto.putIfAbsent("subjectid", subjectid);
-                    Task task = tasksMapperService.mapToEntity(taskDto);
+                    Task task = tasksDtoMapper.mapToEntity(taskDto);
                     tasksDAO.saveOrUpdate(task);
                     saveTaskTopics((List<Map<String, Object>>) taskDto.get("topics"), task.getId());
                     saveTaskTestings((List<Map<String, Object>>) taskDto.get("testings"), task.getId());

@@ -43,10 +43,7 @@ public class HquarterMapper {
     TaskMapperDao taskMapperDao;
 
     @Autowired
-    TasksMapperService tasksMapperService;
-
-    @Autowired
-    IWeekDAO weekDAO;
+    TasksDtoMapper tasksDtoMapper;
 
     public Map<String, Object> mapToDtoLazy(HQuarter hQuarter){
         return mapToDtoLazy(hQuarter, slotDAO.getSlotsForHquarter(hQuarter));
@@ -88,6 +85,16 @@ public class HquarterMapper {
         return hQuarter;
     }
 
+    /** Add weeks field, that's list of
+     * {
+     *     startDay: startDay of week,
+     *     endDay: endDay of week,
+     *     days: List of {
+     *         dayOfWeek: List of {task Dto Full}
+     *     }
+     * }
+     *
+     * */
     private void fillWeekWithTasks(Map<String, Object> dto, HQuarter entity){
         if(entity.getStartWeek()!=null && entity.getEndWeek()!=null) {
             List<Week> weeks = weekDao.weeksOfHquarter(entity);
@@ -118,7 +125,7 @@ public class HquarterMapper {
             for(TaskMapper taskMapper : taskMappersByWeekId.get(week.getId())){
                 ((Map)dto.get(DAYS_FIELD_TITLE)).putIfAbsent(taskMapper.getSlotPosition().getDayOfWeek().name(), new ArrayList<>());
                 ((List)((Map)dto.get(DAYS_FIELD_TITLE)).get(taskMapper.getSlotPosition().getDayOfWeek().name()))
-                        .add(tasksMapperService.mapToDtoFull(taskMapper.getTask()));
+                        .add(tasksDtoMapper.mapToDtoFull(taskMapper.getTask()));
             }
         }
         return dto;
