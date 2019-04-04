@@ -143,6 +143,14 @@ public class TestCreators {
         return createWeek(DateUtils.toDate(start), DateUtils.toDate(end));
     }
 
+    public MapperExclusion createMapperExclusion(Week week, SlotPosition slotPosition){
+        MapperExclusion mapperExclusion = new MapperExclusion();
+        mapperExclusion.setWeek(week);
+        mapperExclusion.setSlotPosition(slotPosition);
+        save(mapperExclusion);
+        return mapperExclusion;
+    }
+
     public void save(Object object){
         Session session = sessionFactory.openSession();
         session.beginTransaction();
