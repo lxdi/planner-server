@@ -95,21 +95,23 @@ public class TaskMappersService {
         DaysOfWeek dayOfWeek = DaysOfWeek.valueOf(dayOfWeekShort);
         Set<SlotPosition> slotPositions = new HashSet<>();
         Set<Slot> slots = new HashSet<>();
-        Map<Slot, Layer> slotsAndLayers = new HashMap<>();
         taskMappersDAO.byWeekAndDay(week, dayOfWeek).forEach(tm -> {
             slotPositions.add(tm.getSlotPosition());
             slots.add(tm.getSlotPosition().getSlot());
         });
-        slotPositions.forEach(sp -> {
-            MapperExclusion mapperExclusion = mapperExclusionDAO.getByWeekBySP(week, sp);
-            if(mapperExclusion==null){
-                mapperExclusion = new MapperExclusion();
-                mapperExclusion.setWeek(week);
-                mapperExclusion.setSlotPosition(sp);
-                mapperExclusionDAO.save(mapperExclusion);
-            }
-        });
+        slotPositions.forEach(sp -> getOrCreateMapperExclusion(week, sp));
         slots.forEach(slot -> createTaskMappers(slot.getLayer(), slot));
+    }
+
+    private MapperExclusion getOrCreateMapperExclusion(Week week, SlotPosition sp){
+        MapperExclusion mapperExclusion = mapperExclusionDAO.getByWeekBySP(week, sp);
+        if(mapperExclusion==null){
+            mapperExclusion = new MapperExclusion();
+            mapperExclusion.setWeek(week);
+            mapperExclusion.setSlotPosition(sp);
+            mapperExclusionDAO.save(mapperExclusion);
+        }
+        return mapperExclusion;
     }
 
     public void createTaskMappers(Layer layerToMap, Slot slot){
@@ -131,6 +133,7 @@ public class TaskMappersService {
                             fillTaskMapperForTask(currentTask, weeks.get(iw), slotPositions.get(isp));
                             currentTask = !taskStack.isEmpty()? taskStack.pop():null;
                             if(currentTask==null){
+                                //exit all loops and complete
                                 iw=weeks.size();
                                 isp=slotPositions.size();
                             }
