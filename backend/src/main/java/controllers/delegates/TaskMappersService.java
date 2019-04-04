@@ -33,6 +33,9 @@ public class TaskMappersService {
     @Autowired
     SortUtils sortUtils;
 
+    @Autowired
+    IMapperExclusionDAO mapperExclusionDAO;
+
     public void unassignTasksForLayer(Layer layer){
         if(layer!=null) {
             List<Task> tasks = tasksDAO.tasksByLayer(layer);
@@ -64,7 +67,7 @@ public class TaskMappersService {
         int i=0;
         for(; i<layers.size() && i<slots.size(); i++){
             if(isFullReschedule || slots.get(i).getLayer()==null || slots.get(i).getLayer().getId()!=layers.get(i).getId()){
-                createTaskMappers(layers.get(i), slots.get(i), null);
+                createTaskMappers(layers.get(i), slots.get(i));
                 slots.get(i).setLayer(layers.get(i));
                 slotDAO.saveOrUpdate(slots.get(i));
             }
@@ -90,20 +93,26 @@ public class TaskMappersService {
         //TODO validate pushing
         Week week = weekDAO.getById(weekid);
         DaysOfWeek dayOfWeek = DaysOfWeek.valueOf(dayOfWeekShort);
-        taskMappersDAO.byWeekAndDay(week, dayOfWeek).forEach(taskMapper -> {
-            Map<Long, List<Long>> exclusions = new HashMap<>();
-            exclusions.put(weekid, new ArrayList<>(Arrays.asList(taskMapper.getSlotPosition().getId())));
-            this.rescheduleTaskMappers(taskMapper.getSlotPosition().getSlot(), exclusions);
+        Set<SlotPosition> slotPositions = new HashSet<>();
+        Set<Slot> slots = new HashSet<>();
+        Map<Slot, Layer> slotsAndLayers = new HashMap<>();
+        taskMappersDAO.byWeekAndDay(week, dayOfWeek).forEach(tm -> {
+            slotPositions.add(tm.getSlotPosition());
+            slots.add(tm.getSlotPosition().getSlot());
         });
+        slotPositions.forEach(sp -> {
+            MapperExclusion mapperExclusion = mapperExclusionDAO.getByWeekBySP(week, sp);
+            if(mapperExclusion==null){
+                mapperExclusion = new MapperExclusion();
+                mapperExclusion.setWeek(week);
+                mapperExclusion.setSlotPosition(sp);
+                mapperExclusionDAO.save(mapperExclusion);
+            }
+        });
+        slots.forEach(slot -> createTaskMappers(slot.getLayer(), slot));
     }
 
-    public void rescheduleTaskMappers(Slot slot, Map<Long, List<Long>> weekidSPidsExclusions){
-        if(slot!=null && slot.getLayer()!=null){
-            createTaskMappers(slot.getLayer(), slot, weekidSPidsExclusions);
-        }
-    }
-
-    public void createTaskMappers(Layer layerToMap, Slot slot, Map<Long, List<Long>> weekidSPidsExclusions){
+    public void createTaskMappers(Layer layerToMap, Slot slot){
         if(layerToMap!=null){
             List<Task> tasks = tasksDAO.tasksByLayer(layerToMap);
             sortUtils.sortTasks(tasks);
@@ -113,11 +122,12 @@ public class TaskMappersService {
                 List<Week> weeks = weekDAO.weeksOfHquarter(slot.getHquarter());
                 List<SlotPosition> slotPositions = slotDAO.getSlotPositionsForSlot(slot);
                 sortUtils.sortSlotPositions(slotPositions);
+                List<MapperExclusion> exclusions = mapperExclusionDAO.getByWeeksBySPs(weeks, slotPositions);
                 Task currentTask = !taskStack.isEmpty()? taskStack.pop():null;
                 for(int iw = 0; iw<weeks.size(); iw++){
                     int SPsToMapAmount = slotPositions.size()-ifMappingNotOnFullWeek(iw, fullWeekMappingUntil);
                     for(int isp = 0; isp<SPsToMapAmount; isp++){
-                        if(checkExclusions(weekidSPidsExclusions, weeks.get(iw), slotPositions.get(isp))){
+                        if(checkExclusions(exclusions, weeks.get(iw), slotPositions.get(isp))){
                             fillTaskMapperForTask(currentTask, weeks.get(iw), slotPositions.get(isp));
                             currentTask = !taskStack.isEmpty()? taskStack.pop():null;
                             if(currentTask==null){
@@ -149,13 +159,14 @@ public class TaskMappersService {
         return taskMapper;
     }
 
-    private boolean checkExclusions(Map<Long, List<Long>> exclusions, Week week, SlotPosition slotPosition){
-        if(exclusions==null){
+    private boolean checkExclusions(List<MapperExclusion> exclusions, Week week, SlotPosition slotPosition){
+        if(exclusions==null || exclusions.size()==0){
             return true;
         }
-        List<Long> spIds = exclusions.get(week.getId());
-        if(spIds!=null && spIds.contains(slotPosition.getId())){
-            return false;
+        for(MapperExclusion me : exclusions){
+            if(me.getWeek().getId()==week.getId() && me.getSlotPosition().getId() == slotPosition.getId()) {
+                return false;
+            }
         }
         return true;
     }

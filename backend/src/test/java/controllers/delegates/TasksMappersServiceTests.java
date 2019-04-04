@@ -79,12 +79,11 @@ public class TasksMappersServiceTests extends SpringTestConfig {
             tasks.add(testCreators.createTask(subject));
         }
 
-        Map<Long, List<Long>> exclusions = new HashMap<>();
-        List<Long> spIds = new ArrayList<>();
-        slotPositions.forEach(sp -> spIds.add(sp.getId()));
-        exclusions.put(weeks.get(0).getId(), spIds);
+        testCreators.createMapperExclusion(weeks.get(0), slotPositions.get(0));
+        testCreators.createMapperExclusion(weeks.get(0), slotPositions.get(1));
+        testCreators.createMapperExclusion(weeks.get(0), slotPositions.get(2));
 
-        taskMappersService.createTaskMappers(layer, slot, exclusions);
+        taskMappersService.createTaskMappers(layer, slot);
 
         List<TaskMapper> taskMappers = taskMappersDAO.taskMappersByWeeksAndSlotPositions(
                 weeks, Arrays.asList(slotPositions.get(0), slotPositions.get(1), slotPositions.get(2))
@@ -103,12 +102,12 @@ public class TasksMappersServiceTests extends SpringTestConfig {
             tasks.add(testCreators.createTask(subject));
         }
 
-        Map<Long, List<Long>> exclusions = new HashMap<>();
-        List<Long> spIds = new ArrayList<>();
-        slotPositions.forEach(sp -> spIds.add(sp.getId()));
-        exclusions.put(weeks.get(0).getId(), spIds);
 
-        taskMappersService.createTaskMappers(layer, slot, exclusions);
+        testCreators.createMapperExclusion(weeks.get(0), slotPositions.get(0));
+        testCreators.createMapperExclusion(weeks.get(0), slotPositions.get(1));
+        testCreators.createMapperExclusion(weeks.get(0), slotPositions.get(2));
+
+        taskMappersService.createTaskMappers(layer, slot);
 
         List<TaskMapper> taskMappers = taskMappersDAO.taskMappersByWeeksAndSlotPositions(
                 weeks, Arrays.asList(slotPositions.get(0), slotPositions.get(1), slotPositions.get(2))
@@ -139,7 +138,7 @@ public class TasksMappersServiceTests extends SpringTestConfig {
         for(int i = 0; i<numberOfTasks;i++){
             tasks.add(testCreators.createTask(subject));
         }
-        taskMappersService.createTaskMappers(layer, slot, null);
+        taskMappersService.createTaskMappers(layer, slot);
 
         taskMappersService.rescheduleTaskMappers(weeks.get(0).getId(), "fri");
 

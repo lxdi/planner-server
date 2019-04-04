@@ -16,6 +16,11 @@ public class MapperExclusionDAOimpl implements IMapperExclusionDAO {
     SessionFactory sessionFactory;
 
     @Override
+    public void save(MapperExclusion me) {
+        this.sessionFactory.getCurrentSession().saveOrUpdate(me);
+    }
+
+    @Override
     public MapperExclusion findOne(long id) {
         return sessionFactory.getCurrentSession().get(MapperExclusion.class, id);
     }
