@@ -100,10 +100,28 @@ const getSlotsUI = function(component, hquarter){
                     onDragStart={()=>fireEvent('hquarters-dao', 'add-draggable', [hquarter, slot])}
                     onDragEnd={()=>fireEvent('hquarters-dao', 'remove-draggable')}
                     style={component.state.mode.isEdit?{border: '1px dotted lightgrey', padding:'3px', borderRadius:'10px'}:null}>
-                      Slot {slot.position}
+                      Slot {slot.position}{getAssignedMean(slot)}
                     </div>)
   }
   return result
+}
+
+const getAssignedMean = function(slot){
+  if(slot.meanid!=null){
+    const mean = getFromMappedRepByid(viewStateVal('means-dao', 'means'), slot.meanid)
+    return ' - ' + mean.title
+  }
+}
+
+export const getFromMappedRepByid = function(rep, sid){
+  for(var superid in rep){
+    for(var id in rep[superid]){
+      if(rep[superid][id].id === sid){
+        return rep[superid][id]
+      }
+    }
+  }
+  return null
 }
 
 const week = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']
@@ -133,40 +151,6 @@ const weekMappingTable = function(hquarter){
   }
   return days
 }
-
-// const weeksWithTasksUI = function(hquarter){
-//   const borderStyle = '1px solid lightgrey'
-//   const result = []
-//   if(hquarter.weeks!=null && hquarter.weeks.length>0){
-//     for(var i in hquarter.weeks){
-//       const weekUI = []
-//       weekUI.push(<td style={isCurrentWeek(hquarter.weeks, i)?{fontWeight:'bold'}:{}}>{hquarter.weeks[i].startDay}</td>)
-//       for(var dayOfWeekidx in week){
-//         const weekDayUI = []
-//         weekDayUI.push(<div style={{borderBottom: borderStyle, fontStyle: 'italic'}}>{weekFullName[week[dayOfWeekidx]]}</div>)
-//         if(hquarter.weeks[i].days!=null && hquarter.weeks[i].days[week[dayOfWeekidx]]!=null){
-//           for(var taskidx in hquarter.weeks[i].days[week[dayOfWeekidx]]){
-//             const task = hquarter.weeks[i].days[week[dayOfWeekidx]][taskidx]
-//             weekDayUI.push(<li>
-//                             <a href='#' onClick={()=>fireEvent('task-modal', 'open', [null, task, true])}>{task.title}</a>
-//                           </li>)
-//           }
-//         }
-//         weekUI.push(<td style={{padding:'3px', border: borderStyle, verticalAlign: 'top'}}>{weekDayUI}</td>)
-//       }
-//       result.push(<table style={{borderCollapse:'collapse', border: borderStyle}}><tr>{weekUI}</tr></table>)
-//     }
-//   }
-//   return result
-// }
-
-
-// const slotInCellUI = function(hquarter, day, position){
-//   const pos =
-//   if(pos!=null){
-//     return pos.slot.position
-//   }
-// }
 
 const formatDateNumber = function(num){
   if(num<10){
