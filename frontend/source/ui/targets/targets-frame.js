@@ -5,7 +5,7 @@ import {Button, FormGroup, ControlLabel, FormControl, ListGroup, ListGroupItem, 
 import {CreateTarget, CreateRealm} from './../../data/creators'
 import {TargetModal} from './target-modal'
 import {RealmModal} from './realm-modal'
-import {registerEvent, registerReaction, fireEvent, viewStateVal} from '../../controllers/eventor'
+import {registerEvent, registerReaction, fireEvent, viewStateVal} from 'absevent'
 import {TreeComponent} from './../components/tree-component'
 
 export class TargetsFrame extends React.Component{

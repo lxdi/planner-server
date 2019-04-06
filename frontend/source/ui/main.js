@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {Button} from 'react-bootstrap'
 
-import {registerEvent, registerReaction, fireEvent, viewStateVal, registerObject} from '../controllers/eventor'
+import {registerEvent, registerReaction, fireEvent, viewStateVal, registerObject} from 'absevent'
 
 import {Frame} from './frame';
 //import {SwitchButton} from './changebutton';

@@ -1,6 +1,6 @@
 //import $ from 'jquery'
 import {sendGet, sendPut, sendPost, sendDelete} from './postoffice'
-import {registerEvent, registerReaction, fireEvent, viewStateVal} from '../controllers/eventor'
+import {registerEvent, registerReaction, fireEvent, viewStateVal} from 'absevent'
 import {deleteNode} from '../utils/import-utils'
 
 registerEvent('targets-dao', 'create', function(stateSetter, target, parent){

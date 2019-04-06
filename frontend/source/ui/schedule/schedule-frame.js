@@ -5,7 +5,7 @@ import {Button, Table, ButtonGroup} from 'react-bootstrap'
 import {CurrentDate} from './../../state'
 import {HquarterModal} from './hquarter-modal'
 import {BigMapModal} from './big-map-modal'
-import {registerEvent, registerReaction, fireEvent, viewStateVal} from '../../controllers/eventor'
+import {registerEvent, registerReaction, fireEvent, viewStateVal} from 'absevent'
 
 import {BidirectList} from '../components/bidirect-list'
 

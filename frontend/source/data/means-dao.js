@@ -1,6 +1,6 @@
 import {sendGet, sendPut, sendPost, sendDelete} from './postoffice'
 import {Protomean} from './creators'
-import {registerEvent, registerReaction, fireEvent, viewStateVal, registerReactionCombo} from '../controllers/eventor'
+import {registerEvent, registerReaction, fireEvent, viewStateVal, registerReactionCombo} from 'absevent'
 import {getMaxVal} from '../utils/import-utils'
 import {addToLastLL} from '../utils/linked-list'
 import {replaceDraggableUtil, addAsChildDraggableUtil, mergeArrays} from '../utils/draggable-tree-utils'

@@ -1,4 +1,4 @@
-import {registerEvent, registerReaction, fireEvent, viewStateVal} from '../controllers/eventor'
+import {registerEvent, registerReaction, fireEvent, viewStateVal} from 'absevent'
 import {sendGet} from './postoffice'
 
 const repName = 'rep-plans-dao'

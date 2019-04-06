@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom';
 import {CreateMean} from './../../data/creators'
 import {Button, ButtonGroup, ButtonToolbar,  DropdownButton, MenuItem, ListGroup, ListGroupItem} from 'react-bootstrap'
 import {MeanModal} from './mean-modal'
-import {registerEvent, registerReaction, fireEvent, viewStateVal} from '../../controllers/eventor'
+import {registerEvent, registerReaction, fireEvent, viewStateVal} from 'absevent'
 import {TreeComponent} from './../components/tree-component'
 import {SubjectModal} from './subject-modal'
 import {TaskModal} from './task-modal'

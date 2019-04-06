@@ -1,4 +1,4 @@
-import {registerEvent, registerReaction, fireEvent, viewStateVal} from '../controllers/eventor'
+import {registerEvent, registerReaction, fireEvent, viewStateVal} from 'absevent'
 import {insertObj, deleteObj, swapObjs} from '../utils/drag-utils'
 import {sendDelete} from './postoffice'
 

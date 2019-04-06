@@ -1,6 +1,6 @@
 //import $ from 'jquery'
 import {sendGet, sendPost} from './postoffice'
-import {registerObject, registerEvent, registerReaction, fireEvent, viewStateVal} from '../controllers/eventor'
+import {registerObject, registerEvent, registerReaction, fireEvent, viewStateVal} from 'absevent'
 
 import {normalizeInnerArrays, getMaxVal} from '../utils/import-utils'
 import {findSlotInPosition} from '../utils/hquarters-utils'
