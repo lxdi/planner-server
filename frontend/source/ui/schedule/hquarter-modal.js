@@ -36,6 +36,11 @@ export class HquarterModal extends React.Component {
       this.setState(defaultState())
     })
     registerReaction('hquarter-modal', 'hquarters-dao', ['add-slot', 'assign-slot', 'got-full', 'default-received'], (stateSetter)=>this.setState({}))
+    registerReaction('hquarter-modal', 'hquarters-dao', ['tasks-pushed'], (ss)=>{
+      console.log('reload hquarter')
+        this.state.hquarter.isFull = false
+        this.setState({})
+    })
   }
 
   okButton(){
