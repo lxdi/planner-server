@@ -1,13 +1,13 @@
 //import $ from 'jquery'
 import {sendGet, sendPut, sendPost, sendDelete} from './postoffice'
-import {registerEvent, registerReaction, fireEvent, viewStateVal} from 'absevent'
+import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevent'
 import {deleteNode} from '../utils/import-utils'
 
 registerEvent('targets-dao', 'create', function(stateSetter, target, parent){
   target.parentid = parent!=null? parent.id: null
   sendPut('/target/create', JSON.stringify(target), function(data) {
     if(data.previd!=null){
-      viewStateVal('targets-dao', 'targets')[data.realmid][data.previd].nextid = data.id
+      chkSt('targets-dao', 'targets')[data.realmid][data.previd].nextid = data.id
     }
     importOneTargetDto(data)
     resolveTarget(data)
@@ -19,8 +19,8 @@ registerEvent('targets-dao', 'target-created', (stateSetter, target)=>target)
 
 registerEvent('targets-dao', 'delete', function(stateSetter, target){
   sendDelete('/target/delete/'+target.id, function() {
-    deleteNode(viewStateVal('targets-dao', 'targets')[target.realmid], target)
-    //delete viewStateVal('targets-dao', 'targets')[target.realmid][id]
+    deleteNode(chkSt('targets-dao', 'targets')[target.realmid], target)
+    //delete chkSt('targets-dao', 'targets')[target.realmid][id]
     fireEvent('targets-dao', 'target-deleted', [target])
   })
 })
@@ -30,7 +30,7 @@ registerEvent('targets-dao', 'target-deleted', (stateSetter, target)=>target)
 registerEvent('targets-dao', 'modify', function(stateSetter, target){
   sendPost('/target/update', JSON.stringify(target), function(data) {
     importOneTargetDto(data)
-    resolveTarget(viewStateVal('targets-dao', 'targets')[data.realmid][data.id])
+    resolveTarget(chkSt('targets-dao', 'targets')[data.realmid][data.id])
     fireEvent('targets-dao', 'target-modified', [target])
   })
 })
@@ -51,7 +51,7 @@ registerEvent('targets-dao', 'modify-list', function(stateSetter, targets){
   sendPost('/target/update/list', JSON.stringify(targets), function(data) {
     for(var i in data){
       importOneTargetDto(data[i])
-      resolveTarget(viewStateVal('targets-dao', 'targets')[data[i].realmid][data[i].id])
+      resolveTarget(chkSt('targets-dao', 'targets')[data[i].realmid][data[i].id])
     }
     fireEvent('targets-dao', 'targets-list-modified', [data])
   })
@@ -88,18 +88,18 @@ const targetsuper = {
 }
 
 const importTargetsDto = function(stateSetter, targetsDto){
-  if(viewStateVal('targets-dao', 'targets')==null){
+  if(chkSt('targets-dao', 'targets')==null){
     stateSetter('targets', [])
   }
   for(var i in targetsDto){
     importOneTargetDto(targetsDto[i])
-    resolveTarget(viewStateVal('targets-dao', 'targets')[targetsDto[i].realmid][targetsDto[i].id])
+    resolveTarget(chkSt('targets-dao', 'targets')[targetsDto[i].realmid][targetsDto[i].id])
   }
   //resolveTargets();
 }
 
 const importOneTargetDto = function(targetDto){
-  const targets = viewStateVal('targets-dao', 'targets')
+  const targets = chkSt('targets-dao', 'targets')
   if(targets[targetDto.realmid]==null){
     targets[targetDto.realmid] = []
   }
@@ -111,5 +111,5 @@ const resolveTarget = function(target){
 }
 
 export var GetTargetById = function(id){
-  return viewStateVal('targets-dao', 'targets').id
+  return chkSt('targets-dao', 'targets').id
 }

@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {Button} from 'react-bootstrap'
 
-import {registerEvent, registerReaction, fireEvent, viewStateVal} from 'absevent'
+import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevent'
 
 export class LeftSideBarContent extends React.Component {
   constructor(props){
@@ -20,7 +20,7 @@ export class LeftSideBarContent extends React.Component {
 }
 
 const content = function(reactcomp){
-  const actualTasksMap = viewStateVal('tasks-dao', 'actual-tasks');
+  const actualTasksMap = chkSt('tasks-dao', 'actual-tasks');
   if(actualTasksMap==null){
     fireEvent('tasks-dao', 'actual-tasks-rq')
     return 'Loading...'
@@ -55,7 +55,7 @@ const divisor = function(){
 }
 
 const getSwitchButton = function(){
-  if(!viewStateVal('main-ui', 'three-frames')){
+  if(!chkSt('main-ui', 'three-frames')){
     return <div style={{margin:'2px', width:'45px', height:'45px'}}>
                     <button class="left-bar-button-switch" style={{fontSize:'8pt'}} onClick={()=>fireEvent('main-ui', 'switch-curr-state')}>Switch</button>
                   </div>
@@ -65,7 +65,7 @@ const getSwitchButton = function(){
 }
 
 const viewModeButtonLabel = function(){
-  if(!viewStateVal('main-ui', 'three-frames')){
+  if(!chkSt('main-ui', 'three-frames')){
     return ' |  | '
   } else {
     return <div>

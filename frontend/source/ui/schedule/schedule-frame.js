@@ -5,7 +5,7 @@ import {Button, Table, ButtonGroup} from 'react-bootstrap'
 import {CurrentDate} from './../../state'
 import {HquarterModal} from './hquarter-modal'
 import {BigMapModal} from './big-map-modal'
-import {registerEvent, registerReaction, fireEvent, viewStateVal} from 'absevent'
+import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevent'
 
 import {BidirectList} from '../components/bidirect-list'
 
@@ -31,14 +31,14 @@ export class ScheduleFrame extends React.Component{
         <HquarterModal/>
         <BigMapModal/>
         <ButtonGroup>
-          <Button bsStyle="primary" bsSize="xsmall" onClick={()=>fireEvent('hquarter-modal', 'open', [viewStateVal('hquarters-dao', 'default')])}>Default settings</Button>
+          <Button bsStyle="primary" bsSize="xsmall" onClick={()=>fireEvent('hquarter-modal', 'open', [chkSt('hquarters-dao', 'default')])}>Default settings</Button>
           <Button bsStyle="default" bsSize="xsmall" onClick={()=>fireEvent('big-map-modal', 'open')}>Big map</Button>
           <Button bsStyle="default" bsSize="xsmall" onClick={()=>fireEvent('schedule-frame', 'switch-edit-mode')}>{this.state.edit?'View': 'Edit'}</Button>
           {this.state.edit?<Button bsStyle="default" bsSize="xsmall" onClick={()=>loadPrevNextManually(this, 'prev')}>Load prev</Button>:null}
           {this.state.edit?<Button bsStyle="default" bsSize="xsmall" onClick={()=>loadPrevNextManually(this, 'next')}>Load next</Button>:null}
         </ButtonGroup>
         <div style={{height:'85vh', borderTop:'1px solid lightgrey', borderBottom:'1px solid lightgrey', marginTop:'3px'}}>
-          {viewStateVal('means-dao', 'means')!=null?hquartersUI(this):null}
+          {chkSt('means-dao', 'means')!=null?hquartersUI(this):null}
         </div>
       </div>
     )
@@ -47,7 +47,7 @@ export class ScheduleFrame extends React.Component{
 
 const loadPrevNextManually = function(component, type){
   if(type=='prev'){
-    loadPrev(viewStateVal('hquarters-dao', 'hquarters')[viewStateVal('hquarters-dao', 'firstHquarterId')])
+    loadPrev(chkSt('hquarters-dao', 'hquarters')[chkSt('hquarters-dao', 'firstHquarterId')])
   }
   if(type=='next'){
     loadNext(null)
@@ -55,8 +55,8 @@ const loadPrevNextManually = function(component, type){
 }
 
 const hquartersUI = function(component){
-  if(viewStateVal('hquarters-dao', 'hquarters') != null){
-    return <BidirectList firstNode={viewStateVal('hquarters-dao', 'hquarters')[viewStateVal('hquarters-dao', 'firstHquarterId')]}
+  if(chkSt('hquarters-dao', 'hquarters') != null){
+    return <BidirectList firstNode={chkSt('hquarters-dao', 'hquarters')[chkSt('hquarters-dao', 'firstHquarterId')]}
                           getNext = {(node, isExtend)=>getNextHandler(component, node, isExtend)}
                           getPrev = {(node)=>getPrevHandler(component, node)}
                           nodeView = {(node)=>hquarterUI(component, node)}
@@ -72,7 +72,7 @@ const getPrevHandler = function(component, node){
   if(node.id=='loading'){
     return null
   }
-  const prevNode = viewStateVal('hquarters-dao', 'hquarters')[node.previd]
+  const prevNode = chkSt('hquarters-dao', 'hquarters')[node.previd]
   if(prevNode==null){
     return loadPrev(node)
   }
@@ -85,7 +85,7 @@ const loadPrev = function(node){
 }
 
 const getNextHandler = function(component, node, isExtend){
-  const nextNode = viewStateVal('hquarters-dao', 'hquarters')[node.nextid]
+  const nextNode = chkSt('hquarters-dao', 'hquarters')[node.nextid]
   if(isExtend && nextNode==null){
     return loadNext(node)
   }
@@ -133,7 +133,7 @@ const getSlotsUI = function(component, hquarter){
 const getSlotView = function(component, slot){
   if(slot.meanid!=null){
     const mean = findMean(slot.meanid)
-    //const realm = viewStateVal('realms-dao', 'realms')[mean.realmid]
+    //const realm = chkSt('realms-dao', 'realms')[mean.realmid]
     return <tr key={slot.id}>
                     <td>
                       <a href='#' style={getStyleFroSlot(slot)}>{getSlotTitleWithMean(slot.meanid)}</a>
@@ -143,7 +143,7 @@ const getSlotView = function(component, slot){
   } else {
     return <tr key={slot.id}
                   onDragOver={(e)=>{e.preventDefault()}}
-                  onDrop={(e)=>fireEvent('hquarters-dao', 'assign-mean-to-slot', [viewStateVal('means-dao', 'draggableMean'), slot])}>
+                  onDrop={(e)=>fireEvent('hquarters-dao', 'assign-mean-to-slot', [chkSt('means-dao', 'draggableMean'), slot])}>
                     <td>
                         <span style={{color:'lightgrey'}}>Slot {slot.position}</span>
                         {assignMeanLink(component, slot)}
@@ -153,10 +153,10 @@ const getSlotView = function(component, slot){
 }
 
 const assignMeanLink = function(component, slot){
-  const draggableMean = viewStateVal('means-dao', 'draggableMean')
+  const draggableMean = chkSt('means-dao', 'draggableMean')
   if(component.state.edit && draggableMean!=null){
     return <a href='#' onClick={(e)=>{
-      fireEvent('hquarters-dao', 'assign-mean-to-slot', [viewStateVal('means-dao', 'draggableMean'), slot])
+      fireEvent('hquarters-dao', 'assign-mean-to-slot', [chkSt('means-dao', 'draggableMean'), slot])
     }}> Assign {draggableMean.title}</a>
   }
 }
@@ -178,12 +178,12 @@ const getStyleFroSlot = function(slot){
 
 const getSlotTitleWithMean = function(meanid){
   const mean = findMean(meanid)
-  const realm = viewStateVal('realms-dao', 'realms')[mean.realmid]
+  const realm = chkSt('realms-dao', 'realms')[mean.realmid]
   var chain = []
   var currMean = mean
   while(currMean!=null){
     chain.unshift(currMean.title)
-    currMean = viewStateVal('means-dao', 'means')[realm.id][currMean.parentid]
+    currMean = chkSt('means-dao', 'means')[realm.id][currMean.parentid]
   }
   var result = realm.title
   for(var i in chain){
@@ -193,8 +193,8 @@ const getSlotTitleWithMean = function(meanid){
 }
 
 const findMean = function(meanid){
-  for(var realmid in viewStateVal('means-dao', 'means')){
-    const means = viewStateVal('means-dao', 'means')[realmid]
+  for(var realmid in chkSt('means-dao', 'means')){
+    const means = chkSt('means-dao', 'means')[realmid]
     if(means[meanid]!=null){
       return means[meanid]
     }

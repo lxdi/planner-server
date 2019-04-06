@@ -1,6 +1,6 @@
 //import $ from 'jquery'
 import {sendGet} from './postoffice'
-import {registerEvent, registerReaction, fireEvent, viewStateVal} from 'absevent'
+import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevent'
 
 registerEvent('layers-dao', 'layers-request', (stateSetter, mean)=>{
   if(mean.id!=null && mean.id>0){

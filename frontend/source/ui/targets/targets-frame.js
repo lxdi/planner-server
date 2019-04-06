@@ -5,7 +5,7 @@ import {Button, FormGroup, ControlLabel, FormControl, ListGroup, ListGroupItem, 
 import {CreateTarget, CreateRealm} from './../../data/creators'
 import {TargetModal} from './target-modal'
 import {RealmModal} from './realm-modal'
-import {registerEvent, registerReaction, fireEvent, viewStateVal} from 'absevent'
+import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevent'
 import {TreeComponent} from './../components/tree-component'
 
 export class TargetsFrame extends React.Component{
@@ -41,14 +41,14 @@ export class TargetsFrame extends React.Component{
 }
 
 const realmsUI = function(component){
-  if(viewStateVal('realms-dao', 'realms')!=null){
-    if(viewStateVal('targets-dao', 'targets')!=null){
+  if(chkSt('realms-dao', 'realms')!=null){
+    if(chkSt('targets-dao', 'targets')!=null){
       const result = []
-      const realms = viewStateVal('realms-dao','realms')
+      const realms = chkSt('realms-dao','realms')
       for(var realmId in realms){
         const realmidConst = realmId
-        const isCurrentRealm = realms[realmidConst]==viewStateVal('realms-dao','currentRealm')
-        result.push(<ListGroupItem key={"realm_"+realmidConst+(realms[realmidConst]==viewStateVal('realms-dao','currentRealm')?"_current":"_notcurrent")}>
+        const isCurrentRealm = realms[realmidConst]==chkSt('realms-dao','currentRealm')
+        result.push(<ListGroupItem key={"realm_"+realmidConst+(realms[realmidConst]==chkSt('realms-dao','currentRealm')?"_current":"_notcurrent")}>
             <div>
               <h4 onClick={()=>fireEvent('realms-dao', 'change-current-realm', [realms[realmidConst]])}>
                 <input type="radio" autocomplete="off" checked={isCurrentRealm?"checked":null} style={{marginRight:'5px'}} />
@@ -80,7 +80,7 @@ const targetsUI = function(component){
 
 const getControlButtonsForTargets = function(component){
   const result = []
-  result.push(<Button bsStyle="success" bsSize="xsmall" onClick={()=>fireEvent('target-modal', 'open', [CreateTarget(0, '', viewStateVal('realms-dao','currentRealm').id)])}>
+  result.push(<Button bsStyle="success" bsSize="xsmall" onClick={()=>fireEvent('target-modal', 'open', [CreateTarget(0, '', chkSt('realms-dao','currentRealm').id)])}>
               {createNewTargetButtonTitle}
             </Button>)
   result.push(<Button bsStyle="default" bsSize="xsmall" onClick={()=>component.setState({isEdit: !component.state.isEdit})}>
@@ -91,10 +91,10 @@ const getControlButtonsForTargets = function(component){
 
 const targetsUIlist = function(component){
       var result = 'Loading...'
-      if(viewStateVal('realms-dao', 'currentRealm')!=null){
-        component.state.allNodes = viewStateVal('targets-dao', 'targets')[viewStateVal('realms-dao', 'currentRealm').id]
+      if(chkSt('realms-dao', 'currentRealm')!=null){
+        component.state.allNodes = chkSt('targets-dao', 'targets')[chkSt('realms-dao', 'currentRealm').id]
         result = <TreeComponent isEdit={component.state.isEdit}
-                  nodes={viewStateVal('targets-dao', 'targets')[viewStateVal('realms-dao', 'currentRealm').id]}
+                  nodes={chkSt('targets-dao', 'targets')[chkSt('realms-dao', 'currentRealm').id]}
                   viewCallback = {(target)=>targetUI(component, target)}
                   onDropCallback = {(alteredList)=>fireEvent('targets-dao', 'modify-list', [alteredList])}
                   rootStyle={{border:'1px solid lightgrey', borderRadius:'5px', marginBottom:'5px', padding:'3px'}}
@@ -108,7 +108,7 @@ const targetUI = function(component, target){
   const styleForLinks = {color:'darkgreen'}
   return <div style={target.parentid!=null?{borderLeft:'1px solid grey', paddingLeft:'3px'}:null}>
                     <a href="#" onClick={()=>fireEvent('target-modal', 'open', [target])} style={styleForLinks}>{target.title}</a>
-                    <a href="#" style = {{marginLeft:'3px', color:'darkgreen'}} onClick={()=>fireEvent('target-modal', 'open', [CreateTarget(0, '', viewStateVal('realms-dao', 'currentRealm').id, []), target])}>
+                    <a href="#" style = {{marginLeft:'3px', color:'darkgreen'}} onClick={()=>fireEvent('target-modal', 'open', [CreateTarget(0, '', chkSt('realms-dao', 'currentRealm').id, []), target])}>
                       {addNewTargetTitle}
                     </a>
                 </div>

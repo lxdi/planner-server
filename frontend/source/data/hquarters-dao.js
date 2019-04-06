@@ -1,6 +1,6 @@
 //import $ from 'jquery'
 import {sendGet, sendPost} from './postoffice'
-import {registerObject, registerEvent, registerReaction, fireEvent, viewStateVal} from 'absevent'
+import {registerObject, registerEvent, registerReaction, fireEvent, chkSt} from 'absevent'
 
 import {normalizeInnerArrays, getMaxVal} from '../utils/import-utils'
 import {findSlotInPosition} from '../utils/hquarters-utils'
@@ -34,7 +34,7 @@ registerEvent('hquarters-dao', 'hquarters-prev', (stateSetter, hquarter)=>{
 
 registerEvent('hquarters-dao', 'hquarters-next', (stateSetter, hquarter)=>{
   if(hquarter==null){
-    hquarter = viewStateVal('hquarters-dao', 'hquarters')[findLastHquarter(viewStateVal('hquarters-dao', 'hquarters'))]
+    hquarter = chkSt('hquarters-dao', 'hquarters')[findLastHquarter(chkSt('hquarters-dao', 'hquarters'))]
   }
   sendGet('/hquarter/next/'+hquarter.id + '/1', function(data) {
             importHquarters(stateSetter, data)
@@ -49,7 +49,7 @@ registerEvent('hquarters-dao', 'hquarters-next', (stateSetter, hquarter)=>{
 
 registerEvent('hquarters-dao', 'update', (stateSetter, hquarter)=>{
   sendPost('/hquarter/update', hquarter, (data)=>{
-    fireEvent('hquarters-dao', 'hquarter-modified', [Object.assign(viewStateVal('hquarters-dao', 'hquarters')[Date.parse(data.startWeek.startDay)], data)])
+    fireEvent('hquarters-dao', 'hquarter-modified', [Object.assign(chkSt('hquarters-dao', 'hquarters')[Date.parse(data.startWeek.startDay)], data)])
   })
 })
 registerEvent('hquarters-dao', 'hquarter-modified', (stateSetter, hquarter)=>hquarter)
@@ -64,13 +64,13 @@ registerEvent('hquarters-dao', 'add-draggable', (stateSetter, hquarter, slot, sl
 registerEvent('hquarters-dao', 'remove-draggable', (stateSetter)=>stateSetter('draggableSlot', null))
 
 registerEvent('hquarters-dao', 'assign-slot', (stateSetter, day, position)=>{
-  const slotPosition = viewStateVal('hquarters-dao', 'draggableSlot').slotPosition
+  const slotPosition = chkSt('hquarters-dao', 'draggableSlot').slotPosition
   if(slotPosition!=null){
     slotPosition.dayOfWeek = day
     slotPosition.position = position
   } else {
-    const hquarter = viewStateVal('hquarters-dao', 'draggableSlot').hquarter
-    const draggableSlot = viewStateVal('hquarters-dao', 'draggableSlot').slot
+    const hquarter = chkSt('hquarters-dao', 'draggableSlot').hquarter
+    const draggableSlot = chkSt('hquarters-dao', 'draggableSlot').slot
     if(draggableSlot!=null && findSlotInPosition(hquarter, day, position)==null
         && (draggableSlot.slotPositions==null || draggableSlot.slotPositions.length<3)){
       const slotPosition = {dayOfWeek: day, position: position}
@@ -98,18 +98,18 @@ registerEvent('hquarters-dao', 'unassign-mean', (stateSetter, slot)=>{
 
 registerEvent('hquarters-dao', 'request-for-default', (stateSetter)=>{
   sendGet('/hquarter/get/default', function(data){
-    Object.assign(viewStateVal('hquarters-dao', 'default'), data)
-    viewStateVal('hquarters-dao', 'default').isFull=true
-    fireEvent('hquarters-dao', 'default-received', [viewStateVal('hquarters-dao', 'default')])
+    Object.assign(chkSt('hquarters-dao', 'default'), data)
+    chkSt('hquarters-dao', 'default').isFull=true
+    fireEvent('hquarters-dao', 'default-received', [chkSt('hquarters-dao', 'default')])
   })
 })
 
 registerEvent('hquarters-dao', 'default-received', (hquarter)=>hquarter)
 
 registerEvent('hquarters-dao', 'update-default', (stateSetter)=>{
-  sendPost('/hquarter/set/default', JSON.stringify(viewStateVal('hquarters-dao', 'default')), (data)=>{
-    Object.assign(viewStateVal('hquarters-dao', 'default'), data)
-    viewStateVal('hquarters-dao', 'default').isFull=false
+  sendPost('/hquarter/set/default', JSON.stringify(chkSt('hquarters-dao', 'default')), (data)=>{
+    Object.assign(chkSt('hquarters-dao', 'default'), data)
+    chkSt('hquarters-dao', 'default').isFull=false
     fireEvent('hquarters-dao', 'hquarters-request')
   })
 })
@@ -118,8 +118,8 @@ registerEvent('hquarters-dao', 'get-full', (stateSetter, id)=>{
   sendGet('/hquarter/get/'+id, (hquarterfull)=>{
     hquarterfull.isFull=true
     const idDate = Date.parse(hquarterfull.startWeek.startDay)
-    Object.assign(viewStateVal('hquarters-dao', 'hquarters')[idDate], hquarterfull)
-    fireEvent('hquarters-dao', 'got-full', [viewStateVal('hquarters-dao', 'hquarters')[idDate]])
+    Object.assign(chkSt('hquarters-dao', 'hquarters')[idDate], hquarterfull)
+    fireEvent('hquarters-dao', 'got-full', [chkSt('hquarters-dao', 'hquarters')[idDate]])
   })
 })
 
@@ -135,7 +135,7 @@ registerEvent('hquarters-dao', 'tasks-pushed', (stateSetter)=>{})
 
 
 const importHquarters = function(stateSetter, hquartersDto, isFull){
-  var hquarters = viewStateVal('hquarters-dao', 'hquarters')
+  var hquarters = chkSt('hquarters-dao', 'hquarters')
   if(hquarters==null){
     hquarters = []
     stateSetter('hquarters', hquarters)
@@ -176,9 +176,9 @@ const importToArray = function(hquartersDto, hquarters, isFull){
 }
 
 const spliceIfBefore = function(last){
-  if(viewStateVal('hquarters-dao', 'firstHquarterId')!=null && Date.parse(last.startWeek.startDay)<viewStateVal('hquarters-dao', 'firstHquarterId')){
-    last.nextid = viewStateVal('hquarters-dao', 'firstHquarterId')
-    viewStateVal('hquarters-dao', 'hquarters')[viewStateVal('hquarters-dao', 'firstHquarterId')].previd
+  if(chkSt('hquarters-dao', 'firstHquarterId')!=null && Date.parse(last.startWeek.startDay)<chkSt('hquarters-dao', 'firstHquarterId')){
+    last.nextid = chkSt('hquarters-dao', 'firstHquarterId')
+    chkSt('hquarters-dao', 'hquarters')[chkSt('hquarters-dao', 'firstHquarterId')].previd
           = Date.parse(last.startWeek.startDay)
   }
 }

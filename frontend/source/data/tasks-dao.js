@@ -1,4 +1,4 @@
-import {registerEvent, registerReaction, fireEvent, viewStateVal} from 'absevent'
+import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevent'
 import {insertObj, deleteObj, swapObjs} from '../utils/drag-utils'
 import {sendDelete, sendPost, sendGet} from './postoffice'
 
@@ -35,8 +35,8 @@ registerEvent('tasks-dao', 'add-task-to-drag', (stateSetter, subject, task)=>sta
 registerEvent('tasks-dao', 'release-draggable-task', (stateSetter)=>stateSetter('draggable-task', null))
 
 registerEvent('tasks-dao', 'move-task', (stateSetter, targetSubject, targetTask)=>{
-  const sourceSubject = viewStateVal('tasks-dao', 'draggable-task').subject
-  const sourceTask = viewStateVal('tasks-dao', 'draggable-task').task
+  const sourceSubject = chkSt('tasks-dao', 'draggable-task').subject
+  const sourceTask = chkSt('tasks-dao', 'draggable-task').task
   if(targetTask!=null){
     if(sourceTask!=targetTask){
       if(sourceSubject!=targetSubject){

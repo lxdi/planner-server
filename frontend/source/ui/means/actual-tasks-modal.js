@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {CommonModal} from './../common-modal'
 
-import {registerEvent, registerReaction, fireEvent, viewStateVal} from 'absevent'
+import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevent'
 
 export class ActualTasksModal extends React.Component{
   constructor(props){
@@ -39,7 +39,7 @@ const content = function(reactcomp){
 
 const currentTasks = function(reactcomp){
   const result = []
-  const tasks = viewStateVal('tasks-dao', 'actual-tasks')[100]
+  const tasks = chkSt('tasks-dao', 'actual-tasks')[100]
   for(var i in tasks){
     result.push(taskLink(tasks[i], true))
   }
@@ -61,10 +61,10 @@ const spacedRepetitionsUI = function(reactcomp){
                 <td style={Object.assign({border:'1px solid grey'}, tdStyle)}>Upcoming</td>
               </tr>
               <tr>
-                <td>{tasksListUI(viewStateVal('tasks-dao', 'actual-tasks')[-2])}</td>
-                <td>{tasksListUI(viewStateVal('tasks-dao', 'actual-tasks')[-1])}</td>
-                <td>{tasksListUI(viewStateVal('tasks-dao', 'actual-tasks')[-0])}</td>
-                <td>{tasksListUI(viewStateVal('tasks-dao', 'actual-tasks')[1])}</td>
+                <td>{tasksListUI(chkSt('tasks-dao', 'actual-tasks')[-2])}</td>
+                <td>{tasksListUI(chkSt('tasks-dao', 'actual-tasks')[-1])}</td>
+                <td>{tasksListUI(chkSt('tasks-dao', 'actual-tasks')[-0])}</td>
+                <td>{tasksListUI(chkSt('tasks-dao', 'actual-tasks')[1])}</td>
               </tr>
             </table>
         </div>

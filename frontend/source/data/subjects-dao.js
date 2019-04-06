@@ -1,4 +1,4 @@
-import {registerEvent, registerReaction, fireEvent, viewStateVal} from 'absevent'
+import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevent'
 import {insertObj, deleteObj, swapObjs} from '../utils/drag-utils'
 import {sendDelete} from './postoffice'
 
@@ -35,8 +35,8 @@ registerEvent('subjects-dao', 'add-subject-to-drag', (stateSetter, layer, subjec
 registerEvent('subjects-dao', 'release-draggable-subject', (stateSetter)=>stateSetter('draggable-subject', null))
 
 registerEvent('subjects-dao', 'move-subject', (stateSetter, targetLayer, targetSubject)=>{
-  const sourceLayer = viewStateVal('subjects-dao', 'draggable-subject').layer
-  const sourceSubject = viewStateVal('subjects-dao', 'draggable-subject').subject
+  const sourceLayer = chkSt('subjects-dao', 'draggable-subject').layer
+  const sourceSubject = chkSt('subjects-dao', 'draggable-subject').subject
   if(targetSubject!=null){
     if(sourceSubject!=targetSubject){
       if(sourceLayer!=targetLayer){

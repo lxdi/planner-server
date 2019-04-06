@@ -5,7 +5,7 @@ import {ButtonToolbar, DropdownButton, MenuItem, Button} from 'react-bootstrap'
 import {CommonModal} from './../common-modal'
 import {TestingsList} from './testings-list'
 
-import {registerEvent, registerReaction, fireEvent, viewStateVal} from 'absevent'
+import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevent'
 
 //props: testings
 export class TaskProgressModal extends React.Component {
@@ -80,7 +80,7 @@ const spacedRepRadioButton = function(reactcomp){
 }
 
 const repPlanChooserUI = function(reactcomp){
-  const repPlans = viewStateVal('rep-plans-dao', 'rep-plans')
+  const repPlans = chkSt('rep-plans-dao', 'rep-plans')
   if(repPlans == null){
     fireEvent('rep-plans-dao', 'plans-request')
     return 'Loading...'

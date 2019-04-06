@@ -5,7 +5,7 @@ import {CommonModal} from './../common-modal'
 import {CreateMean} from './../../data/creators'
 import {CommonCrudeTemplate} from './../common-crud-template'
 import {Button, ButtonToolbar,  DropdownButton, MenuItem,  FormGroup, ControlLabel, FormControl,  ListGroup, ListGroupItem, Alert} from 'react-bootstrap'
-import {registerEvent, registerReaction, fireEvent, viewStateVal} from 'absevent'
+import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevent'
 // import {SubjectModal} from './subject-modal'
 // import {TaskModal} from './task-modal'
 import {isValidMean} from '../../utils/mean-validator'
@@ -127,7 +127,7 @@ export class MeanModal extends React.Component {
 }
 
 const rememberButton = function(component){
-  if(viewStateVal('means-dao', 'draggableMean')!=component.state.currentMean){
+  if(chkSt('means-dao', 'draggableMean')!=component.state.currentMean){
     return <Button bsStyle="default" bsSize="xsmall" onClick={()=>rememberReleaseHandler(component, 'remember')}>Remember</Button>
   } else {
     return <Button bsStyle="default" bsSize="xsmall" onClick={()=>rememberReleaseHandler(component, 'release')}>Release</Button>
@@ -155,7 +155,7 @@ const targetsChooser = function(component){
 
 const availableTargetsUI = function(){
   const result = []
-  iterateTree(viewStateVal('targets-dao', 'targets')[viewStateVal('realms-dao', 'currentRealm').id], (target, level)=>{
+  iterateTree(chkSt('targets-dao', 'targets')[chkSt('realms-dao', 'currentRealm').id], (target, level)=>{
     const style = {marginLeft: (level*10)+'px'}
     result.push(<MenuItem style={style} eventKey={target}>{target.toString()}</MenuItem>)
   })
@@ -165,7 +165,7 @@ const availableTargetsUI = function(){
 const relatedTargetsUI = function(component, targetsids){
   const targets = []
   for(var tid in targetsids){
-    targets.push(viewStateVal('targets-dao', 'targets')[component.state.currentMean.realmid][targetsids[tid]])
+    targets.push(chkSt('targets-dao', 'targets')[component.state.currentMean.realmid][targetsids[tid]])
   }
   return targets.map((target) =>
     <li key={'target_'+target.id} >{target.toString()} {component.state.mode.isEdit?<a href='#' onClick={()=>component.removeTarget(target)}>X</a>:null}</li>
@@ -286,13 +286,13 @@ const moveEvent = function(e, parentObj, obj, type, isEdit){
   if(isEdit){
     e.preventDefault()
     if(type == 'task'){
-      const draggableTask = viewStateVal('tasks-dao', 'draggable-task')
+      const draggableTask = chkSt('tasks-dao', 'draggable-task')
       if(draggableTask!=null && draggableTask.task != obj){
         fireEvent('tasks-dao', 'move-task', [parentObj, obj])
       }
     }
     if(type == 'subject'){
-      const draggableSubject = viewStateVal('subjects-dao', 'draggable-subject')
+      const draggableSubject = chkSt('subjects-dao', 'draggable-subject')
       if(draggableSubject!=null && draggableSubject.subject){
         fireEvent('subjects-dao', 'move-subject', [parentObj, obj])
       }

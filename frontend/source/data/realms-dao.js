@@ -1,17 +1,17 @@
 //import $ from 'jquery'
 import {sendGet, sendPut, sendPost} from './postoffice'
-import {registerEvent, registerReaction, fireEvent, viewStateVal} from 'absevent'
+import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevent'
 
 registerEvent('realms-dao', 'realms-request', function(stateSetter){
   sendGet("/realm/all", (data)=>{
     var receivedData = typeof data == 'string'? JSON.parse(data): data
     importRealms(stateSetter, receivedData)
-    for(var i in viewStateVal('realms-dao', 'realms')){
-      if(viewStateVal('realms-dao', 'currentRealm')==null){
-        stateSetter('currentRealm', viewStateVal('realms-dao', 'realms')[i])
+    for(var i in chkSt('realms-dao', 'realms')){
+      if(chkSt('realms-dao', 'currentRealm')==null){
+        stateSetter('currentRealm', chkSt('realms-dao', 'realms')[i])
       }
-      if(viewStateVal('realms-dao', 'realms')[i].current==true){
-        stateSetter('currentRealm', viewStateVal('realms-dao', 'realms')[i])
+      if(chkSt('realms-dao', 'realms')[i].current==true){
+        stateSetter('currentRealm', chkSt('realms-dao', 'realms')[i])
       }
     }
     fireEvent('realms-dao', 'realms-received', [])
@@ -23,7 +23,7 @@ registerEvent('realms-dao', 'realms-received', ()=>{})
 registerEvent('realms-dao', 'create', function(stateSetter, realm){
   sendPut('/realm/create', JSON.stringify(realm), function(data) {
     var receivedData = typeof data == 'string'? JSON.parse(data): data
-    viewStateVal('realms-dao', 'realms')[""+receivedData.id] = receivedData
+    chkSt('realms-dao', 'realms')[""+receivedData.id] = receivedData
     fireEvent('realms-dao', 'realm-created', [realm])
   })
 })
@@ -41,10 +41,10 @@ registerEvent('realms-dao', 'change-current-realm', function(stateSetter, realm)
 })
 
 const importRealms = function(stateSetter, data){
-  if(viewStateVal('realms-dao', 'realms')==null){
+  if(chkSt('realms-dao', 'realms')==null){
     stateSetter('realms', [])
   }
   for(var i in data){
-    viewStateVal('realms-dao', 'realms')[""+data[i].id] = data[i]
+    chkSt('realms-dao', 'realms')[""+data[i].id] = data[i]
   }
 }

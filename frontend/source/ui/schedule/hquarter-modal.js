@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {CommonModal} from './../common-modal'
 import {CommonCrudeTemplate} from './../common-crud-template'
-import {registerEvent, registerReaction, fireEvent, viewStateVal} from 'absevent'
+import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevent'
 import {WeekSchedule} from './week-schedule'
 
 import {findSlotInPosition} from '../../utils/hquarters-utils'
@@ -39,7 +39,7 @@ export class HquarterModal extends React.Component {
   }
 
   okButton(){
-    if(viewStateVal('hquarters-dao', 'default')==this.state.hquarter){
+    if(chkSt('hquarters-dao', 'default')==this.state.hquarter){
       //fireEvent('hquarters-dao', 'hquarters-clean')
       fireEvent('hquarters-dao', 'update-default')
     } else {
@@ -108,7 +108,7 @@ const getSlotsUI = function(component, hquarter){
 
 const getAssignedMean = function(slot){
   if(slot.meanid!=null){
-    const mean = getFromMappedRepByid(viewStateVal('means-dao', 'means'), slot.meanid)
+    const mean = getFromMappedRepByid(chkSt('means-dao', 'means'), slot.meanid)
     return ' - ' + mean.title
   }
 }

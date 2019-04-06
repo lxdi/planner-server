@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {CommonModal} from './../common-modal'
 import {WeekSchedule} from './week-schedule'
-import {registerEvent, registerReaction, fireEvent, viewStateVal} from 'absevent'
+import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevent'
 
 export class BigMapModal extends React.Component {
   constructor(props){
@@ -11,7 +11,7 @@ export class BigMapModal extends React.Component {
 
     registerEvent('big-map-modal', 'open', ()=>this.setState({isOpen:true}))
     registerEvent('big-map-modal', 'close', ()=>{
-      // const hquarters = viewStateVal('hquarters-dao', 'hquarters')
+      // const hquarters = chkSt('hquarters-dao', 'hquarters')
       // for(var id in hquarters){
       //   hquarters[id].isFull = false
       // }
@@ -34,7 +34,7 @@ export class BigMapModal extends React.Component {
 
 const hquartersUI = function(component){
   const result = []
-  const hquarters = viewStateVal('hquarters-dao', 'hquarters')
+  const hquarters = chkSt('hquarters-dao', 'hquarters')
   for(var dateid in hquarters){
     const hquarter = hquarters[dateid]
     if(!component.state.isFull){

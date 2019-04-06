@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {Button} from 'react-bootstrap'
 
-import {registerEvent, registerReaction, fireEvent, viewStateVal, registerObject} from 'absevent'
+import {registerEvent, registerReaction, fireEvent, chkSt, registerObject} from 'absevent'
 
 import {Frame} from './frame';
 //import {SwitchButton} from './changebutton';
@@ -15,12 +15,12 @@ export class Main extends React.Component {
     registerObject('main-ui', {'three-frames':true, currState:'Targets'})
 
     registerEvent('main-ui', 'switch-mode', (stateSetter)=>{
-      stateSetter('three-frames', !viewStateVal('main-ui', 'three-frames'))
+      stateSetter('three-frames', !chkSt('main-ui', 'three-frames'))
       this.setState({})
     })
 
     registerEvent('main-ui', 'switch-curr-state', (stateSetter)=>{
-      if(viewStateVal('main-ui', 'currState')=='Targets'){
+      if(chkSt('main-ui', 'currState')=='Targets'){
         stateSetter('currState', 'Schedule')
       } else {
         stateSetter('currState', 'Targets')
@@ -39,10 +39,10 @@ export class Main extends React.Component {
 }
 
 const getFramesTable = function(){
-  if(!viewStateVal('main-ui', 'three-frames')){
+  if(!chkSt('main-ui', 'three-frames')){
     var leftFrame = null
     var rightFrame = null
-    if(viewStateVal('main-ui', 'currState') == "Targets"){
+    if(chkSt('main-ui', 'currState') == "Targets"){
       leftFrame = <Frame name="Targets" />
       rightFrame = <Frame name="Means" />
     } else {
@@ -67,7 +67,7 @@ const getFramesTable = function(){
 }
 
 const getSwitchButton = function(){
-  if(!viewStateVal('main-ui', 'three-frames')){
+  if(!chkSt('main-ui', 'three-frames')){
     return <div class='switch-button-div'>
                       <Button bsStyle="primary" onClick={()=>fireEvent('main-ui', 'switch-curr-state')}>Switch</Button>
                   </div>
