@@ -113,6 +113,22 @@ public class MeansDelegateTests extends SpringTestConfig {
         assertTrue(result.get(0).containsKey("nextid"));
     }
 
+    @Test
+    public void createTest(){
+        Realm realm = testCreators.createRealm();
+        Mean oldMean = testCreators.createMean(realm);
+
+        Map<String, Object> dto = new HashMap<>();
+        dto.put("title", "new mean");
+        dto.put("realmid", realm.getId());
+
+        Map<String, Object> result = meansDelegate.create(dto);
+
+        assertTrue((long)result.get("id")>0);
+        assertTrue(result.get("title").equals("new mean"));
+        assertTrue((long)result.get("previd")==oldMean.getId());
+    }
+
 
 
 }

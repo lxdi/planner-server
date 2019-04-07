@@ -6,6 +6,7 @@ import model.entities.Mean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Service
@@ -24,9 +25,13 @@ public class MeansMapper {
     }
 
     public Map<String, Object> mapToDtoFull(Mean mean){
-        Map<String, Object> dto = commonMapper.mapToDto(mean);
-        additionalMeansMapping.mapTargetsIdsToDto(mean, dto);
-        additionalMeansMapping.mapLayers(mean, dto);
+        return mapToDtoFull(mean, new HashMap<>());
+    }
+
+    public Map<String, Object> mapToDtoFull(Mean mean, Map<String, Object> dto){
+        Map<String, Object> result = commonMapper.mapToDto(mean, dto);
+        additionalMeansMapping.mapTargetsIdsToDto(mean, result);
+        additionalMeansMapping.mapLayers(mean, result);
         return dto;
     }
 

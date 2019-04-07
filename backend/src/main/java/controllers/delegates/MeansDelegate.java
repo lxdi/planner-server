@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -69,14 +70,16 @@ public class MeansDelegate {
         //TODO do not save the mean if layers are not valid
         meansDAO.saveOrUpdate(mean);
 
+        Map<String, Object> result = new HashMap<>();
         if(prevMean!=null){
             prevMean.setNext(mean);
             meansDAO.saveOrUpdate(prevMean);
+            result.put("previd", prevMean.getId());
         }
         if(meanDtoFull.get("layers")!=null){
             saveLayers((List<Map<String, Object>>) meanDtoFull.get("layers"), mean.getId());
         }
-        return meansMapper.mapToDtoFull(mean);
+        return meansMapper.mapToDtoFull(mean, result);
     }
 
     public void delete(long id){
