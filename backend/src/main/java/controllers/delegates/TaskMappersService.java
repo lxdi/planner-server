@@ -90,7 +90,6 @@ public class TaskMappersService {
     }
 
     public void rescheduleTaskMappers(long weekid, String dayOfWeekShort){
-        //TODO validate pushing
         Week week = weekDAO.getById(weekid);
         DaysOfWeek dayOfWeek = DaysOfWeek.valueOf(dayOfWeekShort);
         Set<SlotPosition> slotPositions = new HashSet<>();

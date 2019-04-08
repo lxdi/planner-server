@@ -42,4 +42,20 @@ public class MapperExclusionDAOimpl implements IMapperExclusionDAO {
                 .setParameter("slotposes", slotPositions)
                 .getResultList();
     }
+
+    @Override
+    public void deleteBySlotPositions(List<SlotPosition> sps) {
+        sessionFactory.getCurrentSession()
+                .createQuery("delete from MapperExclusion where slotPosition in :slotposes")
+                .setParameter("slotposes", sps)
+                .executeUpdate();
+    }
+//    @Override
+//    public List<MapperExclusion> getBySlotPositions(List<SlotPosition> sps) {
+//        return sessionFactory.getCurrentSession()
+//                .createQuery("from MapperExclusion where slotPosition in :slotposes")
+//                .setParameter("slotposes", sps)
+//                .getResultList();
+
+//    }
 }

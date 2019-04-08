@@ -67,4 +67,30 @@ public class MapperExclusionDaoTests extends SpringTestConfig {
 
     }
 
+    @Test
+    public void deleteBySlopPositionsTest(){
+        Week week1 = testCreators.createWeek("2019-04-01", "2019-04-07");
+        Week week2 = testCreators.createWeek("2019-04-08", "2019-04-14");
+        Week week3 = testCreators.createWeek("2019-04-15", "2019-04-21");
+
+        SlotPosition slotPosition1 = testCreators.createSlotPosition(null, DaysOfWeek.mon, 1);
+        SlotPosition slotPosition2 = testCreators.createSlotPosition(null, DaysOfWeek.mon, 1);
+        SlotPosition slotPosition3 = testCreators.createSlotPosition(null, DaysOfWeek.mon, 1);
+
+        MapperExclusion mapperExclusion1 = testCreators.createMapperExclusion(week1, slotPosition1);
+        MapperExclusion mapperExclusion2 = testCreators.createMapperExclusion(week3, slotPosition1);
+        MapperExclusion mapperExclusion3 = testCreators.createMapperExclusion(week3, slotPosition2);
+        MapperExclusion mapperExclusion4 = testCreators.createMapperExclusion(week1, slotPosition3);
+
+        mapperExclusionDAO.deleteBySlotPositions(Arrays.asList(slotPosition1, slotPosition2));
+
+        //List<MapperExclusion> exclusions = mapperExclusionDAO.
+
+        assertTrue(mapperExclusionDAO.findOne(mapperExclusion1.getId())==null);
+        assertTrue(mapperExclusionDAO.findOne(mapperExclusion2.getId())==null);
+        assertTrue(mapperExclusionDAO.findOne(mapperExclusion3.getId())==null);
+        assertTrue(mapperExclusionDAO.findOne(mapperExclusion4.getId()).getId()==mapperExclusion4.getId());
+
+    }
+
 }

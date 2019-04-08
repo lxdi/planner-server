@@ -50,6 +50,9 @@ public class HquartersDelegate {
     @Autowired
     ITaskMappersDAO taskMappersDAO;
 
+    @Autowired
+    IMapperExclusionDAO mapperExclusionDAO;
+
     public List<Map<String, Object>> getAllQuarters(){
         List<Map<String, Object>> result = new ArrayList<>();
         for(HQuarter hQuarter : quarterDAO.getAllHQuartals()){
@@ -122,6 +125,7 @@ public class HquartersDelegate {
         Slot slot = slotDAO.getById(slotid);
         slot.setMean(mean);
         slotDAO.saveOrUpdate(slot);
+        cleanExclusions(slot);
         taskMappersService.rescheduleTaskMappers(mean, false);
         return slotMapper.mapToDtoFull(slot);
     }
@@ -132,6 +136,7 @@ public class HquartersDelegate {
         slot.setLayer(null);
         slot.setMean(null);
         slotDAO.saveOrUpdate(slot);
+        cleanExclusions(slot);
         taskMappersService.rescheduleTaskMappers(mean, false);
         return slotMapper.mapToDtoFull(slot);
     }
@@ -245,6 +250,11 @@ public class HquartersDelegate {
             result = quarterDAO.getHQuartersInYear(year);
         }
         return result;
+    }
+
+    private void cleanExclusions(Slot slot){
+        List<SlotPosition> slotPositions = slotDAO.getSlotPositionsForSlot(slot);
+        mapperExclusionDAO.deleteBySlotPositions(slotPositions);
     }
 
 }
