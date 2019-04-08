@@ -126,6 +126,7 @@ public class TaskMappersService {
                 sortUtils.sortSlotPositions(slotPositions);
                 List<MapperExclusion> exclusions = mapperExclusionDAO.getByWeeksBySPs(weeks, slotPositions);
                 Task currentTask = !taskStack.isEmpty()? taskStack.pop():null;
+                validateMapping(tasks, slotPositions, weeks, exclusions);
                 for(int iw = 0; iw<weeks.size(); iw++){
                     int SPsToMapAmount = slotPositions.size()-ifMappingNotOnFullWeek(iw, fullWeekMappingUntil);
                     for(int isp = 0; isp<SPsToMapAmount; isp++){
@@ -147,6 +148,12 @@ public class TaskMappersService {
                     }
                 }
             }
+        }
+    }
+
+    private void validateMapping(List<Task> tasks, List<SlotPosition> SPs, List<Week> weeks, List<MapperExclusion> exclusions){
+        if((SPs.size()*weeks.size()-exclusions.size())<tasks.size()){
+            throw new UnsupportedOperationException("There is not enough place to schedule the all Tasks");
         }
     }
 

@@ -131,6 +131,23 @@ public class TasksMappersServiceTests extends SpringTestConfig {
 
     }
 
+    @Test(expected = UnsupportedOperationException.class)
+    public void createTaskMappersTooMuchTasksErrorTest(){
+        final int numberOfTasks = 10;
+        List<Task> tasks = new ArrayList<>();
+        for(int i = 0; i<numberOfTasks;i++){
+            tasks.add(testCreators.createTask(subject));
+        }
+
+        testCreators.createMapperExclusion(weeks.get(0), slotPositions.get(0));
+        testCreators.createMapperExclusion(weeks.get(2), slotPositions.get(1));
+        testCreators.createMapperExclusion(weeks.get(2), slotPositions.get(2));
+        testCreators.createMapperExclusion(weeks.get(3), slotPositions.get(2));
+
+        taskMappersService.createTaskMappers(layer, slot);
+
+    }
+
     @Test
     public void rescheduleTaskMappersTest(){
         final int numberOfTasks = 9;
