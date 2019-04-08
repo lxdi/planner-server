@@ -52,4 +52,17 @@ public class DateUtilsTests {
                 DateUtils.toDate("2019-03-25"), DateUtils.toDate("2019-03-31"))==6);
     }
 
+    @Test
+    public void getDayOfWeekTest(){
+        assertTrue(DateUtils.dayOfWeek(DateUtils.toDate("2019-04-07"))==6);
+        assertTrue(DateUtils.dayOfWeek(DateUtils.toDate("2019-04-08"))==0);
+        assertTrue(DateUtils.dayOfWeek(DateUtils.toDate("2019-04-09"))==1);
+        assertTrue(DateUtils.dayOfWeek(DateUtils.toDate("2019-04-10"))==2);
+        assertTrue(DateUtils.dayOfWeek(DateUtils.toDate("2019-04-11"))==3);
+        assertTrue(DateUtils.dayOfWeek(DateUtils.toDate("2019-04-12"))==4);
+        assertTrue(DateUtils.dayOfWeek(DateUtils.toDate("2019-04-13"))==5);
+        assertTrue(DateUtils.dayOfWeek(DateUtils.toDate("2019-04-14"))==6);
+        assertTrue(DateUtils.dayOfWeek(DateUtils.toDate("2019-04-15"))==0);
+    }
+
 }

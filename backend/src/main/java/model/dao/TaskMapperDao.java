@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Date;
+import java.time.DayOfWeek;
 import java.util.List;
 
 @Service
@@ -62,6 +63,16 @@ public class TaskMapperDao implements ITaskMappersDAO{
         return this.sessionFactory.getCurrentSession()
                 .createQuery("from TaskMapper where week = :week and slotPosition.dayOfWeek = :dayOfWeek")
                 .setParameter("week", week)
+                .setParameter("dayOfWeek", dayOfWeek)
+                .getResultList();
+    }
+
+    @Override
+    public List<TaskMapper> taskMappersOfHqAndBefore(HQuarter hQuarter, Date date, DayOfWeek dayOfWeek) {
+        //TODO
+        return this.sessionFactory.getCurrentSession()
+                .createQuery("from TaskMapper where slotPosition.slot.hquarter = :hq and slot.dayOfWeek = :dayOfWeek")
+                .setParameter(":hq", hQuarter)
                 .setParameter("dayOfWeek", dayOfWeek)
                 .getResultList();
     }

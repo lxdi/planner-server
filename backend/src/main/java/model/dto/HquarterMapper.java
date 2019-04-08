@@ -85,7 +85,7 @@ public class HquarterMapper {
         return hQuarter;
     }
 
-    /** Add weeks field, that's list of
+    /** Add weeks field, that's a list of
      * {
      *     startDay: startDay of week,
      *     endDay: endDay of week,

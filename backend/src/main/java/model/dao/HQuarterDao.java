@@ -95,5 +95,13 @@ public class HQuarterDao implements IHQuarterDAO {
                 .list();
     }
 
+    @Override
+    public HQuarter getByDate(Date date) {
+        return (HQuarter) this.sessionFactory.getCurrentSession()
+                .createQuery("from HQuarter where startWeek.startDay<=:date and endWeek.endDay>=:date")
+                .setParameter("date", date)
+                .uniqueResult();
+    }
+
 
 }

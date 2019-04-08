@@ -46,6 +46,13 @@ public class DateUtils {
         return new Date(cal.getTime().getTime());
     }
 
+    public static Date subtractDays(Date date, int days){
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.add(Calendar.DATE, -days); //minus number would decrement the days
+        return new Date(cal.getTime().getTime());
+    }
+
     public static Date currentDate(){
         return new Date(new java.util.Date().getTime());
     }
@@ -66,6 +73,13 @@ public class DateUtils {
         LocalDate date1LD = LocalDate.parse(fromDate(date1), formatter);
         LocalDate date2LD = LocalDate.parse(fromDate(date2), formatter);
         return Integer.parseInt(""+ChronoUnit.DAYS.between(date1LD, date2LD));
+    }
+
+    public static int dayOfWeek(Date date){
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        int dayOfWeek = cal.get(java.util.Calendar.DAY_OF_WEEK);
+        return dayOfWeek==1?6:dayOfWeek-2;
     }
 
 }

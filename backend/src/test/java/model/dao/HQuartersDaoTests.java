@@ -1,19 +1,19 @@
 package model.dao;
 
-import model.dao.IWeekDAO;
 import model.entities.HQuarter;
 import model.entities.Week;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+import services.DateUtils;
 import test_configs.ATestsWithTargetsMeansQuartalsGenerated;
 
+import java.sql.Date;
 import java.util.List;
 
 import static junit.framework.TestCase.assertTrue;
 import static services.DateUtils.fromDate;
-import static services.DateUtils.toDate;
 
 @Transactional
 public class HQuartersDaoTests extends ATestsWithTargetsMeansQuartalsGenerated {
@@ -93,6 +93,15 @@ public class HQuartersDaoTests extends ATestsWithTargetsMeansQuartalsGenerated {
         }
 
         assertTrue(hquarterDAO.getHQuartersInYear(2019).size()==12);
+    }
+
+    @Test
+    public void getByDateTest(){
+        Date date = DateUtils.toDate("2019-04-08");
+        HQuarter hQuarter = hquarterDAO.getByDate(date);
+
+        assertTrue(hQuarter!=null);
+        assertTrue(DateUtils.fromDate(hQuarter.getStartWeek().getStartDay()).equals("2019-04-01"));
     }
 
 }

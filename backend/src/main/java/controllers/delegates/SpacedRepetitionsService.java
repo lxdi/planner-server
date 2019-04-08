@@ -1,9 +1,11 @@
 package controllers.delegates;
 
 import com.sogoodlabs.common_mapper.CommonMapper;
+import model.dao.IHQuarterDAO;
 import model.dao.IRepDAO;
 import model.dao.ITaskMappersDAO;
 import model.dao.IWeekDAO;
+import model.dto.TasksDtoMapper;
 import model.dto.additional_mapping.AdditionalTasksMapping;
 import model.entities.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,13 +30,16 @@ public class SpacedRepetitionsService {
     CommonMapper commonMapper;
 
     @Autowired
-    AdditionalTasksMapping additionalTasksMapping;
-
-    @Autowired
     IWeekDAO weekDAO;
 
     @Autowired
     ITaskMappersDAO taskMappersDAO;
+
+    @Autowired
+    TasksDtoMapper tasksDtoMapper;
+
+    @Autowired
+    IHQuarterDAO ihQuarterDAO;
 
     public Map<Integer, List<Map<String, Object>>> getActualTaskToRepeat(){
         Map<Integer, List<Map<String, Object>>> result = new HashMap<>();
@@ -58,11 +63,6 @@ public class SpacedRepetitionsService {
 
     private void setTasks(Date from, Date to, int weeknum, Map<Integer, List<Map<String, Object>>> result, List<Repetition> repetitions){
         result.putIfAbsent(weeknum, new ArrayList<>());
-//        repDAO.getUnFinishedWithPlanDateInRange(from, to)
-//                .forEach((rep)->{
-//                    Task task = rep.getSpacedRepetitions().getTaskMapper().getTask();
-//                    result.get(weeknum).add(getTaskDto(task, rep));
-//                });
         repetitions.forEach(rep -> {
             if(rep.getPlanDate().compareTo(from)>=0 && rep.getPlanDate().compareTo(to)<=0){
                 Task task = rep.getSpacedRepetitions().getTaskMapper().getTask();
@@ -73,14 +73,10 @@ public class SpacedRepetitionsService {
     }
 
     private Map<String, Object> getTaskDto(Task task, Repetition repetition){
-        Map<String, Object> taskDto = commonMapper.mapToDto(task, new HashMap<>());
+        Map<String, Object> taskDto = tasksDtoMapper.mapToDtoFull(task);
         if(repetition!=null){
             taskDto.put("repetition", commonMapper.mapToDto(repetition, new HashMap<>()));
         }
-        additionalTasksMapping.fillTopicsInTaskDto(taskDto, task);
-        additionalTasksMapping.fillTestingsInTaskDto(taskDto, task);
-        additionalTasksMapping.fillFullName(taskDto, task);
-        additionalTasksMapping.fillIsFinished(taskDto, task);
         return taskDto;
     }
 
@@ -96,6 +92,14 @@ public class SpacedRepetitionsService {
         List<TaskMapper> taskMappers = taskMappersDAO.byWeekAndDay(currentWeek, currentDayOfWeek);
         taskMappers.forEach(tm->result.add(tm.getTask()));
         return result;
+    }
+
+    private List<Task> getOutDatedTasksFromCurrentHq(){
+        HQuarter currentHq = ihQuarterDAO.getByDate(DateUtils.currentDate());
+        if(currentHq!=null){
+            //TODO
+        }
+        return new ArrayList<>();
     }
 
 

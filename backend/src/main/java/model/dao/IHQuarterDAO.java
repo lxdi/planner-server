@@ -3,6 +3,7 @@ package model.dao;
 import model.entities.HQuarter;
 import model.entities.Week;
 
+import java.sql.Date;
 import java.util.List;
 
 public interface IHQuarterDAO {
@@ -16,5 +17,6 @@ public interface IHQuarterDAO {
     HQuarter getHquarterWithStartingWeek(Week week);
     List<HQuarter> getPrev(long currentid, int count);
     List<HQuarter> getNext(long currentid, int count);
+    HQuarter getByDate(Date date);
 
 }
