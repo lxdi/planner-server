@@ -29,6 +29,7 @@ const content = function(reactcomp){
               <a href="#" style={{textDecoration:'none'}}>
                 <div onClick={()=>fireEvent('actual-tasks-modal', 'open')} class="actual-tasks-indicators-group">
                   {getSquare(actualTasksMap['100'].length, 'blue')}
+                  {getSquare(actualTasksMap['99'].length, 'red')}
                   {divisor()}
                   {getSquare(actualTasksMap['-2'].length, 'red')}
                   {getSquare(actualTasksMap['-1'].length, 'orange')}

@@ -5,9 +5,11 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import services.DateUtils;
 
 import java.sql.Date;
 import java.time.DayOfWeek;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -68,13 +70,26 @@ public class TaskMapperDao implements ITaskMappersDAO{
     }
 
     @Override
-    public List<TaskMapper> taskMappersOfHqAndBefore(HQuarter hQuarter, Date date, DayOfWeek dayOfWeek) {
-        //TODO
-        return this.sessionFactory.getCurrentSession()
-                .createQuery("from TaskMapper where slotPosition.slot.hquarter = :hq and slot.dayOfWeek = :dayOfWeek")
-                .setParameter(":hq", hQuarter)
-                .setParameter("dayOfWeek", dayOfWeek)
-                .getResultList();
+    public List<TaskMapper> taskMappersOfHqAndBefore(HQuarter hQuarter, Date date) {
+        String beforeCurrentWeekQuery = "from TaskMapper where slotPosition.slot.hquarter = :hq and week.endDay<:date";
+        String currentWeekQuery = "from TaskMapper where slotPosition.slot.hquarter = :hq " +
+                "and week.startDay<:date and week.endDay>:date " +
+                "and slotPosition.dayOfWeek in :daysOfWeek";
+
+        List<TaskMapper> result = new ArrayList<>();
+        result.addAll(this.sessionFactory.getCurrentSession()
+                .createQuery(beforeCurrentWeekQuery)
+                .setParameter("hq", hQuarter)
+                .setParameter("date", date)
+                .getResultList());
+        result.addAll(this.sessionFactory.getCurrentSession()
+                .createQuery(currentWeekQuery)
+                .setParameter("hq", hQuarter)
+                .setParameter("daysOfWeek", DaysOfWeek.getLessThen(DaysOfWeek.findById(DateUtils.dayOfWeek(date))))
+                .setParameter("date", date)
+                .getResultList());
+
+        return result;
     }
 
 

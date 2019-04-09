@@ -48,8 +48,9 @@ public class SpacedRepetitionsService {
         Date toDate = DateUtils.addDays(DateUtils.currentDate(), +3);
 
         result.putIfAbsent(100, new ArrayList<>());
-
         getCurrentTasks().forEach(task->result.get(100).add(getTaskDto(task, null)));
+
+        result.putIfAbsent(99, getOutdatedTasksDto());
 
         List<Repetition> reps = repDAO.getUnFinishedWithPlanDateInRange(DateUtils.addWeeks(fromDate, -2), DateUtils.addWeeks(toDate, 1));
 
@@ -94,10 +95,25 @@ public class SpacedRepetitionsService {
         return result;
     }
 
+    private List<Map<String, Object>> getOutdatedTasksDto(){
+        List<Map<String, Object>> result = new ArrayList<>();
+        getOutDatedTasksFromCurrentHq().forEach(task -> result.add(getTaskDto(task, null)));
+        return result;
+    }
+
     private List<Task> getOutDatedTasksFromCurrentHq(){
         HQuarter currentHq = ihQuarterDAO.getByDate(DateUtils.currentDate());
         if(currentHq!=null){
-            //TODO
+            List<TaskMapper> taskMappers = taskMappersDAO.taskMappersOfHqAndBefore(currentHq, DateUtils.currentDate());
+            if(taskMappers.size()>0){
+                List<Task> result = new ArrayList<>();
+                taskMappers.forEach(tm -> {
+                    if(tm.getTask()!=null && tm.getFinishDate()==null){
+                        result.add(tm.getTask());
+                    }
+                });
+                return result;
+            }
         }
         return new ArrayList<>();
     }

@@ -29,7 +29,10 @@ export class ActualTasksModal extends React.Component{
 const content = function(reactcomp){
   return <div>
             <div style={{border:'1px solid blue', borderRadius:'10px', padding:'5px', marginTop:'5px'}}>
-              {currentTasks(reactcomp)}
+              {currentTasks()}
+            </div>
+            <div style={{border:'1px solid red', borderRadius:'10px', padding:'5px', marginTop:'5px'}}>
+              {outdatedCurrenttasks()}
             </div>
             <div style={{border:'1px solid lightgrey', borderRadius:'10px', padding:'5px', marginTop:'5px'}}>
               {spacedRepetitionsUI(reactcomp)}
@@ -37,14 +40,30 @@ const content = function(reactcomp){
           </div>
 }
 
-const currentTasks = function(reactcomp){
+const currentTasks = function(){
+  return tasksUI(chkSt('tasks-dao', 'actual-tasks')[100], 'Current tasks')
+  // const result = []
+  // const tasks = chkSt('tasks-dao', 'actual-tasks')[100]
+  // for(var i in tasks){
+  //   result.push(taskLink(tasks[i], true))
+  // }
+  // return <div>
+  //           <div>Current tasks</div>
+  //           {result}
+  //         </div>
+}
+
+const outdatedCurrenttasks = function(){
+  return tasksUI(chkSt('tasks-dao', 'actual-tasks')[99], 'Outdated tasks')
+}
+
+const tasksUI = function(tasks, title){
   const result = []
-  const tasks = chkSt('tasks-dao', 'actual-tasks')[100]
   for(var i in tasks){
     result.push(taskLink(tasks[i], true))
   }
   return <div>
-            <div>Current tasks</div>
+            <div>{title}</div>
             {result}
           </div>
 }
