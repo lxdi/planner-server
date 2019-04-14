@@ -82,13 +82,15 @@ public class TaskMapperDao implements ITaskMappersDAO{
                 .setParameter("hq", hQuarter)
                 .setParameter("date", date)
                 .getResultList());
-        result.addAll(this.sessionFactory.getCurrentSession()
-                .createQuery(currentWeekQuery)
-                .setParameter("hq", hQuarter)
-                .setParameter("daysOfWeek", DaysOfWeek.getLessThen(DaysOfWeek.findById(DateUtils.dayOfWeek(date))))
-                .setParameter("date", date)
-                .getResultList());
-
+        List<DaysOfWeek> daysOfWeeksForCurrent = DaysOfWeek.getLessThen(DaysOfWeek.findById(DateUtils.dayOfWeek(date)));
+        if (daysOfWeeksForCurrent.size() > 0) {
+            result.addAll(this.sessionFactory.getCurrentSession()
+                    .createQuery(currentWeekQuery)
+                    .setParameter("hq", hQuarter)
+                    .setParameter("daysOfWeek", daysOfWeeksForCurrent)
+                    .setParameter("date", date)
+                    .getResultList());
+        }
         return result;
     }
 
