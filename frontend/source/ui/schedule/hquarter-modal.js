@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {CommonModal} from './../common-modal'
 import {CommonCrudeTemplate} from './../common-crud-template'
-import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevent'
+import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
 import {WeekSchedule} from './week-schedule'
 
 import {findSlotInPosition} from '../../utils/hquarters-utils'

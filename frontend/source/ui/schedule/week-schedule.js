@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevent'
+import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
 
 const week = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']
 const weekFullName = {'mon': 'Monday', 'tue': 'Tuesday', 'wed': 'Wednsday', 'thu':'Thursday', 'fri': 'Friday', 'sat': 'Saturday', 'sun':'Sunday'}

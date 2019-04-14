@@ -1,4 +1,4 @@
-import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevent'
+import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
 import {insertObj, deleteObj, swapObjs} from '../utils/drag-utils'
 import {sendDelete, sendPost, sendGet} from './postoffice'
 

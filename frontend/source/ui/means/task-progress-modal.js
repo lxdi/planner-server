@@ -5,7 +5,7 @@ import {ButtonToolbar, DropdownButton, MenuItem, Button} from 'react-bootstrap'
 import {CommonModal} from './../common-modal'
 import {TestingsList} from './testings-list'
 
-import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevent'
+import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
 
 //props: testings
 export class TaskProgressModal extends React.Component {

@@ -1,6 +1,6 @@
 //import $ from 'jquery'
 import {sendGet, sendPut, sendPost} from './postoffice'
-import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevent'
+import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
 
 registerEvent('realms-dao', 'realms-request', function(stateSetter){
   sendGet("/realm/all", (data)=>{

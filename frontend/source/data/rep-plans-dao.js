@@ -1,4 +1,4 @@
-import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevent'
+import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
 import {sendGet} from './postoffice'
 
 const repName = 'rep-plans-dao'

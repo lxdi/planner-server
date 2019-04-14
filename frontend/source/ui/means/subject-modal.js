@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import {FormGroup, ControlLabel, FormControl} from 'react-bootstrap'
 import {CommonModal} from './../common-modal'
 import {CommonCrudeTemplate} from './../common-crud-template'
-import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevent'
+import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
 
 const createState = function(isOpen, isStatic, isEdit, layer, subject){
   return {

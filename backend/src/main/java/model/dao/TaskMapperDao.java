@@ -73,7 +73,7 @@ public class TaskMapperDao implements ITaskMappersDAO{
     public List<TaskMapper> taskMappersOfHqAndBefore(HQuarter hQuarter, Date date) {
         String beforeCurrentWeekQuery = "from TaskMapper where slotPosition.slot.hquarter = :hq and week.endDay<:date";
         String currentWeekQuery = "from TaskMapper where slotPosition.slot.hquarter = :hq " +
-                "and week.startDay<:date and week.endDay>:date " +
+                "and week.startDay<=:date and week.endDay>=:date " +
                 "and slotPosition.dayOfWeek in :daysOfWeek";
 
         List<TaskMapper> result = new ArrayList<>();

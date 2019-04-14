@@ -4,7 +4,7 @@ import {FormGroup, ControlLabel, FormControl, Button} from 'react-bootstrap'
 import {CommonModal} from './../common-modal'
 import {CommonCrudeTemplate} from './../common-crud-template'
 import {TestingsList} from './testings-list'
-import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevent'
+import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
 
 const createState = function(isOpen, isStatic, isEdit, subject, task, progress){
   return {

@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import {fireEvent, chkSt, registerEvent, registerReaction} from 'absevent'
+import {fireEvent, chkSt, registerEvent, registerReaction} from 'absevents'
 
 export class OverlayInfo extends React.Component{
   constructor(props){
