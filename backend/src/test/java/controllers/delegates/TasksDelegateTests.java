@@ -83,9 +83,9 @@ public class TasksDelegateTests extends SpringTestConfig {
         assertTrue(spacedRepetitions!=null);
         assertTrue(spacedRepetitions.getRepetitionPlan().getId()== defaultRepPlan.getId());
 
-        assertTrue(repetitions.size()==4);
+        assertTrue(repetitions.size()==5);
 
-        assertTrue(DateUtils.fromDate(repetitions.get(0).getPlanDate())
+        assertTrue(DateUtils.fromDate(repetitions.get(1).getPlanDate())
                 .equals(DateUtils.fromDate(DateUtils.addWeeks(DateUtils.currentDate(), 6))));
     }
 
@@ -113,9 +113,9 @@ public class TasksDelegateTests extends SpringTestConfig {
         assertTrue(spacedRepetitions!=null);
         assertTrue(spacedRepetitions.getRepetitionPlan().getId()== defaultRepPlan.getId());
 
-        assertTrue(repetitions.size()==4);
+        assertTrue(repetitions.size()==5);
 
-        assertTrue(DateUtils.fromDate(repetitions.get(0).getPlanDate())
+        assertTrue(DateUtils.fromDate(repetitions.get(1).getPlanDate())
                 .equals(DateUtils.fromDate(DateUtils.addWeeks(DateUtils.currentDate(), 6))));
 
         List<TaskTesting> testings = taskTestingDAO.getByTask(task.getId());

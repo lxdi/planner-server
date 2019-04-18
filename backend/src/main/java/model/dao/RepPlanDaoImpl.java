@@ -27,6 +27,14 @@ public class RepPlanDaoImpl implements IRepPlanDAO {
     }
 
     @Override
+    public RepetitionPlan getByTitle(String title) {
+        return (RepetitionPlan) this.factory.getCurrentSession()
+                .createQuery("from RepetitionPlan where title=:title")
+                .setParameter("title", title)
+                .uniqueResult();
+    }
+
+    @Override
     public List<RepetitionPlan> getAll() {
         return this.factory.getCurrentSession().createQuery("from RepetitionPlan").getResultList();
     }

@@ -2,7 +2,6 @@ package controllers.delegates;
 
 import com.sogoodlabs.common_mapper.CommonMapper;
 import configuration.main.DefaultRepPlanCreationJob;
-import model.dao.IRepPlanDAO;
 import model.entities.RepetitionPlan;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,9 +26,9 @@ public class RepPlanDelegateTests extends SpringTestConfig {
         List<Map<String, Object>> result = repPlanDelegate.getAll();
         RepetitionPlan repetitionPlanReceived = commonMapper.mapToEntity(result.get(0), new RepetitionPlan());
 
-        assertTrue(result.size()==1);
+        assertTrue(result.size()==2);
         assertTrue(repetitionPlanReceived.getId() == 1);
-        assertTrue(repetitionPlanReceived.getTitle().equals(DefaultRepPlanCreationJob.DEFAULT_REP_PLAN_TITLE));
+        assertTrue(repetitionPlanReceived.getTitle().equals(DefaultRepPlanCreationJob.ONE_YEAR_LONG_REP_PLAN_TITLE));
 
     }
 
