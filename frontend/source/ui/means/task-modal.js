@@ -81,7 +81,7 @@ const modalContent = function(component){
                     <FormGroup controlId="formBasicText">
                     <div style={{display:'inline-block', paddingRight:'5px'}}><ControlLabel>Title:</ControlLabel></div>
                     <div style={{display:'inline-block'}}>
-                      <StatefulTextField obj={component.state.task} valName={'title'} isEdit={component.state.mode.isEdit}/>
+                      <StatefulTextField obj={component.state.task} valName={'title'} isEdit={component.state.mode.isEdit} onInput={()=>component.setState({})}/>
                     </div>
                     <TopicsList topics={component.state.task.topics} isEdit={component.state.mode.isEdit} />
                     <TestingsList testings={component.state.task.testings} isEdit={component.state.mode.isEdit} />
