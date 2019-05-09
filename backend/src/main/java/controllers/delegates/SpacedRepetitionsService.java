@@ -65,7 +65,7 @@ public class SpacedRepetitionsService {
     private void setTasks(Date from, Date to, int weeknum, Map<Integer, List<Map<String, Object>>> result, List<Repetition> repetitions){
         result.putIfAbsent(weeknum, new ArrayList<>());
         repetitions.forEach(rep -> {
-            if(rep.getPlanDate().compareTo(from)>=0 && rep.getPlanDate().compareTo(to)<=0){
+            if(DateUtils.differenceInDays(rep.getPlanDate(), from)<=0 && DateUtils.differenceInDays(rep.getPlanDate(), to)>=0){
                 Task task = rep.getSpacedRepetitions().getTaskMapper().getTask();
                 result.get(weeknum).add(getTaskDto(task, rep));
             }

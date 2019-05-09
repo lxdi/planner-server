@@ -81,7 +81,7 @@ public class HquartersDelegate {
 
         List<HQuarter> result = new ArrayList<>();
         result.addAll(getOrCreateHquarters(currentYear));
-        removeFromHquartersListTillDate(result, DateUtils.currentDate());
+        removeFromHquartersListTillDate(result, currentDate);
         addNextYearHqsIfNeeded(result, currentYear);
 
         return result;
