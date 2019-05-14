@@ -14,6 +14,7 @@ public class DefaultRepPlanCreationJob implements ApplicationListener<ContextRef
 
     public final static String ONE_YEAR_LONG_REP_PLAN_TITLE = "One Year Long (2-6-12-24-48)";
     public final static String HALF_YEAR_LONG_REP_PLAN_TITLE = "Half Year Long (2-6-10-16-24)";
+    public final static String HALF_YEAR_LONG_REP_PLAN_TITLE_INTENSIVE = "Intensive Half Year Long (1-2-4-6-10-16-24)";
 
     @Autowired
     IRepPlanDAO repPlanDAO;
@@ -21,6 +22,7 @@ public class DefaultRepPlanCreationJob implements ApplicationListener<ContextRef
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
         getOrCreateRepPlan(ONE_YEAR_LONG_REP_PLAN_TITLE, new int[]{2, 6, 12, 24, 48});
         getOrCreateRepPlan(HALF_YEAR_LONG_REP_PLAN_TITLE, new int[]{2, 6, 10, 16, 24});
+        getOrCreateRepPlan(HALF_YEAR_LONG_REP_PLAN_TITLE_INTENSIVE, new int[]{1, 2, 4, 6, 10, 16, 24});
     }
 
     private void getOrCreateRepPlan(String title, int[] plan){
