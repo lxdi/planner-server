@@ -32,8 +32,6 @@ shutil.copy2(os.path.join('backend', 'tomcat', 'context.xml'), contextXmlTomcat)
 
 if (onlyCopy is False):
     print("-----------------------------------------Compilation----------------------------------")
-    # mvn -e clean install "-Dtype=app" "-Dbeco.appRegion=workspace"
-    #os.chdir('backend')
     process = subprocess.Popen(['gradle', 'clean', 'war'], shell=True, stdout = subprocess.PIPE)
     for line in process.stdout:
         print(line)
@@ -42,7 +40,6 @@ if (onlyCopy is False):
     if process.returncode!=0 :
         print("------------------------------------Compilation ERROR----------------------------------------------------")
         exit(process.returncode)
-    #os.chdir('..')
 
 print("-----------------------------------------Cleaning webapps dir----------------------------------")
 if os.path.exists(destination):
