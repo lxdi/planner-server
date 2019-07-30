@@ -22,6 +22,9 @@ import static services.DateUtils.toDate;
 @Service
 public class QuarterGenerator {
 
+    private static final int HQUARTERS_PER_YEAR = 12;
+    private static final int HQUARTERS_DURATION = 4;
+
     @Autowired
     IHQuarterDAO quartalDAO;
 
@@ -45,18 +48,14 @@ public class QuarterGenerator {
         YearWeek start = YearWeek.of(year,1);
         int numberOfWeeks = start.is53WeekYear()? 53: 54;
         YearWeek yw = start;
-        int hquartersPerYearLimit = 12;
-        int hquarterlength = 4;
-        for(int i = 1; i <= hquartersPerYearLimit; i++){
-            //if(i==1 || (i-1)%6==0 && hquartersPerYearLimit>0){
-            //if(i==1 || i == (1+12) || i == (1+12*2) || i==(1+12*3)) {
+        for(int i = 1; i <= HQUARTERS_PER_YEAR; i++){
                 if(yw.getWeek()==1 && yw.atDay(DayOfWeek.MONDAY).getMonthValue()==12){
                     yw = yw.plusWeeks(1); //if the first week starts in the last year then start from the second week
                 }
                 Date startDate = toDate(year, yw.atDay(DayOfWeek.MONDAY).getMonthValue(), yw.atDay(DayOfWeek.MONDAY).getDayOfMonth());
                 Week startWeek = weekDAO.weekByStartDate(startDate);
 
-                yw = yw.plusWeeks(hquarterlength-1);
+                yw = yw.plusWeeks(HQUARTERS_DURATION-1);
                 Date endDate = toDate(year, yw.atDay(DayOfWeek.MONDAY).getMonthValue(), yw.atDay(DayOfWeek.MONDAY).getDayOfMonth());
                 Week endWeek = weekDAO.weekByStartDate(endDate);
 
@@ -67,9 +66,6 @@ public class QuarterGenerator {
 
                 String message = "HQuarter: " + HQuarter.getStartWeek().getNumber() + " | start: " + fromDate(HQuarter.getStartWeek().getStartDay());
                 System.out.println(message);
-            //}
-            // Prepare for next loop.
-            //yw = yw.plusWeeks(1);
         }
     }
 

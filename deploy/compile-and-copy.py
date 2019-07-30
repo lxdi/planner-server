@@ -28,7 +28,7 @@ if os.path.exists(contextXmlTomcat):
     os.remove(contextXmlTomcat)
 
 print("-----------------------------------------Copying context.xml to tomcat----------------------------------")
-shutil.copy2(os.path.join('backend', 'tomcat', 'context.xml'), contextXmlTomcat)
+shutil.copy2(os.path.join('deploy', 'tomcat', 'context.xml'), contextXmlTomcat)
 
 if (onlyCopy is False):
     print("-----------------------------------------Compilation----------------------------------")

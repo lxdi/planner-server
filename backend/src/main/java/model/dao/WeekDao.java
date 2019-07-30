@@ -50,11 +50,6 @@ public class WeekDao implements IWeekDAO {
     public Week weekByStartDate(Date date) {
         Week week = (Week) sessionFactory.getCurrentSession().createQuery("from Week w where w.startDay = :startDay")
                 .setParameter("startDay", date).uniqueResult();
-//        Week week = (Week) sessionFactory.getCurrentSession().createCriteria(Week.class)
-//                .add(Restrictions.eq("startDay", date)).uniqueResult();
-        if(week==null){
-            throw new NullPointerException("The week with start date "+ fromDate(date) + " either doesn't exist either hasn't been generated");
-        }
         return week;
     }
 
@@ -91,4 +86,15 @@ public class WeekDao implements IWeekDAO {
                 .setParameter("curDate", date)
                 .uniqueResult();
     }
+
+    @Override
+    public Week lastWeekInYear(int year) {
+        Date lastYearDay = toDate(year+1, 1, 1);
+        String hql = "from Week where startDay <= :lastYearDay order by startDay desc";
+        Query query = sessionFactory.getCurrentSession().createQuery(hql)
+                .setParameter("lastYearDay", lastYearDay)
+                .setMaxResults(1);
+        return (Week) query.uniqueResult();
+    }
+
 }
