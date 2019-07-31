@@ -20,6 +20,11 @@ public class TaskMapperDao implements ITaskMappersDAO{
     SessionFactory sessionFactory;
 
     @Override
+    public TaskMapper findOne(long id) {
+        return this.sessionFactory.getCurrentSession().get(TaskMapper.class, id);
+    }
+
+    @Override
     public void saveOrUpdate(TaskMapper taskMapper) {
         sessionFactory.getCurrentSession().saveOrUpdate(taskMapper);
     }

@@ -6,7 +6,6 @@ import model.dao.IWeekDAO;
 import model.entities.*;
 import org.hibernate.SessionFactory;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -157,7 +156,7 @@ public class TasksMappersServiceTests extends SpringTestConfig {
         }
         taskMappersService.createTaskMappers(layer, slot);
 
-        taskMappersService.rescheduleTaskMappers(weeks.get(0).getId(), "fri");
+        taskMappersService.rescheduleTaskMappersWithExclusion(weeks.get(0).getId(), "fri");
 
         List<TaskMapper> taskMappers = taskMappersDAO.taskMappersByWeeksAndSlotPositions(
                 weeks, Arrays.asList(slotPositions.get(0), slotPositions.get(1), slotPositions.get(2))

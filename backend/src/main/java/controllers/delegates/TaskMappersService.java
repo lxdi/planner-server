@@ -89,9 +89,9 @@ public class TaskMappersService {
         }
     }
 
-    public void rescheduleTaskMappers(long weekid, String dayOfWeekShort){
+    public void rescheduleTaskMappersWithExclusion(long weekid, String dayOfWeekShortForExclusion){
         Week week = weekDAO.getById(weekid);
-        DaysOfWeek dayOfWeek = DaysOfWeek.valueOf(dayOfWeekShort);
+        DaysOfWeek dayOfWeek = DaysOfWeek.valueOf(dayOfWeekShortForExclusion);
         Set<SlotPosition> slotPositions = new HashSet<>();
         Set<Slot> slots = new HashSet<>();
         taskMappersDAO.byWeekAndDay(week, dayOfWeek).forEach(tm -> {

@@ -187,7 +187,7 @@ public class HquartersDelegate {
     }
 
     public void pushTasks(long weekid, String dayOfWeekShort){
-        taskMappersService.rescheduleTaskMappers(weekid, dayOfWeekShort);
+        taskMappersService.rescheduleTaskMappersWithExclusion(weekid, dayOfWeekShort);
     }
 
     public void shiftHquarters(long firstHquarterid){
@@ -200,6 +200,10 @@ public class HquartersDelegate {
                     if(DateUtils.differenceInDays(firstHquarter.getStartWeek().getStartDay(), hQuarter.getStartWeek().getStartDay())>=0){
                         hQuarter.setStartWeek(weekDAO.weekByYearAndNumber(year, hQuarter.getStartWeek().getNumber()+1));
                         hQuarter.setEndWeek(weekDAO.weekByYearAndNumber(year, hQuarter.getEndWeek().getNumber()+1));
+                        for(Slot slot : slotDAO.getSlotsForHquarter(hQuarter)){
+                            cleanExclusions(slot);
+                            taskMappersService.rescheduleTaskMappers(slot.getMean(),true);
+                        }
                         quarterDAO.saveOrUpdate(hQuarter);
                     }
                 }

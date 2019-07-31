@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface ITaskMappersDAO {
 
+    TaskMapper findOne(long id);
     void saveOrUpdate(TaskMapper taskMapper);
     void delete(TaskMapper taskMapper);
     TaskMapper taskMapperForTask(Task task);
