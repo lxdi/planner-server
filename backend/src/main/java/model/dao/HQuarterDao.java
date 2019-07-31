@@ -3,6 +3,7 @@ package model.dao;
 import model.entities.HQuarter;
 import model.entities.Week;
 import org.hibernate.SessionFactory;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -101,6 +102,16 @@ public class HQuarterDao implements IHQuarterDAO {
                 .createQuery("from HQuarter where startWeek.startDay<=:date and endWeek.endDay>=:date")
                 .setParameter("date", date)
                 .uniqueResult();
+    }
+
+    @Override
+    public HQuarter getLastInYear(int year) {
+        Date lastYearDay = toDate(year+1, 1, 1);
+        String hql = "from HQuarter where endWeek.startDay < :lastYearDay order by endWeek.startDay desc";
+        Query query = this.sessionFactory.getCurrentSession().createQuery(hql)
+                .setParameter("lastYearDay", lastYearDay)
+                .setMaxResults(1);
+        return (HQuarter) query.uniqueResult();
     }
 
 

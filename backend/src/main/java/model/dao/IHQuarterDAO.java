@@ -18,5 +18,6 @@ public interface IHQuarterDAO {
     List<HQuarter> getPrev(long currentid, int count);
     List<HQuarter> getNext(long currentid, int count);
     HQuarter getByDate(Date date);
+    HQuarter getLastInYear(int year);
 
 }

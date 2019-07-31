@@ -98,6 +98,14 @@ public class WeekDAOTests extends AbstractTestsWithTargets {
 
     }
 
+    @Test
+    public void getLastInYearTest(){
+        quarterGenerator.generateYear(2018);
+        quarterGenerator.generateYear(2019);
+        HQuarter lastHquarter = hquarterDao.getLastInYear(2018);
+        assertTrue(hquarterDao.getHQuartersInYear(2018).get(11).getId()==lastHquarter.getId());
+    }
+
     private void checkDayInWeek(String dateString, String startDayExpected, String endDayExpected){
         Date date = DateUtils.toDate(dateString);
         Week week = weekDAO.weekOfDate(date);

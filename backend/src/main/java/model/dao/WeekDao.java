@@ -90,7 +90,7 @@ public class WeekDao implements IWeekDAO {
     @Override
     public Week lastWeekInYear(int year) {
         Date lastYearDay = toDate(year+1, 1, 1);
-        String hql = "from Week where startDay <= :lastYearDay order by startDay desc";
+        String hql = "from Week where startDay < :lastYearDay order by startDay desc";
         Query query = sessionFactory.getCurrentSession().createQuery(hql)
                 .setParameter("lastYearDay", lastYearDay)
                 .setMaxResults(1);

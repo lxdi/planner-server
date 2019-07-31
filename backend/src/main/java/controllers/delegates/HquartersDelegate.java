@@ -51,6 +51,9 @@ public class HquartersDelegate {
     ITaskMappersDAO taskMappersDAO;
 
     @Autowired
+    IWeekDAO weekDAO;
+
+    @Autowired
     IMapperExclusionDAO mapperExclusionDAO;
 
     public List<Map<String, Object>> getAllQuarters(){
@@ -187,6 +190,32 @@ public class HquartersDelegate {
         taskMappersService.rescheduleTaskMappers(weekid, dayOfWeekShort);
     }
 
+    public void shiftHquarters(long firstHquarterid){
+        HQuarter firstHquarter = quarterDAO.getById(firstHquarterid);
+        if(firstHquarter!=null){
+            int year = DateUtils.getYear(firstHquarter.getStartWeek().getStartDay());
+            if(isShiftingAvailable(year)){
+                List<HQuarter> hQuartersInYear = quarterDAO.getHQuartersInYear(year);
+                for(HQuarter hQuarter : hQuartersInYear){
+                    if(DateUtils.differenceInDays(firstHquarter.getStartWeek().getStartDay(), hQuarter.getStartWeek().getStartDay())>=0){
+                        hQuarter.setStartWeek(weekDAO.weekByYearAndNumber(year, hQuarter.getStartWeek().getNumber()+1));
+                        hQuarter.setEndWeek(weekDAO.weekByYearAndNumber(year, hQuarter.getEndWeek().getNumber()+1));
+                        quarterDAO.saveOrUpdate(hQuarter);
+                    }
+                }
+            } else {
+                throw new RuntimeException("Shifting is not available");
+            }
+        } else {
+            throw new RuntimeException("Hquarter doesn't exist");
+        }
+    }
+
+    private boolean isShiftingAvailable(int year){
+        Week lastWeek = weekDAO.lastWeekInYear(year);
+        HQuarter lastHquarter = quarterDAO.getLastInYear(year);
+        return lastHquarter.getEndWeek().getId()!=lastWeek.getId();
+    }
 
     private HQuarter saveHQuarter(Map<String, Object> hquarterDtoFull){
         HQuarter hQuarter = hquarterMapper.mapToEntity(hquarterDtoFull);
