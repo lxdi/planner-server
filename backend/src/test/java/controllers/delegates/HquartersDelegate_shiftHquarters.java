@@ -124,6 +124,25 @@ public class HquartersDelegate_shiftHquarters extends ATestsWithTargetsMeansQuar
 
     }
 
+    @Test(expected = RuntimeException.class)
+    public void shiftHquartersEdgeCaseTest(){
+
+        List<HQuarter> beforeShifting = hquarterDAO.getHQuartersInYear(2019);
+
+        Map<Long, Week> oldWeeks = new HashMap<>();
+        beforeShifting.forEach(hq -> oldWeeks.put(hq.getId(), hq.getStartWeek()));
+
+        hquartersDelegate.shiftHquarters(beforeShifting.get(4).getId());
+        hquartersDelegate.shiftHquarters(beforeShifting.get(6).getId());
+        hquartersDelegate.shiftHquarters(beforeShifting.get(7).getId());
+        hquartersDelegate.shiftHquarters(beforeShifting.get(9).getId());
+
+        //now the last week of the last hquarter equals the last week of year
+        // try to shift to the next year and expect an exception
+        hquartersDelegate.shiftHquarters(beforeShifting.get(10).getId());
+
+    }
+
 
 
     private void checkHquarterShifting(List<HQuarter> beforeShift, List<HQuarter> afterShift, int i, int isShifted, Map<Long, Week> oldWeeks){
