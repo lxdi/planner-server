@@ -101,7 +101,7 @@ const hquarterUI = function(component, hquarter){
   if(hquarter.id=='loading'){
     return <div key = {hquarter.id}>Loading ...</div>
   }
-  return <div key = {hquarter.id}>
+  return <div key = {hquarter.id} style={Object.assign({marginBottom:'5px'}, getHquarterLayoutStyle(hquarter))}>
             <Table striped bordered condensed hover width={'100px'} key={"hquarter_"+weekToString(hquarter.startWeek)} >
               <tbody>
                 <tr>
@@ -183,6 +183,17 @@ const getStyleFroSlot = function(slot){
   if(slot.tasksInLayer > 9){
     return {color: 'red'}
   }
+}
+
+const getHquarterLayoutStyle = function(hquarter){
+  var result = {border:'1px solid LightSalmon', borderRadius:'5px'}
+  if(isCurrentOrPrevHquarter(hquarter)){
+    result = Object.assign(result, {border:'1px solid LightGreen '})
+  }
+  if(isCurrentHquarter(hquarter)){
+    result = Object.assign(result, {border:'1px solid gold'})
+  }
+  return result
 }
 
 const getSlotTitleWithMean = function(meanid){
