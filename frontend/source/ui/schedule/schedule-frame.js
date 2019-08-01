@@ -16,7 +16,7 @@ export class ScheduleFrame extends React.Component{
     registerEvent('schedule-frame', 'switch-edit-mode', (stateSetter)=>this.setState({edit:!this.state.edit}))
     registerEvent('schedule-frame', 'update', (stateSetter)=>this.setState({}))
 
-    registerReaction('schedule-frame', 'hquarters-dao', ['hquarters-received', 'hquarter-modified', 'default-received'], ()=>this.setState({}))
+    registerReaction('schedule-frame', 'hquarters-dao', ['hquarters-received', 'hquarter-modified', 'default-received', 'shift-completed'], ()=>this.setState({}))
     registerReaction('schedule-frame', 'means-dao', ['means-received', 'mean-modified'], ()=>this.setState({}))
     //registerReaction('schedule-frame', 'realms-dao', 'change-current-realm', ()=>this.setState({}))
   }
@@ -106,9 +106,18 @@ const hquarterUI = function(component, hquarter){
               <tbody>
                 <tr>
                   <td>
-                    <a href='#' onClick={()=>fireEvent('hquarter-modal', 'open', [hquarter])} style={isCurrentHquarter(hquarter)?{fontWeight: 'bold'}:{}}>
-                      {hquarter.startWeek!=null?hquarter.startWeek.startDay:null} to {hquarter.endWeek!=null?hquarter.endWeek.endDay:null}
-                    </a>
+                    <div style={{width:'100%'}}>
+                      <div style={{float:'left'}}>
+                        <a href='#' onClick={()=>fireEvent('hquarter-modal', 'open', [hquarter])} style={isCurrentHquarter(hquarter)?{fontWeight: 'bold'}:{}}>
+                          W-{hquarter.startWeek.number}: {hquarter.startWeek!=null?hquarter.startWeek.startDay:null} to {hquarter.endWeek!=null?hquarter.endWeek.endDay:null}
+                        </a>
+                      </div>
+                      <div  style={{float:'right'}}>
+                        {component.state.edit && !isCurrentOrPrevHquarter(hquarter)?
+                          <a href='#' onClick={()=>fireEvent('hquarters-dao', 'shift', [hquarter])}>shift</a>
+                          :null}
+                      </div>
+                    </div>
                   </td>
                 </tr>
                 {getSlotsUI(component, hquarter)}
@@ -215,4 +224,13 @@ const isCurrentHquarter = function(hquarter){
   const beginTime = Date.parse(hquarter.startWeek.startDay)
   const endTime = Date.parse(hquarter.endWeek.endDay) + 86400000
   return todayTime>beginTime && todayTime<endTime
+}
+
+const isCurrentOrPrevHquarter = function(hquarter){
+  if(isCurrentHquarter(hquarter)){
+    return true;
+  }
+  const todayTime = new Date().getTime()
+  const endTime = Date.parse(hquarter.endWeek.endDay) + 86400000
+  return todayTime>endTime
 }

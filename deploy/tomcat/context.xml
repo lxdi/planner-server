@@ -21,7 +21,7 @@
     <!-- Default set of monitored resources -->
     <WatchedResource>WEB-INF/web.xml</WatchedResource>
 
-    <Environment name="use_database" type="java.lang.String" value="true"/>
+    <Environment name="use_database" type="java.lang.String" value="false"/>
     <Environment name="url" type="java.lang.String" value="jdbc:postgresql://localhost:5432/planner-test"/>
     <Environment name="show_sql" type="java.lang.String" value="false"/>
     <Environment name="use_query_cache" type="java.lang.String" value="false"/>

@@ -97,4 +97,10 @@ public class HquartersRESTController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @RequestMapping(path="/shift/{hqId}", method = RequestMethod.POST)
+    public ResponseEntity<String> shiftHquarter(@PathVariable("hqId") long hqId){
+        hquartersDelegate.shiftHquarters(hqId);
+        return new ResponseEntity<>("success", HttpStatus.OK);
+    }
+
 }

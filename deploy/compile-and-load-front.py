@@ -2,8 +2,8 @@ import os
 import shutil
 import subprocess
 import sys
+from properties import *
 
-tomcatPath = 'C:\\Users\\Alexander\\Projects\\tomcats\\apache-tomcat-7.0.91'
 destination = tomcatPath + '\\webapps\\ROOT\\pages'
 source = 'build'
 onlyCopy = False
@@ -12,6 +12,7 @@ for arg in sys.argv[1:]:
     if (arg == '--only-copy'):
         onlyCopy = True
 
+os.chdir(os.path.join('frontend'))
 if (onlyCopy is False):
     print("-----------------------------------------Compilation----------------------------------")
     process = subprocess.Popen(['npm', 'start'], shell=True, stdout = subprocess.PIPE)

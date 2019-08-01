@@ -133,6 +133,14 @@ registerEvent('hquarters-dao', 'push-tasks', (stateSetter, weekid, day)=>{
 
 registerEvent('hquarters-dao', 'tasks-pushed', (stateSetter)=>{})
 
+registerEvent('hquarters-dao', 'shift', (stStr, hquarter)=>{
+  sendPost('/hquarter/shift/'+hquarter.id, null, ()=>{
+    stStr('hquarters', null)
+    fireEvent('hquarters-dao', 'shift-completed')
+  })
+})
+
+registerEvent('hquarters-dao', 'shift-completed', (stateSetter)=>{})
 
 const importHquarters = function(stateSetter, hquartersDto, isFull){
   var hquarters = chkSt('hquarters-dao', 'hquarters')
