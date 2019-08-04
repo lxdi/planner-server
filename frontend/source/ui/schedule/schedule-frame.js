@@ -101,7 +101,8 @@ const hquarterUI = function(component, hquarter){
   if(hquarter.id=='loading'){
     return <div key = {hquarter.id}>Loading ...</div>
   }
-  return <div key = {hquarter.id} style={Object.assign({marginBottom:'5px'}, getHquarterLayoutStyle(hquarter))}>
+  return <div style={hquarter.startWeek.number<=4?{borderTop: '3px solid darkgrey', paddingTop:'3px'}:null}>
+      <div key = {hquarter.id} style={Object.assign({marginBottom:'5px'}, getHquarterLayoutStyle(hquarter))}>
             <Table striped bordered condensed hover width={'100px'} key={"hquarter_"+weekToString(hquarter.startWeek)} >
               <tbody>
                 <tr>
@@ -123,7 +124,8 @@ const hquarterUI = function(component, hquarter){
                 {getSlotsUI(component, hquarter)}
               </tbody>
             </Table>
-            </div>
+          </div>
+        </div>
 }
 
 const weekToString = function(week){
