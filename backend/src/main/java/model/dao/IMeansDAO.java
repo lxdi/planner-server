@@ -3,6 +3,7 @@ package model.dao;
 import model.entities.Mean;
 import model.entities.HQuarter;
 import model.entities.Realm;
+import model.entities.Target;
 
 import java.util.List;
 
@@ -22,6 +23,7 @@ public interface IMeansDAO {
     Mean getPrevMean(Mean mean);
     Mean getLastOfChildren(Mean mean, Realm realm);
     long assignsMeansCount(Mean mean);
+    List<Mean> meansAssignedToTarget(Target target);
 
 
 

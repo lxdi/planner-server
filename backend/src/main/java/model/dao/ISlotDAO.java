@@ -17,5 +17,6 @@ public interface ISlotDAO {
     List<SlotPosition> getSlotPositionsForSlot(Slot slot);
     SlotPosition getSlotPosition(Slot slot, DaysOfWeek daysOfWeek, int position);
     List<Slot> slotsWithMean(Mean mean);
+    List<Slot> slotsWithLayers(List<Layer> layers);
 
 }

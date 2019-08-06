@@ -188,9 +188,9 @@ const getStyleFroSlot = function(slot){
 }
 
 const getHquarterLayoutStyle = function(hquarter){
-  var result = {border:'1px solid LightSalmon', borderRadius:'5px'}
+  var result = {border:'1px solid LightGreen', borderRadius:'5px'}
   if(isCurrentOrPrevHquarter(hquarter)){
-    result = Object.assign(result, {border:'1px solid LightGreen '})
+    result = Object.assign(result, {border:'1px solid LightSalmon '})
   }
   if(isCurrentHquarter(hquarter)){
     result = Object.assign(result, {border:'1px solid gold'})

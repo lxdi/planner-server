@@ -3,6 +3,7 @@ package controllers.delegates;
 import com.sogoodlabs.common_mapper.CommonMapper;
 import model.dao.ITargetsDAO;
 import model.dto.BasicDtoValidator;
+import model.dto.TargetsMapper;
 import model.entities.Target;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,9 +26,12 @@ public class TargetsDelegate {
     @Autowired
     BasicDtoValidator basicDtoValidator;
 
+    @Autowired
+    TargetsMapper targetsMapper;
+
     public List<Map<String, Object>> getAllTargets(){
         List<Map<String, Object>> result = new ArrayList<>();
-        targetsDAO.allTargets().forEach(t -> result.add(commonMapper.mapToDto(t)));
+        targetsDAO.allTargets().forEach(t -> result.add(targetsMapper.mapToDto(t)));
         return result;
     }
 
@@ -38,7 +42,7 @@ public class TargetsDelegate {
         Target target = commonMapper.mapToEntity(targetDto, new Target());
         Target prevTarget = targetsDAO.getLastOfChildren(target.getParent(), target.getRealm());
         targetsDAO.saveOrUpdate(target);
-        Map<String, Object> resultDto = commonMapper.mapToDto(target);
+        Map<String, Object> resultDto = targetsMapper.mapToDto(target);
         if(prevTarget!=null){
             prevTarget.setNext(target);
             targetsDAO.saveOrUpdate(prevTarget);
@@ -57,7 +61,7 @@ public class TargetsDelegate {
         }
         Target target = commonMapper.mapToEntity(targetDto, new Target());
         targetsDAO.saveOrUpdate(target);
-        return commonMapper.mapToDto(target);
+        return targetsMapper.mapToDto(target);
     }
 
 
@@ -70,7 +74,7 @@ public class TargetsDelegate {
         }
         List<Map<String, Object>> result = new ArrayList<>();
         for(Target target: updated) {
-            result.add(commonMapper.mapToDto(target));
+            result.add(targetsMapper.mapToDto(target));
         }
         return result;
     }

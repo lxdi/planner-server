@@ -1,9 +1,6 @@
 package model.dao;
 
-import model.entities.Layer;
-import model.entities.Mean;
-import model.entities.Realm;
-import model.entities.Topic;
+import model.entities.*;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -108,6 +105,14 @@ public class MeansDao implements IMeansDAO {
         Query query = sessionFactory.getCurrentSession().createQuery(hql);
         query.setParameter("mean", mean);
         return (Long) query.uniqueResult();
+    }
+
+    @Override
+    public List<Mean> meansAssignedToTarget(Target target) {
+        String hql = "from Mean where :target in elements(targets)";
+        Query query = this.sessionFactory.getCurrentSession().createQuery(hql)
+                .setParameter("target", target);
+        return query.list();
     }
 
     @Override

@@ -33,6 +33,14 @@ public class LayerDao implements ILayerDAO {
     }
 
     @Override
+    public List<Layer> getLyersOfMeans(List<Mean> means) {
+        String hql = "from Layer where mean in :means";
+        Query query = sessionFactory.getCurrentSession().createQuery(hql);
+        query.setParameter("means", means);
+        return query.list();
+    }
+
+    @Override
     public Layer getNextLayerToSchedule(Mean mean) {
         long assignsCount = meansDAO.assignsMeansCount(mean);
         Layer result = getLayerAtPriority(mean, (int)(assignsCount+1));

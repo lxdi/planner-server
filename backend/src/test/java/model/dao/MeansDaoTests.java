@@ -145,4 +145,21 @@ public class MeansDaoTests extends AbstractTestsWithTargetsWithMeans {
 
     }
 
+    @Test
+    public void numberOfMeansAssignedToTarget(){
+        Target target = new Target("target test 1", realm);
+        targetsDAO.saveOrUpdate(target);
+
+        Mean mean = new Mean("Mean test 1", realm);
+        mean.getTargets().add(target);
+        meansDao.saveOrUpdate(mean);
+
+        Mean mean2 = new Mean("Mean test 1", realm);
+        mean2.getTargets().add(target);
+        meansDao.saveOrUpdate(mean2);
+
+        assertTrue(meansDao.meansAssignedToTarget(target).size()==2);
+
+    }
+
 }

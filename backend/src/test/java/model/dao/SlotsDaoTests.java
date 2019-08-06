@@ -3,14 +3,13 @@ package model.dao;
 import model.dao.IHQuarterDAO;
 import model.dao.IMeansDAO;
 import model.dao.ISlotDAO;
-import model.entities.HQuarter;
-import model.entities.Mean;
-import model.entities.Slot;
+import model.entities.*;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import test_configs.ATestsWithTargetsMeansQuartalsGenerated;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static junit.framework.TestCase.assertTrue;
@@ -27,6 +26,9 @@ public class SlotsDaoTests extends ATestsWithTargetsMeansQuartalsGenerated {
 
     @Autowired
     ISlotDAO slotDAO;
+
+    @Autowired
+    ILayerDAO layerDAO;
 
 
     @Test
@@ -90,6 +92,48 @@ public class SlotsDaoTests extends ATestsWithTargetsMeansQuartalsGenerated {
         assertTrue(slotsWithMean.get(0).getId()==slot1.getId());
         assertTrue(slotsWithMean.get(1).getId()==slot3.getId());
         assertTrue(slotsWithMean.get(2).getId()==slot4.getId());
+    }
+
+    @Test
+    public void slotsWithLayersTest(){
+        Mean mean1 = createMean("test mean1", realm);
+        Layer layer11 = createLayer(mean1, 1);
+        Layer layer12 = createLayer(mean1, 1);
+
+        Mean mean2 = createMean("test mean2", realm);
+        Layer layer21 = createLayer(mean2, 1);
+
+        List<HQuarter> hQuarters = ihQuarterDAO.getHQuartersInYear(2018);
+
+        Slot slot1 = createSlot(hQuarters.get(2), 1, mean1, layer11);
+        Slot slot2 = createSlot(hQuarters.get(4), 1, mean1, layer12);
+        Slot slot3 = createSlot(hQuarters.get(7), 1, mean2, layer21);
+        Slot slot4 = createSlot(hQuarters.get(8), 1, null, null);
+
+        List<Layer> layers = Arrays.asList(layer11, layer12, layer21);
+
+        assertTrue(slotDAO.slotsWithLayers(layers).size()==3);
+
+    }
+
+    private Slot createSlot(HQuarter hQuarter, int position, Mean mean, Layer layer){
+        Slot slot = new Slot(hQuarter, position);
+        slot.setMean(mean);
+        slot.setLayer(layer);
+        slotDAO.saveOrUpdate(slot);
+        return slot;
+    }
+
+    private Mean createMean(String title, Realm realm){
+        Mean mean = new Mean(title, realm);
+        meansDAO.saveOrUpdate(mean);
+        return mean;
+    }
+
+    private Layer createLayer(Mean mean, int priority){
+        Layer layer = new Layer(mean, priority);
+        layerDAO.saveOrUpdate(layer);
+        return layer;
     }
 
 }

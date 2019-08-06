@@ -94,4 +94,12 @@ public class SlotDao implements ISlotDAO {
                 "order by hquarter.startWeek.startDay asc, position asc")
                 .setParameter("mean", mean).list();
     }
+
+    @Override
+    public List<Slot> slotsWithLayers(List<Layer> layers) {
+        String hql = "FROM Slot s WHERE s.layer in :layers";
+        Query query = sessionFactory.getCurrentSession().createQuery(hql);
+        query.setParameter("layers", layers);
+        return query.list();
+    }
 }

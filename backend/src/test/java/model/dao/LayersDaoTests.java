@@ -2,16 +2,14 @@ package model.dao;
 
 import model.dao.IHQuarterDAO;
 import model.dao.ISlotDAO;
-import model.entities.HQuarter;
-import model.entities.Layer;
-import model.entities.Mean;
-import model.entities.Slot;
+import model.entities.*;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import test_configs.ATestsWithTargetsWithMeansWithLayers;
 import services.QuarterGenerator;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static junit.framework.TestCase.assertTrue;
@@ -92,14 +90,10 @@ public class LayersDaoTests extends ATestsWithTargetsWithMeansWithLayers{
         quarterGenerator.generateYear(2018);
         List<HQuarter> hQuarters = ihQuarterDAO.getHQuartersInYear(2018);
 
-        Mean mean = new Mean("test mean", realm);
-        meansDao.saveOrUpdate(mean);
+        Mean mean = createMean("test mean", realm);
 
-        Layer layer = new Layer(mean, 1);
-        layerDAO.saveOrUpdate(layer);
-
-        Layer layer2 = new Layer(mean, 2);
-        layerDAO.saveOrUpdate(layer2);
+        Layer layer = createLayer(mean, 1);
+        Layer layer2 = createLayer(mean, 2);
 
         Slot slot1 = new Slot(hQuarters.get(1), 1);
         slot1.setMean(mean);
@@ -118,6 +112,35 @@ public class LayersDaoTests extends ATestsWithTargetsWithMeansWithLayers{
         assertTrue(layerDAO.getLayerToScheduleForSlot(slot3) == null);
 
 
+    }
+
+    @Test
+    public void getLyersOfMeansTest(){
+        Mean mean = createMean("test mean1", realm);
+        Layer layer1 = createLayer(mean, 1);
+        Layer layer12 = createLayer(mean, 1);
+
+        Mean mean2 = createMean("test mean2", realm);
+        Layer layer21 = createLayer(mean, 1);
+
+        Mean mean3 = createMean("test mean3", realm);
+
+        List<Mean> means = Arrays.asList(mean, mean2, mean3);
+
+        assertTrue(layerDAO.getLyersOfMeans(means).size()==3);
+
+    }
+
+    private Mean createMean(String title, Realm realm){
+        Mean mean = new Mean(title, realm);
+        meansDao.saveOrUpdate(mean);
+        return mean;
+    }
+
+    private Layer createLayer(Mean mean, int priority){
+        Layer layer = new Layer(mean, priority);
+        layerDAO.saveOrUpdate(layer);
+        return layer;
     }
 
 }

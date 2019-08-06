@@ -107,7 +107,9 @@ const targetsUIlist = function(component){
 const targetUI = function(component, target){
   const styleForLinks = {color:'darkgreen'}
   return <div style={target.parentid!=null?{borderLeft:'1px solid grey', paddingLeft:'3px'}:null}>
-                    <a href="#" onClick={()=>fireEvent('target-modal', 'open', [target])} style={styleForLinks}>{target.title}</a>
+                    <a href="#" onClick={()=>fireEvent('target-modal', 'open', [target])} style={styleForLinks}>
+                      {target.title} {target.meansCount}|{target.layersCount}|{target.layersAssignedCount} {target.finishDate}
+                    </a>
                     <a href="#" style = {{marginLeft:'3px', color:'darkgreen'}} onClick={()=>fireEvent('target-modal', 'open', [CreateTarget(0, '', chkSt('realms-dao', 'currentRealm').id, []), target])}>
                       {addNewTargetTitle}
                     </a>
