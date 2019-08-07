@@ -63,6 +63,14 @@ registerEvent('targets-dao', 'add-draggable', (stateSetter, target)=>{stateSette
 
 registerEvent('targets-dao', 'remove-draggable', (stateSetter)=>stateSetter('draggableTarget', null))
 
+registerEvent('targets-dao', 'highlight', (stateSetter, target)=>{
+  stateSetter('highlight', target)
+})
+
+registerEvent('targets-dao', 'highlight-clean', (stateSetter, target)=>{
+  stateSetter('highlight', null)
+})
+
 const targetsProto = {
   map: function(callback, filter){
     var result = []

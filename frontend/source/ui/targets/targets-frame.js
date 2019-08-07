@@ -14,11 +14,13 @@ export class TargetsFrame extends React.Component{
     this.state = {editTree: false}
 
     registerEvent('targets-frame', 'update', ()=>this.setState({}))
-    registerReaction('targets-frame', 'targets-dao', 'targets-received', ()=>this.setState({}))
     registerReaction('targets-frame', 'realms-dao', ['realms-received', 'change-current-realm', 'realm-created'], ()=>this.setState({}))
 
     registerReaction('targets-frame', 'targets-dao',
-            ['targets-received', 'replace-target', 'target-created', 'target-deleted', 'target-modified', 'targets-list-modified', 'draggable-add-as-child'], ()=>this.setState({}))
+            ['targets-received', 'replace-target',
+            'target-created', 'target-deleted',
+            'target-modified', 'targets-list-modified',
+            'draggable-add-as-child', 'highlight', 'highlight-clean'], ()=>this.setState({}))
 
   }
 
@@ -73,9 +75,23 @@ const realmsUI = function(component){
 
 const targetsUI = function(component){
   return <div>
-          <div>{getControlButtonsForTargets(component)}</div>
+          <div>
+            <div style={{display:'inline-block'}}>{getControlButtonsForTargets(component)}</div>
+            {currentHighlightedTargetUI()}
+          </div>
           <div>{targetsUIlist(component)}</div>
     </div>
+}
+
+const currentHighlightedTargetUI = function(){
+  if(chkSt('targets-dao', 'highlight')!=null){
+    return <div style={{display:'inline-block', marginLeft:'5px', padding:'3px', border:'1px solid lightgrey'}}>
+       {chkSt('targets-dao', 'highlight').title}
+       <a href='#' onClick={()=>fireEvent('targets-dao', 'highlight-clean')}>X</a>
+     </div>
+  } else {
+    return null;
+  }
 }
 
 const getControlButtonsForTargets = function(component){
@@ -112,6 +128,7 @@ const targetUI = function(component, target){
                         <a href="#" onClick={()=>fireEvent('target-modal', 'open', [target])} style={styleForLinks}>
                           {target.title}
                         </a>
+                        {highlightButtonUI(target)}
                         <a href="#" style = {{marginLeft:'3px', color:'darkgreen'}} onClick={()=>fireEvent('target-modal', 'open', [CreateTarget(0, '', chkSt('realms-dao', 'currentRealm').id, []), target])}>
                           {addNewTargetTitle}
                         </a>
@@ -141,4 +158,14 @@ const checkTargetIfParent = function(target){
     }
   }
   return false
+}
+
+const highlightButtonUI = function(target){
+  if(chkSt('targets-dao', 'highlight')==null && !checkTargetIfParent(target)){
+    return <a href="#" onClick={()=>fireEvent('targets-dao', 'highlight', [target])}>
+                              (highlight)
+                            </a>
+  } else {
+    return null
+  }
 }

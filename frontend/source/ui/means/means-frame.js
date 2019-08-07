@@ -21,9 +21,13 @@ export class MeansFrame extends React.Component{
       this.setState({})
     })
 
+    registerReaction('means-frame', 'targets-dao', ['highlight', 'highlight-clean'], ()=>this.setState({}))
+
     registerReaction('means-frame', 'realms-dao', 'change-current-realm', ()=>this.setState({}))
     registerReaction('means-frame', 'means-dao',
-            ['means-received', 'replace-mean', 'mean-created', 'mean-deleted', 'mean-modified', 'means-list-modified', 'draggable-add-as-child', 'hide-children-changed'], ()=>this.setState({}))
+            ['means-received', 'replace-mean', 'mean-created',
+            'mean-deleted', 'mean-modified', 'means-list-modified',
+            'draggable-add-as-child', 'hide-children-changed'], ()=>this.setState({}))
   }
 
   render(){
@@ -71,9 +75,17 @@ const meansUIlist = function(component){
 }
 
 const meanUI = function(component, mean){
+  var meanLinkStyle = {}
+  if(chkSt('targets-dao', 'highlight')!=null){
+    if(!isMeanAssignedToTarget(chkSt('targets-dao', 'highlight'), mean)){
+      meanLinkStyle = {color:'grey', fontSize:'9pt'}
+    } else {
+      meanLinkStyle = {fontSize:'12pt'}
+    }
+  }
   return <div style={mean.parentid!=null?{borderLeft:'1px solid grey', paddingLeft:'3px'}:null}>
                     {hideShowChildrenControlUI(component, mean)}
-                    <a href="#" onClick={()=>fireEvent('mean-modal', 'open', [mean])}>
+                    <a href="#" onClick={()=>fireEvent('mean-modal', 'open', [mean])} style={meanLinkStyle}>
                         {markDraggableMeanTitle(mean)}
                     </a>
                     <a href="#" style = {{marginLeft:'3px'}} onClick={()=>fireEvent('mean-modal', 'open', [CreateMean(0, '', chkSt('realms-dao', 'currentRealm').id, []), mean])}>
@@ -107,4 +119,13 @@ const targetsTagsString = function(mean){
     targetsString = targetsString +divisor+chkSt('targets-dao', 'targets')[mean.realmid][mean.targetsIds[indx]];
   }
   return targetsString
+}
+
+const isMeanAssignedToTarget = function(target, mean){
+  for(var id in mean.targetsIds){
+    if(mean.targetsIds[id]==target.id){
+      return true
+    }
+  }
+  return false
 }
