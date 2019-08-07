@@ -4,6 +4,7 @@ import com.sogoodlabs.common_mapper.CommonMapper;
 import model.dao.ILayerDAO;
 import model.dao.IMeansDAO;
 import model.dao.ISlotDAO;
+import model.dao.ITargetsDAO;
 import model.entities.Layer;
 import model.entities.Mean;
 import model.entities.Slot;
@@ -32,6 +33,9 @@ public class TargetsMapper {
     CommonMapper commonMapper;
 
     @Autowired
+    ITargetsDAO targetsDAO;
+
+    @Autowired
     IMeansDAO meansDAO;
 
     @Autowired
@@ -47,23 +51,25 @@ public class TargetsMapper {
         result.put(LAYERS_ASSIGNED, 0);
         result.put(FINISH_DATE, null);
 
-        List<Mean> meansAssigned = meansDAO.meansAssignedToTarget(target);
-        if(meansAssigned.size()>0){
-            result.put(MEANS_COUNT, meansAssigned.size());
-            List<Layer> layers = layerDAO.getLyersOfMeans(meansAssigned);
-            if(layers.size()>0){
-                result.put(LAYERS, layers.size());
-                List<Slot> slots = slotDAO.slotsWithLayers(layers);
-                if(slots.size()>0){
-                    result.put(LAYERS_ASSIGNED, slots.size());
-                    if(layers.size()==slots.size()){
-                        Date date = null;
-                        for(Slot slot : slots){
-                            if(date == null || slot.getHquarter().getEndWeek().getEndDay().after(date)){
-                                date = slot.getHquarter().getEndWeek().getEndDay();
+        if(targetsDAO.isLeafTarget(target)){
+            List<Mean> meansAssigned = meansDAO.meansAssignedToTarget(target);
+            if(meansAssigned.size()>0){
+                result.put(MEANS_COUNT, meansAssigned.size());
+                List<Layer> layers = layerDAO.getLyersOfMeans(meansAssigned);
+                if(layers.size()>0){
+                    result.put(LAYERS, layers.size());
+                    List<Slot> slots = slotDAO.slotsWithLayers(layers);
+                    if(slots.size()>0){
+                        result.put(LAYERS_ASSIGNED, slots.size());
+                        if(layers.size()==slots.size()){
+                            Date date = null;
+                            for(Slot slot : slots){
+                                if(date == null || slot.getHquarter().getEndWeek().getEndDay().after(date)){
+                                    date = slot.getHquarter().getEndWeek().getEndDay();
+                                }
                             }
+                            result.put(FINISH_DATE, DateUtils.fromDate(date));
                         }
-                        result.put(FINISH_DATE, DateUtils.fromDate(date));
                     }
                 }
             }

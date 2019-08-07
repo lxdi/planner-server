@@ -126,4 +126,12 @@ public class TargetsDao implements ITargetsDAO {
         query.setParameter("realm", realm);
         return (Target) query.uniqueResult();
     }
+
+    @Override
+    public boolean isLeafTarget(Target target) {
+        String hql = "select count(*) from Target where parent = :target";
+        Query query = sessionFactory.getCurrentSession().createQuery(hql)
+                .setParameter("target", target);
+        return (long)query.uniqueResult()==0;
+    }
 }

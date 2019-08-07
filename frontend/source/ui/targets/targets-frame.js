@@ -107,11 +107,38 @@ const targetsUIlist = function(component){
 const targetUI = function(component, target){
   const styleForLinks = {color:'darkgreen'}
   return <div style={target.parentid!=null?{borderLeft:'1px solid grey', paddingLeft:'3px'}:null}>
-                    <a href="#" onClick={()=>fireEvent('target-modal', 'open', [target])} style={styleForLinks}>
-                      {target.title} {target.meansCount}|{target.layersCount}|{target.layersAssignedCount} {target.finishDate}
-                    </a>
-                    <a href="#" style = {{marginLeft:'3px', color:'darkgreen'}} onClick={()=>fireEvent('target-modal', 'open', [CreateTarget(0, '', chkSt('realms-dao', 'currentRealm').id, []), target])}>
-                      {addNewTargetTitle}
-                    </a>
+                    <div>
+                      <div>
+                        <a href="#" onClick={()=>fireEvent('target-modal', 'open', [target])} style={styleForLinks}>
+                          {target.title}
+                        </a>
+                        <a href="#" style = {{marginLeft:'3px', color:'darkgreen'}} onClick={()=>fireEvent('target-modal', 'open', [CreateTarget(0, '', chkSt('realms-dao', 'currentRealm').id, []), target])}>
+                          {addNewTargetTitle}
+                        </a>
+                      </div>
+                      {targetMetadataUI(component, target)}
+                    </div>
                 </div>
+}
+
+const targetMetadataUI = function(comp, target){
+  const styleForMetadata = {display:'inline-block', marginRight:'3px', paddingRight:'3px', borderRight:'1px solid lightgrey'}
+  if(!checkTargetIfParent(target)){
+    return <div style={{fontSize:'9pt'}}>
+      <div style={styleForMetadata}><span style={{fontWeight:'bold', color:'blue'}}>Means:</span> {target.meansCount}</div>
+      <div style={styleForMetadata}><span style={{fontWeight:'bold', color:'orange'}}>layers:</span> {target.layersAssignedCount}/{target.layersCount}</div>
+      <div style={styleForMetadata}><span style={{fontWeight:'bold', color:'green'}}>{target.finishDate!=null?target.finishDate:null}</span></div>
+    </div>
+  } else {
+    return null
+  }
+}
+
+const checkTargetIfParent = function(target){
+  for(var idx in chkSt('targets-dao', 'targets')[target.realmid]){
+    if(chkSt('targets-dao', 'targets')[target.realmid][idx].parentid==target.id){
+      return true
+    }
+  }
+  return false
 }

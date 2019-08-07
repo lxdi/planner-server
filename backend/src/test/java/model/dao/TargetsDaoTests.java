@@ -1,5 +1,6 @@
 package model.dao;
 
+import model.entities.Realm;
 import model.entities.Target;
 import org.hibernate.SessionFactory;
 import org.junit.Ignore;
@@ -139,4 +140,28 @@ public class TargetsDaoTests extends AbstractTestsWithTargets {
         assertTrue(targetsDAO.targetById(childChild.getId())==null);
 
     }
+
+    @Test
+    public void isLeafTest(){
+        Target rootTarget = createTarget("root target test", null, realm);
+
+        Target target1 = createTarget("target test", null, realm);
+        Target target11 = createTarget("child target test 11", target1, realm);
+        Target target12 = createTarget("child target test 12", target1, realm);
+        Target target121 = createTarget("childchild target test 121", target12, realm);
+
+        assertTrue(targetsDAO.isLeafTarget(rootTarget));
+        assertTrue(!targetsDAO.isLeafTarget(target1));
+        assertTrue(targetsDAO.isLeafTarget(target11));
+        assertTrue(!targetsDAO.isLeafTarget(target12));
+        assertTrue(targetsDAO.isLeafTarget(target121));
+    }
+
+    private Target createTarget(String title, Target parentTarget, Realm realm){
+        Target target = new Target(title, realm);
+        target.setParent(parentTarget);
+        targetsDAO.saveOrUpdate(target);
+        return target;
+    }
+
 }

@@ -19,5 +19,6 @@ public interface ITargetsDAO {
     Target getTargetByTitle(String title);
     Target getPrevTarget(Target target);
     Target getLastOfChildren(Target targetParent, Realm realm);
+    boolean isLeafTarget(Target target);
 
 }
