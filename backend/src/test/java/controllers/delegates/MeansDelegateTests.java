@@ -13,6 +13,7 @@ import services.StringUtils;
 import test_configs.SpringTestConfig;
 import test_configs.TestCreators;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,6 +52,10 @@ public class MeansDelegateTests extends SpringTestConfig {
 
     @Autowired
     ITaskTestingDAO taskTestingDAO;
+
+    @Autowired
+    ITargetsDAO targetsDAO;
+
 
     @Test
     public void updateTest(){
@@ -129,6 +134,73 @@ public class MeansDelegateTests extends SpringTestConfig {
         assertTrue((long)result.get("previd")==oldMean.getId());
     }
 
+    @Test
+    public void createChildTest(){
+        Realm realm = testCreators.createRealm();
+
+        Target target = createTestTarget(null, realm);
+
+        Mean rootMean = createMean(Arrays.asList(target), null, realm);
+
+        Mean newMean = new Mean();
+        newMean.setParent(rootMean);
+        newMean.setRealm(realm);
+
+        Map<String, Object> newMeanMap = commonMapper.mapToDto(newMean);
+
+        assertTrue(meansDAO.meanById(rootMean.getId()).getTargets().size()==1);
+
+        Map<String, Object> result = meansDelegate.create(newMeanMap);
+
+        newMean = meansDAO.meanById((Long) result.get("id"));
+        assertTrue(meansDAO.meanById(rootMean.getId()).getTargets().size()==0);
+        assertTrue(newMean.getTargets().size()==1);
+
+    }
+
+    @Test
+    public void createChildTest2(){
+        Realm realm = testCreators.createRealm();
+
+        Target target = createTestTarget(null, realm);
+
+        Mean rootMean = createMean(Arrays.asList(target), null, realm);
+
+        Mean newMean = new Mean();
+        newMean.setParent(rootMean);
+        newMean.setRealm(realm);
+        newMean.setTargets(Arrays.asList(target));
+
+        Map<String, Object> newMeanMap = commonMapper.mapToDto(newMean);
+        additionalMeansMapping.mapTargetsIdsToDto(newMean, newMeanMap);
+
+        assertTrue(meansDAO.meanById(rootMean.getId()).getTargets().size()==1);
+
+        Map<String, Object> result = meansDelegate.create(newMeanMap);
+
+        newMean = meansDAO.meanById((Long) result.get("id"));
+        assertTrue(meansDAO.meanById(rootMean.getId()).getTargets().size()==0);
+        assertTrue(newMean.getTargets().size()==1);
+
+    }
+
+    private Target createTestTarget(Target parent, Realm realm){
+        Target target = new Target();
+        target.setRealm(realm);
+        target.setParent(target);
+        targetsDAO.saveOrUpdate(target);
+        return target;
+    }
+
+
+    private Mean createMean(List<Target> targets, Mean parent, Realm realm){
+        Mean mean = new Mean();
+        mean.setParent(mean);
+        mean.setTargets(targets);
+        mean.setRealm(realm);
+        meansDAO.saveOrUpdate(mean);
+        return mean;
+    }
 
 
 }

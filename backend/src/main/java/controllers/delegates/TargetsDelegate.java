@@ -1,9 +1,11 @@
 package controllers.delegates;
 
 import com.sogoodlabs.common_mapper.CommonMapper;
+import model.dao.IMeansDAO;
 import model.dao.ITargetsDAO;
 import model.dto.BasicDtoValidator;
 import model.dto.TargetsMapper;
+import model.entities.Mean;
 import model.entities.Target;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,6 +31,9 @@ public class TargetsDelegate {
     @Autowired
     TargetsMapper targetsMapper;
 
+    @Autowired
+    IMeansDAO meansDAO;
+
     public List<Map<String, Object>> getAllTargets(){
         List<Map<String, Object>> result = new ArrayList<>();
         targetsDAO.allTargets().forEach(t -> result.add(targetsMapper.mapToDto(t)));
@@ -42,6 +47,7 @@ public class TargetsDelegate {
         Target target = commonMapper.mapToEntity(targetDto, new Target());
         Target prevTarget = targetsDAO.getLastOfChildren(target.getParent(), target.getRealm());
         targetsDAO.saveOrUpdate(target);
+        reassignMeansFromParent(target);
         Map<String, Object> resultDto = targetsMapper.mapToDto(target);
         if(prevTarget!=null){
             prevTarget.setNext(target);
@@ -77,6 +83,23 @@ public class TargetsDelegate {
             result.add(targetsMapper.mapToDto(target));
         }
         return result;
+    }
+
+    private void reassignMeansFromParent(Target target){
+        if(target.getParent()!=null){
+            List<Mean> means = meansDAO.meansAssignedToTarget(target.getParent());
+            if(means.size()>0){
+                for(Mean mean : means){
+                    List<Target> newTargets = new ArrayList<>();
+                    newTargets.add(target);
+                    mean.getTargets().forEach(curTar->{
+                        if(curTar.getId()!=target.getParent().getId())newTargets.add(curTar);
+                    });
+                    mean.setTargets(newTargets);
+                    meansDAO.saveOrUpdate(mean);
+                }
+            }
+        }
     }
 
 

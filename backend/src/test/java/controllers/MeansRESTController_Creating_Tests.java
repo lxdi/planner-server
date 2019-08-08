@@ -3,6 +3,7 @@ package controllers;
 import controllers.delegates.MeansDelegate;
 import controllers.delegates.TaskMappersService;
 import model.entities.Mean;
+import model.entities.Target;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.NestedServletException;
 import test_configs.ATestsWithTargetsMeansQuartalsGenerated;
+
+import java.util.*;
 
 import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -52,14 +55,24 @@ public class MeansRESTController_Creating_Tests extends ATestsWithTargetsMeansQu
         long newId = meansDao.meanByTitle("new mean").getId();
         assertTrue(meansDao.meanById(newId)!=null);
         assertTrue(meansDao.meanById(newId).getTitle().equals("new mean"));
-        assertTrue(meansDao.meanById(newId).getTargets().size()==2);
-        assertTrue(meansDao.meanById(newId).getTargets().get(0).getTitle().equals(defaultParentTarget) ||
-                meansDao.meanById(newId).getTargets().get(0).getTitle().equals(defaultChildChildTarget));
-        assertTrue(meansDao.meanById(newId).getTargets().get(1).getTitle().equals(defaultParentTarget) ||
-                meansDao.meanById(newId).getTargets().get(1).getTitle().equals(defaultChildChildTarget));
+        assertTrue(meansDao.meanById(newId).getTargets().size()==4);
+        Set<String> targetsTitles = new HashSet<>(Arrays.asList(
+                defaultParentTarget, defaultChildChildTarget, defaultChildTarget, defaultChild2Target));
+        checkTargets(meansDao.meanById(newId).getTargets(), targetsTitles);
         assertTrue(result.getResponse().getContentAsString().contains("\"id\":"+newId));
         assertTrue(result.getResponse().getContentAsString().contains("new mean"));
         System.out.println(result.getResponse().getContentAsString());
+    }
+
+    private void checkTargets(List<Target> targets, Set<String> titles){
+        targets.forEach(t->{
+            if(titles.contains(t.getTitle())){
+                titles.remove(t.getTitle());
+            } else {
+                throw new AssertionError("Targets check failed");
+            }
+        });
+        assertTrue(titles.size()==0);
     }
 
     @Test(expected = NestedServletException.class)

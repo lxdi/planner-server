@@ -69,6 +69,7 @@ public class MeansDelegate {
         Mean prevMean = meansDAO.getLastOfChildren(mean.getParent(), mean.getRealm());
         //TODO do not save the mean if layers are not valid
         meansDAO.saveOrUpdate(mean);
+        reassignTargetsFromParent(mean);
 
         Map<String, Object> result = new HashMap<>();
         if(prevMean!=null){
@@ -116,6 +117,19 @@ public class MeansDelegate {
         meansDAO.saveOrUpdate(mean);
         //TODO map with additinal
         return meansMapper.mapToDtoLazy(mean);
+    }
+
+    private void reassignTargetsFromParent(Mean mean){
+        if(mean.getParent()!=null){
+            List<Target> targets = mean.getParent().getTargets();
+            if(targets.size()>0){
+                mean.getParent().setTargets(new ArrayList<>());
+                meansDAO.saveOrUpdate(mean.getParent());
+
+                mean.getTargets().addAll(targets);
+                meansDAO.saveOrUpdate(mean);
+            }
+        }
     }
 
 

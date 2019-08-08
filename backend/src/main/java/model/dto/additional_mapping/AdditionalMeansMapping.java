@@ -49,14 +49,25 @@ public class AdditionalMeansMapping {
 
     public void mapTargetsIdsToEntity(Mean mean, Map<String, Object> dto){
         if(dto.get(TARGETSIDS_FIELD_TITLE )!=null){
-            List<Integer> targetsIds = (List) dto.get(TARGETSIDS_FIELD_TITLE );
-            for(Integer id : targetsIds){
+            List<Long> targetsIds = convertToListLong((List) dto.get(TARGETSIDS_FIELD_TITLE ));
+            for(Long id : targetsIds){
                 Target target = targetsDAO.targetById(id);
                 if(target!=null){
                     mean.getTargets().add(target);
                 }
             }
         }
+    }
+
+    private List<Long> convertToListLong(List targets){
+        List<Long> result = new ArrayList<>();
+        if(targets.size()>0 && targets.get(0) instanceof Integer){
+            for(Object i : targets){
+                Integer integer = (Integer) i;
+                result.add(Long.valueOf(integer));
+            }
+        }
+        return result;
     }
 
 }
