@@ -50,7 +50,8 @@ public class TargetsDao implements ITargetsDAO {
     @Override
     public void deleteTarget(long id) {
         Target targetToDelete = this.targetById(id);
-        deleteDependedMeans(targetToDelete);
+        //deleteDependedMeans(targetToDelete);
+        anassignMeans(targetToDelete);
         handlePrevForDeleting(targetToDelete);
 
         for(Target target : this.getChildren(targetToDelete)){
@@ -59,6 +60,7 @@ public class TargetsDao implements ITargetsDAO {
         sessionFactory.getCurrentSession().delete(targetToDelete);
     }
 
+    @Deprecated
     private void deleteDependedMeans(Target target){
         String hql = "select m from Mean m join m.targets t where t = :target";
         Query query = sessionFactory.getCurrentSession().createQuery(hql);
@@ -77,6 +79,22 @@ public class TargetsDao implements ITargetsDAO {
                     }
                 }
             }
+        }
+    }
+
+    private void anassignMeans(Target target){
+        List<Mean> means = meansDAO.meansAssignedToTarget(target);
+        if(means.size()>0){
+            means.forEach(mean->{
+                Iterator<Target> targetIterator = mean.getTargets().iterator();
+                while(targetIterator.hasNext()){
+                    Target curTarget = targetIterator.next();
+                    if(curTarget.getId()==target.getId()){
+                        targetIterator.remove();
+                    }
+                }
+                meansDAO.saveOrUpdate(mean);
+            });
         }
     }
 

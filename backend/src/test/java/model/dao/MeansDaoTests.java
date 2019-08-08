@@ -46,9 +46,9 @@ public class MeansDaoTests extends AbstractTestsWithTargetsWithMeans {
     public void deleteLinkedTarget(){
         targetsDAO.deleteTarget(targetsDAO.getTargetByTitle(defaultParentTarget).getId());
 
-        assertTrue(meansDao.meanById(1)==null);
-        assertTrue(meansDao.meanById(2)==null);
-        assertTrue(meansDao.meanById(3)==null);
+        assertTrue(meansDao.meanById(1)!=null);
+        assertTrue(meansDao.meanById(2)!=null);
+        assertTrue(meansDao.meanById(3)!=null);
 
         assertTrue(targetsDAO.targetById(1)==null);
         assertTrue(targetsDAO.targetById(2)==null);
