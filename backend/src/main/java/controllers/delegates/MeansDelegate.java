@@ -126,10 +126,20 @@ public class MeansDelegate {
                 mean.getParent().setTargets(new ArrayList<>());
                 meansDAO.saveOrUpdate(mean.getParent());
 
-                mean.getTargets().addAll(targets);
+                mean.setTargets(makeOne(mean.getTargets(), targets));
                 meansDAO.saveOrUpdate(mean);
             }
         }
+    }
+
+    private List<Target> makeOne(List<Target> list1, List<Target> list2){
+        Map<Long, Target> map = new HashMap<>();
+        list1.forEach(t->map.put(t.getId(), t));
+        list2.forEach(t->map.put(t.getId(), t));
+
+        List<Target> result = new ArrayList<>();
+        map.values().forEach(result::add);
+        return result;
     }
 
 

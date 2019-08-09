@@ -70,17 +70,35 @@ public class TargetsDelegateTests extends SpringTestConfig {
 
     }
 
+    @Test
+    public void updateListWhenParentBecomesNextTest(){
+
+        Target rootTarget = createTestTarget(null);
+        Target childTarget = createTestTarget(rootTarget);
+
+        Map<String, Object> rootTargetDto = commonMapper.mapToDto(rootTarget);
+        rootTargetDto.put("nextid", null);
+
+        Map<String, Object> childTargetDto = commonMapper.mapToDto(childTarget);
+        childTargetDto.put("parentid", null);
+        childTargetDto.put("nextid", rootTarget.getId());
+
+        List<Map<String, Object>> result = targetsDelegate.updateList(Arrays.asList(rootTargetDto, childTargetDto));
+
+    }
+
+
     private Target createTestTarget(Target parent){
         Target target = new Target();
         target.setRealm(realm);
-        target.setParent(target);
+        target.setParent(parent);
         targetsDAO.saveOrUpdate(target);
         return target;
     }
 
     private Mean createMean(List<Target> targets, Mean parent){
         Mean mean = new Mean();
-        mean.setParent(mean);
+        mean.setParent(parent);
         mean.setTargets(targets);
         meansDAO.saveOrUpdate(mean);
         return mean;

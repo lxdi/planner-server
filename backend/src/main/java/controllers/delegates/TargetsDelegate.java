@@ -7,9 +7,12 @@ import model.dto.BasicDtoValidator;
 import model.dto.TargetsMapper;
 import model.entities.Mean;
 import model.entities.Target;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import services.JsonParsingFixUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,7 +77,9 @@ public class TargetsDelegate {
     public List<Map<String, Object>> updateList(List<Map<String, Object>> targetDtoLazies){
         List<Target> updated = new ArrayList<>();
         for(Map<String, Object> targetDtoLazy : targetDtoLazies) {
-            Target target = commonMapper.mapToEntity(targetDtoLazy, new Target());
+            //Target target = commonMapper.mapToEntity(targetDtoLazy, new Target());
+            Target target = commonMapper.mapToEntity(targetDtoLazy,
+                    targetsDAO.targetById(JsonParsingFixUtils.returnLong(targetDtoLazy.get("id"))));
             targetsDAO.saveOrUpdate(target);
             updated.add(target);
         }

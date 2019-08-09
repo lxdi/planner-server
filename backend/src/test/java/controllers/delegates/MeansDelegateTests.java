@@ -184,10 +184,27 @@ public class MeansDelegateTests extends SpringTestConfig {
 
     }
 
+    @Test
+    public void repositionWhenParentBecomesNextTest(){
+        Realm realm = testCreators.createRealm();
+
+        Mean meanRoot = createMean(null, null, realm);
+        Mean meanChild = createMean(null, meanRoot, realm);
+
+        Map<String, Object> meanRootMap = commonMapper.mapToDto(meanRoot);
+        meanRootMap.put("nextid", null);
+
+        Map<String, Object> meanChildMap = commonMapper.mapToDto(meanChild);
+        meanChildMap.put("nextid", meanRoot.getId());
+        meanChildMap.put("parentid", null);
+
+        meansDelegate.reposition(Arrays.asList(meanRootMap, meanChildMap));
+    }
+
     private Target createTestTarget(Target parent, Realm realm){
         Target target = new Target();
         target.setRealm(realm);
-        target.setParent(target);
+        target.setParent(parent);
         targetsDAO.saveOrUpdate(target);
         return target;
     }
@@ -195,7 +212,7 @@ public class MeansDelegateTests extends SpringTestConfig {
 
     private Mean createMean(List<Target> targets, Mean parent, Realm realm){
         Mean mean = new Mean();
-        mean.setParent(mean);
+        mean.setParent(parent);
         mean.setTargets(targets);
         mean.setRealm(realm);
         meansDAO.saveOrUpdate(mean);

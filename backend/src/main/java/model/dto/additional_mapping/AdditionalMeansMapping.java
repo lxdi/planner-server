@@ -8,6 +8,7 @@ import model.entities.Mean;
 import model.entities.Target;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import services.JsonParsingFixUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,11 +62,8 @@ public class AdditionalMeansMapping {
 
     private List<Long> convertToListLong(List targets){
         List<Long> result = new ArrayList<>();
-        if(targets.size()>0 && targets.get(0) instanceof Integer){
-            for(Object i : targets){
-                Integer integer = (Integer) i;
-                result.add(Long.valueOf(integer));
-            }
+        if(targets.size()>0){
+            targets.forEach(i->result.add(JsonParsingFixUtils.returnLong(i)));
         }
         return result;
     }
