@@ -7,7 +7,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import test_configs.ATestsWithTargetsMeansQuartalsGenerated;
-import test_configs.TestCreators;
+import test_configs.TestCreatorsAnotherSession;
 
 import java.util.HashMap;
 import java.util.List;
@@ -25,7 +25,7 @@ public class HquartersDelegate_shiftHquarters extends ATestsWithTargetsMeansQuar
     IWeekDAO weekDAO;
 
     @Autowired
-    TestCreators testCreators;
+    TestCreatorsAnotherSession testCreators;
 
     @Autowired
     ITaskMappersDAO taskMappersDAO;

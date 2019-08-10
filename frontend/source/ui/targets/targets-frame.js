@@ -20,7 +20,7 @@ export class TargetsFrame extends React.Component{
             ['targets-received', 'replace-target',
             'target-created', 'target-deleted',
             'target-modified', 'targets-list-modified',
-            'draggable-add-as-child', 'highlight', 'highlight-clean'], ()=>this.setState({}))
+            'draggable-add-as-child', 'highlight', 'highlight-clean', 'clear-rep'], ()=>this.setState({}))
 
   }
 

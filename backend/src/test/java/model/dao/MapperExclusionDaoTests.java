@@ -8,7 +8,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import test_configs.SpringTestConfig;
-import test_configs.TestCreators;
+import test_configs.TestCreatorsAnotherSession;
 
 import java.util.Arrays;
 import java.util.List;
@@ -22,7 +22,7 @@ public class MapperExclusionDaoTests extends SpringTestConfig {
     IMapperExclusionDAO mapperExclusionDAO;
 
     @Autowired
-    TestCreators testCreators;
+    TestCreatorsAnotherSession testCreators;
 
     @Test
     public void getByWeekBySPTest(){

@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import services.QuarterGenerator;
 import test_configs.AbstractTestsWithTargets;
 import services.DateUtils;
-import test_configs.TestCreators;
+import test_configs.TestCreatorsAnotherSession;
 
 import java.sql.Date;
 import java.util.List;
@@ -38,7 +38,7 @@ public class TaskMapperDaoTests extends AbstractTestsWithTargets {
     IHQuarterDAO ihQuarterDAO;
 
     @Autowired
-    TestCreators testCreators;
+    TestCreatorsAnotherSession testCreators;
 
     @Autowired
     SessionFactory sessionFactory;

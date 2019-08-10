@@ -11,11 +11,9 @@ import services.StringUtils;
 import test_configs.AbstractTestsWithTargets;
 import services.DateUtils;
 import services.QuarterGenerator;
-import test_configs.TestCreators;
+import test_configs.TestCreatorsAnotherSession;
 
 import java.sql.Date;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -34,7 +32,7 @@ public class HquartersDelegateTests extends AbstractTestsWithTargets {
     HquartersDelegate hquartersDelegate;
 
     @Autowired
-    TestCreators testCreators;
+    TestCreatorsAnotherSession testCreators;
 
     @Before
     public void init(){

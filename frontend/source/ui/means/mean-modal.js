@@ -50,6 +50,7 @@ export class MeanModal extends React.Component {
 
     registerReaction('means-modal', 'means-dao', ['mean-deleted', 'mean-modified', 'mean-created'], function(){
       fireEvent('mean-modal', 'close')
+      fireEvent('targets-dao', 'clear-rep')
       this.setState({})
     }.bind(this))
     registerReaction('mean-modal', 'layers-dao', ['layers-received', 'add-layer'], ()=>this.setState({}))

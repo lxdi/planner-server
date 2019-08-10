@@ -5,18 +5,16 @@ import model.dao.*;
 import model.dto.additional_mapping.AdditionalMeansMapping;
 import model.entities.*;
 import org.hibernate.SessionFactory;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+import services.QuarterGenerator;
 import services.StringUtils;
 import test_configs.SpringTestConfig;
 import test_configs.TestCreators;
+import test_configs.TestCreatorsAnotherSession;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.junit.Assert.assertTrue;
 
@@ -27,6 +25,9 @@ public class MeansDelegateTests extends SpringTestConfig {
     TestCreators testCreators;
 
     @Autowired
+    TestCreatorsAnotherSession testCreators2;
+
+    @Autowired
     CommonMapper commonMapper;
 
     @Autowired
@@ -34,9 +35,6 @@ public class MeansDelegateTests extends SpringTestConfig {
 
     @Autowired
     ITasksDAO tasksDAO;
-
-    @Autowired
-    IRealmDAO realmDAO;
 
     @Autowired
     AdditionalMeansMapping additionalMeansMapping;
@@ -54,19 +52,25 @@ public class MeansDelegateTests extends SpringTestConfig {
     ITaskTestingDAO taskTestingDAO;
 
     @Autowired
-    ITargetsDAO targetsDAO;
+    QuarterGenerator quarterGenerator;
+
+    @Autowired
+    IHQuarterDAO ihQuarterDAO;
+
+    @Autowired
+    IWeekDAO weekDAO;
 
 
     @Test
     public void updateTest(){
 
-        Realm realm = testCreators.createRealm();
-        Mean mean = testCreators.createMean(realm);
-        Layer layer = testCreators.createLayer(mean);
-        Subject subject = testCreators.createSubject(layer);
-        Task task = testCreators.createTask(subject);
-        Topic topic = testCreators.createTopic(task);
-        TaskTesting taskTesting = testCreators.createTesting(task);
+        Realm realm = testCreators2.createRealm();
+        Mean mean = testCreators2.createMean(realm);
+        Layer layer = testCreators2.createLayer(mean);
+        Subject subject = testCreators2.createSubject(layer);
+        Task task = testCreators2.createTask(subject);
+        Topic topic = testCreators2.createTopic(task);
+        TaskTesting taskTesting = testCreators2.createTesting(task);
 
         Map<String, Object> dto = commonMapper.mapToDto(mean);
         additionalMeansMapping.mapLayers(mean, dto);
@@ -95,15 +99,15 @@ public class MeansDelegateTests extends SpringTestConfig {
     @Test
     public void getAllMeansTest(){
 
-        Realm realm = testCreators.createRealm();
-        Mean mean = testCreators.createMean(realm);
-        Layer layer = testCreators.createLayer(mean);
-        Subject subject = testCreators.createSubject(layer);
-        Task task = testCreators.createTask(subject);
-        Topic topic = testCreators.createTopic(task);
-        TaskTesting taskTesting = testCreators.createTesting(task);
+        Realm realm = testCreators2.createRealm();
+        Mean mean = testCreators2.createMean(realm);
+        Layer layer = testCreators2.createLayer(mean);
+        Subject subject = testCreators2.createSubject(layer);
+        Task task = testCreators2.createTask(subject);
+        Topic topic = testCreators2.createTopic(task);
+        TaskTesting taskTesting = testCreators2.createTesting(task);
 
-        Target target = testCreators.createTarget(realm);
+        Target target = testCreators2.createTarget(realm);
 
         mean.getTargets().add(target);
         meansDAO.saveOrUpdate(mean);
@@ -120,8 +124,8 @@ public class MeansDelegateTests extends SpringTestConfig {
 
     @Test
     public void createTest(){
-        Realm realm = testCreators.createRealm();
-        Mean oldMean = testCreators.createMean(realm);
+        Realm realm = testCreators2.createRealm();
+        Mean oldMean = testCreators2.createMean(realm);
 
         Map<String, Object> dto = new HashMap<>();
         dto.put("title", "new mean");
@@ -136,11 +140,11 @@ public class MeansDelegateTests extends SpringTestConfig {
 
     @Test
     public void createChildTest(){
-        Realm realm = testCreators.createRealm();
+        Realm realm = testCreators2.createRealm();
 
-        Target target = createTestTarget(null, realm);
+        Target target = testCreators.createTarget(null, realm);
 
-        Mean rootMean = createMean(Arrays.asList(target), null, realm);
+        Mean rootMean = testCreators.createMean( null, Arrays.asList(target), realm);
 
         Mean newMean = new Mean();
         newMean.setParent(rootMean);
@@ -160,11 +164,11 @@ public class MeansDelegateTests extends SpringTestConfig {
 
     @Test
     public void createChildTest2(){
-        Realm realm = testCreators.createRealm();
+        Realm realm = testCreators2.createRealm();
 
-        Target target = createTestTarget(null, realm);
+        Target target = testCreators.createTarget(null, realm);
 
-        Mean rootMean = createMean(Arrays.asList(target), null, realm);
+        Mean rootMean = testCreators.createMean( null, Arrays.asList(target), realm);
 
         Mean newMean = new Mean();
         newMean.setParent(rootMean);
@@ -186,10 +190,10 @@ public class MeansDelegateTests extends SpringTestConfig {
 
     @Test
     public void repositionWhenParentBecomesNextTest(){
-        Realm realm = testCreators.createRealm();
+        Realm realm = testCreators2.createRealm();
 
-        Mean meanRoot = createMean(null, null, realm);
-        Mean meanChild = createMean(null, meanRoot, realm);
+        Mean meanRoot = testCreators.createMean(null, null, realm);
+        Mean meanChild = testCreators.createMean(meanRoot,null, realm);
 
         Map<String, Object> meanRootMap = commonMapper.mapToDto(meanRoot);
         meanRootMap.put("nextid", null);
@@ -201,23 +205,34 @@ public class MeansDelegateTests extends SpringTestConfig {
         meansDelegate.reposition(Arrays.asList(meanRootMap, meanChildMap));
     }
 
-    private Target createTestTarget(Target parent, Realm realm){
-        Target target = new Target();
-        target.setRealm(realm);
-        target.setParent(parent);
-        targetsDAO.saveOrUpdate(target);
-        return target;
+    @Test
+    public void deleteTest(){
+        Realm realm = testCreators.createRealm();
+
+        quarterGenerator.generateYear(2018);
+
+        Target target = testCreators.createTarget(realm);
+
+        Mean rootMean = testCreators.createMean(null, Arrays.asList(target), realm);
+        Mean mean = testCreators.createMean(rootMean, Arrays.asList(target), realm);
+        Mean meanChild = testCreators.createMean(mean, new ArrayList<>(), realm);
+        Mean meanChildChild = testCreators.createMean(meanChild, new ArrayList<>(), realm);
+
+        Layer layer = testCreators.createLayer(mean);
+        Subject subject = testCreators.createSubject(layer);
+        Task task = testCreators.createTask(subject);
+
+        Slot slot = testCreators.createSlot(layer, mean, ihQuarterDAO.getHQuartersInYear(2018).get(5));
+        SlotPosition slotPosition = testCreators.createSlotPosition(slot);
+
+        TaskMapper taskMapper = testCreators.createTaskMapper(
+                task, ihQuarterDAO.getHQuartersInYear(2018).get(5).getStartWeek(), slotPosition);
+
+        Layer layer2 = testCreators.createLayer(meanChild);
+        Layer layer3 = testCreators.createLayer(meanChildChild);
+
+        meansDelegate.delete(mean.getId());
+
     }
-
-
-    private Mean createMean(List<Target> targets, Mean parent, Realm realm){
-        Mean mean = new Mean();
-        mean.setParent(parent);
-        mean.setTargets(targets);
-        mean.setRealm(realm);
-        meansDAO.saveOrUpdate(mean);
-        return mean;
-    }
-
 
 }

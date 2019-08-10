@@ -71,6 +71,10 @@ registerEvent('targets-dao', 'highlight-clean', (stateSetter, target)=>{
   stateSetter('highlight', null)
 })
 
+registerEvent('targets-dao', 'clear-rep', (stStr)=>{
+  stStr('targets', null)
+})
+
 const targetsProto = {
   map: function(callback, filter){
     var result = []

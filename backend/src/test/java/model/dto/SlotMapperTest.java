@@ -5,7 +5,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import services.StringUtils;
 import test_configs.SpringTestConfig;
-import test_configs.TestCreators;
+import test_configs.TestCreatorsAnotherSession;
 
 import java.util.Map;
 
@@ -14,7 +14,7 @@ import static org.junit.Assert.assertTrue;
 public class SlotMapperTest extends SpringTestConfig {
 
     @Autowired
-    TestCreators testCreators;
+    TestCreatorsAnotherSession testCreators;
 
     @Autowired
     SlotMapper slotMapper;

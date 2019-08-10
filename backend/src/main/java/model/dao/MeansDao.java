@@ -52,11 +52,12 @@ public class MeansDao implements IMeansDAO {
             this.saveOrUpdate(prevMean);
         }
 
-        for(Layer dependedLayer : layerDAO.getLyersOfMean(meanToDelete)){
-            layerDAO.delete(dependedLayer);
-        }
         for(Mean childMean : this.getChildren(meanToDelete)){
             this.deleteMean(childMean.getId());
+        }
+
+        for(Layer dependedLayer : layerDAO.getLyersOfMean(meanToDelete)){
+            layerDAO.delete(dependedLayer);
         }
 
         sessionFactory.getCurrentSession().delete(meanToDelete);

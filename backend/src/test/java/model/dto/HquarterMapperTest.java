@@ -3,11 +3,10 @@ package model.dto;
 import model.entities.*;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 import services.DateUtils;
 import services.StringUtils;
 import test_configs.SpringTestConfig;
-import test_configs.TestCreators;
+import test_configs.TestCreatorsAnotherSession;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,7 +16,7 @@ import static org.junit.Assert.assertTrue;
 public class HquarterMapperTest extends SpringTestConfig {
 
     @Autowired
-    TestCreators testCreators;
+    TestCreatorsAnotherSession testCreators;
 
     @Autowired
     HquarterMapper hquarterMapper;

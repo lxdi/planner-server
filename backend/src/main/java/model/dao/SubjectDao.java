@@ -2,6 +2,7 @@ package model.dao;
 
 import model.entities.Layer;
 import model.entities.Subject;
+import model.entities.Task;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,9 @@ public class SubjectDao implements ISubjectDAO {
 
     @Autowired
     SessionFactory sessionFactory;
+
+    @Autowired
+    ITasksDAO tasksDAO;
 
     @Override
     public void saveOrUpdate(Subject subject) {
@@ -37,6 +41,11 @@ public class SubjectDao implements ISubjectDAO {
 
     @Override
     public void delete(long id) {
-        sessionFactory.getCurrentSession().delete(this.getById(id));
+        Subject subject = this.getById(id);
+        List<Task> tasks = tasksDAO.tasksBySubject(subject);
+        if(tasks.size()>0){
+            tasks.forEach(t->tasksDAO.delete(t.getId()));
+        }
+        sessionFactory.getCurrentSession().delete(subject);
     }
 }

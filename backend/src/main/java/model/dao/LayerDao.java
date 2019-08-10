@@ -3,6 +3,7 @@ package model.dao;
 import model.entities.Layer;
 import model.entities.Mean;
 import model.entities.Slot;
+import model.entities.Subject;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,9 @@ public class LayerDao implements ILayerDAO {
 
     @Autowired
     ILayerDAO layerDAO;
+
+    @Autowired
+    ISubjectDAO subjectDAO;
 
     @Override
     public List<Layer> getLyersOfMean(Mean mean) {
@@ -77,6 +81,10 @@ public class LayerDao implements ILayerDAO {
 
     @Override
     public void delete(Layer layer) {
+        List<Subject> subjects = subjectDAO.subjectsByLayer(layer);
+        if(subjects.size()>0){
+            subjects.forEach(s->subjectDAO.delete(s.getId()));
+        }
         sessionFactory.getCurrentSession().delete(layer);
     }
 
