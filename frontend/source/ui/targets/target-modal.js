@@ -14,7 +14,8 @@ const createState = function(isOpen, isStatic, isEdit, currentTarget, parent){
     isOpen: isOpen,
     mode: {isStatic: isStatic, isEdit: isEdit},
     currentTarget: currentTarget,
-    parent: parent
+    parent: parent,
+    fieldsValidation:{}
   }
 }
 
@@ -51,13 +52,16 @@ export class TargetModal extends React.Component {
         fireEvent('targets-dao', 'modify', [this.state.currentTarget])
       }
     } else {
-      this.props.isTitleValid = false
+      this.state.fieldsValidation['title'] = false
       this.setState({})
     }
   }
 
-  handleNameVal(e){
-    this.state.currentTarget.title = e.target.value;
+  handleNameVal(e, fieldName){
+    if(this.state.fieldsValidation[fieldName] == false){
+      this.state.fieldsValidation[fieldName] = true
+    }
+    this.state.currentTarget[fieldName] = e.target.value;
     this.setState({})
   }
 
@@ -65,18 +69,28 @@ export class TargetModal extends React.Component {
     return <CommonModal isOpen = {this.state.isOpen} okHandler = {this.okHandler} cancelHandler={()=>fireEvent('target-modal', 'close', [])} title={targetModalHeaderTitle} >
         <CommonCrudeTemplate editing = {this.state.mode} changeEditHandler = {this.forceUpdate.bind(this)} deleteHandler={()=>fireEvent('targets-dao', 'delete', [this.state.currentTarget])}>
           <form>
-            <FormGroup controlId="formBasicText">
-              <ControlLabel>Title</ControlLabel>
-              {this.state.mode.isEdit? <FormControl
-                type="text"
-                value={this.state.currentTarget.title}
-                placeholder="Enter title"
-                onChange={this.handleNameVal}/>
-              : <FormControl.Static>{this.state.currentTarget.title}</FormControl.Static>}
-              {this.state.isTitleValid!=null && !this.state.isTitleValid? <Alert bsStyle="danger"><strong>Title</strong> must not be empty</Alert>: null}
-            </FormGroup>
+            {getTextField(this, 'title', 'Title')}
+            {getTextField(this, 'definitionOfDone', 'Definition of done')}
           </form>
         </CommonCrudeTemplate>
       </CommonModal>
   }
+}
+
+const getTextField = function(comp, fieldName, fieldTitle){
+  var content = null
+  if(comp.state.mode.isEdit){
+    content = <FormControl
+      type="text"
+      value={comp.state.currentTarget[fieldName]}
+      placeholder={fieldTitle}
+      onChange={(e)=>comp.handleNameVal(e, fieldName)}/>
+  } else {
+    content = <FormControl.Static>{comp.state.currentTarget[fieldName]}</FormControl.Static>
+  }
+  return  <FormGroup controlId="formBasicText">
+                <ControlLabel>{fieldTitle}</ControlLabel>
+                {content}
+                {comp.state.fieldsValidation[fieldName]!=null && !comp.state.fieldsValidation[fieldName]? <Alert bsStyle="danger"><strong>{fieldTitle}</strong> must not be empty</Alert>: null}
+              </FormGroup>
 }

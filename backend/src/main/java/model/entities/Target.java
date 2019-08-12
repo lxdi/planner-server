@@ -27,6 +27,9 @@ public class Target {
     @ManyToOne(fetch = FetchType.LAZY)
     Realm realm;
 
+    @Column(length = 4096)
+    String definitionOfDone;
+
     public Target(){
     }
 
@@ -68,5 +71,12 @@ public class Target {
     }
     public void setNext(Target next) {
         this.next = next;
+    }
+
+    public String getDefinitionOfDone() {
+        return definitionOfDone;
+    }
+    public void setDefinitionOfDone(String definitionOfDone) {
+        this.definitionOfDone = definitionOfDone;
     }
 }
