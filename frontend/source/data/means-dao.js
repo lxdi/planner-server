@@ -38,6 +38,9 @@ registerEvent('means-dao', 'create', function(stateSetter, mean, parent){
     }
     importOneMeanDto(data)
     resolveMean(data)
+    if(parent!=null){
+      parent.targetsIds = []
+    }
     fireEvent('means-dao', 'mean-created', [data])
   })
 })
