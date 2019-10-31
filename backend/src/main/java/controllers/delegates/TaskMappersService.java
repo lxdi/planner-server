@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.function.Supplier;
 
 @Service
 @Transactional
@@ -115,27 +116,32 @@ public class TaskMappersService {
         if(layerToMap!=null){
             List<Task> tasks = sortUtils.sortTasks(tasksDAO.tasksByLayer(layerToMap));
             if(tasks.size()>0) {
-                Stack<Task> taskStack = tasksInStack(tasks);
                 List<SlotPosition> slotPositions = sortUtils.sortSlotPositions(slotDAO.getSlotPositionsForSlot(slot));
-                createTaskMappers(weekDAO.weeksOfHquarter(slot.getHquarter()), slotPositions, taskStack);
+                createTaskMappers(weekDAO.weeksOfHquarter(slot.getHquarter()), slotPositions, tasksInStack(tasks));
             }
         }
     }
 
     private void createTaskMappers(List<Week> weeks, List<SlotPosition> slotPositions, Stack<Task> taskStack){
         List<MapperExclusion> exclusions = mapperExclusionDAO.getByWeeksBySPs(weeks, slotPositions);
-        Task currentTask = !taskStack.isEmpty()? taskStack.pop():null;
         validateMapping(taskStack.size(), slotPositions, weeks, exclusions);
-        for(int iw = 0; iw<weeks.size(); iw++){
-            for(int isp = 0; isp<slotPositions.size(); isp++){
-                if(checkExclusions(exclusions, weeks.get(iw), slotPositions.get(isp))){
-                    fillTaskMapperForTask(currentTask, weeks.get(iw), slotPositions.get(isp));
-                    currentTask = !taskStack.isEmpty()? taskStack.pop():null;
-                    if(currentTask==null){
-                        //exit all loops and complete
-                        iw=weeks.size();
-                        isp=slotPositions.size();
-                    }
+        for(Week week : weeks){
+            if(!taskStack.isEmpty()){
+                createTaskMappersForWeek(week, slotPositions, ()->!taskStack.empty()?taskStack.pop():null, exclusions);
+            } else {
+                return;
+            }
+        }
+    }
+
+    private void createTaskMappersForWeek(Week week, List<SlotPosition> slotPositions, Supplier<Task> taskSupplier, List<MapperExclusion> exclusions){
+        for(SlotPosition sp : slotPositions){
+            if(checkExclusions(exclusions, week, sp)){
+                Task currentTask = taskSupplier.get();
+                if(currentTask!=null){
+                    fillTaskMapperForTask(currentTask, week, sp);
+                } else {
+                    return;
                 }
             }
         }
