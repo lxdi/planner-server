@@ -113,35 +113,36 @@ public class TaskMappersService {
 
     public void createTaskMappers(Layer layerToMap, Slot slot){
         if(layerToMap!=null){
-            List<Task> tasks = tasksDAO.tasksByLayer(layerToMap);
-            sortUtils.sortTasks(tasks);
+            List<Task> tasks = sortUtils.sortTasks(tasksDAO.tasksByLayer(layerToMap));
             if(tasks.size()>0) {
                 Stack<Task> taskStack = tasksInStack(tasks);
-                List<Week> weeks = weekDAO.weeksOfHquarter(slot.getHquarter());
-                List<SlotPosition> slotPositions = slotDAO.getSlotPositionsForSlot(slot);
-                sortUtils.sortSlotPositions(slotPositions);
-                List<MapperExclusion> exclusions = mapperExclusionDAO.getByWeeksBySPs(weeks, slotPositions);
-                Task currentTask = !taskStack.isEmpty()? taskStack.pop():null;
-                validateMapping(tasks, slotPositions, weeks, exclusions);
-                for(int iw = 0; iw<weeks.size(); iw++){
-                    for(int isp = 0; isp<slotPositions.size(); isp++){
-                        if(checkExclusions(exclusions, weeks.get(iw), slotPositions.get(isp))){
-                            fillTaskMapperForTask(currentTask, weeks.get(iw), slotPositions.get(isp));
-                            currentTask = !taskStack.isEmpty()? taskStack.pop():null;
-                            if(currentTask==null){
-                                //exit all loops and complete
-                                iw=weeks.size();
-                                isp=slotPositions.size();
-                            }
-                        }
+                List<SlotPosition> slotPositions = sortUtils.sortSlotPositions(slotDAO.getSlotPositionsForSlot(slot));
+                createTaskMappers(weekDAO.weeksOfHquarter(slot.getHquarter()), slotPositions, taskStack);
+            }
+        }
+    }
+
+    private void createTaskMappers(List<Week> weeks, List<SlotPosition> slotPositions, Stack<Task> taskStack){
+        List<MapperExclusion> exclusions = mapperExclusionDAO.getByWeeksBySPs(weeks, slotPositions);
+        Task currentTask = !taskStack.isEmpty()? taskStack.pop():null;
+        validateMapping(taskStack.size(), slotPositions, weeks, exclusions);
+        for(int iw = 0; iw<weeks.size(); iw++){
+            for(int isp = 0; isp<slotPositions.size(); isp++){
+                if(checkExclusions(exclusions, weeks.get(iw), slotPositions.get(isp))){
+                    fillTaskMapperForTask(currentTask, weeks.get(iw), slotPositions.get(isp));
+                    currentTask = !taskStack.isEmpty()? taskStack.pop():null;
+                    if(currentTask==null){
+                        //exit all loops and complete
+                        iw=weeks.size();
+                        isp=slotPositions.size();
                     }
                 }
             }
         }
     }
 
-    private void validateMapping(List<Task> tasks, List<SlotPosition> SPs, List<Week> weeks, List<MapperExclusion> exclusions){
-        if((SPs.size()*weeks.size()-exclusions.size())<tasks.size()){
+    private void validateMapping(int tasksCount, List<SlotPosition> SPs, List<Week> weeks, List<MapperExclusion> exclusions){
+        if((SPs.size()*weeks.size()-exclusions.size())<tasksCount){
             throw new UnsupportedOperationException("There's not enough place to schedule the all Tasks");
         }
     }
@@ -168,14 +169,6 @@ public class TaskMappersService {
             }
         }
         return true;
-    }
-
-    private int ifMappingNotOnFullWeek(int weekNumFromZero, int atLeastTo){
-        if(weekNumFromZero+1<=atLeastTo){
-            return 0;
-        } else {
-            return 1;
-        }
     }
 
 }
