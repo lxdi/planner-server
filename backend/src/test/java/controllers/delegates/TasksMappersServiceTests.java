@@ -169,8 +169,8 @@ public class TasksMappersServiceTests extends SpringTestConfig {
         checkTaskMapper(tasks, weeks, slotPositions, 4, 2, 1);
         checkTaskMapper(tasks, weeks, slotPositions, 5, 0, 2);
         checkTaskMapper(tasks, weeks, slotPositions, 6, 1, 2);
-        checkTaskMapper(tasks, weeks, slotPositions, 7, 0, 3);
-        checkTaskMapper(tasks, weeks, slotPositions, 8, 1, 3);
+        checkTaskMapper(tasks, weeks, slotPositions, 7, 2, 2);
+        checkTaskMapper(tasks, weeks, slotPositions, 8, 0, 3);
     }
 
     private void checkTaskMapper(List<Task> tasks, List<Week> weeks, List<SlotPosition> slotPositions, int itask,  int isp, int iw){

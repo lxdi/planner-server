@@ -106,21 +106,20 @@ public class HquartersDelegate_shiftHquarters extends ATestsWithTargetsMeansQuar
         assertTrue(taskMappersDAO.taskMapperForTask(task2).getWeek().getId()==selectedHquarter.getStartWeek().getId());
         assertTrue(taskMappersDAO.taskMapperForTask(task2).getSlotPosition().getId()==slotPosition2.getId());
 
-        assertTrue(taskMappersDAO.taskMapperForTask(task3).getWeek().getId()
-                == weekDAO.weekByYearAndNumber(2018, selectedHquarter.getStartWeek().getNumber()+1).getId());
-        assertTrue(taskMappersDAO.taskMapperForTask(task3).getSlotPosition().getId()==slotPosition.getId());
+        assertTrue(taskMappersDAO.taskMapperForTask(task3).getWeek().getId()==selectedHquarter.getStartWeek().getId());
+        assertTrue(taskMappersDAO.taskMapperForTask(task3).getSlotPosition().getId()==slotPosition3.getId());
 
         assertTrue(taskMappersDAO.taskMapperForTask(task4).getWeek().getId()
                 == weekDAO.weekByYearAndNumber(2018, selectedHquarter.getStartWeek().getNumber()+1).getId());
-        assertTrue(taskMappersDAO.taskMapperForTask(task4).getSlotPosition().getId()==slotPosition2.getId());
+        assertTrue(taskMappersDAO.taskMapperForTask(task4).getSlotPosition().getId()==slotPosition.getId());
 
         assertTrue(taskMappersDAO.taskMapperForTask(task5).getWeek().getId()
-                == weekDAO.weekByYearAndNumber(2018, selectedHquarter.getStartWeek().getNumber()+2).getId());
-        assertTrue(taskMappersDAO.taskMapperForTask(task5).getSlotPosition().getId()==slotPosition.getId());
+                == weekDAO.weekByYearAndNumber(2018, selectedHquarter.getStartWeek().getNumber()+1).getId());
+        assertTrue(taskMappersDAO.taskMapperForTask(task5).getSlotPosition().getId()==slotPosition2.getId());
 
         assertTrue(taskMappersDAO.taskMapperForTask(task6).getWeek().getId()
-                == weekDAO.weekByYearAndNumber(2018, selectedHquarter.getStartWeek().getNumber()+2).getId());
-        assertTrue(taskMappersDAO.taskMapperForTask(task6).getSlotPosition().getId()==slotPosition2.getId());
+                == weekDAO.weekByYearAndNumber(2018, selectedHquarter.getStartWeek().getNumber()+1).getId());
+        assertTrue(taskMappersDAO.taskMapperForTask(task6).getSlotPosition().getId()==slotPosition3.getId());
 
     }
 

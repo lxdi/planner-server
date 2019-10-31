@@ -201,18 +201,12 @@ public class HquarterDtoLazyMapper_AfterUnassigning_Tests extends ATestsWithTarg
 
         List<Map<String, Object>> weeks = (List<Map<String, Object>>) hquarterDtoFull.get("weeks");
 
-        //check first week
-        Map<DaysOfWeek, List<String>> mappingFirstWeek = new HashMap();
-        mappingFirstWeek.put(DaysOfWeek.mon, new ArrayList<>(Arrays.asList(tasksTitles.pop())));
-        mappingFirstWeek.put(DaysOfWeek.fri, new ArrayList<>(Arrays.asList(tasksTitles.pop())));
-        mappingFirstWeek.put(DaysOfWeek.sun, new ArrayList<>(Arrays.asList(tasksTitles.pop())));
-        WeeksMappingChecker.checkWeek(mappingFirstWeek, weeks, 0);
-
         //check others
-        for (int i = 1; i < 4; i++) {
+        for (int i = 0; i < 3; i++) {
             Map<DaysOfWeek, List<String>> mappingWeek = new HashMap();
             mappingWeek.put(DaysOfWeek.mon, new ArrayList<>(Arrays.asList(tasksTitles.pop())));
             mappingWeek.put(DaysOfWeek.fri, new ArrayList<>(Arrays.asList(tasksTitles.pop())));
+            mappingWeek.put(DaysOfWeek.sun, new ArrayList<>(Arrays.asList(tasksTitles.pop())));
             WeeksMappingChecker.checkWeek(mappingWeek, weeks, i);
         }
 
@@ -234,18 +228,12 @@ public class HquarterDtoLazyMapper_AfterUnassigning_Tests extends ATestsWithTarg
 
         List<Map<String, Object>> weeks2 = (List<Map<String, Object>>) hquarterDtoFull2.get("weeks");
 
-        //check first week
-        Map<DaysOfWeek, List<String>> mappingFirstWeek2 = new HashMap();
-        mappingFirstWeek2.put(DaysOfWeek.mon, new ArrayList<>(Arrays.asList(tasksTitles2.pop())));
-        mappingFirstWeek2.put(DaysOfWeek.thu, new ArrayList<>(Arrays.asList(tasksTitles2.pop())));
-        mappingFirstWeek2.put(DaysOfWeek.fri, new ArrayList<>(Arrays.asList(tasksTitles2.pop())));
-        WeeksMappingChecker.checkWeek(mappingFirstWeek2, weeks2, 0);
-
         //check others
-        for (int i = 1; i < 4; i++) {
+        for (int i = 0; i < 3; i++) {
             Map<DaysOfWeek, List<String>> mappingWeek = new HashMap();
             mappingWeek.put(DaysOfWeek.mon, new ArrayList<>(Arrays.asList(tasksTitles2.pop())));
             mappingWeek.put(DaysOfWeek.thu, new ArrayList<>(Arrays.asList(tasksTitles2.pop())));
+            mappingWeek.put(DaysOfWeek.fri, new ArrayList<>(Arrays.asList(tasksTitles2.pop())));
             WeeksMappingChecker.checkWeek(mappingWeek, weeks2, i);
         }
     }

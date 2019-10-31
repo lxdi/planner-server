@@ -13,8 +13,6 @@ import java.util.*;
 @Transactional
 public class TaskMappersService {
 
-    private static final int OPTIMAL_TASKS_AMOUNT = 8;
-
     @Autowired
     ISlotDAO slotDAO;
 
@@ -117,7 +115,6 @@ public class TaskMappersService {
         if(layerToMap!=null){
             List<Task> tasks = tasksDAO.tasksByLayer(layerToMap);
             sortUtils.sortTasks(tasks);
-            int fullWeekMappingUntil = tasks.size()-OPTIMAL_TASKS_AMOUNT;
             if(tasks.size()>0) {
                 Stack<Task> taskStack = tasksInStack(tasks);
                 List<Week> weeks = weekDAO.weeksOfHquarter(slot.getHquarter());
@@ -127,8 +124,7 @@ public class TaskMappersService {
                 Task currentTask = !taskStack.isEmpty()? taskStack.pop():null;
                 validateMapping(tasks, slotPositions, weeks, exclusions);
                 for(int iw = 0; iw<weeks.size(); iw++){
-                    int SPsToMapAmount = slotPositions.size()-ifMappingNotOnFullWeek(iw, fullWeekMappingUntil);
-                    for(int isp = 0; isp<SPsToMapAmount; isp++){
+                    for(int isp = 0; isp<slotPositions.size(); isp++){
                         if(checkExclusions(exclusions, weeks.get(iw), slotPositions.get(isp))){
                             fillTaskMapperForTask(currentTask, weeks.get(iw), slotPositions.get(isp));
                             currentTask = !taskStack.isEmpty()? taskStack.pop():null;
@@ -136,12 +132,6 @@ public class TaskMappersService {
                                 //exit all loops and complete
                                 iw=weeks.size();
                                 isp=slotPositions.size();
-                            }
-                        } else {
-                            if(SPsToMapAmount<slotPositions.size()){
-                                SPsToMapAmount++;
-                            } else {
-                                fullWeekMappingUntil++;
                             }
                         }
                     }
@@ -152,7 +142,7 @@ public class TaskMappersService {
 
     private void validateMapping(List<Task> tasks, List<SlotPosition> SPs, List<Week> weeks, List<MapperExclusion> exclusions){
         if((SPs.size()*weeks.size()-exclusions.size())<tasks.size()){
-            throw new UnsupportedOperationException("There is not enough place to schedule the all Tasks");
+            throw new UnsupportedOperationException("There's not enough place to schedule the all Tasks");
         }
     }
 
