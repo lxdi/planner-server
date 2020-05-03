@@ -1,12 +1,16 @@
 package com.sogoodlabs.planner.model.dao;
 
 import com.sogoodlabs.planner.model.entities.*;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,25 +22,25 @@ import java.util.List;
 @Transactional
 public class MeansDao implements IMeansDAO {
 
-    @Autowired
-    SessionFactory sessionFactory;
+    @PersistenceContext
+    EntityManager entityManager;
 
     @Autowired
     ILayerDAO layerDAO;
 
     @Override
     public List<Mean> getAllMeans() {
-        return sessionFactory.getCurrentSession().createQuery("FROM Mean").list();
+        return entityManager.unwrap(Session.class).createQuery("FROM Mean").list();
     }
 
     @Override
     public Mean meanById(long id) {
-        return sessionFactory.getCurrentSession().get(Mean.class, id);
+        return entityManager.unwrap(Session.class).get(Mean.class, id);
     }
 
     @Override
     public void saveOrUpdate(Mean mean) {
-        sessionFactory.getCurrentSession().saveOrUpdate(mean);
+        entityManager.unwrap(Session.class).saveOrUpdate(mean);
     }
 
     @Override
@@ -60,14 +64,14 @@ public class MeansDao implements IMeansDAO {
             layerDAO.delete(dependedLayer);
         }
 
-        sessionFactory.getCurrentSession().delete(meanToDelete);
+        entityManager.unwrap(Session.class).delete(meanToDelete);
 
     }
 
     @Override
     public List<Mean> getChildren(Mean mean){
         String hql = "FROM Mean mean where mean.parent = :parent";
-        Query query = sessionFactory.getCurrentSession().createQuery(hql);
+        Query query = entityManager.unwrap(Session.class).createQuery(hql);
         query.setParameter("parent", mean);
         return query.list();
     }
@@ -75,7 +79,7 @@ public class MeansDao implements IMeansDAO {
     @Override
     public Mean meanByTitle(String title) {
         String hql = "FROM Mean mean where mean.title = :title";
-        Query query = sessionFactory.getCurrentSession().createQuery(hql);
+        Query query = entityManager.unwrap(Session.class).createQuery(hql);
         query.setParameter("title", title);
         return (Mean) query.uniqueResult();
     }
@@ -83,7 +87,7 @@ public class MeansDao implements IMeansDAO {
     @Override
     public Mean getPrevMean(Mean mean) {
         String hql = "FROM Mean mean where mean.next = :next";
-        Query query = sessionFactory.getCurrentSession().createQuery(hql);
+        Query query = entityManager.unwrap(Session.class).createQuery(hql);
         query.setParameter("next", mean);
         return (Mean) query.uniqueResult();
     }
@@ -92,7 +96,7 @@ public class MeansDao implements IMeansDAO {
     public Mean getLastOfChildren(Mean mean, Realm realm) {
         String hql = "FROM Mean mean where mean.realm = :realm and mean.next is null and "
                 + (mean!=null?"mean.parent = :parent":"mean.parent is null");
-        Query query = sessionFactory.getCurrentSession().createQuery(hql);
+        Query query = entityManager.unwrap(Session.class).createQuery(hql);
         if(mean!=null){
             query.setParameter("parent", mean);
         }
@@ -103,7 +107,7 @@ public class MeansDao implements IMeansDAO {
     @Override
     public long assignsMeansCount(Mean mean) {
         String hql = "select count(*) from Slot s where s.mean = :mean";
-        Query query = sessionFactory.getCurrentSession().createQuery(hql);
+        Query query = entityManager.unwrap(Session.class).createQuery(hql);
         query.setParameter("mean", mean);
         return (Long) query.uniqueResult();
     }
@@ -111,7 +115,7 @@ public class MeansDao implements IMeansDAO {
     @Override
     public List<Mean> meansAssignedToTarget(Target target) {
         String hql = "from Mean where :target in elements(targets)";
-        Query query = this.sessionFactory.getCurrentSession().createQuery(hql)
+        Query query = this.entityManager.unwrap(Session.class).createQuery(hql)
                 .setParameter("target", target);
         return query.list();
     }

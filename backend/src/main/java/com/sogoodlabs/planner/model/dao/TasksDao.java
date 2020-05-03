@@ -1,12 +1,16 @@
 package com.sogoodlabs.planner.model.dao;
 
 import com.sogoodlabs.planner.model.entities.*;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,29 +22,30 @@ import java.util.List;
 @Transactional
 public class TasksDao implements ITasksDAO {
 
-    @Autowired
-    SessionFactory sessionFactory;
+    @PersistenceContext
+    EntityManager entityManager;
 
     @Autowired
     ITaskMappersDAO taskMappersDAO;
 
     @Autowired
     ITaskTestingDAO taskTestingDAO;
+    
 
     @Override
     public Task getById(long id) {
-        return sessionFactory.getCurrentSession().get(Task.class, id);
+        return entityManager.unwrap(Session.class).get(Task.class, id);
     }
 
     @Override
     public Task byTitle(String title) {
-        return (Task) sessionFactory.getCurrentSession().createQuery("from Task t where t.title = :title")
+        return (Task) entityManager.unwrap(Session.class).createQuery("from Task t where t.title = :title")
                 .setParameter("title", title).uniqueResult();
     }
 
     @Override
     public void saveOrUpdate(Task task) {
-        sessionFactory.getCurrentSession().saveOrUpdate(task);
+        entityManager.unwrap(Session.class).saveOrUpdate(task);
         //handleRemovedTopics(task);
     }
 //
@@ -49,7 +54,7 @@ public class TasksDao implements ITasksDAO {
 //        if(task.getTopics().size()>0){
 //            queryString = queryString + " and t not in :topicsToSurvive";
 //        }
-//        Query query = sessionFactory.getCurrentSession().createQuery(queryString);
+//        Query query = entityManager.unwrap(Session.class).createQuery(queryString);
 //        query.setParameter("task", task);
 //        if (task.getTopics().size() > 0) {
 //            query.setParameter("topicsToSurvive", task.getTopics());
@@ -65,24 +70,24 @@ public class TasksDao implements ITasksDAO {
             taskMappersDAO.delete(taskMapper);
         }
         taskTestingDAO.getByTask(id).forEach(testing -> taskTestingDAO.delete(testing.getId()));
-        sessionFactory.getCurrentSession().delete(task);
+        entityManager.unwrap(Session.class).delete(task);
     }
 
     @Override
     public List<Task> allTasks() {
-        return sessionFactory.getCurrentSession().createQuery("from Task").list();
+        return entityManager.unwrap(Session.class).createQuery("from Task").list();
     }
 
     @Override
     public List<Task> tasksBySubject(Subject subject) {
-        return sessionFactory.getCurrentSession().createQuery("from Task t where t.subject = :subject")
+        return entityManager.unwrap(Session.class).createQuery("from Task t where t.subject = :subject")
                 .setParameter("subject", subject).list();
     }
 
     @Override
     public List<Task> tasksByLayer(Layer layer) {
         String hql = "from Task t where t.subject.layer = :layer";
-        Query query = sessionFactory.getCurrentSession().createQuery(hql).setParameter("layer", layer);
+        Query query = entityManager.unwrap(Session.class).createQuery(hql).setParameter("layer", layer);
         return query.list();
     }
 

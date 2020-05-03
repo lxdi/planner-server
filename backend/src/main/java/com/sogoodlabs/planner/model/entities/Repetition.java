@@ -15,10 +15,12 @@ public class Repetition {
     @ManyToOne(fetch = FetchType.LAZY)
     SpacedRepetitions spacedRepetitions;
 
+    @Column(name = "plandate")
     @Basic
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     Date planDate;
 
+    @Column(name = "factdate")
     @Basic
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     Date factDate;

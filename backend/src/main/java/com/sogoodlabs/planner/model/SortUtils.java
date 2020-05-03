@@ -1,4 +1,4 @@
-package model;
+package com.sogoodlabs.planner.model;
 
 import com.sogoodlabs.planner.model.entities.SlotPosition;
 import com.sogoodlabs.planner.model.entities.Task;

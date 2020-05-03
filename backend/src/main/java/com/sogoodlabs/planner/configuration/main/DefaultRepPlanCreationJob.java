@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -19,6 +21,7 @@ public class DefaultRepPlanCreationJob implements ApplicationListener<ContextRef
     @Autowired
     IRepPlanDAO repPlanDAO;
 
+    //@Transactional(propagation= Propagation.REQUIRES_NEW)
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
         getOrCreateRepPlan(ONE_YEAR_LONG_REP_PLAN_TITLE, new int[]{2, 6, 12, 24, 48});
         getOrCreateRepPlan(HALF_YEAR_LONG_REP_PLAN_TITLE, new int[]{2, 6, 10, 16, 24});

@@ -12,6 +12,7 @@ public class SlotPosition {
     @ManyToOne(fetch = FetchType.LAZY)
     Slot slot;
 
+    @Column(name = "dayofweek")
     @Enumerated(EnumType.STRING)
     DaysOfWeek dayOfWeek;
 

@@ -27,7 +27,7 @@ public class Target {
     @ManyToOne(fetch = FetchType.LAZY)
     Realm realm;
 
-    @Column(length = 4096)
+    @Column(name="definitionofdone", length = 4096)
     String definitionOfDone;
 
     public Target(){

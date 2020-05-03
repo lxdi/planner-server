@@ -44,6 +44,7 @@ public class Mean {
     @OneToMany(mappedBy = "mean", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     List<Layer> layers = new ArrayList();
 
+    @Column(name = "hidechildren")
     boolean hideChildren = false;
 
     public Mean(){}

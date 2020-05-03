@@ -1,5 +1,6 @@
 package com.sogoodlabs.planner.controllers.delegates;
 
+import com.sogoodlabs.planner.model.SortUtils;
 import com.sogoodlabs.planner.model.dao.*;
 import com.sogoodlabs.planner.model.entities.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,7 @@ public class TaskMappersService {
     ITaskMappersDAO taskMappersDAO;
 
     @Autowired
-    model.SortUtils sortUtils;
+    SortUtils sortUtils;
 
     @Autowired
     IMapperExclusionDAO mapperExclusionDAO;

@@ -4,20 +4,24 @@ import com.sogoodlabs.planner.model.entities.Layer;
 import com.sogoodlabs.planner.model.entities.Mean;
 import com.sogoodlabs.planner.model.entities.Slot;
 import com.sogoodlabs.planner.model.entities.Subject;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceContext;
 import java.util.List;
 
 @Service
 @Transactional
 public class LayerDao implements ILayerDAO {
 
-    @Autowired
-    SessionFactory sessionFactory;
+    @PersistenceContext
+    EntityManager entityManager;
 
     @Autowired
     IMeansDAO meansDAO;
@@ -31,7 +35,7 @@ public class LayerDao implements ILayerDAO {
     @Override
     public List<Layer> getLyersOfMean(Mean mean) {
         String hql = "from Layer lr where lr.mean = :mean order by lr.priority asc";
-        Query query = sessionFactory.getCurrentSession().createQuery(hql);
+        Query query = entityManager.unwrap(Session.class).createQuery(hql);
         query.setParameter("mean", mean);
         return query.list();
     }
@@ -39,7 +43,7 @@ public class LayerDao implements ILayerDAO {
     @Override
     public List<Layer> getLyersOfMeans(List<Mean> means) {
         String hql = "from Layer where mean in :means";
-        Query query = sessionFactory.getCurrentSession().createQuery(hql);
+        Query query = entityManager.unwrap(Session.class).createQuery(hql);
         query.setParameter("means", means);
         return query.list();
     }
@@ -56,7 +60,7 @@ public class LayerDao implements ILayerDAO {
         String hql = "select count(*) from Slot where " +
                 "((hquarter.startWeek.startDay < :startDay) or (hquarter.startWeek.startDay = :startDay and position<:position) )" +
                 "and mean = :mean";
-        long slotsBeforeCount = (long) sessionFactory.getCurrentSession().createQuery(hql)
+        long slotsBeforeCount = (long) entityManager.unwrap(Session.class).createQuery(hql)
                 .setParameter("startDay", slot.getHquarter().getStartWeek().getStartDay())
                 .setParameter("position", slot.getPosition())
                 .setParameter("mean", slot.getMean())
@@ -67,7 +71,7 @@ public class LayerDao implements ILayerDAO {
     @Override
     public Layer getLayerAtPriority(Mean mean, int priority) {
         String hql = "from Layer l where l.mean = :mean and l.priority = :priority";
-        Query query = sessionFactory.getCurrentSession().createQuery(hql);
+        Query query = entityManager.unwrap(Session.class).createQuery(hql);
         query.setParameter("mean", mean);
         query.setParameter("priority", priority);
         return (Layer) query.uniqueResult();
@@ -85,12 +89,12 @@ public class LayerDao implements ILayerDAO {
         if(subjects.size()>0){
             subjects.forEach(s->subjectDAO.delete(s.getId()));
         }
-        sessionFactory.getCurrentSession().delete(layer);
+        entityManager.unwrap(Session.class).delete(layer);
     }
 
     @Override
     public long taskCountInLayer(Layer layer) {
-        return (long) sessionFactory.getCurrentSession()
+        return (long) entityManager.unwrap(Session.class)
                 .createQuery("select count(*) from Task where subject.layer = :layer")
                 .setParameter("layer", layer)
                 .uniqueResult();
@@ -109,11 +113,11 @@ public class LayerDao implements ILayerDAO {
 
     @Override
     public Layer layerById(long id) {
-        return sessionFactory.getCurrentSession().get(Layer.class, id);
+        return entityManager.unwrap(Session.class).get(Layer.class, id);
     }
 
     @Override
     public void saveOrUpdate(Layer layer) {
-        sessionFactory.getCurrentSession().saveOrUpdate(layer);
+        entityManager.unwrap(Session.class).saveOrUpdate(layer);
     }
 }

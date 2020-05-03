@@ -21,6 +21,7 @@ public class TaskMapper {
     @OneToOne(fetch = FetchType.LAZY)
     Week week;
 
+    @Column(name = "finishdate")
     @Basic
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     Date finishDate;

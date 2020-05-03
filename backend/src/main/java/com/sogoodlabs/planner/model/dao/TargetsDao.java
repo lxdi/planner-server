@@ -3,12 +3,16 @@ package com.sogoodlabs.planner.model.dao;
 import com.sogoodlabs.planner.model.entities.Mean;
 import com.sogoodlabs.planner.model.entities.Realm;
 import com.sogoodlabs.planner.model.entities.Target;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceContext;
 import java.util.Iterator;
 import java.util.List;
 
@@ -20,11 +24,12 @@ import java.util.List;
 @Transactional
 public class TargetsDao implements ITargetsDAO {
 
-    @Autowired
-    SessionFactory sessionFactory;
+    @PersistenceContext
+    EntityManager entityManager;
 
     @Autowired
     IMeansDAO meansDAO;
+    
 
     @Override
     public List<Target> topTargets() {
@@ -33,18 +38,17 @@ public class TargetsDao implements ITargetsDAO {
 
     @Override
     public List<Target> allTargets() {
-        return sessionFactory.getCurrentSession().createQuery("from Target").list();
-        //return sessionFactory.getCurrentSession().createCriteria(Target.class).list();
+        return entityManager.unwrap(Session.class).createQuery("from Target").list();
     }
 
     @Override
     public Target targetById(long id) {
-        return sessionFactory.getCurrentSession().get(Target.class, id);
+        return entityManager.unwrap(Session.class).get(Target.class, id);
     }
 
     @Override
     public void saveOrUpdate(Target target) {
-        sessionFactory.getCurrentSession().saveOrUpdate(target);
+        entityManager.unwrap(Session.class).saveOrUpdate(target);
     }
 
     @Override
@@ -57,13 +61,13 @@ public class TargetsDao implements ITargetsDAO {
         for(Target target : this.getChildren(targetToDelete)){
             this.deleteTarget(target.getId());
         }
-        sessionFactory.getCurrentSession().delete(targetToDelete);
+        entityManager.unwrap(Session.class).delete(targetToDelete);
     }
 
     @Deprecated
     private void deleteDependedMeans(Target target){
         String hql = "select m from Mean m join m.targets t where t = :target";
-        Query query = sessionFactory.getCurrentSession().createQuery(hql);
+        Query query = entityManager.unwrap(Session.class).createQuery(hql);
         query.setParameter("target", target);
         List<Mean> means = query.list();
 
@@ -112,15 +116,15 @@ public class TargetsDao implements ITargetsDAO {
 
     public List<Target> getChildren(Target target){
         String hql = "from Target t where t.parent = :target";
-        Query query = sessionFactory.getCurrentSession().createQuery(hql);
+        Query query = entityManager.unwrap(Session.class).createQuery(hql);
         query.setParameter("target", target);
         return query.list();
-        //return sessionFactory.getCurrentSession().createCriteria(Target.class).add(Restrictions.eq("parent", target)).list();
+        //return entityManager.unwrap(Session.class).createCriteria(Target.class).add(Restrictions.eq("parent", target)).list();
     }
 
     @Override
     public Target getTargetByTitle(String title) {
-        List<Target> result = sessionFactory.getCurrentSession().createQuery("from Target t where t.title = :title")
+        List<Target> result = entityManager.unwrap(Session.class).createQuery("from Target t where t.title = :title")
                 .setParameter("title", title).list();
         return result.size()>0? result.get(0):null;
     }
@@ -128,7 +132,7 @@ public class TargetsDao implements ITargetsDAO {
     @Override
     public Target getPrevTarget(Target target) {
         String hql = "FROM Target where next = :next";
-        Query query = sessionFactory.getCurrentSession().createQuery(hql);
+        Query query = entityManager.unwrap(Session.class).createQuery(hql);
         query.setParameter("next", target);
         return (Target) query.uniqueResult();
     }
@@ -137,7 +141,7 @@ public class TargetsDao implements ITargetsDAO {
     public Target getLastOfChildren(Target targetParent, Realm realm) {
         String hql = "FROM Target where realm = :realm and next is null and "
                 + (targetParent!=null?"parent = :parent":"parent is null");
-        Query query = sessionFactory.getCurrentSession().createQuery(hql);
+        Query query = entityManager.unwrap(Session.class).createQuery(hql);
         if(targetParent!=null){
             query.setParameter("parent", targetParent);
         }
@@ -148,7 +152,7 @@ public class TargetsDao implements ITargetsDAO {
     @Override
     public boolean isLeafTarget(Target target) {
         String hql = "select count(*) from Target where parent = :target";
-        Query query = sessionFactory.getCurrentSession().createQuery(hql)
+        Query query = entityManager.unwrap(Session.class).createQuery(hql)
                 .setParameter("target", target);
         return (long)query.uniqueResult()==0;
     }

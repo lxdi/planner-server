@@ -1,11 +1,16 @@
 package com.sogoodlabs.planner.model.dao;
 
 import com.sogoodlabs.planner.model.entities.RepetitionPlan;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceContext;
 import java.util.List;
 
 
@@ -13,22 +18,22 @@ import java.util.List;
 @Transactional
 public class RepPlanDaoImpl implements IRepPlanDAO {
 
-    @Autowired
-    SessionFactory factory;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
     public void save(RepetitionPlan repetitionPlan) {
-      this.factory.getCurrentSession().saveOrUpdate(repetitionPlan);
+        entityManager.unwrap(Session.class).saveOrUpdate(repetitionPlan);
     }
 
     @Override
     public RepetitionPlan getById(long id) {
-        return factory.getCurrentSession().get(RepetitionPlan.class, id);
+        return entityManager.unwrap(Session.class).get(RepetitionPlan.class, id);
     }
 
     @Override
     public RepetitionPlan getByTitle(String title) {
-        return (RepetitionPlan) this.factory.getCurrentSession()
+        return (RepetitionPlan) entityManager.unwrap(Session.class)
                 .createQuery("from RepetitionPlan where title=:title")
                 .setParameter("title", title)
                 .uniqueResult();
@@ -36,7 +41,7 @@ public class RepPlanDaoImpl implements IRepPlanDAO {
 
     @Override
     public List<RepetitionPlan> getAll() {
-        return this.factory.getCurrentSession().createQuery("from RepetitionPlan").getResultList();
+        return entityManager.unwrap(Session.class).createQuery("from RepetitionPlan").getResultList();
     }
 
 

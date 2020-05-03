@@ -1,11 +1,15 @@
 package com.sogoodlabs.planner.model.dao;
 
 import com.sogoodlabs.planner.model.entities.Repetition;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceContext;
 import java.sql.Date;
 import java.util.List;
 
@@ -13,22 +17,22 @@ import java.util.List;
 @Transactional
 public class RepDaoImpl implements IRepDAO {
 
-    @Autowired
-    SessionFactory sessionFactory;
+    @PersistenceContext
+    EntityManager entityManager;
 
     @Override
     public Repetition findOne(long id) {
-        return this.sessionFactory.getCurrentSession().get(Repetition.class, id);
+        return this.entityManager.unwrap(Session.class).get(Repetition.class, id);
     }
 
     @Override
     public void save(Repetition repetition) {
-        this.sessionFactory.getCurrentSession().saveOrUpdate(repetition);
+        this.entityManager.unwrap(Session.class).saveOrUpdate(repetition);
     }
 
     @Override
     public List<Repetition> getRepsbySpacedRepId(long srId) {
-        return this.sessionFactory.getCurrentSession()
+        return this.entityManager.unwrap(Session.class)
                 .createQuery("from Repetition where spacedRepetitions.id = :srId")
                 .setParameter("srId", srId)
                 .getResultList();
@@ -36,7 +40,7 @@ public class RepDaoImpl implements IRepDAO {
 
     @Override
     public List<Repetition> getUnFinishedWithPlanDateInRange(Date from, Date to) {
-        return this.sessionFactory.getCurrentSession()
+        return this.entityManager.unwrap(Session.class)
                 .createQuery("from Repetition where planDate >= :from and planDate <= :to and factDate is null order by planDate asc")
                 .setParameter("from", from)
                 .setParameter("to", to)
