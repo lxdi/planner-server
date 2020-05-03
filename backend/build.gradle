@@ -1,71 +1,48 @@
 plugins {
-    id "com.bmuschko.tomcat" version "2.4.2"
-    // to enable debugging add this to GRADLE_OPTS
-//     -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005
+    id 'org.springframework.boot' version '2.2.6.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+    id 'java'
 }
 
-
-apply plugin: 'java'
-apply plugin: 'war'
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
 
 repositories {
-    //mavenCentral()
     mavenLocal()
-    maven { url 'http://repo1.maven.org/maven2' }
+    mavenCentral()
 }
 
 dependencies {
-    //compile project(':frontend')
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation  "joda-time:joda-time:2.2"
+    implementation 'org.threeten:threeten-extra:1.3.2'
+    implementation "com.sogoodlabs:common-mapper:1.0.0"
 
-    compile  "joda-time:joda-time:2.2"
-    providedCompile "javax.servlet:javax.servlet-api:3.1.0"
-    compile "org.springframework:spring-context:4.3.7.RELEASE"
-    compile "org.springframework:spring-orm:4.3.7.RELEASE"
-    compile "org.springframework:spring-webmvc:4.3.7.RELEASE"
+    runtimeOnly "org.postgresql:postgresql:9.4.1212"
 
-    compile "org.springframework:spring-aspects:4.3.7.RELEASE"
-
-    compile "com.fasterxml.jackson.core:jackson-core:2.8.7"
-    compile "com.fasterxml.jackson.core:jackson-annotations:2.8.7"
-    compile "com.fasterxml.jackson.core:jackson-databind:2.8.7"
-
-    compile "org.hibernate:hibernate-core:5.2.8.Final"
-    compile "org.postgresql:postgresql:9.4.1212"
-    compile "com.h2database:h2:1.4.196"
-    compile 'org.threeten:threeten-extra:1.3.2'
-    
-    compile "com.sogoodlabs:common-mapper:1.0.0"
-
-    testCompile "junit:junit:4.12"
-    testCompile "org.springframework:spring-test:4.3.9.RELEASE"
-    testCompile "org.mockito:mockito-all:1.10.19"
-
-    def tomcatVersion = '7.0.76'
-    tomcat "org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}",
-            "org.apache.tomcat.embed:tomcat-embed-logging-juli:${tomcatVersion}",
-            "org.apache.tomcat.embed:tomcat-embed-jasper:${tomcatVersion}"
+    testImplementation "org.mockito:mockito-all:1.10.19"
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'com.h2database:h2'
 }
 
-war {
-    //from 'src/main/resources' // adds a file-set to the root of the archive
-    archiveName = 'ROOT.war'
-    //webInf { from 'src/main/resources/web-inf' } // adds a file-set to the WEB-INF dir.
-    //classpath fileTree('additionalLibs') // adds a file-set to the WEB-INF/lib dir.
-    //webXml = file('src/main/resources/web-inf/web.xml') // copies a file to WEB-INF/web.xml
+test {
+    useJUnitPlatform()
 }
 
 task copyFront(type: Copy) {
     from '../frontend/build'
-    into 'src/main/webapp/pages'
+    into 'src/main/resources/static'
 }
 
-task cleanFront(type: Delete) {
-    delete 'src/main/webapp/pages'
+task fullClean(type: Delete){
+    delete 'src/main/resources/static'
 }
 
-war.dependsOn copyFront
-clean.dependsOn cleanFront
+processResources.dependsOn copyFront
+clean.dependsOn fullClean
 
-tomcatRun.outputFile = file('tomcat/log.txt')
-tomcatRun.configFile = file('tomcat/context.xml')
-tomcatRun.contextPath = '/'
+bootJar {
+    archiveName 'ROOT.jar'
+}

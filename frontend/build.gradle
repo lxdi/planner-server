@@ -15,7 +15,7 @@ task compile(type: Exec) {
     commandLine npm, "start"
 }
 
-compile.dependsOn downloadDependencies
+//compile.dependsOn downloadDependencies
 
 task clean(type: Delete) { 
     delete 'build/bundle.js' 
