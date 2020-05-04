@@ -92,7 +92,7 @@ public class MeansRESTController_Creating_Tests extends ATestsWithTargetsMeansQu
                     .andExpect(status().isOk()).andReturn();
         } catch (Exception ex){
             if(ex instanceof NestedServletException){
-                assertTrue(ex.getMessage().contains("Entity not found; class: model.entities.Realm; id: 100500"));
+                assertTrue(ex.getMessage().contains("Entity not found; class: com.sogoodlabs.planner.model.entities.Realm; id: 100500"));
                 return;
             }
         }

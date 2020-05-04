@@ -2,6 +2,7 @@ package com.sogoodlabs.planner.controllers;
 
 import com.sogoodlabs.planner.controllers.delegates.MeansDelegate;
 import com.sogoodlabs.planner.model.entities.Mean;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,6 +14,9 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.NestedServletException;
 import com.sogoodlabs.planner.test_configs.ATestsWithTargetsMeansQuartalsGenerated;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -26,11 +30,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 public class MeansRESTController_Update_Tests extends ATestsWithTargetsMeansQuartalsGenerated {
 
-    @Autowired
-    MeansDelegate meansDelegate;
+    @PersistenceContext
+    EntityManager entityManager;
 
     @Autowired
-    SessionFactory sessionFactory;
+    MeansDelegate meansDelegate;
 
     private MockMvc mockMvc;
     private MeansRESTController meansRESTController;
@@ -44,7 +48,7 @@ public class MeansRESTController_Update_Tests extends ATestsWithTargetsMeansQuar
 
     @Test
     public void updateTest() throws Exception {
-        sessionFactory.getCurrentSession().clear();
+        entityManager.unwrap(Session.class).clear();
 
         String content = "{\"id\":1,\"title\":\"Parent mean changed\",\"parentid\":0, \"targetsIds\":[1], \"realmid\":1}";
         MvcResult result = mockMvc.perform(post("/mean/update")

@@ -43,6 +43,7 @@ public class TargetsDelegateTests extends SpringTestConfig {
 
     @Before
     public void init(){
+        super.init();
         realm = new Realm();
         realmDAO.saveOrUpdate(realm);
     }

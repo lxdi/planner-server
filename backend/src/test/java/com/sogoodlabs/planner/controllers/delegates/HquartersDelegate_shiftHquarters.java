@@ -2,6 +2,7 @@ package com.sogoodlabs.planner.controllers.delegates;
 
 import com.sogoodlabs.planner.model.dao.*;
 import com.sogoodlabs.planner.model.entities.*;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.sogoodlabs.planner.test_configs.ATestsWithTargetsMeansQuartalsGenerated;
 import com.sogoodlabs.planner.test_configs.TestCreatorsAnotherSession;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +20,9 @@ import static org.junit.Assert.assertTrue;
 
 @Transactional
 public class HquartersDelegate_shiftHquarters extends ATestsWithTargetsMeansQuartalsGenerated {
+
+    @PersistenceContext
+    EntityManager entityManager;
 
     @Autowired
     HquartersDelegate hquartersDelegate;
@@ -29,9 +35,6 @@ public class HquartersDelegate_shiftHquarters extends ATestsWithTargetsMeansQuar
 
     @Autowired
     ITaskMappersDAO taskMappersDAO;
-
-    @Autowired
-    SessionFactory sessionFactory;
 
     @Autowired
     TaskMappersService taskMappersService;
@@ -68,8 +71,8 @@ public class HquartersDelegate_shiftHquarters extends ATestsWithTargetsMeansQuar
         HQuarter selectedHquarter = beforeShifting.get(6);
         Week oldStartWeek = selectedHquarter.getStartWeek();
 
-        sessionFactory.getCurrentSession().getTransaction().commit();
-        sessionFactory.getCurrentSession().beginTransaction();
+        entityManager.unwrap(Session.class).getTransaction().commit();
+        entityManager.unwrap(Session.class).beginTransaction();
 
         Realm realm = testCreators.createRealm();
         Mean mean = testCreators.createMean(realm);

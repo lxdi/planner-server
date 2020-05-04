@@ -6,6 +6,7 @@ import com.sogoodlabs.planner.model.dao.IMeansDAO;
 import com.sogoodlabs.planner.model.dao.ISlotDAO;
 import com.sogoodlabs.planner.model.dao.IWeekDAO;
 import com.sogoodlabs.planner.model.entities.*;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.junit.Assert;
 import org.junit.Before;
@@ -20,6 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.sogoodlabs.planner.test_configs.AbstractTestsWithTargets;
 import com.sogoodlabs.planner.services.QuarterGenerator;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.List;
 
 import static junit.framework.TestCase.assertTrue;
@@ -33,6 +36,9 @@ public class HquartersRESTControllerTests extends AbstractTestsWithTargets {
 
     MockMvc mockMvc;
     HquartersRESTController hquartersRESTController;
+
+    @PersistenceContext
+    EntityManager entityManager;
 
     @Autowired
     IMeansDAO meansDAO;
@@ -51,9 +57,6 @@ public class HquartersRESTControllerTests extends AbstractTestsWithTargets {
 
     @Autowired
     HquartersDelegate hquartersDelegate;
-
-    @Autowired
-    SessionFactory sessionFactory;
 
     @Before
     public void init(){
@@ -95,7 +98,7 @@ public class HquartersRESTControllerTests extends AbstractTestsWithTargets {
                 +"}";
 
 
-        sessionFactory.getCurrentSession().clear();
+        entityManager.unwrap(Session.class).clear();
 
         MvcResult result = mockMvc.perform(post("/hquarter/update")
                 .contentType(MediaType.APPLICATION_JSON).content(content))

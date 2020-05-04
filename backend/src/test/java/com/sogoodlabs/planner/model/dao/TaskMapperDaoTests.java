@@ -1,6 +1,7 @@
 package com.sogoodlabs.planner.model.dao;
 
 import com.sogoodlabs.planner.model.entities.*;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,6 +12,8 @@ import com.sogoodlabs.planner.test_configs.AbstractTestsWithTargets;
 import com.sogoodlabs.planner.services.DateUtils;
 import com.sogoodlabs.planner.test_configs.TestCreatorsAnotherSession;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.sql.Date;
 import java.util.List;
 
@@ -18,6 +21,9 @@ import static junit.framework.TestCase.assertTrue;
 
 @Transactional
 public class TaskMapperDaoTests extends AbstractTestsWithTargets {
+
+    @PersistenceContext
+    EntityManager entityManager;
 
     @Autowired
     ITasksDAO tasksDAO;
@@ -39,9 +45,6 @@ public class TaskMapperDaoTests extends AbstractTestsWithTargets {
 
     @Autowired
     TestCreatorsAnotherSession testCreators;
-
-    @Autowired
-    SessionFactory sessionFactory;
 
     @Before
     public void init(){
@@ -113,7 +116,7 @@ public class TaskMapperDaoTests extends AbstractTestsWithTargets {
 
         Date date = DateUtils.toDate("2019-04-12");
 
-        sessionFactory.getCurrentSession().getTransaction().commit();
+        entityManager.unwrap(Session.class).getTransaction().commit();
 
         Slot slot = testCreators.createSlot(null, null, hQuarter);
         SlotPosition slotPosition1 = testCreators.createSlotPosition(slot, DaysOfWeek.mon, 1);
@@ -146,7 +149,7 @@ public class TaskMapperDaoTests extends AbstractTestsWithTargets {
 
         Date date = DateUtils.toDate("2019-04-14");
 
-        sessionFactory.getCurrentSession().getTransaction().commit();
+        entityManager.unwrap(Session.class).getTransaction().commit();
 
         Slot slot = testCreators.createSlot(null, null, hQuarter);
         SlotPosition slotPosition1 = testCreators.createSlotPosition(slot, DaysOfWeek.mon, 1);

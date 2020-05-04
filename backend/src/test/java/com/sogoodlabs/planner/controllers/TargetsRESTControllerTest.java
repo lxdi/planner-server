@@ -32,6 +32,7 @@ public class TargetsRESTControllerTest extends AbstractTestsWithTargets {
 
    @Before
    public void init(){
+      super.init();
       Realm realm = new Realm("test realm");
       Target target1  = new Target("target-1", realm);
       target1.setId(1);

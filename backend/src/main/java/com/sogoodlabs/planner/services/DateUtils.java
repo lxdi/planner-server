@@ -17,7 +17,7 @@ public class DateUtils {
         java.util.Date date = null;
         try {
             date = sdf1.parse(dateStr);
-            return new java.sql.Date(date.getTime());
+            return new Date(date.getTime());
         } catch (ParseException e) {
             e.printStackTrace();
         }

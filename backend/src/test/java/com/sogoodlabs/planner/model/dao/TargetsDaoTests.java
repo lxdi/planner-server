@@ -2,6 +2,7 @@ package com.sogoodlabs.planner.model.dao;
 
 import com.sogoodlabs.planner.model.entities.Realm;
 import com.sogoodlabs.planner.model.entities.Target;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -9,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import com.sogoodlabs.planner.test_configs.AbstractTestsWithTargets;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.List;
 
 import static org.junit.Assert.assertTrue;
@@ -20,8 +23,8 @@ import static org.junit.Assert.assertTrue;
 @Transactional
 public class TargetsDaoTests extends AbstractTestsWithTargets {
 
-    @Autowired
-    SessionFactory sessionFactory;
+    @PersistenceContext
+    EntityManager entityManager;
 
     @Test
     public void gettingAllTargetsTest(){
@@ -32,7 +35,7 @@ public class TargetsDaoTests extends AbstractTestsWithTargets {
     @Test
     public void saveOrUpdateTest(){
 
-        sessionFactory.getCurrentSession().clear();
+        entityManager.unwrap(Session.class).clear();
 
         Target target = new Target("new child", realm);
         target.setId(2);

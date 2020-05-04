@@ -4,9 +4,18 @@ import com.sogoodlabs.common_mapper.CommonMapper;
 import com.sogoodlabs.planner.model.dao.*;
 import com.sogoodlabs.planner.model.dto.additional_mapping.AdditionalMeansMapping;
 import com.sogoodlabs.planner.model.entities.*;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import com.sogoodlabs.planner.services.QuarterGenerator;
 import com.sogoodlabs.planner.services.StringUtils;
@@ -14,12 +23,22 @@ import com.sogoodlabs.planner.test_configs.SpringTestConfig;
 import com.sogoodlabs.planner.test_configs.TestCreators;
 import com.sogoodlabs.planner.test_configs.TestCreatorsAnotherSession;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.*;
 
 import static org.junit.Assert.assertTrue;
 
-@Transactional
+//@RunWith(SpringRunner.class)
+//@SpringBootTest
+//@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+//@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
+//@ActiveProfiles("test")
+@Transactional(propagation = Propagation.REQUIRES_NEW)
 public class MeansDelegateTests extends SpringTestConfig {
+
+    @PersistenceContext
+    EntityManager entityManager;
 
     @Autowired
     TestCreators testCreators;
@@ -38,9 +57,6 @@ public class MeansDelegateTests extends SpringTestConfig {
 
     @Autowired
     AdditionalMeansMapping additionalMeansMapping;
-
-    @Autowired
-    SessionFactory sessionFactory;
 
     @Autowired
     IMeansDAO meansDAO;
@@ -86,7 +102,7 @@ public class MeansDelegateTests extends SpringTestConfig {
                 "get('layers').get(0).get('subjects').get(0).get('tasks').get(0).get('testings').get(0)"))
                 .put("question", "testing changed");
 
-        sessionFactory.getCurrentSession().clear();
+        entityManager.unwrap(Session.class).clear();
 
         meansDelegate.update(dto);
 
@@ -230,6 +246,8 @@ public class MeansDelegateTests extends SpringTestConfig {
 
         Layer layer2 = testCreators.createLayer(meanChild);
         Layer layer3 = testCreators.createLayer(meanChildChild);
+
+        entityManager.unwrap(Session.class).getTransaction().commit();
 
         meansDelegate.delete(mean.getId());
 

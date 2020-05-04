@@ -4,6 +4,7 @@ import com.sogoodlabs.planner.model.dao.IMeansDAO;
 import com.sogoodlabs.planner.model.dao.IRealmDAO;
 import com.sogoodlabs.planner.model.dto.MeansMapper;
 import com.sogoodlabs.planner.model.entities.*;
+import com.sogoodlabs.planner.test_configs.TestCreators;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,7 +20,7 @@ import static org.junit.Assert.assertTrue;
 public class MeansMapperTests extends SpringTestConfig {
 
     @Autowired
-    TestCreatorsAnotherSession testCreators;
+    TestCreators testCreators;
 
     @Autowired
     IRealmDAO realmDAO;

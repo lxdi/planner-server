@@ -1,20 +1,10 @@
 package com.sogoodlabs.planner.test_configs;
 
-import com.sogoodlabs.planner.configuration.main.SpringConfig;
 import com.sogoodlabs.planner.model.dao.*;
 import com.sogoodlabs.planner.model.entities.Realm;
 import com.sogoodlabs.planner.model.entities.Target;
 import org.junit.Before;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mock.jndi.SimpleNamingContextBuilder;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
-import com.sogoodlabs.planner.test_configs.SpringTestConfig;
-
-import javax.naming.NamingException;
 
 import static org.junit.Assert.assertTrue;
 
@@ -39,6 +29,7 @@ public abstract class AbstractTestsWithTargets extends SpringTestConfig {
 
     @Before
     public void init(){
+        super.init();
         realm = realmDAO.createRealm("test realm");
 
         Target parentTarget = new Target(defaultParentTarget, realm);

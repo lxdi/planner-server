@@ -13,6 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.sogoodlabs.planner.services.DateUtils;
 import com.sogoodlabs.planner.test_configs.SpringTestConfig;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.sql.Date;
 import java.util.*;
 
@@ -20,6 +22,9 @@ import static junit.framework.TestCase.assertTrue;
 
 @Transactional
 public class TasksDelegateTests extends SpringTestConfig {
+
+    @PersistenceContext
+    EntityManager entityManager;
 
     @Autowired
     ITasksDAO tasksDAO;
@@ -46,11 +51,10 @@ public class TasksDelegateTests extends SpringTestConfig {
     TaskMapper taskMapper;
     RepetitionPlan defaultRepPlan;
 
-    @Autowired
-    SessionFactory sessionFactory;
 
     @Before
     public void init(){
+        super.init();
         task = new Task();
         tasksDAO.saveOrUpdate(task);
 
@@ -100,7 +104,7 @@ public class TasksDelegateTests extends SpringTestConfig {
                 createTaskTestingDTO(0, "testing1 q", null),
                 createTaskTestingDTO(existingTesting.getId(), "testing2 q", task.getId())));
 
-        sessionFactory.getCurrentSession().clear();
+        entityManager.unwrap(Session.class).clear();
 
         tasksDelegate.finishTaskWithRepetition(task.getId(), defaultRepPlan.getId(), testingsDto);
 

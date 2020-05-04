@@ -4,6 +4,7 @@ import com.sogoodlabs.planner.model.dao.IHQuarterDAO;
 import com.sogoodlabs.planner.model.dao.ITaskMappersDAO;
 import com.sogoodlabs.planner.model.dao.IWeekDAO;
 import com.sogoodlabs.planner.model.entities.*;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,12 +14,16 @@ import com.sogoodlabs.planner.services.QuarterGenerator;
 import com.sogoodlabs.planner.test_configs.SpringTestConfig;
 import com.sogoodlabs.planner.test_configs.TestCreatorsAnotherSession;
 
+import javax.persistence.EntityManager;
 import java.util.*;
 
 import static junit.framework.TestCase.assertTrue;
 
 @Transactional
 public class TasksMappersServiceTests extends SpringTestConfig {
+
+    @Autowired
+    EntityManager entityManager;
 
     @Autowired
     TestCreatorsAnotherSession testCreators;
@@ -38,9 +43,6 @@ public class TasksMappersServiceTests extends SpringTestConfig {
     @Autowired
     ITaskMappersDAO taskMappersDAO;
 
-    @Autowired
-    SessionFactory sessionFactory;
-
     Mean mean;
     Layer layer;
     Subject subject;
@@ -51,13 +53,14 @@ public class TasksMappersServiceTests extends SpringTestConfig {
 
     @Before
     public void init(){
+        super.init();
         mean = testCreators.createMean(null);
         layer = testCreators.createLayer(mean);
         subject = testCreators.createSubject(layer);
 
         quarterGenerator.generateYear(2019);
         hQuarter = ihQuarterDAO.getHQuartersInYear(2019).get(3);
-        sessionFactory.getCurrentSession().getTransaction().commit();
+        entityManager.unwrap(Session.class).getTransaction().commit();
 
         slot = testCreators.createSlot(layer, mean, hQuarter);
         slotPositions = new ArrayList<>();

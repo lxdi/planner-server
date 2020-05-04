@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import com.sogoodlabs.planner.test_configs.SpringTestConfig;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -20,6 +22,9 @@ import static org.junit.Assert.assertTrue;
 
 @Transactional
 public class AdditionalTasksMappingTests extends SpringTestConfig {
+
+    @PersistenceContext
+    EntityManager entityManager;
 
     @Autowired
     ITasksDAO tasksDAO;
@@ -40,13 +45,7 @@ public class AdditionalTasksMappingTests extends SpringTestConfig {
     ISubjectDAO subjectDAO;
 
     @Autowired
-    ITopicDAO topicDAO;
-
-    @Autowired
     AdditionalTasksMapping additionalTasksMapping;
-
-    @Autowired
-    SessionFactory sessionFactory;
 
     @Test
     public void fillFullnameTest(){
@@ -89,7 +88,7 @@ public class AdditionalTasksMappingTests extends SpringTestConfig {
     @Test
     public void fillTopicsTest(){
 
-        Session session = sessionFactory.openSession();
+        Session session = entityManager.getEntityManagerFactory().unwrap(SessionFactory.class).openSession();
         Transaction transaction = session.beginTransaction();
 
         Task task = new Task();

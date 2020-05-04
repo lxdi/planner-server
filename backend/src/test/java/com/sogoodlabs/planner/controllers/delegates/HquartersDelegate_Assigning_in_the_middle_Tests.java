@@ -46,9 +46,6 @@ public class HquartersDelegate_Assigning_in_the_middle_Tests extends ATestsWithT
     @Autowired
     IWeekDAO weekDAO;
 
-    @Autowired
-    SessionFactory sessionFactory;
-
     Mean mean;
     HQuarter hQuarter1;
     Slot slot1;

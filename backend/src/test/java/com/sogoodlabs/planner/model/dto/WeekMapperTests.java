@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sogoodlabs.planner.model.entities.Week;
 import org.junit.Test;
 
+import java.util.TimeZone;
+
 import static junit.framework.TestCase.assertTrue;
 import static com.sogoodlabs.planner.services.DateUtils.toDate;
 
@@ -16,6 +18,7 @@ public class WeekMapperTests {
         Week week = new Week(toDate("2014-12-24"), null, 1);
 
         ObjectMapper mapper = new ObjectMapper();
+        mapper.setTimeZone(TimeZone.getDefault());
 
         String jsonInString = mapper.writeValueAsString(week);
 
