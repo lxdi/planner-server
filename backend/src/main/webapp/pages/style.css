@@ -1,0 +1,127 @@
+/* .modal-container {
+  position: relative;
+}
+.modal-container .modal, .modal-container .modal-backdrop {
+  position: absolute;
+} */
+
+/* .mode-button-div {
+  float:right;
+  display: inline-block;
+  margin: 5px;
+} */
+
+.switch-button-div {
+  display: inline-block;
+  padding: 5px;
+}
+
+.frames-table {
+  width:100%;
+}
+
+.frame-td {
+  vertical-align: top;
+  width:50%;
+  padding:3px;
+}
+
+.frame-td-3f {
+  vertical-align: top;
+  width:30%;
+  padding:2px;
+}
+
+.frame{
+    float: left;
+    /* display: inline-block; */
+    width: 100%;
+    min-height: 200px;
+    border: 1px solid #000000;
+    overflow: auto;
+    height:97vh;
+}
+
+.frame_title {
+    margin: 10px;
+}
+
+.frame_content {
+    margin: 10px;
+}
+
+.mean-modal-style {
+  width:80%
+}
+
+.task-modal-style {
+  width:70%
+}
+
+.big-map-style {
+  width:90%
+}
+
+.hquarter-modal-style {
+  width:90%
+}
+
+.left-bar-button {
+  width:45px;
+  height:45px;
+  background-color: white;
+  border: 1px solid lightgrey;
+  border-radius: 8px;
+  color:grey
+}
+
+.left-bar-button:active {
+  background-color: lightgrey;
+  color:white
+}
+
+.left-bar-button:hover {
+  border: 1px solid grey;
+}
+
+.left-bar-button-switch {
+  width:45px;
+  height:45px;
+  background-color: CornflowerBlue ;
+  border: 1px solid lightgrey;
+  border-radius: 8px;
+  color:white
+}
+
+.left-bar-button-switch:active {
+  background-color: blue;
+}
+
+.left-bar-button-switch:hover {
+  border: 1px solid grey;
+}
+
+.actual-tasks-indicators-group {
+  border-radius: 8px;
+  border: 1px solid lightgrey
+}
+
+.actual-tasks-indicators-group:hover {
+  border: 1px solid grey;
+}
+
+.actual-tasks-modal-style {
+  width:70%;
+}
+
+#Targets {
+  border: 1px solid green;
+}
+
+#Means {
+  border: 1px solid blue;
+}
+
+#Schedule {
+  border: 1px solid orange;
+}
