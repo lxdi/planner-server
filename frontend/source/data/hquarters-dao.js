@@ -2,8 +2,7 @@
 import {sendGet, sendPost} from './postoffice'
 import {registerObject, registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
 
-import {normalizeInnerArrays, getMaxVal} from '../utils/import-utils'
-import {findSlotInPosition} from '../utils/hquarters-utils'
+import {normalizeInnerArrays, getMaxVal, findSlotInPosition} from 'js-utils'
 
 registerObject('hquarters-dao', {default:{}})
 

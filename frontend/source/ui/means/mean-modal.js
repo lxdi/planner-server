@@ -9,8 +9,7 @@ import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
 // import {SubjectModal} from './subject-modal'
 // import {TaskModal} from './task-modal'
 import {isValidMean} from '../../utils/mean-validator'
-import {iterateLLfull} from '../../utils/linked-list'
-import {iterateTree} from '../../utils/tree-utils'
+import {iterateLLfull, iterateTree} from 'js-utils'
 
 const dumbMean = CreateMean(0, '', null, [])
 

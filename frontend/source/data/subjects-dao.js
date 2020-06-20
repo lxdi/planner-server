@@ -1,5 +1,5 @@
 import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
-import {insertObj, deleteObj, swapObjs} from '../utils/drag-utils'
+import {insertObj, deleteObj, swapObjs} from 'js-utils'
 import {sendDelete} from './postoffice'
 
 registerEvent('subjects-dao', 'add-subject', (stateSetter, layer, subject)=>{

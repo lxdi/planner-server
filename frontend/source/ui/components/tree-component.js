@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {iterateLLfull} from '../../utils/linked-list'
-import {mergeArrays, resolveNodes, replaceDraggableUtil, addAsChildDraggableUtil} from '../../utils/draggable-tree-utils'
+import {iterateLLfull} from 'js-utils'
+import {mergeArrays, resolveNodes, replaceDraggableUtil, addAsChildDraggableUtil} from 'js-utils'
 
 const offsetVal = 20
 
