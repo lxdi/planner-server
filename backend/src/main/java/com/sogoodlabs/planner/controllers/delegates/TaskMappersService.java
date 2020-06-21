@@ -32,8 +32,6 @@ public class TaskMappersService {
     @Autowired
     SortUtils sortUtils;
 
-    @Autowired
-    IMapperExclusionDAO mapperExclusionDAO;
 
     public void unassignTasksForLayer(Layer layer){
         if(layer!=null) {
@@ -41,8 +39,7 @@ public class TaskMappersService {
             for(Task task : tasks){
                 TaskMapper taskMapper = taskMappersDAO.taskMapperForTask(task);
                 if(taskMapper!=null){
-                    taskMapper.setSlotPosition(null);
-                    taskMapper.setWeek(null);
+                    taskMapper.setPlanDay(null);
                     taskMappersDAO.saveOrUpdate(taskMapper);
                 }
             }
@@ -89,27 +86,16 @@ public class TaskMappersService {
     }
 
     public void rescheduleTaskMappersWithExclusion(long weekid, String dayOfWeekShortForExclusion){
-        Week week = weekDAO.getById(weekid);
-        DaysOfWeek dayOfWeek = DaysOfWeek.valueOf(dayOfWeekShortForExclusion);
-        Set<SlotPosition> slotPositions = new HashSet<>();
-        Set<Slot> slots = new HashSet<>();
-        taskMappersDAO.byWeekAndDay(week, dayOfWeek).forEach(tm -> {
-            slotPositions.add(tm.getSlotPosition());
-            slots.add(tm.getSlotPosition().getSlot());
-        });
-        slotPositions.forEach(sp -> getOrCreateMapperExclusion(week, sp));
-        slots.forEach(slot -> createTaskMappers(slot.getLayer(), slot));
-    }
-
-    private MapperExclusion getOrCreateMapperExclusion(Week week, SlotPosition sp){
-        MapperExclusion mapperExclusion = mapperExclusionDAO.getByWeekBySP(week, sp);
-        if(mapperExclusion==null){
-            mapperExclusion = new MapperExclusion();
-            mapperExclusion.setWeek(week);
-            mapperExclusion.setSlotPosition(sp);
-            mapperExclusionDAO.save(mapperExclusion);
-        }
-        return mapperExclusion;
+        throw new UnsupportedOperationException();
+//        Week week = weekDAO.getById(weekid);
+//        DaysOfWeek dayOfWeek = DaysOfWeek.valueOf(dayOfWeekShortForExclusion);
+//        Set<SlotPosition> slotPositions = new HashSet<>();
+//        Set<Slot> slots = new HashSet<>();
+//        taskMappersDAO.byWeekAndDay(week, dayOfWeek).forEach(tm -> {
+//
+//        });
+//        slotPositions.forEach(sp -> getOrCreateMapperExclusion(week, sp));
+//        slots.forEach(slot -> createTaskMappers(slot.getLayer(), slot));
     }
 
     public void createTaskMappers(Layer layerToMap, Slot slot){
@@ -123,34 +109,29 @@ public class TaskMappersService {
     }
 
     private void createTaskMappers(List<Week> weeks, List<SlotPosition> slotPositions, Stack<Task> taskStack){
-        List<MapperExclusion> exclusions = mapperExclusionDAO.getByWeeksBySPs(weeks, slotPositions);
-        validateMapping(taskStack.size(), slotPositions, weeks, exclusions);
+        validateMapping(taskStack.size(), slotPositions, weeks);
         for(Week week : weeks){
             if(!taskStack.isEmpty()){
-                createTaskMappersForWeek(week, slotPositions, ()->!taskStack.empty()?taskStack.pop():null, exclusions);
+                createTaskMappersForWeek(week, slotPositions, ()->!taskStack.empty()?taskStack.pop():null);
             } else {
                 return;
             }
         }
     }
 
-    private void createTaskMappersForWeek(Week week, List<SlotPosition> slotPositions, Supplier<Task> taskSupplier, List<MapperExclusion> exclusions){
-        for(SlotPosition sp : slotPositions){
-            if(checkExclusions(exclusions, week, sp)){
-                Task currentTask = taskSupplier.get();
-                if(currentTask!=null){
-                    fillTaskMapperForTask(currentTask, week, sp);
-                } else {
-                    return;
-                }
+    private void createTaskMappersForWeek(Week week, List<SlotPosition> slotPositions, Supplier<Task> taskSupplier){
+        for (SlotPosition sp : slotPositions) {
+            Task currentTask = taskSupplier.get();
+            if (currentTask != null) {
+                fillTaskMapperForTask(currentTask, week, sp);
+            } else {
+                return;
             }
         }
     }
 
-    private void validateMapping(int tasksCount, List<SlotPosition> SPs, List<Week> weeks, List<MapperExclusion> exclusions){
-        if((SPs.size()*weeks.size()-exclusions.size())<tasksCount){
-            throw new UnsupportedOperationException("There's not enough place to schedule the all Tasks");
-        }
+    private void validateMapping(int tasksCount, List<SlotPosition> SPs, List<Week> weeks){
+        //TODO implement this
     }
 
     private TaskMapper fillTaskMapperForTask(Task task, Week week, SlotPosition slotPosition){
@@ -159,22 +140,9 @@ public class TaskMappersService {
             taskMapper = new TaskMapper();
             taskMapper.setTask(task);
         }
-        taskMapper.setSlotPosition(slotPosition);
-        taskMapper.setWeek(week);
+        //TODO get the day of week from slotPosition and find this day in the week
         taskMappersDAO.saveOrUpdate(taskMapper);
         return taskMapper;
-    }
-
-    private boolean checkExclusions(List<MapperExclusion> exclusions, Week week, SlotPosition slotPosition){
-        if(exclusions==null || exclusions.size()==0){
-            return true;
-        }
-        for(MapperExclusion me : exclusions){
-            if(me.getWeek().getId()==week.getId() && me.getSlotPosition().getId() == slotPosition.getId()) {
-                return false;
-            }
-        }
-        return true;
     }
 
 }

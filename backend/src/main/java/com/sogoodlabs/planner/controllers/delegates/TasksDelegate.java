@@ -22,9 +22,6 @@ public class TasksDelegate {
     ITaskMappersDAO taskMappersDAO;
 
     @Autowired
-    ISpacedRepDAO spacedRepDAO;
-
-    @Autowired
     IRepPlanDAO repPlanDAO;
 
     @Autowired
@@ -61,17 +58,8 @@ public class TasksDelegate {
     public void finishTaskWithRepetition(long taskid, long repPlanid, List<Map<String, Object>> testingsDto){
         Task task = tasksDAO.getById(taskid);
         TaskMapper taskMapper = taskMappersDAO.taskMapperForTask(task);
+        planRepetitions(repPlanDAO.getById(repPlanid));
         finishTask(taskMapper);
-        SpacedRepetitions spacedRepetitions = spacedRepDAO.getSRforTaskMapper(taskMapper.getId());
-        if(spacedRepetitions == null){
-            spacedRepetitions = new SpacedRepetitions();
-            spacedRepetitions.setTaskMapper(taskMapper);
-            spacedRepetitions.setRepetitionPlan(repPlanDAO.getById(repPlanid));
-            spacedRepDAO.save(spacedRepetitions);
-            planRepetitions(spacedRepetitions);
-        } else {
-            //TODO clean spacedRep
-        }
         if(testingsDto!=null){
             testingsDto.forEach(testingDto -> {
                 if(testingDto.get("id")==null)
@@ -88,7 +76,8 @@ public class TasksDelegate {
 
     public void finishRepetition(long repId){
         Repetition repetition = repDAO.findOne(repId);
-        repetition.setFactDate(DateUtils.currentDate());
+        //TODO find day by date
+        //repetition.setFactDay(DateUtils.currentDate());
         repDAO.save(repetition);
     }
 
@@ -111,18 +100,18 @@ public class TasksDelegate {
         if(taskMapper==null){
             throw new NullPointerException("There must be a taskMapper for the task");
         }
-        taskMapper.setFinishDate(DateUtils.currentDate());
+        //TODO find day by date
+        //taskMapper.setFactDay(DateUtils.currentDate());
         taskMappersDAO.saveOrUpdate(taskMapper);
     }
 
-    private List<Repetition> planRepetitions(SpacedRepetitions spacedRepetitions){
+    private List<Repetition> planRepetitions(RepetitionPlan repetitionPlan){
         List<Repetition> repetitions = new ArrayList<>();
-        RepetitionPlan repetitionPlan = spacedRepetitions.getRepetitionPlan();
         for(int weeksToRep : repetitionPlan.getPlan()){
             Repetition repetition = new Repetition();
-            repetition.setSpacedRepetitions(spacedRepetitions);
-            Date planDate = DateUtils.addWeeks(spacedRepetitions.getTaskMapper().getFinishDate(), weeksToRep);
-            repetition.setPlanDate(planDate);
+            Date planDate = DateUtils.addWeeks(DateUtils.currentDate(), weeksToRep);
+            //TODO find day by date
+            //repetition.setPlanDay();
             repDAO.save(repetition);
         }
         return repetitions;

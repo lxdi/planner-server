@@ -45,36 +45,37 @@ public class TargetsMapper {
     ISlotDAO slotDAO;
 
     public Map<String, Object> mapToDto(Target target){
-        Map<String, Object> result = commonMapper.mapToDto(target, new HashMap<>());
-        result.put(MEANS_COUNT, 0);
-        result.put(LAYERS, 0);
-        result.put(LAYERS_ASSIGNED, 0);
-        result.put(FINISH_DATE, null);
-
-        if(targetsDAO.isLeafTarget(target)){
-            List<Mean> meansAssigned = meansDAO.meansAssignedToTarget(target);
-            if(meansAssigned.size()>0){
-                result.put(MEANS_COUNT, meansAssigned.size());
-                List<Layer> layers = layerDAO.getLyersOfMeans(meansAssigned);
-                if(layers.size()>0){
-                    result.put(LAYERS, layers.size());
-                    List<Slot> slots = slotDAO.slotsWithLayers(layers);
-                    if(slots.size()>0){
-                        result.put(LAYERS_ASSIGNED, slots.size());
-                        if(layers.size()==slots.size()){
-                            Date date = null;
-                            for(Slot slot : slots){
-                                if(date == null || slot.getHquarter().getEndWeek().getEndDay().after(date)){
-                                    date = slot.getHquarter().getEndWeek().getEndDay();
-                                }
-                            }
-                            result.put(FINISH_DATE, DateUtils.fromDate(date));
-                        }
-                    }
-                }
-            }
-        }
-        return result;
+        throw new UnsupportedOperationException();
+//        Map<String, Object> result = commonMapper.mapToDto(target, new HashMap<>());
+//        result.put(MEANS_COUNT, 0);
+//        result.put(LAYERS, 0);
+//        result.put(LAYERS_ASSIGNED, 0);
+//        result.put(FINISH_DATE, null);
+//
+//        if(targetsDAO.isLeafTarget(target)){
+//            List<Mean> meansAssigned = meansDAO.meansAssignedToTarget(target);
+//            if(meansAssigned.size()>0){
+//                result.put(MEANS_COUNT, meansAssigned.size());
+//                List<Layer> layers = layerDAO.getLyersOfMeans(meansAssigned);
+//                if(layers.size()>0){
+//                    result.put(LAYERS, layers.size());
+//                    List<Slot> slots = slotDAO.slotsWithLayers(layers);
+//                    if(slots.size()>0){
+//                        result.put(LAYERS_ASSIGNED, slots.size());
+//                        if(layers.size()==slots.size()){
+//                            Date date = null;
+//                            for(Slot slot : slots){
+//                                if(date == null || slot.getHquarter().getEndWeek().getEndDay().after(date)){
+//                                    date = slot.getHquarter().getEndWeek().getEndDay();
+//                                }
+//                            }
+//                            result.put(FINISH_DATE, DateUtils.fromDate(date));
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//        return result;
     }
 
 }

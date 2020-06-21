@@ -27,9 +27,6 @@ public class LayerDao implements ILayerDAO {
     IMeansDAO meansDAO;
 
     @Autowired
-    ILayerDAO layerDAO;
-
-    @Autowired
     ISubjectDAO subjectDAO;
 
     @Override
@@ -53,19 +50,6 @@ public class LayerDao implements ILayerDAO {
         long assignsCount = meansDAO.assignsMeansCount(mean);
         Layer result = getLayerAtPriority(mean, (int)(assignsCount+1));
         return result;
-    }
-
-    @Override
-    public Layer getLayerToScheduleForSlot(Slot slot) {
-        String hql = "select count(*) from Slot where " +
-                "((hquarter.startWeek.startDay < :startDay) or (hquarter.startWeek.startDay = :startDay and position<:position) )" +
-                "and mean = :mean";
-        long slotsBeforeCount = (long) entityManager.unwrap(Session.class).createQuery(hql)
-                .setParameter("startDay", slot.getHquarter().getStartWeek().getStartDay())
-                .setParameter("position", slot.getPosition())
-                .setParameter("mean", slot.getMean())
-                .uniqueResult();
-        return layerDAO.getLayerAtPriority(slot.getMean(), (int)(slotsBeforeCount+1));
     }
 
     @Override

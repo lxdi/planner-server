@@ -83,7 +83,7 @@ public class HQuarterDao implements IHQuarterDAO {
 
     @Override
     public List<HQuarter> getPrev(long currentid, int count) {
-        Date dateUntil = this.getById(currentid).getStartWeek().getStartDay();
+        Date dateUntil = this.getById(currentid).getStartWeek().getStartDay().getDate();
         return entityManager.unwrap(Session.class)
                 .createQuery("from HQuarter where startWeek.startDay < :dateUntil order by startWeek.startDay desc")
                 .setMaxResults(count)
@@ -93,7 +93,7 @@ public class HQuarterDao implements IHQuarterDAO {
 
     @Override
     public List<HQuarter> getNext(long currentid, int count) {
-        Date dateAfter = this.getById(currentid).getStartWeek().getStartDay();
+        Date dateAfter = this.getById(currentid).getStartWeek().getStartDay().getDate();
         return entityManager.unwrap(Session.class)
                 .createQuery("from HQuarter where startWeek.startDay > :dateAfter order by startWeek.startDay asc")
                 .setMaxResults(count)

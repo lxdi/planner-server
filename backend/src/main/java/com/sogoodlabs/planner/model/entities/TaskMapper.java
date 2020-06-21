@@ -1,7 +1,6 @@
 package com.sogoodlabs.planner.model.entities;
 
 import javax.persistence.*;
-import java.sql.Date;
 
 @Entity
 public class TaskMapper {
@@ -14,11 +13,10 @@ public class TaskMapper {
     Task task;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    Date day;
+    Day planDay;
 
-    @Column(name = "finishday")
     @ManyToOne(fetch = FetchType.LAZY)
-    Date finishDay;
+    Day factDay;
 
     public long getId() {
         return id;
@@ -34,17 +32,17 @@ public class TaskMapper {
         this.task = task;
     }
 
-    public Date getDay() {
-        return day;
+    public Day getPlanDay() {
+        return planDay;
     }
-    public void setDay(Date day) {
-        this.day = day;
+    public void setPlanDay(Day planDay) {
+        this.planDay = planDay;
     }
 
-    public Date getFinishDay() {
-        return finishDay;
+    public Day getFactDay() {
+        return factDay;
     }
-    public void setFinishDay(Date finishDay) {
-        this.finishDay = finishDay;
+    public void setFactDay(Day factDay) {
+        this.factDay = factDay;
     }
 }

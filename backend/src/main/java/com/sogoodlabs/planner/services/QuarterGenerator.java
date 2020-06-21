@@ -1,5 +1,6 @@
 package com.sogoodlabs.planner.services;
 
+import com.sogoodlabs.planner.model.dao.IDayDao;
 import com.sogoodlabs.planner.model.dao.IHQuarterDAO;
 import com.sogoodlabs.planner.model.dao.IWeekDAO;
 import com.sogoodlabs.planner.model.entities.HQuarter;
@@ -34,6 +35,9 @@ public class QuarterGenerator {
     @Autowired
     WeeksGenerator weeksGenerator;
 
+    @Autowired
+    IDayDao dayDao;
+
 
     public void generate(List<Integer> years){
         for(int year : years){
@@ -53,18 +57,18 @@ public class QuarterGenerator {
                     yw = yw.plusWeeks(1); //if the first week starts in the last year then start from the second week
                 }
                 Date startDate = toDate(year, yw.atDay(DayOfWeek.MONDAY).getMonthValue(), yw.atDay(DayOfWeek.MONDAY).getDayOfMonth());
-                Week startWeek = weekDAO.weekByStartDate(startDate);
+                Week startWeek = weekDAO.weekByStartDay(dayDao.byDate(startDate));
 
                 yw = yw.plusWeeks(HQUARTERS_DURATION-1);
                 Date endDate = toDate(year, yw.atDay(DayOfWeek.MONDAY).getMonthValue(), yw.atDay(DayOfWeek.MONDAY).getDayOfMonth());
-                Week endWeek = weekDAO.weekByStartDate(endDate);
+                Week endWeek = weekDAO.weekByStartDay(dayDao.byDate(endDate));
 
                 HQuarter HQuarter = new HQuarter(startWeek, endWeek);
                 quartalDAO.saveOrUpdate(HQuarter);
                 yw = yw.plusWeeks(1);
                 //hquartersPerYearLimit--;
 
-                String message = "HQuarter: " + HQuarter.getStartWeek().getNumber() + " | start: " + fromDate(HQuarter.getStartWeek().getStartDay());
+                String message = "HQuarter: " + HQuarter.getStartWeek().getNumber() + " | start: " + fromDate(HQuarter.getStartWeek().getStartDay().getDate());
                 System.out.println(message);
         }
     }

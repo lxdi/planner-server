@@ -53,9 +53,6 @@ public class HquartersDelegate {
     @Autowired
     IWeekDAO weekDAO;
 
-    @Autowired
-    IMapperExclusionDAO mapperExclusionDAO;
-
     public List<Map<String, Object>> getAllQuarters(){
         List<Map<String, Object>> result = new ArrayList<>();
         for(HQuarter hQuarter : quarterDAO.getAllHQuartals()){
@@ -94,8 +91,8 @@ public class HquartersDelegate {
         if(hQuarters!=null && hQuarters.size()>0){
             List<HQuarter> toRemove = new ArrayList<>();
             for (int i = 0; i < hQuarters.size(); i++) {
-                if (DateUtils.differenceInDays(date, hQuarters.get(i).getStartWeek().getStartDay()) < 0
-                        && DateUtils.differenceInDays(date, hQuarters.get(i).getEndWeek().getEndDay()) < 0) {
+                if (DateUtils.differenceInDays(date, hQuarters.get(i).getStartWeek().getStartDay().getDate()) < 0
+                        && DateUtils.differenceInDays(date, hQuarters.get(i).getEndWeek().getEndDay().getDate()) < 0) {
                     toRemove.add(hQuarters.get(i));
                 }
             }
@@ -126,20 +123,16 @@ public class HquartersDelegate {
     public Map<String, Object> assign(long meanid, long slotid){
         Mean mean = meansDAO.meanById(meanid);
         Slot slot = slotDAO.getById(slotid);
-        slot.setMean(mean);
         slotDAO.saveOrUpdate(slot);
-        cleanExclusions(slot);
         taskMappersService.rescheduleTaskMappers(mean, false);
         return slotMapper.mapToDtoFull(slot);
     }
 
     public Map<String, Object> unassign(long slotid){
         Slot slot = slotDAO.getById(slotid);
-        Mean mean = slot.getMean();
+        Mean mean = slot.getLayer().getMean();
         slot.setLayer(null);
-        slot.setMean(null);
         slotDAO.saveOrUpdate(slot);
-        cleanExclusions(slot);
         taskMappersService.rescheduleTaskMappers(mean, false);
         return slotMapper.mapToDtoFull(slot);
     }
@@ -161,7 +154,7 @@ public class HquartersDelegate {
         List<Map<String, Object>> result = new ArrayList<>();
         List<HQuarter> hQuarters = quarterDAO.getPrev(currentHqId, prevCount);
         if(hQuarters.size()==0){
-            int year = DateUtils.getYear(quarterDAO.getById(currentHqId).getStartWeek().getStartDay());
+            int year = DateUtils.getYear(quarterDAO.getById(currentHqId).getStartWeek().getStartDay().getDate());
             quarterGenerator.generateYear(year-1);
             hQuarters = quarterDAO.getPrev(currentHqId, prevCount);
         }
@@ -176,7 +169,7 @@ public class HquartersDelegate {
         List<Map<String, Object>> result = new ArrayList<>();
         List<HQuarter> hQuarters = quarterDAO.getNext(currentHqId, nextCount);
         if(hQuarters.size()==0){
-            int year = DateUtils.getYear(quarterDAO.getById(currentHqId).getStartWeek().getStartDay());
+            int year = DateUtils.getYear(quarterDAO.getById(currentHqId).getStartWeek().getStartDay().getDate());
             quarterGenerator.generateYear(year+1);
             hQuarters = quarterDAO.getNext(currentHqId, nextCount);
         }
@@ -193,16 +186,15 @@ public class HquartersDelegate {
     public void shiftHquarters(long firstHquarterid){
         HQuarter firstHquarter = quarterDAO.getById(firstHquarterid);
         if(firstHquarter!=null){
-            int year = DateUtils.getYear(firstHquarter.getStartWeek().getStartDay());
+            int year = DateUtils.getYear(firstHquarter.getStartWeek().getStartDay().getDate());
             if(isShiftingAvailable(year)){
                 List<HQuarter> hQuartersInYear = quarterDAO.getHQuartersInYear(year);
                 for(HQuarter hQuarter : hQuartersInYear){
-                    if(DateUtils.differenceInDays(firstHquarter.getStartWeek().getStartDay(), hQuarter.getStartWeek().getStartDay())>=0){
+                    if(DateUtils.differenceInDays(firstHquarter.getStartWeek().getStartDay().getDate(), hQuarter.getStartWeek().getStartDay().getDate())>=0){
                         hQuarter.setStartWeek(weekDAO.weekByYearAndNumber(year, hQuarter.getStartWeek().getNumber()+1));
                         hQuarter.setEndWeek(weekDAO.weekByYearAndNumber(year, hQuarter.getEndWeek().getNumber()+1));
                         for(Slot slot : slotDAO.getSlotsForHquarter(hQuarter)){
-                            cleanExclusions(slot);
-                            taskMappersService.rescheduleTaskMappers(slot.getMean(),true);
+                            taskMappersService.rescheduleTaskMappers(slot.getLayer().getMean(),true);
                         }
                         quarterDAO.saveOrUpdate(hQuarter);
                     }
@@ -283,11 +275,6 @@ public class HquartersDelegate {
             result = quarterDAO.getHQuartersInYear(year);
         }
         return result;
-    }
-
-    private void cleanExclusions(Slot slot){
-        List<SlotPosition> slotPositions = slotDAO.getSlotPositionsForSlot(slot);
-        mapperExclusionDAO.deleteBySlotPositions(slotPositions);
     }
 
 }

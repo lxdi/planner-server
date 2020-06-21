@@ -68,16 +68,6 @@ public class SlotDao implements ISlotDAO {
     }
 
     @Override
-    public List<Slot> slotsAfter(Slot slot) {
-        assert slot.getMean()!=null;
-        String hql = "from Slot s where s.mean = :mean and s.hquarter.startWeek.startDay > :startDay order by hquarter.startWeek.startDay asc";
-        Query query = entityManager.unwrap(Session.class).createQuery(hql);
-        query.setParameter("mean", slot.getMean());
-        query.setParameter("startDay", slot.getHquarter().getStartWeek().getStartDay());
-        return query.list();
-    }
-
-    @Override
     public List<SlotPosition> getSlotPositionsForSlot(Slot slot) {
         String hql = "FROM SlotPosition sp WHERE sp.slot= :slot";
         Query query = entityManager.unwrap(Session.class).createQuery(hql);

@@ -65,8 +65,9 @@ public class SpacedRepetitionsService {
     private void setTasks(Date from, Date to, int weeknum, Map<Integer, List<Map<String, Object>>> result, List<Repetition> repetitions){
         result.putIfAbsent(weeknum, new ArrayList<>());
         repetitions.forEach(rep -> {
-            if(DateUtils.differenceInDays(rep.getPlanDate(), from)<=0 && DateUtils.differenceInDays(rep.getPlanDate(), to)>=0){
-                Task task = rep.getSpacedRepetitions().getTaskMapper().getTask();
+            if(DateUtils.differenceInDays(rep.getPlanDay().getDate(), from)<=0
+                    && DateUtils.differenceInDays(rep.getPlanDay().getDate(), to)>=0){
+                Task task = rep.getTask();
                 result.get(weeknum).add(getTaskDto(task, rep));
             }
         });
@@ -89,7 +90,8 @@ public class SpacedRepetitionsService {
                 currentWeek = weekDAO.weekOfDate(DateUtils.currentDate());
             }
         }
-        DaysOfWeek currentDayOfWeek = DaysOfWeek.findById(DateUtils.differenceInDays(currentWeek.getStartDay(), DateUtils.currentDate()));
+        DaysOfWeek currentDayOfWeek = DaysOfWeek.findById(DateUtils.differenceInDays(
+                currentWeek.getStartDay().getDate(), DateUtils.currentDate()));
         List<TaskMapper> taskMappers = taskMappersDAO.byWeekAndDay(currentWeek, currentDayOfWeek);
         taskMappers.forEach(tm->result.add(tm.getTask()));
         return result;
@@ -108,7 +110,7 @@ public class SpacedRepetitionsService {
             if(taskMappers.size()>0){
                 List<Task> result = new ArrayList<>();
                 taskMappers.forEach(tm -> {
-                    if(tm.getTask()!=null && tm.getFinishDate()==null){
+                    if(tm.getTask()!=null && tm.getFactDay().getDate()==null){
                         result.add(tm.getTask());
                     }
                 });

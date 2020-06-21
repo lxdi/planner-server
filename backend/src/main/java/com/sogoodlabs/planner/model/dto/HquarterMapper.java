@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.sogoodlabs.planner.services.DateUtils;
 
+import javax.naming.OperationNotSupportedException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -96,39 +97,41 @@ public class HquarterMapper {
      *
      * */
     private void fillWeekWithTasks(Map<String, Object> dto, HQuarter entity){
-        if(entity.getStartWeek()!=null && entity.getEndWeek()!=null) {
-            List<Week> weeks = weekDao.weeksOfHquarter(entity);
-            List<Slot> slots = slotDAO.getSlotsForHquarter(entity);
-            List<SlotPosition> slotPositionList = new ArrayList<>();
-            for(Slot slot : slots){
-                slotPositionList.addAll(slotDAO.getSlotPositionsForSlot(slot));
-            }
-            List<TaskMapper> taskMappers = taskMapperDao.taskMappersByWeeksAndSlotPositions(weeks, slotPositionList);
-            Map<Long, List<TaskMapper>> taskMappersByWeekId = new HashMap<>();
-            for(TaskMapper taskMapper : taskMappers){
-                taskMappersByWeekId.putIfAbsent(taskMapper.getWeek().getId(), new ArrayList<>());
-                taskMappersByWeekId.get(taskMapper.getWeek().getId()).add(taskMapper);
-            }
-            dto.putIfAbsent(WEEKS_FIELD_TITLE, new ArrayList<>());
-            for (Week week : weeks) {
-                ((List)dto.get(WEEKS_FIELD_TITLE)).add(mapWeeksWithTasksDto(week, taskMappersByWeekId));
-            }
-        }
+        throw new UnsupportedOperationException();
+//        if(entity.getStartWeek()!=null && entity.getEndWeek()!=null) {
+//            List<Week> weeks = weekDao.weeksOfHquarter(entity);
+//            List<Slot> slots = slotDAO.getSlotsForHquarter(entity);
+//            List<SlotPosition> slotPositionList = new ArrayList<>();
+//            for(Slot slot : slots){
+//                slotPositionList.addAll(slotDAO.getSlotPositionsForSlot(slot));
+//            }
+//            List<TaskMapper> taskMappers = taskMapperDao.taskMappersByWeeksAndSlotPositions(weeks, slotPositionList);
+//            Map<Long, List<TaskMapper>> taskMappersByWeekId = new HashMap<>();
+//            for(TaskMapper taskMapper : taskMappers){
+//                taskMappersByWeekId.putIfAbsent(taskMapper.getWeek().getId(), new ArrayList<>());
+//                taskMappersByWeekId.get(taskMapper.getWeek().getId()).add(taskMapper);
+//            }
+//            dto.putIfAbsent(WEEKS_FIELD_TITLE, new ArrayList<>());
+//            for (Week week : weeks) {
+//                ((List)dto.get(WEEKS_FIELD_TITLE)).add(mapWeeksWithTasksDto(week, taskMappersByWeekId));
+//            }
+//        }
     }
 
     private Map<String, Object> mapWeeksWithTasksDto(Week week, Map<Long, List<TaskMapper>> taskMappersByWeekId){
-        Map<String, Object> dto = commonMapper.mapToDto(week);
-//        dto.put(STARTDAY_FIELD_TITLE, DateUtils.fromDate(week.getStartDay()));
-//        dto.put(END_FIELD_TITLE, DateUtils.fromDate(week.getEndDay()));
-        dto.putIfAbsent(DAYS_FIELD_TITLE, new HashMap<>());
-        if(taskMappersByWeekId.get(week.getId())!=null){
-            for(TaskMapper taskMapper : taskMappersByWeekId.get(week.getId())){
-                ((Map)dto.get(DAYS_FIELD_TITLE)).putIfAbsent(taskMapper.getSlotPosition().getDayOfWeek().name(), new ArrayList<>());
-                ((List)((Map)dto.get(DAYS_FIELD_TITLE)).get(taskMapper.getSlotPosition().getDayOfWeek().name()))
-                        .add(tasksDtoMapper.mapToDtoFull(taskMapper.getTask()));
-            }
-        }
-        return dto;
+        throw new UnsupportedOperationException();
+//        Map<String, Object> dto = commonMapper.mapToDto(week);
+////        dto.put(STARTDAY_FIELD_TITLE, DateUtils.fromDate(week.getStartDay()));
+////        dto.put(END_FIELD_TITLE, DateUtils.fromDate(week.getEndDay()));
+//        dto.putIfAbsent(DAYS_FIELD_TITLE, new HashMap<>());
+//        if(taskMappersByWeekId.get(week.getId())!=null){
+//            for(TaskMapper taskMapper : taskMappersByWeekId.get(week.getId())){
+//                ((Map)dto.get(DAYS_FIELD_TITLE)).putIfAbsent(taskMapper.getSlotPosition().getDayOfWeek().name(), new ArrayList<>());
+//                ((List)((Map)dto.get(DAYS_FIELD_TITLE)).get(taskMapper.getSlotPosition().getDayOfWeek().name()))
+//                        .add(tasksDtoMapper.mapToDtoFull(taskMapper.getTask()));
+//            }
+//        }
+//        return dto;
     }
 
 

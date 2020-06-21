@@ -1,5 +1,6 @@
 package com.sogoodlabs.planner.model.dao;
 
+import com.sogoodlabs.planner.model.entities.Day;
 import com.sogoodlabs.planner.model.entities.HQuarter;
 import com.sogoodlabs.planner.model.entities.Week;
 import org.hibernate.Session;
@@ -46,14 +47,9 @@ public class WeekDao implements IWeekDAO {
     }
 
     @Override
-    public Week weekByStartDate(int day, int month, int year) {
-        return this.weekByStartDate(toDate(year, month, day));
-    }
-
-    @Override
-    public Week weekByStartDate(Date date) {
-        Week week = (Week) entityManager.unwrap(Session.class).createQuery("from Week w where w.startDay = :startDay")
-                .setParameter("startDay", date).uniqueResult();
+    public Week weekByStartDay(Day day) {
+        Week week = (Week) entityManager.unwrap(Session.class).createQuery("from Week w where w.startDay = :day")
+                .setParameter("day", day).uniqueResult();
         return week;
     }
 

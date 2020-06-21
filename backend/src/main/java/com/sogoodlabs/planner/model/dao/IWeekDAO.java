@@ -1,5 +1,6 @@
 package com.sogoodlabs.planner.model.dao;
 
+import com.sogoodlabs.planner.model.entities.Day;
 import com.sogoodlabs.planner.model.entities.HQuarter;
 import com.sogoodlabs.planner.model.entities.Week;
 
@@ -14,8 +15,7 @@ public interface IWeekDAO {
     Week getById(long id);
     void saveOrUpdate(Week week);
     List<Week> allWeeks();
-    Week weekByStartDate(int day, int month, int year);
-    Week weekByStartDate(Date date);
+    Week weekByStartDay(Day day);
     Week weekByYearAndNumber(int year, int number);
     List<Week> weeksOfHquarter(HQuarter hQuarter);
     Week weekOfDate(Date date);

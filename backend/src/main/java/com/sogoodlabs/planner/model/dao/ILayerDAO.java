@@ -13,7 +13,6 @@ public interface ILayerDAO {
     List<Layer> getLyersOfMean(Mean mean);
     List<Layer> getLyersOfMeans(List<Mean> means);
     Layer getNextLayerToSchedule(Mean mean);
-    Layer getLayerToScheduleForSlot(Slot slot);
     Layer getLayerAtPriority(Mean mean, int priority);
     Layer create(Mean mean);
     void delete(Layer layer);

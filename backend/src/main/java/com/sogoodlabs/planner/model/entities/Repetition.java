@@ -9,6 +9,9 @@ public class Repetition {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
 
+    @ManyToOne
+    private Task task;
+
     @ManyToOne(fetch = FetchType.LAZY)
     Day planDay;
 
@@ -34,5 +37,13 @@ public class Repetition {
     }
     public void setFactDay(Day factDay) {
         this.factDay = factDay;
+    }
+
+    public Task getTask() {
+        return task;
+    }
+
+    public void setTask(Task task) {
+        this.task = task;
     }
 }
