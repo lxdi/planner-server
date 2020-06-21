@@ -1,7 +1,5 @@
 package com.sogoodlabs.planner.model.entities;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-
 import javax.persistence.*;
 import java.sql.Date;
 
@@ -15,21 +13,16 @@ public class TaskMapper {
     @OneToOne(fetch = FetchType.LAZY)
     Task task;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    SlotPosition slotPosition;
+    @ManyToOne(fetch = FetchType.LAZY)
+    Date day;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    Week week;
-
-    @Column(name = "finishdate")
-    @Basic
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    Date finishDate;
+    @Column(name = "finishday")
+    @ManyToOne(fetch = FetchType.LAZY)
+    Date finishDay;
 
     public long getId() {
         return id;
     }
-
     public void setId(long id) {
         this.id = id;
     }
@@ -37,31 +30,21 @@ public class TaskMapper {
     public Task getTask() {
         return task;
     }
-
     public void setTask(Task task) {
         this.task = task;
     }
 
-    public SlotPosition getSlotPosition() {
-        return slotPosition;
+    public Date getDay() {
+        return day;
+    }
+    public void setDay(Date day) {
+        this.day = day;
     }
 
-    public void setSlotPosition(SlotPosition slotPosition) {
-        this.slotPosition = slotPosition;
+    public Date getFinishDay() {
+        return finishDay;
     }
-
-    public Week getWeek() {
-        return week;
-    }
-
-    public void setWeek(Week week) {
-        this.week = week;
-    }
-
-    public Date getFinishDate() {
-        return finishDate;
-    }
-    public void setFinishDate(Date finishDate) {
-        this.finishDate = finishDate;
+    public void setFinishDay(Date finishDay) {
+        this.finishDay = finishDay;
     }
 }

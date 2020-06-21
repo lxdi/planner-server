@@ -12,13 +12,12 @@ public class Layer {
     long id;
 
     int priority;
-    boolean done;
 
     @ManyToOne(fetch = FetchType.LAZY)
     Mean mean;
 
     @OneToMany(mappedBy = "layer", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
-    private List<Subject> subjects = new ArrayList();
+    private List<Subject> subjects = new ArrayList<>();
 
     public Layer(){}
 
@@ -47,13 +46,6 @@ public class Layer {
     }
     public void setMean(Mean mean) {
         this.mean = mean;
-    }
-
-    public boolean isDone() {
-        return done;
-    }
-    public void setDone(boolean done) {
-        this.done = done;
     }
 
     public List<Subject> getSubjects() {

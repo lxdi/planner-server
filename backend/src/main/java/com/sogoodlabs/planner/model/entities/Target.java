@@ -21,9 +21,6 @@ public class Target {
     @OneToOne(fetch = FetchType.LAZY)
     Target next;
 
-//    @OneToMany(mappedBy = "parent")
-//    private List<Target> children = new ArrayList<>();
-
     @ManyToOne(fetch = FetchType.LAZY)
     Realm realm;
 

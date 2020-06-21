@@ -17,7 +17,7 @@ public class Subject {
     Layer layer;
 
     @OneToMany(mappedBy = "subject", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
-    private List<Task> tasks = new ArrayList();
+    private List<Task> tasks = new ArrayList<>();
 
     public Subject(){}
 

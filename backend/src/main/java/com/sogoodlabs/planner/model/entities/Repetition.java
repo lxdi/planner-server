@@ -1,9 +1,6 @@
 package com.sogoodlabs.planner.model.entities;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-
 import javax.persistence.*;
-import java.sql.Date;
 
 @Entity
 public class Repetition {
@@ -13,15 +10,10 @@ public class Repetition {
     long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    SpacedRepetitions spacedRepetitions;
+    Day planDay;
 
-    @Basic
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    Date planDate;
-
-    @Basic
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    Date factDate;
+    @ManyToOne(fetch = FetchType.LAZY)
+    Day factDay;
 
     public long getId() {
         return id;
@@ -30,25 +22,17 @@ public class Repetition {
         this.id = id;
     }
 
-    public SpacedRepetitions getSpacedRepetitions() {
-        return spacedRepetitions;
+    public Day getPlanDay() {
+        return planDay;
     }
-    public void setSpacedRepetitions(SpacedRepetitions spacedRepetitions) {
-        this.spacedRepetitions = spacedRepetitions;
-    }
-
-    public Date getPlanDate() {
-        return planDate;
-    }
-    public void setPlanDate(Date planDate) {
-        this.planDate = planDate;
+    public void setPlanDay(Day planDay) {
+        this.planDay = planDay;
     }
 
-    public Date getFactDate() {
-        return factDate;
+    public Day getFactDay() {
+        return factDay;
     }
-
-    public void setFactDate(Date factDate) {
-        this.factDate = factDate;
+    public void setFactDay(Day factDay) {
+        this.factDay = factDay;
     }
 }

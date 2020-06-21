@@ -18,9 +18,6 @@ public class Topic {
     public Topic(){}
 
     public Topic(String title, Task task){
-//        if(title==null || title.isEmpty() || task==null){
-//            throw new RuntimeException("Topic to create is not full");
-//        }
         this.title = title;
         this.task = task;
     }

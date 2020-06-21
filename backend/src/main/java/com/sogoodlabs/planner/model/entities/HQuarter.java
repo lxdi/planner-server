@@ -1,8 +1,6 @@
 package com.sogoodlabs.planner.model.entities;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 public class HQuarter implements Comparable<HQuarter>{
@@ -10,10 +8,6 @@ public class HQuarter implements Comparable<HQuarter>{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
-
-//    int year;
-//    int startMonth;
-//    int startDay;
 
     @ManyToOne(fetch = FetchType.LAZY)
     Week startWeek;
@@ -30,7 +24,6 @@ public class HQuarter implements Comparable<HQuarter>{
     }
 
     public HQuarter(Week startWeek, Week endWeek){
-        assert startWeek!=null && endWeek!=null && startWeek.getStartDay().before(endWeek.getStartDay());
         this.startWeek = startWeek;
         this.endWeek = endWeek;
     }

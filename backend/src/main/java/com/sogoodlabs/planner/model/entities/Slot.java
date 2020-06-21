@@ -11,9 +11,6 @@ public class Slot {
     int position;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    Mean mean;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     Layer layer;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -32,13 +29,6 @@ public class Slot {
     }
     public void setId(long id) {
         this.id = id;
-    }
-
-    public Mean getMean() {
-        return mean;
-    }
-    public void setMean(Mean mean) {
-        this.mean = mean;
     }
 
     public HQuarter getHquarter() {
