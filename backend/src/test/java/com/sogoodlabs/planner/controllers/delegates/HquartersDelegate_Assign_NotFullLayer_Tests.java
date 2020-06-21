@@ -152,8 +152,10 @@ public class HquartersDelegate_Assign_NotFullLayer_Tests extends ATestsWithTarge
     }
 
     private void checkTaskMapper(TaskMapper taskMapper, Week week, SlotPosition slotPosition){
-        assertTrue(taskMapper.getSlotPosition().getId()==slotPosition.getId());
-        assertTrue(taskMapper.getWeek().getId()==week.getId());
+        //TODO fix
+        throw new UnsupportedOperationException();
+        //assertTrue(taskMapper.getPlanDay().getDayOfWeek()==slotPosition.getDayOfWeek());
+        //assertTrue(taskMapper.getPlanDay().get()==week.getId());
     }
 
     private Task createTask(String title, Subject subject, int position){

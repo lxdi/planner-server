@@ -169,13 +169,12 @@ public class HquartersDelegate_Assigning_in_the_middle_Tests extends ATestsWithT
         hquartersDelegate.assign(mean.getId(), slot3.getId());
         hquartersDelegate.assign(mean.getId(), slot2.getId());
 
-        assertTrue(slotDAO.getById(slot1.getId()).getMean().getId()==mean.getId());
+        assertTrue(slotDAO.getById(slot1.getId()).getLayer().getMean().getId()==mean.getId());
         assertTrue(slotDAO.getById(slot1.getId()).getLayer().getId()==layerDAO.getLayerAtPriority(mean, 1).getId());
 
-        assertTrue(slotDAO.getById(slot2.getId()).getMean().getId()==mean.getId());
+        assertTrue(slotDAO.getById(slot2.getId()).getLayer().getMean().getId()==mean.getId());
         assertTrue(slotDAO.getById(slot2.getId()).getLayer().getId()==layerDAO.getLayerAtPriority(mean, 2).getId());
 
-        assertTrue(slotDAO.getById(slot3.getId()).getMean().getId()==mean.getId());
         assertTrue(slotDAO.getById(slot3.getId()).getLayer()==null);
 
         List<Week> weeksHq1 = weekDAO.weeksOfHquarter(hQuarter1);
@@ -214,8 +213,10 @@ public class HquartersDelegate_Assigning_in_the_middle_Tests extends ATestsWithT
     }
 
     private void checkTaskMapper(TaskMapper taskMapper, Week week, SlotPosition slotPosition){
-        assertTrue(taskMapper.getSlotPosition().getId()==slotPosition.getId());
-        assertTrue(taskMapper.getWeek().getId()==week.getId());
+        //TODO fix test
+        throw new UnsupportedOperationException();
+//        assertTrue(taskMapper.getSlotPosition().getId()==slotPosition.getId());
+//        assertTrue(taskMapper.getWeek().getId()==week.getId());
     }
 
     private Task createTask(String title, Subject subject, int position){

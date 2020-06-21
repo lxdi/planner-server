@@ -165,24 +165,22 @@ public class HquartersDelegate_Unassigns_with2hquarters_Tests extends ATestsWith
         hquartersDelegate.assign(mean.getId(), slot2.getId());
         hquartersDelegate.assign(mean.getId(), slot3.getId());
 
-        assertTrue(slotDAO.getById(slot1.getId()).getMean().getId()==mean.getId());
+        assertTrue(slotDAO.getById(slot1.getId()).getLayer().getMean().getId()==mean.getId());
         assertTrue(slotDAO.getById(slot1.getId()).getLayer().getId()==layerDAO.getLayerAtPriority(mean, 1).getId());
 
-        assertTrue(slotDAO.getById(slot2.getId()).getMean().getId()==mean.getId());
+        assertTrue(slotDAO.getById(slot2.getId()).getLayer().getMean().getId()==mean.getId());
         assertTrue(slotDAO.getById(slot2.getId()).getLayer().getId()==layerDAO.getLayerAtPriority(mean, 2).getId());
 
-        assertTrue(slotDAO.getById(slot3.getId()).getMean().getId()==mean.getId());
         assertTrue(slotDAO.getById(slot3.getId()).getLayer()==null);
 
         hquartersDelegate.unassign(slot2.getId());
 
-        assertTrue(slotDAO.getById(slot1.getId()).getMean().getId()==mean.getId());
+        assertTrue(slotDAO.getById(slot1.getId()).getLayer().getMean().getId()==mean.getId());
         assertTrue(slotDAO.getById(slot1.getId()).getLayer().getId()==layerDAO.getLayerAtPriority(mean, 1).getId());
 
-        assertTrue(slotDAO.getById(slot2.getId()).getMean()==null);
         assertTrue(slotDAO.getById(slot2.getId()).getLayer()==null);
 
-        assertTrue(slotDAO.getById(slot3.getId()).getMean().getId()==mean.getId());
+        assertTrue(slotDAO.getById(slot3.getId()).getLayer().getMean().getId()==mean.getId());
         assertTrue(slotDAO.getById(slot3.getId()).getLayer().getId()==layerDAO.getLayerAtPriority(mean, 2).getId());
 
         List<Week> weeksHq1 = weekDAO.weeksOfHquarter(hQuarter1);
@@ -211,8 +209,10 @@ public class HquartersDelegate_Unassigns_with2hquarters_Tests extends ATestsWith
     }
 
     private void checkTaskMapper(TaskMapper taskMapper, Week week, SlotPosition slotPosition){
-        assertTrue(taskMapper.getSlotPosition().getId()==slotPosition.getId());
-        assertTrue(taskMapper.getWeek().getId()==week.getId());
+        //TODO fix test
+        throw new UnsupportedOperationException();
+//        assertTrue(taskMapper.getSlotPosition().getId()==slotPosition.getId());
+//        assertTrue(taskMapper.getWeek().getId()==week.getId());
     }
 
     private Task createTask(String title, Subject subject, int position){

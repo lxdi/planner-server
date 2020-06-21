@@ -194,8 +194,10 @@ public class HquartersDelegate_ConsecutiveAssigns_Tests extends ATestsWithTarget
     }
 
     private void checkTaskMapper(TaskMapper taskMapper, Week week, SlotPosition slotPosition){
-        assertTrue(taskMapper.getSlotPosition().getId()==slotPosition.getId());
-        assertTrue(taskMapper.getWeek().getId()==week.getId());
+        //TODO fix test
+        throw new UnsupportedOperationException();
+        //assertTrue(taskMapper.getSlotPosition().getId()==slotPosition.getId());
+        //assertTrue(taskMapper.getWeek().getId()==week.getId());
     }
 
     private Task createTask(String title, Subject subject, int position){

@@ -27,9 +27,6 @@ public class SpacedRepetitionsServiceTests extends SpringTestConfig {
     ITaskMappersDAO taskMappersDAO;
 
     @Autowired
-    ISpacedRepDAO spacedRepDAO;
-
-    @Autowired
     SpacedRepetitionsService spacedRepetitionsService;
 
     @Autowired
@@ -43,6 +40,9 @@ public class SpacedRepetitionsServiceTests extends SpringTestConfig {
 
     @Autowired
     ISlotDAO slotDAO;
+
+    @Autowired
+    IDayDao dayDao;
 
     @Test
     public void getActualTaskToRepeatTest(){
@@ -60,8 +60,8 @@ public class SpacedRepetitionsServiceTests extends SpringTestConfig {
         topicDAO.saveOrUpdate(topicForTask5);
 
         Repetition repetitionDone = new Repetition();
-        repetitionDone.setPlanDate(DateUtils.addDays(DateUtils.currentDate(), 3));
-        repetitionDone.setFactDate(DateUtils.addDays(DateUtils.currentDate(), 4));
+        repetitionDone.setPlanDay(dayDao.byDate(DateUtils.addDays(DateUtils.currentDate(), 3)));
+        repetitionDone.setFactDay(dayDao.byDate(DateUtils.addDays(DateUtils.currentDate(), 4)));
         repDAO.save(repetitionDone);
 
         Task currentTask = new Task();
@@ -70,15 +70,15 @@ public class SpacedRepetitionsServiceTests extends SpringTestConfig {
         int currentYear = Calendar.getInstance().get(Calendar.YEAR);
         weeksGenerator.generateYear(currentYear);
         Week currentWeek = weekDAO.weekOfDate(DateUtils.currentDate());
-        DaysOfWeek currentDayOfWeek = DaysOfWeek.findById(DateUtils.differenceInDays(currentWeek.getStartDay(), DateUtils.currentDate()));
+        DaysOfWeek currentDayOfWeek = DaysOfWeek.findById(DateUtils.differenceInDays(currentWeek.getStartDay().getDate(), DateUtils.currentDate()));
 
         SlotPosition slotPosition = new SlotPosition();
         slotPosition.setDayOfWeek(currentDayOfWeek);
         slotDAO.saveOrUpdate(slotPosition);
 
         TaskMapper taskMapper = new TaskMapper();
-        taskMapper.setWeek(currentWeek);
-        taskMapper.setSlotPosition(slotPosition);
+        //TODO set day
+        //taskMapper.setPlanDay
         taskMapper.setTask(currentTask);
         taskMappersDAO.saveOrUpdate(taskMapper);
 
@@ -109,13 +109,8 @@ public class SpacedRepetitionsServiceTests extends SpringTestConfig {
         taskMapper.setTask(task);
         taskMappersDAO.saveOrUpdate(taskMapper);
 
-        SpacedRepetitions spacedRepetitions = new SpacedRepetitions();
-        spacedRepetitions.setTaskMapper(taskMapper);
-        spacedRepDAO.save(spacedRepetitions);
-
         Repetition repetition = new Repetition();
-        repetition.setSpacedRepetitions(spacedRepetitions);
-        repetition.setPlanDate(planDate);
+        repetition.setPlanDay(dayDao.byDate(planDate));
         repDAO.save(repetition);
 
         return task;

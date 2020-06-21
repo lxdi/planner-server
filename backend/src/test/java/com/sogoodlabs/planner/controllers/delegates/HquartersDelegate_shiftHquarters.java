@@ -90,9 +90,6 @@ public class HquartersDelegate_shiftHquarters extends ATestsWithTargetsMeansQuar
         SlotPosition slotPosition2 = testCreators.createSlotPosition(slot, DaysOfWeek.wed, 2);
         SlotPosition slotPosition3 = testCreators.createSlotPosition(slot, DaysOfWeek.fri, 2);
 
-        MapperExclusion mapperExclusion = testCreators.createMapperExclusion(selectedHquarter.getStartWeek(), slotPosition2);
-        MapperExclusion mapperExclusion2 = testCreators.createMapperExclusion(selectedHquarter.getEndWeek(), slotPosition);
-
         taskMappersService.rescheduleTaskMappers(mean, true);
 
         assertTrue(taskMappersDAO.taskMapperForTask(task).getWeek().getId()==selectedHquarter.getStartWeek().getId());
