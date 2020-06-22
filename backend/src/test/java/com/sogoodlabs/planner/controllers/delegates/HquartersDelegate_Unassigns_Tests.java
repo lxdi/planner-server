@@ -11,7 +11,7 @@ import com.sogoodlabs.planner.test_configs.ATestsWithTargetsMeansQuartalsGenerat
 
 import java.util.List;
 
-import static junit.framework.TestCase.assertTrue;
+import static junit.framework.TestCase.*;
 
 
 @Transactional
@@ -245,10 +245,8 @@ public class HquartersDelegate_Unassigns_Tests extends ATestsWithTargetsMeansQua
     }
 
     private void checkTaskMapper(TaskMapper taskMapper, Week week, SlotPosition slotPosition){
-        //TODO fix test
-        throw new UnsupportedOperationException();
-//        assertTrue(taskMapper.getSlotPosition().getId()==slotPosition.getId());
-//        assertTrue(taskMapper.getWeek().getId()==week.getId());
+        assertSame(taskMapper.getPlanDay().getDayOfWeek(), slotPosition.getDayOfWeek());
+        assertEquals(weekDAO.byDay(taskMapper.getPlanDay()).getId(), week.getId());
     }
 
     private Task createTask(String title, Subject subject, int position){

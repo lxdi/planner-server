@@ -63,11 +63,6 @@ public class WeekDao implements IWeekDAO {
                 .setParameter("lastDay", lastDay)
                 .setParameter("number", number)
                 .uniqueResult();
-//        return (Week) entityManager.unwrap(Session.class).createCriteria(Week.class)
-//                .add(Restrictions.gt("startDay", firstDay))
-//                .add(Restrictions.le("startDay", lastDay))
-//                .add(Restrictions.eq("number", number))
-//                .uniqueResult();
     }
 
     @Override
@@ -96,5 +91,14 @@ public class WeekDao implements IWeekDAO {
                 .setMaxResults(1);
         return (Week) query.uniqueResult();
     }
+
+    @Override
+    public Week byDay(Day day) {
+        return (Week) this.entityManager.unwrap(Session.class)
+                .createQuery("from Week where startDay <= :day and endDay >= :day")
+                .setParameter("day", day)
+                .uniqueResult();
+    }
+
 
 }

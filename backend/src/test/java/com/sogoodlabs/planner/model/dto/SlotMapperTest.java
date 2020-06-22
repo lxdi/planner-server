@@ -26,7 +26,7 @@ public class SlotMapperTest extends SpringTestConfig {
         Task task = testCreators.createTask(subject);
         Task task2 = testCreators.createTask(subject);
 
-        Slot slot = testCreators.createSlot(layer, null, null);
+        Slot slot = testCreators.createSlot(layer, null);
 
         Map<String, Object> dto = slotMapper.mapToDtoLazy(slot);
 
@@ -41,7 +41,7 @@ public class SlotMapperTest extends SpringTestConfig {
         Task task = testCreators.createTask(subject);
         Task task2 = testCreators.createTask(subject);
 
-        Slot slot = testCreators.createSlot(layer, null, null);
+        Slot slot = testCreators.createSlot(layer, null);
 
         SlotPosition slotPosition = testCreators.createSlotPosition(slot);
         slotPosition.setDayOfWeek(DaysOfWeek.thu);

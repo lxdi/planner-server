@@ -32,7 +32,7 @@ public class HQuartersDaoTests extends ATestsWithTargetsMeansQuartalsGenerated {
         assertTrue(HQuarters.size()==24);
         int checks = 12;
         for (HQuarter HQuarter : HQuarters) {
-            String startWeekDateStr = fromDate(HQuarter.getStartWeek().getStartDay());
+            String startWeekDateStr = fromDate(HQuarter.getStartWeek().getStartDay().getDate());
             if (startWeekDateStr.contains("2018-01-01")) {
                 checks--;
             }
@@ -89,7 +89,7 @@ public class HQuartersDaoTests extends ATestsWithTargetsMeansQuartalsGenerated {
         for(int i =1; i<hQuartersIn2018.size(); i++){
             HQuarter prev = hQuartersIn2018.get(i-1);
             HQuarter current = hQuartersIn2018.get(i);
-            assertTrue(current.getStartWeek().getStartDay().after(prev.getStartWeek().getStartDay()));
+            assertTrue(current.getStartWeek().getStartDay().getDate().after(prev.getStartWeek().getStartDay().getDate()));
         }
 
         assertTrue(hquarterDAO.getHQuartersInYear(2019).size()==12);
@@ -101,7 +101,7 @@ public class HQuartersDaoTests extends ATestsWithTargetsMeansQuartalsGenerated {
         HQuarter hQuarter = hquarterDAO.getByDate(date);
 
         assertTrue(hQuarter!=null);
-        assertTrue(DateUtils.fromDate(hQuarter.getStartWeek().getStartDay()).equals("2019-04-01"));
+        assertTrue(DateUtils.fromDate(hQuarter.getStartWeek().getStartDay().getDate()).equals("2019-04-01"));
     }
 
 }

@@ -85,41 +85,43 @@ public class HquartersDelegate_shiftHquarters extends ATestsWithTargetsMeansQuar
         Task task5 = testCreators.createTask(subject);
         Task task6 = testCreators.createTask(subject);
 
-        Slot slot = testCreators.createSlot(layer, mean, selectedHquarter);
+        Slot slot = testCreators.createSlot(layer, selectedHquarter);
         SlotPosition slotPosition = testCreators.createSlotPosition(slot, DaysOfWeek.mon, 1);
         SlotPosition slotPosition2 = testCreators.createSlotPosition(slot, DaysOfWeek.wed, 2);
         SlotPosition slotPosition3 = testCreators.createSlotPosition(slot, DaysOfWeek.fri, 2);
 
         taskMappersService.rescheduleTaskMappers(mean, true);
 
-        assertTrue(taskMappersDAO.taskMapperForTask(task).getWeek().getId()==selectedHquarter.getStartWeek().getId());
-        assertTrue(taskMappersDAO.taskMapperForTask(task2).getWeek().getId()==selectedHquarter.getStartWeek().getId());
-        assertTrue(taskMappersDAO.taskMapperForTask(task2).getSlotPosition().getId()==slotPosition3.getId());
+        assertTrue(weekDAO.byDay(taskMappersDAO.taskMapperForTask(task).getPlanDay()).getId()==selectedHquarter.getStartWeek().getId());
+        assertTrue(weekDAO.byDay(taskMappersDAO.taskMapperForTask(task2).getPlanDay()).getId()==selectedHquarter.getStartWeek().getId());
+        assertTrue(taskMappersDAO.taskMapperForTask(task2).getPlanDay().getDayOfWeek()==slotPosition3.getDayOfWeek());
 
         hquartersDelegate.shiftHquarters(selectedHquarter.getId());
 
         assertTrue(selectedHquarter.getStartWeek().getId()!=oldStartWeek.getId());
 
-        assertTrue(taskMappersDAO.taskMapperForTask(task).getWeek().getId()==selectedHquarter.getStartWeek().getId());
-        assertTrue(taskMappersDAO.taskMapperForTask(task).getSlotPosition().getId()==slotPosition.getId());
 
-        assertTrue(taskMappersDAO.taskMapperForTask(task2).getWeek().getId()==selectedHquarter.getStartWeek().getId());
-        assertTrue(taskMappersDAO.taskMapperForTask(task2).getSlotPosition().getId()==slotPosition2.getId());
+        assertTrue(weekDAO.byDay(taskMappersDAO.taskMapperForTask(task).getPlanDay()).getId()==selectedHquarter.getStartWeek().getId());
+        assertTrue(taskMappersDAO.taskMapperForTask(task).getPlanDay().getDayOfWeek()==slotPosition.getDayOfWeek());
 
-        assertTrue(taskMappersDAO.taskMapperForTask(task3).getWeek().getId()==selectedHquarter.getStartWeek().getId());
-        assertTrue(taskMappersDAO.taskMapperForTask(task3).getSlotPosition().getId()==slotPosition3.getId());
+        assertTrue(weekDAO.byDay(taskMappersDAO.taskMapperForTask(task2).getPlanDay()).getId()==selectedHquarter.getStartWeek().getId());
+        assertTrue(taskMappersDAO.taskMapperForTask(task2).getPlanDay().getDayOfWeek()==slotPosition2.getDayOfWeek());
 
-        assertTrue(taskMappersDAO.taskMapperForTask(task4).getWeek().getId()
+
+        assertTrue(weekDAO.byDay(taskMappersDAO.taskMapperForTask(task3).getPlanDay()).getId()==selectedHquarter.getStartWeek().getId());
+        assertTrue(taskMappersDAO.taskMapperForTask(task3).getPlanDay().getDayOfWeek()==slotPosition2.getDayOfWeek());
+
+        assertTrue(weekDAO.byDay(taskMappersDAO.taskMapperForTask(task4).getPlanDay()).getId()
                 == weekDAO.weekByYearAndNumber(2018, selectedHquarter.getStartWeek().getNumber()+1).getId());
-        assertTrue(taskMappersDAO.taskMapperForTask(task4).getSlotPosition().getId()==slotPosition.getId());
+        assertTrue(taskMappersDAO.taskMapperForTask(task4).getPlanDay().getDayOfWeek()==slotPosition.getDayOfWeek());
 
-        assertTrue(taskMappersDAO.taskMapperForTask(task5).getWeek().getId()
+        assertTrue(weekDAO.byDay(taskMappersDAO.taskMapperForTask(task5).getPlanDay()).getId()
                 == weekDAO.weekByYearAndNumber(2018, selectedHquarter.getStartWeek().getNumber()+1).getId());
-        assertTrue(taskMappersDAO.taskMapperForTask(task5).getSlotPosition().getId()==slotPosition2.getId());
+        assertTrue(taskMappersDAO.taskMapperForTask(task5).getPlanDay().getDayOfWeek()==slotPosition2.getDayOfWeek());
 
-        assertTrue(taskMappersDAO.taskMapperForTask(task6).getWeek().getId()
+        assertTrue(weekDAO.byDay(taskMappersDAO.taskMapperForTask(task6).getPlanDay()).getId()
                 == weekDAO.weekByYearAndNumber(2018, selectedHquarter.getStartWeek().getNumber()+1).getId());
-        assertTrue(taskMappersDAO.taskMapperForTask(task6).getSlotPosition().getId()==slotPosition3.getId());
+        assertTrue(taskMappersDAO.taskMapperForTask(task6).getPlanDay().getDayOfWeek()==slotPosition3.getDayOfWeek());
 
     }
 

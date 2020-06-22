@@ -22,6 +22,13 @@ public class Day implements Comparable<Day>{
     @Enumerated(EnumType.STRING)
     DaysOfWeek dayOfWeek;
 
+
+    public Day(){}
+
+    public Day(Date date){
+        this.date = date;
+    }
+
     public long getId() {
         return id;
     }

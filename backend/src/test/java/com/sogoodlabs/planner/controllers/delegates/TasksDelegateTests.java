@@ -73,7 +73,7 @@ public class TasksDelegateTests extends SpringTestConfig {
 
     @Test
     public void finishTaskWithRepTest(){
-        //TODO fix test
+        //TODO fix test finishTaskWithRepTest
         tasksDelegate.finishTaskWithRepetition(task.getId(), defaultRepPlan.getId(), null);
 //        SpacedRepetitions spacedRepetitions = spacedRepDAO.getSRforTask(task.getId());
 //        List<Repetition> repetitions = repDAO.getRepsbySpacedRepId(spacedRepetitions.getId());
@@ -92,38 +92,40 @@ public class TasksDelegateTests extends SpringTestConfig {
 
     @Test
     public void finishTaskWithRepWithTestingsTest(){
-
-        TaskTesting existingTesting = new TaskTesting();
-        existingTesting.setTask(task);
-        taskTestingDAO.save(existingTesting);
-
-        List<Map<String, Object>> testingsDto = new ArrayList<>(Arrays.asList(
-                createTaskTestingDTO(0, "testing1 q", null),
-                createTaskTestingDTO(existingTesting.getId(), "testing2 q", task.getId())));
-
-        entityManager.unwrap(Session.class).clear();
-
-        tasksDelegate.finishTaskWithRepetition(task.getId(), defaultRepPlan.getId(), testingsDto);
-
-        SpacedRepetitions spacedRepetitions = spacedRepDAO.getSRforTask(task.getId());
-        List<Repetition> repetitions = repDAO.getRepsbySpacedRepId(spacedRepetitions.getId());
-
-        assertTrue(DateUtils.fromDate(taskMappersDAO.taskMapperForTask(task).getFinishDate())
-                .equals(DateUtils.fromDate(new Date(new java.util.Date().getTime()))));
-
-        assertTrue(spacedRepetitions!=null);
-        assertTrue(spacedRepetitions.getRepetitionPlan().getId()== defaultRepPlan.getId());
-
-        assertTrue(repetitions.size()==5);
-
-        assertTrue(DateUtils.fromDate(repetitions.get(1).getPlanDate())
-                .equals(DateUtils.fromDate(DateUtils.addWeeks(DateUtils.currentDate(), 6))));
-
-        List<TaskTesting> testings = taskTestingDAO.getByTask(task.getId());
-
-        assertTrue(testings.size()==2);
-        assertTrue(testings.get(0).getQuestion().equals("testing2 q"));
-        assertTrue(testings.get(1).getQuestion().equals("testing1 q"));
+        //TODO fix test finishTaskWithRepWithTestingsTest
+        throw new UnsupportedOperationException();
+//
+//        TaskTesting existingTesting = new TaskTesting();
+//        existingTesting.setTask(task);
+//        taskTestingDAO.save(existingTesting);
+//
+//        List<Map<String, Object>> testingsDto = new ArrayList<>(Arrays.asList(
+//                createTaskTestingDTO(0, "testing1 q", null),
+//                createTaskTestingDTO(existingTesting.getId(), "testing2 q", task.getId())));
+//
+//        entityManager.unwrap(Session.class).clear();
+//
+//        tasksDelegate.finishTaskWithRepetition(task.getId(), defaultRepPlan.getId(), testingsDto);
+//
+//        SpacedRepetitions spacedRepetitions = spacedRepDAO.getSRforTask(task.getId());
+//        List<Repetition> repetitions = repDAO.getRepsbySpacedRepId(spacedRepetitions.getId());
+//
+//        assertTrue(DateUtils.fromDate(taskMappersDAO.taskMapperForTask(task).getFactDay().getDate())
+//                .equals(DateUtils.fromDate(new Date(new java.util.Date().getTime()))));
+//
+//        assertTrue(spacedRepetitions!=null);
+//        assertTrue(spacedRepetitions.getRepetitionPlan().getId()== defaultRepPlan.getId());
+//
+//        assertTrue(repetitions.size()==5);
+//
+//        assertTrue(DateUtils.fromDate(repetitions.get(1).getPlanDay().getDate())
+//                .equals(DateUtils.fromDate(DateUtils.addWeeks(DateUtils.currentDate(), 6))));
+//
+//        List<TaskTesting> testings = taskTestingDAO.getByTask(task.getId());
+//
+//        assertTrue(testings.size()==2);
+//        assertTrue(testings.get(0).getQuestion().equals("testing2 q"));
+//        assertTrue(testings.get(1).getQuestion().equals("testing1 q"));
     }
 
     @Test
@@ -134,7 +136,7 @@ public class TasksDelegateTests extends SpringTestConfig {
         tasksDelegate.finishRepetition(repetition.getId());
 
         repetition = repDAO.findOne(repetition.getId());
-        assertTrue(DateUtils.fromDate(repetition.getFactDate()).equals(DateUtils.currentDateString()));
+        assertTrue(DateUtils.fromDate(repetition.getFactDay().getDate()).equals(DateUtils.currentDateString()));
     }
 
     @Test

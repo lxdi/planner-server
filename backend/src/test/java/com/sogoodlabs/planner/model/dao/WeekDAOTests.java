@@ -2,6 +2,7 @@ package com.sogoodlabs.planner.model.dao;
 
 import com.sogoodlabs.planner.model.dao.IHQuarterDAO;
 import com.sogoodlabs.planner.model.dao.IWeekDAO;
+import com.sogoodlabs.planner.model.entities.Day;
 import com.sogoodlabs.planner.model.entities.HQuarter;
 import com.sogoodlabs.planner.model.entities.Week;
 import org.junit.Before;
@@ -35,25 +36,17 @@ public class WeekDAOTests extends AbstractTestsWithTargets {
     @Autowired
     IHQuarterDAO hquarterDao;
 
-    @Test
-    public void gettingSameWeekByDateTest(){
-        Date date = toDate("2017-03-17");
-        assertTrue(date!=null);
-
-        Week week = new Week(date, null, 1);
-        weekDAO.saveOrUpdate(week);
-
-        Week sameWeek = weekDAO.weekByStartDate(toDate("2017-03-17"));
-
-        assertTrue(week.getId()==sameWeek.getId());
-    }
+    @Autowired
+    IDayDao dayDao;
 
     @Test
     public void weekByYearAndNumberTest(){
         Date date = toDate("2017-03-17");
         assertTrue(date!=null);
 
-        Week week = new Week(date, null, 1);
+        Day day = new Day(date);
+        dayDao.save(day);
+        Week week = new Week(day, null, 1);
         weekDAO.saveOrUpdate(week);
 
         Week sameWeek = weekDAO.weekByYearAndNumber(2017, 1);
@@ -75,7 +68,7 @@ public class WeekDAOTests extends AbstractTestsWithTargets {
         for(int i = 1; i<weeks.size();  i++){
             Week weekPrev = weeks.get(i-1);
             Week week= weeks.get(i);
-            assertTrue(week.getStartDay().after(weekPrev.getStartDay()));
+            assertTrue(week.getStartDay().getDate().after(weekPrev.getStartDay().getDate()));
         }
     }
 
@@ -91,10 +84,10 @@ public class WeekDAOTests extends AbstractTestsWithTargets {
     @Test
     public void lastWeekInYearTest(){
         quarterGenerator.generateYear(2018);
-        assertEquals(DateUtils.fromDate(weekDAO.lastWeekInYear(2018).getStartDay()),"2018-12-31");
+        assertEquals(DateUtils.fromDate(weekDAO.lastWeekInYear(2018).getStartDay().getDate()),"2018-12-31");
 
         quarterGenerator.generateYear(2019);
-        assertEquals(DateUtils.fromDate(weekDAO.lastWeekInYear(2019).getStartDay()),"2019-12-30");
+        assertEquals(DateUtils.fromDate(weekDAO.lastWeekInYear(2019).getStartDay().getDate()),"2019-12-30");
 
     }
 
@@ -109,8 +102,8 @@ public class WeekDAOTests extends AbstractTestsWithTargets {
     private void checkDayInWeek(String dateString, String startDayExpected, String endDayExpected){
         Date date = DateUtils.toDate(dateString);
         Week week = weekDAO.weekOfDate(date);
-        assertTrue(DateUtils.fromDate(week.getStartDay()).equals(startDayExpected));
-        assertTrue(DateUtils.fromDate(week.getEndDay()).equals(endDayExpected));
+        assertTrue(DateUtils.fromDate(week.getStartDay().getDate()).equals(startDayExpected));
+        assertTrue(DateUtils.fromDate(week.getEndDay().getDate()).equals(endDayExpected));
     }
 
 }

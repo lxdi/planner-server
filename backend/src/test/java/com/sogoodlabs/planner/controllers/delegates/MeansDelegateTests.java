@@ -76,6 +76,9 @@ public class MeansDelegateTests extends SpringTestConfig {
     @Autowired
     IWeekDAO weekDAO;
 
+    @Autowired
+    IDayDao dayDao;
+
 
     @Test
     public void updateTest(){
@@ -238,11 +241,11 @@ public class MeansDelegateTests extends SpringTestConfig {
         Subject subject = testCreators.createSubject(layer);
         Task task = testCreators.createTask(subject);
 
-        Slot slot = testCreators.createSlot(layer, mean, ihQuarterDAO.getHQuartersInYear(2018).get(5));
+        Slot slot = testCreators.createSlot(layer, ihQuarterDAO.getHQuartersInYear(2018).get(5));
         SlotPosition slotPosition = testCreators.createSlotPosition(slot);
 
-        TaskMapper taskMapper = testCreators.createTaskMapper(
-                task, ihQuarterDAO.getHQuartersInYear(2018).get(5).getStartWeek(), slotPosition);
+        TaskMapper taskMapper = testCreators.createTaskMapper(task,
+                dayDao.byWeekAndDayOfWeek(ihQuarterDAO.getHQuartersInYear(2018).get(5).getStartWeek(), slotPosition.getDayOfWeek()));
 
         Layer layer2 = testCreators.createLayer(meanChild);
         Layer layer3 = testCreators.createLayer(meanChildChild);

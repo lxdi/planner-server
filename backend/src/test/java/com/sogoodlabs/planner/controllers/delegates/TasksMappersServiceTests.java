@@ -62,7 +62,7 @@ public class TasksMappersServiceTests extends SpringTestConfig {
         hQuarter = ihQuarterDAO.getHQuartersInYear(2019).get(3);
         entityManager.unwrap(Session.class).getTransaction().commit();
 
-        slot = testCreators.createSlot(layer, mean, hQuarter);
+        slot = testCreators.createSlot(layer, hQuarter);
         slotPositions = new ArrayList<>();
 
         slotPositions.add(testCreators.createSlotPosition(slot, DaysOfWeek.mon, 1));
@@ -81,10 +81,6 @@ public class TasksMappersServiceTests extends SpringTestConfig {
             tasks.add(testCreators.createTask(subject));
         }
 
-        testCreators.createMapperExclusion(weeks.get(0), slotPositions.get(0));
-        testCreators.createMapperExclusion(weeks.get(0), slotPositions.get(1));
-        testCreators.createMapperExclusion(weeks.get(0), slotPositions.get(2));
-
         taskMappersService.createTaskMappers(layer, slot);
 
         List<TaskMapper> taskMappers = taskMappersDAO.taskMappersByWeeksAndSlotPositions(
@@ -92,7 +88,7 @@ public class TasksMappersServiceTests extends SpringTestConfig {
         );
 
         assertTrue(taskMappers.size()==numberOfTasks);
-        taskMappers.forEach(taskmapper -> assertTrue(taskmapper.getWeek().getId()!=weeks.get(0).getId()));
+        taskMappers.forEach(taskmapper -> assertTrue(weekDAO.byDay(taskmapper.getPlanDay()).getId()!=weeks.get(0).getId()));
 
     }
 
@@ -104,11 +100,6 @@ public class TasksMappersServiceTests extends SpringTestConfig {
             tasks.add(testCreators.createTask(subject));
         }
 
-
-        testCreators.createMapperExclusion(weeks.get(0), slotPositions.get(0));
-        testCreators.createMapperExclusion(weeks.get(0), slotPositions.get(1));
-        testCreators.createMapperExclusion(weeks.get(0), slotPositions.get(2));
-
         taskMappersService.createTaskMappers(layer, slot);
 
         List<TaskMapper> taskMappers = taskMappersDAO.taskMappersByWeeksAndSlotPositions(
@@ -116,10 +107,10 @@ public class TasksMappersServiceTests extends SpringTestConfig {
         );
 
         assertTrue(taskMappers.size()==numberOfTasks);
-        taskMappers.forEach(taskmapper -> assertTrue(taskmapper.getWeek().getId()!=weeks.get(0).getId()));
+        taskMappers.forEach(taskmapper -> assertTrue(weekDAO.byDay(taskmapper.getPlanDay()).getId()!=weeks.get(0).getId()));
 
-        assertTrue(taskMappersDAO.taskMapperForTask(tasks.get(0)).getSlotPosition().getId()==slotPositions.get(0).getId());
-        assertTrue(taskMappersDAO.taskMapperForTask(tasks.get(0)).getWeek().getId()==weeks.get(1).getId());
+        assertTrue(taskMappersDAO.taskMapperForTask(tasks.get(0)).getPlanDay().getDayOfWeek()==slotPositions.get(0).getDayOfWeek());
+        assertTrue(weekDAO.byDay(taskMappersDAO.taskMapperForTask(tasks.get(0)).getPlanDay()).getId()==weeks.get(1).getId());
 
         checkTaskMapper(tasks, weeks, slotPositions, 0, 0, 1);
         checkTaskMapper(tasks, weeks, slotPositions, 1, 1, 1);
@@ -140,11 +131,6 @@ public class TasksMappersServiceTests extends SpringTestConfig {
         for(int i = 0; i<numberOfTasks;i++){
             tasks.add(testCreators.createTask(subject));
         }
-
-        testCreators.createMapperExclusion(weeks.get(0), slotPositions.get(0));
-        testCreators.createMapperExclusion(weeks.get(2), slotPositions.get(1));
-        testCreators.createMapperExclusion(weeks.get(2), slotPositions.get(2));
-        testCreators.createMapperExclusion(weeks.get(3), slotPositions.get(2));
 
         taskMappersService.createTaskMappers(layer, slot);
 
@@ -177,8 +163,8 @@ public class TasksMappersServiceTests extends SpringTestConfig {
     }
 
     private void checkTaskMapper(List<Task> tasks, List<Week> weeks, List<SlotPosition> slotPositions, int itask,  int isp, int iw){
-        assertTrue(taskMappersDAO.taskMapperForTask(tasks.get(itask)).getSlotPosition().getId()==slotPositions.get(isp).getId());
-        assertTrue(taskMappersDAO.taskMapperForTask(tasks.get(itask)).getWeek().getId()==weeks.get(iw).getId());
+        assertTrue(taskMappersDAO.taskMapperForTask(tasks.get(itask)).getPlanDay().getDayOfWeek()==slotPositions.get(isp).getDayOfWeek());
+        assertTrue(weekDAO.byDay(taskMappersDAO.taskMapperForTask(tasks.get(itask)).getPlanDay()).getId()==weeks.get(iw).getId());
     }
 
 }

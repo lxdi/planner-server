@@ -33,34 +33,33 @@ public class SlotsDaoTests extends ATestsWithTargetsMeansQuartalsGenerated {
 
     @Test
     public void slotsAfterTest(){
-        Mean mean = new Mean("test mean", realm);
-        meansDAO.saveOrUpdate(mean);
-
-        List<HQuarter> hQuarters = ihQuarterDAO.getHQuartersInYear(2018);
-
-        Slot slot1 = new Slot(hQuarters.get(1), 1);
-        slot1.setMean(mean);
-        slotDAO.saveOrUpdate(slot1);
-
-        Slot slot2 = new Slot(hQuarters.get(3), 1);
-        slot2.setMean(mean);
-        slotDAO.saveOrUpdate(slot2);
-
-        Slot slot3 = new Slot(hQuarters.get(7), 1);
-        slot3.setMean(mean);
-        slotDAO.saveOrUpdate(slot3);
-
-        List<Slot> slotsAfter1 = slotDAO.slotsAfter(slot1);
-        assertTrue(slotsAfter1.size()==2);
-        assertTrue(slotsAfter1.get(0).getId()==slot2.getId());
-        assertTrue(slotsAfter1.get(1).getId()==slot3.getId());
-
-        List<Slot> slotsAfter2 = slotDAO.slotsAfter(slot2);
-        assertTrue(slotsAfter2.size()==1);
-        assertTrue(slotsAfter2.get(0).getId()==slot3.getId());
-
-        List<Slot> slotsAfter3 = slotDAO.slotsAfter(slot3);
-        assertTrue(slotsAfter3.size()==0);
+        //TODO fix test slotsAfterTest
+        throw new UnsupportedOperationException();
+//        Mean mean = new Mean("test mean", realm);
+//        meansDAO.saveOrUpdate(mean);
+//
+//        List<HQuarter> hQuarters = ihQuarterDAO.getHQuartersInYear(2018);
+//
+//        Slot slot1 = new Slot(hQuarters.get(1), 1);
+//        slotDAO.saveOrUpdate(slot1);
+//
+//        Slot slot2 = new Slot(hQuarters.get(3), 1);
+//        slotDAO.saveOrUpdate(slot2);
+//
+//        Slot slot3 = new Slot(hQuarters.get(7), 1);
+//        slotDAO.saveOrUpdate(slot3);
+//
+//        List<Slot> slotsAfter1 = slotDAO.slotsAfter(slot1);
+//        assertTrue(slotsAfter1.size()==2);
+//        assertTrue(slotsAfter1.get(0).getId()==slot2.getId());
+//        assertTrue(slotsAfter1.get(1).getId()==slot3.getId());
+//
+//        List<Slot> slotsAfter2 = slotDAO.slotsAfter(slot2);
+//        assertTrue(slotsAfter2.size()==1);
+//        assertTrue(slotsAfter2.get(0).getId()==slot3.getId());
+//
+//        List<Slot> slotsAfter3 = slotDAO.slotsAfter(slot3);
+//        assertTrue(slotsAfter3.size()==0);
 
     }
 
@@ -72,18 +71,15 @@ public class SlotsDaoTests extends ATestsWithTargetsMeansQuartalsGenerated {
         List<HQuarter> hQuarters = ihQuarterDAO.getHQuartersInYear(2018);
 
         Slot slot1 = new Slot(hQuarters.get(1), 1);
-        slot1.setMean(mean);
         slotDAO.saveOrUpdate(slot1);
 
         Slot slot2 = new Slot(hQuarters.get(3), 1);
         slotDAO.saveOrUpdate(slot2);
 
         Slot slot4 = new Slot(hQuarters.get(7), 2);
-        slot4.setMean(mean);
         slotDAO.saveOrUpdate(slot4);
 
         Slot slot3 = new Slot(hQuarters.get(7), 1);
-        slot3.setMean(mean);
         slotDAO.saveOrUpdate(slot3);
 
         List<Slot> slotsWithMean = slotDAO.slotsWithMean(mean);
@@ -105,10 +101,10 @@ public class SlotsDaoTests extends ATestsWithTargetsMeansQuartalsGenerated {
 
         List<HQuarter> hQuarters = ihQuarterDAO.getHQuartersInYear(2018);
 
-        Slot slot1 = createSlot(hQuarters.get(2), 1, mean1, layer11);
-        Slot slot2 = createSlot(hQuarters.get(4), 1, mean1, layer12);
-        Slot slot3 = createSlot(hQuarters.get(7), 1, mean2, layer21);
-        Slot slot4 = createSlot(hQuarters.get(8), 1, null, null);
+        Slot slot1 = createSlot(hQuarters.get(2), 1, layer11);
+        Slot slot2 = createSlot(hQuarters.get(4), 1, layer12);
+        Slot slot3 = createSlot(hQuarters.get(7), 1, layer21);
+        Slot slot4 = createSlot(hQuarters.get(8), 1, null);
 
         List<Layer> layers = Arrays.asList(layer11, layer12, layer21);
 
@@ -116,9 +112,8 @@ public class SlotsDaoTests extends ATestsWithTargetsMeansQuartalsGenerated {
 
     }
 
-    private Slot createSlot(HQuarter hQuarter, int position, Mean mean, Layer layer){
+    private Slot createSlot(HQuarter hQuarter, int position , Layer layer){
         Slot slot = new Slot(hQuarter, position);
-        slot.setMean(mean);
         slot.setLayer(layer);
         slotDAO.saveOrUpdate(slot);
         return slot;

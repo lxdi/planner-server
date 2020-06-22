@@ -1,5 +1,6 @@
 package com.sogoodlabs.planner.model.dto.hquarter;
 
+import com.sogoodlabs.planner.model.dao.IDayDao;
 import com.sogoodlabs.planner.model.dao.IHQuarterDAO;
 import com.sogoodlabs.planner.model.dao.ISlotDAO;
 import com.sogoodlabs.planner.model.dao.IWeekDAO;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.sogoodlabs.planner.services.StringUtils;
 import com.sogoodlabs.planner.test_configs.AbstractTestsWithTargets;
 
+import java.sql.Date;
 import java.util.Map;
 
 import static junit.framework.TestCase.assertTrue;
@@ -30,6 +32,9 @@ public class HquarterDtoLazyMapperTests extends AbstractTestsWithTargets {
     @Autowired
     HquarterMapper hquarterMapper;
 
+    @Autowired
+    IDayDao dayDao;
+
     HQuarter hQuarter;
     SlotPosition slotPosition;
     Slot slot;
@@ -42,10 +47,11 @@ public class HquarterDtoLazyMapperTests extends AbstractTestsWithTargets {
     public void init(){
         super.init();
 
-        startWeek = new Week(toDate(startDateStr), null, 1);
+
+        startWeek = new Week(createDay(toDate(startDateStr)), null, 1);
         weekDAO.saveOrUpdate(startWeek);
 
-        endWeek = new Week(toDate(startDateStr), null, 6);
+        endWeek = new Week(createDay(toDate(startDateStr)), null, 6);
         weekDAO.saveOrUpdate(endWeek);
 
         hQuarter = new HQuarter();
@@ -64,6 +70,12 @@ public class HquarterDtoLazyMapperTests extends AbstractTestsWithTargets {
         slotPosition.setPosition(2);
         slotDAO.saveOrUpdate(slotPosition);
 
+    }
+
+    private Day createDay(Date date){
+        Day day = new Day(date);
+        dayDao.save(day);
+        return day;
     }
 
     @Test

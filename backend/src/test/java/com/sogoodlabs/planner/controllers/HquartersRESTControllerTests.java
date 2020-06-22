@@ -83,9 +83,9 @@ public class HquartersRESTControllerTests extends AbstractTestsWithTargets {
 
         String content = "{\"id\":"+hQuarter.getId()+","+
                 "\"startWeek\":{\"id\":"+hQuarter.getStartWeek().getId()+
-                    ", \"startDay\":\""+fromDate(hQuarter.getStartWeek().getStartDay())+"\", \"number\": 1},"+
+                    ", \"startDay\":\""+fromDate(hQuarter.getStartWeek().getStartDay().getDate())+"\", \"number\": 1},"+
                 "\"endWeek\":{\"id\":"+hQuarter.getEndWeek().getId()+
-                ", \"startDay\":\""+fromDate(hQuarter.getEndWeek().getStartDay())+"\", \"number\": 8},"+
+                ", \"startDay\":\""+fromDate(hQuarter.getEndWeek().getStartDay().getDate())+"\", \"number\": 8},"+
                 "\"slots\":[{" +
                     "\"position\":1,"+
                     "\"slotPositions\":["+
@@ -112,8 +112,8 @@ public class HquartersRESTControllerTests extends AbstractTestsWithTargets {
         assertTrue(slot!=null);
         assertTrue(slot.getPosition()==1);
         assertTrue(slotPositions.size()==2);
-        assertTrue(fromDate(hQuarter.getStartWeek().getStartDay())
-                .equals(fromDate(weekDAO.weekByYearAndNumber(2018, 2).getStartDay())));
+        assertTrue(fromDate(hQuarter.getStartWeek().getStartDay().getDate())
+                .equals(fromDate(weekDAO.weekByYearAndNumber(2018, 2).getStartDay().getDate())));
 
     }
 
@@ -136,9 +136,9 @@ public class HquartersRESTControllerTests extends AbstractTestsWithTargets {
         MvcResult result = mockMvc.perform(post("/hquarter/assignmean/"+mean.getId()+"/toslot/"+slot.getId()))
                 .andExpect(status().isOk()).andReturn();
 
-        assertTrue(slotDAO.getById(slot.getId()).getMean()!=null);
-        assertTrue(slotDAO.getById(slot.getId()).getMean().getId()==mean.getId());
-        assertTrue(slotDAO.getById(slot.getId()).getMean().getTitle().equals(mean.getTitle()));
+        assertTrue(slotDAO.getById(slot.getId()).getLayer().getMean()!=null);
+        assertTrue(slotDAO.getById(slot.getId()).getLayer().getMean().getId()==mean.getId());
+        assertTrue(slotDAO.getById(slot.getId()).getLayer().getMean().getTitle().equals(mean.getTitle()));
 
     }
 
@@ -150,7 +150,6 @@ public class HquartersRESTControllerTests extends AbstractTestsWithTargets {
         HQuarter hQuarter = quarterDAO.getAllHQuartals().get(0);
         Slot slot =  new Slot();
         slot.setHquarter(hQuarter);
-        slot.setMean(mean);
         slotDAO.saveOrUpdate(slot);
 
         MvcResult result = mockMvc.perform(post("/hquarter/slot/unassign/"+slot.getId()))
@@ -159,7 +158,7 @@ public class HquartersRESTControllerTests extends AbstractTestsWithTargets {
         //assertTrue(slot.getMean()!=null);
 
         slot = slotDAO.getById(slot.getId());
-        assertTrue(slot.getMean()==null);
+        assertTrue(slot.getLayer()==null);
     }
 
 

@@ -1,5 +1,6 @@
 package com.sogoodlabs.planner.model.dto;
 
+import com.sogoodlabs.planner.model.dao.IDayDao;
 import com.sogoodlabs.planner.model.entities.*;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,20 +22,23 @@ public class HquarterMapperTest extends SpringTestConfig {
     @Autowired
     HquarterMapper hquarterMapper;
 
+    @Autowired
+    IDayDao dayDao;
+
     @Test
     public void mapToLazyTest(){
         Week startWeek = testCreators.createWeek(
-                DateUtils.toDate("2019-06-01"),
-                DateUtils.toDate("2019-06-07"));
+                "2019-06-01",
+                "2019-06-07");
 
         Week endWeek = testCreators.createWeek(
-                DateUtils.toDate("2019-06-22"),
-                DateUtils.toDate("2019-06-28"));
+                "2019-06-22",
+                "2019-06-28");
 
         HQuarter hQuarter = testCreators.createHquarter(startWeek, endWeek);
 
-        Slot slot = testCreators.createSlot(null, null, hQuarter);
-        Slot slot2 = testCreators.createSlot(null, null, hQuarter);
+        Slot slot = testCreators.createSlot(null, hQuarter);
+        Slot slot2 = testCreators.createSlot(null, hQuarter);
 
         Map<String, Object> result = hquarterMapper.mapToDtoLazy(hQuarter);
 
@@ -53,8 +57,8 @@ public class HquarterMapperTest extends SpringTestConfig {
 
         HQuarter hQuarter = testCreators.createHquarter(startWeek, endWeek);
 
-        Slot slot = testCreators.createSlot(null, null, hQuarter);
-        Slot slot2 = testCreators.createSlot(null, null, hQuarter);
+        Slot slot = testCreators.createSlot(null, hQuarter);
+        Slot slot2 = testCreators.createSlot(null, hQuarter);
 
         SlotPosition slotPosition1 = testCreators.createSlotPosition(slot, DaysOfWeek.mon, 1);
         SlotPosition slotPosition2 = testCreators.createSlotPosition(slot, DaysOfWeek.fri, 2);
@@ -66,13 +70,16 @@ public class HquarterMapperTest extends SpringTestConfig {
         Subject subject = testCreators.createSubject(layer);
 
         Task task = testCreators.createTask(subject);
-        TaskMapper taskMapper = testCreators.createTaskMapper(task, startWeek, slotPosition1);
+        TaskMapper taskMapper = testCreators.createTaskMapper(task,
+                dayDao.byWeekAndDayOfWeek(startWeek, slotPosition1.getDayOfWeek()));
 
         Task task2 = testCreators.createTask(subject);
-        TaskMapper taskMapper2 = testCreators.createTaskMapper(task2, week2, slotPosition1);
+        TaskMapper taskMapper2 = testCreators.createTaskMapper(task2,
+                dayDao.byWeekAndDayOfWeek(week2, slotPosition1.getDayOfWeek()));
 
         Task task3 = testCreators.createTask(subject);
-        TaskMapper taskMapper3 = testCreators.createTaskMapper(task3, week2, slotPosition2);
+        TaskMapper taskMapper3 = testCreators.createTaskMapper(task3,
+                dayDao.byWeekAndDayOfWeek(week2, slotPosition2.getDayOfWeek()));
 
         Map<String, Object> result = hquarterMapper.mapToDtoFull(hQuarter);
 
@@ -115,7 +122,7 @@ public class HquarterMapperTest extends SpringTestConfig {
         HQuarter hQuarter = hquarterMapper.mapToEntity(dto);
 
         assertTrue(hQuarter.getStartWeek()!=null);
-        assertTrue(DateUtils.fromDate(hQuarter.getStartWeek().getStartDay()).equals("2019-07-08"));
+        assertTrue(DateUtils.fromDate(hQuarter.getStartWeek().getStartDay().getDate()).equals("2019-07-08"));
 
     }
 

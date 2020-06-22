@@ -39,10 +39,10 @@ public class TestCreators extends ATestCreators {
     ISlotDAO slotDAO;
 
     @Autowired
-    ISpacedRepDAO spacedRepDAO;
+    IRepDAO repDAO;
 
     @Autowired
-    IRepDAO repDAO;
+    IDayDao dayDao;
 
 
     @Override
@@ -80,8 +80,8 @@ public class TestCreators extends ATestCreators {
         if(object instanceof SlotPosition){
             slotDAO.saveOrUpdate((SlotPosition) object);
         }
-        if(object instanceof SpacedRepetitions){
-            spacedRepDAO.save((SpacedRepetitions) object);
+        if(object instanceof Day){
+            dayDao.save((Day) object);
         }
         if(object instanceof Repetition){
             repDAO.save((Repetition) object);

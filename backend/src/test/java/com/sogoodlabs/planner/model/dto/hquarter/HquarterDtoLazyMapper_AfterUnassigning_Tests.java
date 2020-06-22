@@ -176,13 +176,12 @@ public class HquarterDtoLazyMapper_AfterUnassigning_Tests extends ATestsWithTarg
 
         hquartersDelegate.unassign(slot2.getId());
 
-        assertTrue(slotDAO.getById(slot1.getId()).getMean().getId()==mean.getId());
+        assertTrue(slotDAO.getById(slot1.getId()).getLayer().getMean().getId()==mean.getId());
         assertTrue(slotDAO.getById(slot1.getId()).getLayer().getId()==layerDAO.getLayerAtPriority(mean, 1).getId());
 
-        assertTrue(slotDAO.getById(slot2.getId()).getMean()==null);
         assertTrue(slotDAO.getById(slot2.getId()).getLayer()==null);
 
-        assertTrue(slotDAO.getById(slot3.getId()).getMean().getId()==mean.getId());
+        assertTrue(slotDAO.getById(slot3.getId()).getLayer().getMean().getId()==mean.getId());
         assertTrue(slotDAO.getById(slot3.getId()).getLayer().getId()==layerDAO.getLayerAtPriority(mean, 2).getId());
 
 
@@ -244,26 +243,23 @@ public class HquarterDtoLazyMapper_AfterUnassigning_Tests extends ATestsWithTarg
         hquartersDelegate.assign(mean.getId(), slot2.getId());
         hquartersDelegate.assign(mean.getId(), slot3.getId());
 
-        assertTrue(slotDAO.getById(slot1.getId()).getMean().getId()==mean.getId());
+        assertTrue(slotDAO.getById(slot1.getId()).getLayer().getMean().getId()==mean.getId());
         assertTrue(slotDAO.getById(slot1.getId()).getLayer().getId()==layerDAO.getLayerAtPriority(mean, 1).getId());
 
-        assertTrue(slotDAO.getById(slot2.getId()).getMean().getId()==mean.getId());
+        assertTrue(slotDAO.getById(slot2.getId()).getLayer().getMean().getId()==mean.getId());
         assertTrue(slotDAO.getById(slot2.getId()).getLayer().getId()==layerDAO.getLayerAtPriority(mean, 2).getId());
 
-        assertTrue(slotDAO.getById(slot3.getId()).getMean().getId()==mean.getId());
+        assertTrue(slotDAO.getById(slot3.getId()).getLayer().getMean().getId()==mean.getId());
         assertTrue(slotDAO.getById(slot3.getId()).getLayer().getId()==layerDAO.getLayerAtPriority(mean, 3).getId());
 
         hquartersDelegate.unassign(slot1.getId());
         hquartersDelegate.unassign(slot2.getId());
         hquartersDelegate.unassign(slot3.getId());
 
-        assertTrue(slotDAO.getById(slot1.getId()).getMean()==null);
         assertTrue(slotDAO.getById(slot1.getId()).getLayer()==null);
 
-        assertTrue(slotDAO.getById(slot2.getId()).getMean()==null);
         assertTrue(slotDAO.getById(slot2.getId()).getLayer()==null);
 
-        assertTrue(slotDAO.getById(slot3.getId()).getMean()==null);
         assertTrue(slotDAO.getById(slot3.getId()).getLayer()==null);
 
         Map<String, Object> hquarterDtoFull = hquarterMapper.mapToDtoFull(hQuarter1);
@@ -282,11 +278,6 @@ public class HquarterDtoLazyMapper_AfterUnassigning_Tests extends ATestsWithTarg
             }
         }
 
-    }
-
-    private void checkTaskMapper(TaskMapper taskMapper, Week week, SlotPosition slotPosition){
-        assertTrue(taskMapper.getSlotPosition().getId()==slotPosition.getId());
-        assertTrue(taskMapper.getWeek().getId()==week.getId());
     }
 
     private Task createTask(String title, Subject subject, int position){

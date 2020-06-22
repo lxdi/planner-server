@@ -2,6 +2,7 @@ package com.sogoodlabs.planner.model.dto;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sogoodlabs.planner.model.entities.Day;
 import com.sogoodlabs.planner.model.entities.Week;
 import org.junit.Test;
 
@@ -15,7 +16,7 @@ public class WeekMapperTests {
     @Test
     public void datesMappingTest() throws JsonProcessingException {
 
-        Week week = new Week(toDate("2014-12-24"), null, 1);
+        Week week = new Week(new Day(toDate("2014-12-24")), null, 1);
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.setTimeZone(TimeZone.getDefault());

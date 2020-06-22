@@ -13,11 +13,9 @@ public class Week {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
 
-    @Column(name = "startday")
     @ManyToOne(fetch = FetchType.LAZY)
     Day startDay;
 
-    @Column(name = "endday")
     @ManyToOne(fetch = FetchType.LAZY)
     Day endDay;
 

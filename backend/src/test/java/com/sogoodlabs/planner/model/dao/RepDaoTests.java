@@ -1,6 +1,7 @@
 package com.sogoodlabs.planner.model.dao;
 
 import com.sogoodlabs.planner.model.dao.IRepDAO;
+import com.sogoodlabs.planner.model.entities.Day;
 import com.sogoodlabs.planner.model.entities.Repetition;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,16 +20,16 @@ public class RepDaoTests extends SpringTestConfig {
     @Test
     public void getFinishedWithPlanDateInRangeTest(){
         Repetition repetition = new Repetition();
-        repetition.setPlanDate(DateUtils.toDate("2019-03-14"));
+        repetition.setPlanDay(new Day(DateUtils.toDate("2019-03-14")));
         repDAO.save(repetition);
 
         Repetition repetition2 = new Repetition();
-        repetition2.setPlanDate(DateUtils.toDate("2019-01-10"));
+        repetition2.setPlanDay(new Day(DateUtils.toDate("2019-01-10")));
         repDAO.save(repetition2);
 
         Repetition repetition3 = new Repetition();
-        repetition3.setPlanDate(DateUtils.toDate("2019-01-10"));
-        repetition3.setFactDate(DateUtils.toDate("2019-02-10"));
+        repetition3.setPlanDay(new Day(DateUtils.toDate("2019-01-10")));
+        repetition3.setFactDay(new Day(DateUtils.toDate("2019-02-10")));
         repDAO.save(repetition3);
 
         List<Repetition> foundReps = repDAO.getUnFinishedWithPlanDateInRange(

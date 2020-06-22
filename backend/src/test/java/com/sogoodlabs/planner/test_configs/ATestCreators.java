@@ -62,11 +62,10 @@ public abstract class ATestCreators {
         return task;
     }
 
-    public TaskMapper createTaskMapper(Task task, Week week, SlotPosition slotPosition){
+    public TaskMapper createTaskMapper(Task task, Day day){
         TaskMapper taskMapper = new TaskMapper();
         taskMapper.setTask(task);
-        taskMapper.setWeek(week);
-        taskMapper.setSlotPosition(slotPosition);
+        taskMapper.setPlanDay(day);
         save(taskMapper);
         return taskMapper;
     }
@@ -85,10 +84,9 @@ public abstract class ATestCreators {
         return taskTesting;
     }
 
-    public Slot createSlot(Layer layer, Mean mean, HQuarter hQuarter){
+    public Slot createSlot(Layer layer, HQuarter hQuarter){
         Slot slot = new Slot();
         slot.setLayer(layer);
-        slot.setMean(mean);
         slot.setHquarter(hQuarter);
         save(slot);
         return slot;
@@ -115,7 +113,7 @@ public abstract class ATestCreators {
         return hQuarter;
     }
 
-    public Week createWeek(Date start, Date end){
+    public Week createWeek(Day start, Day end){
         Week week = new Week();
         week.setStartDay(start);
         week.setEndDay(end);
@@ -124,15 +122,13 @@ public abstract class ATestCreators {
     }
 
     public Week createWeek(String start, String end){
-        return createWeek(DateUtils.toDate(start), DateUtils.toDate(end));
+        return createWeek(createDay(DateUtils.toDate(start)), createDay(DateUtils.toDate(end)));
     }
 
-    public MapperExclusion createMapperExclusion(Week week, SlotPosition slotPosition){
-        MapperExclusion mapperExclusion = new MapperExclusion();
-        mapperExclusion.setWeek(week);
-        mapperExclusion.setSlotPosition(slotPosition);
-        save(mapperExclusion);
-        return mapperExclusion;
+    public Day createDay(Date date){
+        Day day = new Day(date);
+        save(day);
+        return day;
     }
 
     public abstract void save(Object object);

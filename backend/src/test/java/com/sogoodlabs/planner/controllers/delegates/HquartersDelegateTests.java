@@ -31,9 +31,6 @@ public class HquartersDelegateTests extends AbstractTestsWithTargets {
     @Autowired
     HquartersDelegate hquartersDelegate;
 
-    @Autowired
-    TestCreatorsAnotherSession testCreators;
-
     @Before
     public void init(){
         super.init();
@@ -111,16 +108,6 @@ public class HquartersDelegateTests extends AbstractTestsWithTargets {
         assertTrue(DateUtils.fromDate(result.get(9).getStartWeek().getStartDay().getDate()).equals("2019-11-11"));
         assertTrue(DateUtils.fromDate(result.get(10).getStartWeek().getStartDay().getDate()).equals("2020-01-06"));
         assertTrue(DateUtils.fromDate(result.get(11).getStartWeek().getStartDay().getDate()).equals("2020-02-03"));
-    }
-
-    private HQuarter createHQuareter(String startWeekStartDay, String startWeekEndDay, String endWeekStartDay, String endWeekEndDay){
-        Week startWeek = testCreators.createWeek(startWeekStartDay, startWeekEndDay);
-        Week endWeek = testCreators.createWeek(endWeekStartDay, endWeekEndDay);
-        HQuarter hQuarter = new HQuarter();
-        hQuarter.setStartWeek(startWeek);
-        hQuarter.setEndWeek(endWeek);
-        hQuarterDAO.saveOrUpdate(hQuarter);
-        return hQuarter;
     }
 
 
