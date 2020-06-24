@@ -107,18 +107,7 @@ const hquarterUI = function(component, hquarter){
               <tbody>
                 <tr>
                   <td>
-                    <div style={{width:'100%'}}>
-                      <div style={{float:'left'}}>
-                        <a href='#' onClick={()=>fireEvent('hquarter-modal', 'open', [hquarter])} style={isCurrentHquarter(hquarter)?{fontWeight: 'bold'}:{}}>
-                          W-{hquarter.startWeek.number}: {hquarter.startWeek!=null?hquarter.startWeek.startDay:null} to {hquarter.endWeek!=null?hquarter.endWeek.endDay:null}
-                        </a>
-                      </div>
-                      <div  style={{float:'right'}}>
-                        {component.state.edit && !isCurrentOrPrevHquarter(hquarter)?
-                          <a href='#' onClick={()=>fireEvent('hquarters-dao', 'shift', [hquarter])}>shift</a>
-                          :null}
-                      </div>
-                    </div>
+                    {hquarterHeaderUI(component, hquarter)}
                   </td>
                 </tr>
                 {getSlotsUI(component, hquarter)}
@@ -128,8 +117,28 @@ const hquarterUI = function(component, hquarter){
         </div>
 }
 
+const hquarterHeaderUI = function(component, hquarter){
+  return              <div style={{width:'100%'}}>
+                        <div style={{float:'left'}}>
+                          <a href='#' onClick={()=>fireEvent('hquarter-modal', 'open', [hquarter])} style={isCurrentHquarter(hquarter)?{fontWeight: 'bold'}:{}}>
+                            W-{hquarter.startWeek.number}: {formatDate(hquarter.startWeek.startDay)} to {formatDate(hquarter.endWeek.endDay)} (SP:{hquarter.repsCount})
+                          </a>
+                        </div>
+                        <div  style={{float:'right'}}>
+                          {component.state.edit && !isCurrentOrPrevHquarter(hquarter)?
+                            <a href='#' onClick={()=>fireEvent('hquarters-dao', 'shift', [hquarter])}>shift</a>
+                            :null}
+                        </div>
+                      </div>
+}
+
 const weekToString = function(week){
   return week!=null? week.startDay: "default week (TODO - remove!)"
+}
+
+const formatDate = function(dateString){
+  const date = new Date(dateString)
+  return formatDateNumber(date.getDate()) + '.' + formatDateNumber(date.getMonth()+1) + '.' + date.getFullYear()
 }
 
 const getSlotsUI = function(component, hquarter){

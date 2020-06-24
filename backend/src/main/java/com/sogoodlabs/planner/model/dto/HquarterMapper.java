@@ -26,6 +26,7 @@ public class HquarterMapper {
     private static final String END_FIELD_TITLE = "endDay";
     private static final String DAYS_FIELD_TITLE = "days";
     private static final String WEEKS_FIELD_TITLE = "weeks";
+    private static final String NUMBER_OF_REPETITIONS = "repsCount";
 
     @Autowired
     ISlotDAO slotDAO;
@@ -45,6 +46,9 @@ public class HquarterMapper {
     @Autowired
     TasksDtoMapper tasksDtoMapper;
 
+    @Autowired
+    IRepDAO repDAO;
+
     public Map<String, Object> mapToDtoLazy(HQuarter hQuarter){
         return mapToDtoLazy(hQuarter, slotDAO.getSlotsForHquarter(hQuarter));
     }
@@ -61,6 +65,8 @@ public class HquarterMapper {
         if(hQuarter.getEndWeek()!=null) {
             dto.put(ENDWEEK_FIELD_TITLE, commonMapper.mapToDto(hQuarter.getEndWeek()));
         }
+        dto.put(NUMBER_OF_REPETITIONS,
+                repDAO.numberOfRepetitionsInRange(hQuarter.getStartWeek().getStartDay(), hQuarter.getEndWeek().getEndDay()));
         return dto;
     }
 

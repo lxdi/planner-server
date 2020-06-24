@@ -46,4 +46,13 @@ public class RepDaoImpl implements IRepDAO {
                 .setParameter("to", to)
                 .getResultList();
     }
+
+    @Override
+    public long numberOfRepetitionsInRange(Date from, Date to) {
+        return (long) this.entityManager.unwrap(Session.class)
+                .createQuery("select count(*) from Repetition where planDate >= :from and planDate <= :to and factDate is null")
+                .setParameter("from", from)
+                .setParameter("to", to)
+                .uniqueResult();
+    }
 }
