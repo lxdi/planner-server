@@ -140,7 +140,7 @@ const weekToString = function(week){
 }
 
 const repsCountUI = function(hquarter){
-  return <span>(SP:<span style={{color:hquarter.repsCount>safeSPcount?'red':'green'}}>{hquarter.repsCount}</span>)</span>
+  return <span>(SP:<span style={{color:hquarter.repsCount>safeSPcount?'red':'green'}}>{hquarter.repsCount}</span>/{hquarter.repsOnlyCount})</span>
 }
 
 const getSlotsUI = function(component, hquarter){

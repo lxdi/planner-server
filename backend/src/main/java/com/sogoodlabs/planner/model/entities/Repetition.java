@@ -23,6 +23,8 @@ public class Repetition {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     Date factDate;
 
+    private boolean isRepetitionOnly = false;
+
     public long getId() {
         return id;
     }
@@ -50,5 +52,12 @@ public class Repetition {
 
     public void setFactDate(Date factDate) {
         this.factDate = factDate;
+    }
+
+    public boolean getIsRepetitionOnly() {
+        return isRepetitionOnly;
+    }
+    public void setIsRepetitionOnly(boolean repetitionOnly) {
+        isRepetitionOnly = repetitionOnly;
     }
 }

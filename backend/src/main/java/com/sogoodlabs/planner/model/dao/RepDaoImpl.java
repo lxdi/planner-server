@@ -1,6 +1,7 @@
 package com.sogoodlabs.planner.model.dao;
 
 import com.sogoodlabs.planner.model.entities.Repetition;
+import com.sogoodlabs.planner.model.entities.SpacedRepetitions;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,11 +49,22 @@ public class RepDaoImpl implements IRepDAO {
     }
 
     @Override
-    public long numberOfRepetitionsInRange(Date from, Date to) {
+    public long numberOfRepetitionsInRange(Date from, Date to, boolean isRepOnly) {
         return (long) this.entityManager.unwrap(Session.class)
-                .createQuery("select count(*) from Repetition where planDate >= :from and planDate <= :to and factDate is null")
+                .createQuery("select count(*) from Repetition where planDate >= :from and planDate <= :to and factDate is null and isRepetitionOnly is :isRepOnly")
                 .setParameter("from", from)
                 .setParameter("to", to)
+                .setParameter("isRepOnly", isRepOnly)
                 .uniqueResult();
+    }
+
+    @Override
+    public void makeRepOnlyAllUnfinished(SpacedRepetitions spacedRepetition) {
+        List<Repetition> repetitions = this.entityManager.unwrap(Session.class).createQuery("from Repetition where spacedRepetitions.id = :sp and factDate is null")
+                .setParameter("sp", spacedRepetition.getId()).list();
+        repetitions.forEach(rep->{
+            rep.setIsRepetitionOnly(true);
+            save(rep);
+        });
     }
 }

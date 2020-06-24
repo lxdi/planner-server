@@ -18,7 +18,7 @@ import javax.persistence.PersistenceContext;
 import java.sql.Date;
 import java.util.*;
 
-import static junit.framework.TestCase.assertTrue;
+import static junit.framework.TestCase.*;
 
 @Transactional
 public class TasksDelegateTests extends SpringTestConfig {
@@ -131,13 +131,33 @@ public class TasksDelegateTests extends SpringTestConfig {
 
     @Test
     public void finishRepetitionTest(){
-        Repetition repetition = new Repetition();
-        repDAO.save(repetition);
+        Repetition repetition = createRep(null, null);
 
         tasksDelegate.finishRepetition(repetition.getId());
 
         repetition = repDAO.findOne(repetition.getId());
         assertTrue(DateUtils.fromDate(repetition.getFactDate()).equals(DateUtils.currentDateString()));
+    }
+
+    @Test
+    public void finishRepetitionWithLowingTest(){
+        SpacedRepetitions spacedRepetitions = new SpacedRepetitions();
+        spacedRepDAO.save(spacedRepetitions);
+        Repetition repetitionBefore = createRep(spacedRepetitions, DateUtils.toDate("2000-12-04"));
+        Repetition repetition = createRep(spacedRepetitions, null);
+        Repetition repetitionAfter = createRep(spacedRepetitions, null);
+        Repetition otherRepetition = createRep(null, null);
+
+        tasksDelegate.finishRepetitionWithLowing(repetition.getId());
+
+        repetitionBefore = repDAO.findOne(repetitionBefore.getId());
+        repetition = repDAO.findOne(repetition.getId());
+        repetitionAfter = repDAO.findOne(repetitionAfter.getId());
+        otherRepetition = repDAO.findOne(otherRepetition.getId());
+        assertEquals(DateUtils.fromDate(repetition.getFactDate()), DateUtils.currentDateString());
+        assertFalse(otherRepetition.getIsRepetitionOnly());
+        assertFalse(repetitionBefore.getIsRepetitionOnly());
+        assertTrue(repetitionAfter.getIsRepetitionOnly());
     }
 
     @Test
@@ -181,6 +201,14 @@ public class TasksDelegateTests extends SpringTestConfig {
         }
         result.put("question", question);
         return result;
+    }
+
+    private Repetition createRep(SpacedRepetitions spacedRepetitions, Date factDate){
+        Repetition repetition = new Repetition();
+        repetition.setSpacedRepetitions(spacedRepetitions);
+        repetition.setFactDate(factDate);
+        repDAO.save(repetition);
+        return repetition;
     }
 
 }

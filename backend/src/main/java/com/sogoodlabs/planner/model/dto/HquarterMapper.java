@@ -27,6 +27,7 @@ public class HquarterMapper {
     private static final String DAYS_FIELD_TITLE = "days";
     private static final String WEEKS_FIELD_TITLE = "weeks";
     private static final String NUMBER_OF_REPETITIONS = "repsCount";
+    private static final String NUMBER_OF_REPETITIONS_ONLY = "repsOnlyCount";
 
     @Autowired
     ISlotDAO slotDAO;
@@ -67,7 +68,11 @@ public class HquarterMapper {
         }
         if(hQuarter.getStartWeek()!=null && hQuarter.getEndWeek()!=null){
             dto.put(NUMBER_OF_REPETITIONS,
-                    repDAO.numberOfRepetitionsInRange(hQuarter.getStartWeek().getStartDay(), hQuarter.getEndWeek().getEndDay()));
+                    repDAO.numberOfRepetitionsInRange(
+                            hQuarter.getStartWeek().getStartDay(), hQuarter.getEndWeek().getEndDay(), false));
+            dto.put(NUMBER_OF_REPETITIONS_ONLY,
+                    repDAO.numberOfRepetitionsInRange(
+                            hQuarter.getStartWeek().getStartDay(), hQuarter.getEndWeek().getEndDay(), true));
         }
         return dto;
     }
@@ -137,7 +142,9 @@ public class HquarterMapper {
             }
         }
         dto.put(NUMBER_OF_REPETITIONS,
-                repDAO.numberOfRepetitionsInRange(week.getStartDay(), week.getEndDay()));
+                repDAO.numberOfRepetitionsInRange(week.getStartDay(), week.getEndDay(), false));
+        dto.put(NUMBER_OF_REPETITIONS_ONLY,
+                repDAO.numberOfRepetitionsInRange(week.getStartDay(), week.getEndDay(), true));
         return dto;
     }
 

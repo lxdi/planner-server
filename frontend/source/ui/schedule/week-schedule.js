@@ -34,7 +34,7 @@ const getWeekUI = function(currentweek){
   result.push(<tr key={"titles_"+currentweek.id} style={{borderTop:'1px solid lightgrey'}}>
                 <td style={{fontWeight:isCurrentWeek(currentweek)?'bold':null, borderRight:'1px solid lightgrey', borderBottom:'1px solid grey',  width:'5%'}} rowspan="2">
                   <div>{formatDate(currentweek.startDay)}</div>
-                  <div>(SP:{currentweek.repsCount})</div>
+                  <div>(SP:{currentweek.repsCount}/{currentweek.repsOnlyCount})</div>
                 </td>
                 {getDaysOfWeekUI(currentweek)}
               </tr>)

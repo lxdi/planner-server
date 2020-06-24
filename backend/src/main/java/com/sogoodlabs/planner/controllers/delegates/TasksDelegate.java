@@ -86,10 +86,20 @@ public class TasksDelegate {
         }
     }
 
-    public void finishRepetition(long repId){
+    public Repetition finishRepetition(long repId){
         Repetition repetition = repDAO.findOne(repId);
         repetition.setFactDate(DateUtils.currentDate());
         repDAO.save(repetition);
+        return repetition;
+    }
+
+    /**
+     * Finishes repetition and make repetitionOnly all repetitions after
+     * @param repId
+     */
+    public void finishRepetitionWithLowing(long repId){
+        Repetition repetition = finishRepetition(repId);
+        repDAO.makeRepOnlyAllUnfinished(repetition.getSpacedRepetitions());
     }
 
     public Map<String, Object> addNewTestingToTask(long taskid, Map<String, Object> testingDto){

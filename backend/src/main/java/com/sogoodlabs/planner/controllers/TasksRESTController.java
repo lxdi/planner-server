@@ -70,6 +70,12 @@ public class TasksRESTController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @RequestMapping(path = "/task/finish/repetition/{repId}/and/low/other" , method = RequestMethod.POST)
+    public ResponseEntity finishRepetitionWithLowing(@PathVariable("repId") long repId){
+        tasksDelegate.finishRepetitionWithLowing(repId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @RequestMapping(path = "/task/get/to/repeat/all" , method = RequestMethod.GET)
     public ResponseEntity<Map<Integer, List<Map<String, Object>>>> getTasksToRepeat(){
         return new ResponseEntity<>(spacedRepetitionsService.getActualTaskToRepeat(), HttpStatus.OK);
