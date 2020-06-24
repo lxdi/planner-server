@@ -16,7 +16,7 @@ public interface IDayDao extends JpaRepository<Day, Long> {
 
     @Query("from Day where date = :date")
     Day byDate(@Param("date") Date date);
-    
+
     @Query("from Day where date >= :#{#week.startDay.date} and date <= :#{#week.endDay.date} and dayOfWeek = :dayOfWeek")
     Day byWeekAndDayOfWeek(@Param("week") Week week, @Param("dayOfWeek") DaysOfWeek dayOfWeek);
 }

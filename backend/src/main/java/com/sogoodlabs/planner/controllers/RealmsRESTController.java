@@ -28,13 +28,13 @@ public class RealmsRESTController {
 
     @RequestMapping(path = "/all")
     public ResponseEntity<List<Realm>> getAllTargets(){
-        List<Realm> result = realmDAO.getAllRealms();
+        List<Realm> result = realmDAO.findAll();
         return new ResponseEntity<List<Realm>>(result, HttpStatus.OK);
     }
 
     @RequestMapping(path = "/create" , method = RequestMethod.PUT)
     public ResponseEntity<Realm> createRealm(@RequestBody Realm realm){
-        realmDAO.saveOrUpdate(realm);
+        realmDAO.save(realm);
         return new ResponseEntity<Realm>(realm, HttpStatus.OK);
     }
 
