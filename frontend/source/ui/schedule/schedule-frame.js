@@ -10,6 +10,8 @@ import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
 import {BidirectList} from '../components/bidirect-list'
 import {formatDate} from '../../utils/date-utils'
 
+const safeSPcount = 18
+
 export class ScheduleFrame extends React.Component{
   constructor(props){
     super(props)
@@ -122,7 +124,7 @@ const hquarterHeaderUI = function(component, hquarter){
   return              <div style={{width:'100%'}}>
                         <div style={{float:'left'}}>
                           <a href='#' onClick={()=>fireEvent('hquarter-modal', 'open', [hquarter])} style={isCurrentHquarter(hquarter)?{fontWeight: 'bold'}:{}}>
-                            W-{hquarter.startWeek.number}: {formatDate(hquarter.startWeek.startDay)} to {formatDate(hquarter.endWeek.endDay)} (SP:{hquarter.repsCount})
+                            W-{hquarter.startWeek.number}: {formatDate(hquarter.startWeek.startDay)} to {formatDate(hquarter.endWeek.endDay)} {repsCountUI(hquarter)}
                           </a>
                         </div>
                         <div  style={{float:'right'}}>
@@ -135,6 +137,10 @@ const hquarterHeaderUI = function(component, hquarter){
 
 const weekToString = function(week){
   return week!=null? week.startDay: "default week (TODO - remove!)"
+}
+
+const repsCountUI = function(hquarter){
+  return <span>(SP:<span style={{color:hquarter.repsCount>safeSPcount?'red':'green'}}>{hquarter.repsCount}</span>)</span>
 }
 
 const getSlotsUI = function(component, hquarter){
