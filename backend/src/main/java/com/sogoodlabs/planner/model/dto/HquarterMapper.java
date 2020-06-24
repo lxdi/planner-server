@@ -65,8 +65,10 @@ public class HquarterMapper {
         if(hQuarter.getEndWeek()!=null) {
             dto.put(ENDWEEK_FIELD_TITLE, commonMapper.mapToDto(hQuarter.getEndWeek()));
         }
-        dto.put(NUMBER_OF_REPETITIONS,
-                repDAO.numberOfRepetitionsInRange(hQuarter.getStartWeek().getStartDay(), hQuarter.getEndWeek().getEndDay()));
+        if(hQuarter.getStartWeek()!=null && hQuarter.getEndWeek()!=null){
+            dto.put(NUMBER_OF_REPETITIONS,
+                    repDAO.numberOfRepetitionsInRange(hQuarter.getStartWeek().getStartDay(), hQuarter.getEndWeek().getEndDay()));
+        }
         return dto;
     }
 
