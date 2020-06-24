@@ -8,6 +8,7 @@ import {BigMapModal} from './big-map-modal'
 import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
 
 import {BidirectList} from '../components/bidirect-list'
+import {formatDate} from '../../utils/date-utils'
 
 export class ScheduleFrame extends React.Component{
   constructor(props){
@@ -136,11 +137,6 @@ const weekToString = function(week){
   return week!=null? week.startDay: "default week (TODO - remove!)"
 }
 
-const formatDate = function(dateString){
-  const date = new Date(dateString)
-  return formatDateNumber(date.getDate()) + '.' + formatDateNumber(date.getMonth()+1) + '.' + date.getFullYear()
-}
-
 const getSlotsUI = function(component, hquarter){
   const result = []
   for(var slotpos in hquarter.slotsLazy){
@@ -231,14 +227,6 @@ const findMean = function(meanid){
     }
   }
   return null
-}
-
-const formatDateNumber = function(num){
-  if(num<10){
-    return '0'+num
-  } else {
-    return num
-  }
 }
 
 const isCurrentHquarter = function(hquarter){

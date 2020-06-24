@@ -134,6 +134,8 @@ public class HquarterMapper {
                         .add(tasksDtoMapper.mapToDtoFull(taskMapper.getTask()));
             }
         }
+        dto.put(NUMBER_OF_REPETITIONS,
+                repDAO.numberOfRepetitionsInRange(week.getStartDay(), week.getEndDay()));
         return dto;
     }
 

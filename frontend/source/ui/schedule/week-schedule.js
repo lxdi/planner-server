@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
+import {formatDate} from '../../utils/date-utils'
 
 const week = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']
 const weekFullName = {'mon': 'Monday', 'tue': 'Tuesday', 'wed': 'Wednsday', 'thu':'Thursday', 'fri': 'Friday', 'sat': 'Saturday', 'sun':'Sunday'}
@@ -31,7 +32,10 @@ export class WeekSchedule extends React.Component {
 const getWeekUI = function(currentweek){
   const result = []
   result.push(<tr key={"titles_"+currentweek.id} style={{borderTop:'1px solid lightgrey'}}>
-                <td style={{fontWeight:isCurrentWeek(currentweek)?'bold':null, borderRight:'1px solid lightgrey', borderBottom:'1px solid grey',  width:'5%'}} rowspan="2">{currentweek.startDay}</td>
+                <td style={{fontWeight:isCurrentWeek(currentweek)?'bold':null, borderRight:'1px solid lightgrey', borderBottom:'1px solid grey',  width:'5%'}} rowspan="2">
+                  <div>{formatDate(currentweek.startDay)}</div>
+                  <div>(SP:{currentweek.repsCount})</div>
+                </td>
                 {getDaysOfWeekUI(currentweek)}
               </tr>)
   result.push(<tr key={"content_"+currentweek.id} style={{borderBottom:'1px solid grey'}}>
