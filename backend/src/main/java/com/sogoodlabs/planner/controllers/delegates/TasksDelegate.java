@@ -119,7 +119,11 @@ public class TasksDelegate {
     }
 
     public List<Map<String, Object>> getRepetitionsForTask(long taskid){
-        List<Repetition> repetitions = repDAO.getRepsbySpacedRepId(spacedRepDAO.getSRforTask(taskid).getId());
+        SpacedRepetitions sr = spacedRepDAO.getSRforTask(taskid);
+        if(sr == null){
+            return new ArrayList<>();
+        }
+        List<Repetition> repetitions = repDAO.getRepsbySpacedRepId(sr.getId());
         return repetitions.stream().map(commonMapper::mapToDto).collect(Collectors.toList());
     }
 

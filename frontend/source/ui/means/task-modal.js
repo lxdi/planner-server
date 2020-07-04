@@ -92,13 +92,12 @@ const modalContent = function(component){
 
 const progressButton = function(component){
   if(component.state.mode.progress){
-      return <Button disabled={isProgressButtonDisabled(component)} onClick={()=>fireEvent('task-progress-modal', 'open', [component.state.task, component.state.task.repetition])}>Progress</Button>
+      return <Button disabled={isProgressButtonDisabled(component)} onClick={()=>fireEvent('task-progress-modal', 'open', [component.state.task, false])}>Progress</Button>
+  } else {
+      return <Button disabled={isProgressButtonDisabled(component)} onClick={()=>fireEvent('task-progress-modal', 'open', [component.state.task, true])}>Progress</Button>
   }
 }
 
 const isProgressButtonDisabled = function(component){
-    if(component.state.task.repetition!=null){
-      return false
-    }
-    return component.state.task.finished
+  return component.state.task.id == null || component.state.task.id < 1
 }

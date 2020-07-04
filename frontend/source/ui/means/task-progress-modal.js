@@ -8,14 +8,13 @@ import {formatDate} from '../../utils/date-utils'
 
 import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
 
-//props: testings
 export class TaskProgressModal extends React.Component {
   constructor(props){
     super(props)
-    const defaultState = ()=>{return {isOpen:false, isSpacedRep:false, repPlan:null, repetition:null}}
+    const defaultState = ()=>{return {isOpen:false, isSpacedRep:false, repPlan:null, isReadOnly:true}}
     this.state = defaultState()
 
-    registerEvent('task-progress-modal', 'open', (stateSetter, task, repetition)=>this.setState({isOpen:true, task:task, repetition:repetition}))
+    registerEvent('task-progress-modal', 'open', (stateSetter, task, isReadOnly)=>this.setState({isOpen:true, task:task, isReadOnly:isReadOnly}))
     registerEvent('task-progress-modal', 'close', (stateSetter)=>this.setState(defaultState()))
 
     registerReaction('task-progress-modal', 'tasks-dao', ['task-finished', 'repetition-finished'], ()=>{fireEvent('task-progress-modal', 'close')})
@@ -24,25 +23,40 @@ export class TaskProgressModal extends React.Component {
   }
 
   render(){
+    var content = null
+    if(this.state.task!=null && this.state.task.id>0){
+      if(this.state.isReadOnly){
+        content = finishRepetitionContent(this)
+      } else {
+        content = isFinishingTask(this)? finishTaskContent(this):finishRepetitionContent(this)
+      }
+    }
     return <CommonModal
                 isOpen = {this.state.isOpen}
-                okHandler = {isValid(this)?()=>okHandler(this):null}
+                okHandler = {isValid(this) && !this.state.isReadOnly?()=>okHandler(this):null}
                 cancelHandler = {()=>fireEvent('task-progress-modal', 'close')}
-                title={isFinishingTask(this)? "Finish task": "Finish repetition"}>
-                {isFinishingTask(this)?finishTaskContent(this):finishRepetitionContent(this)}
+                title={getTitle(this)}>
+                {content}
           </CommonModal>
   }
 }
 
+const getTitle = function(comp){
+  if(comp.state.isReadOnly){
+    return 'Progress'
+  }
+  return isFinishingTask(comp)? "Finish task": "Finish repetition"
+}
+
 const isFinishingTask = function(reactcomp){
-  return reactcomp.state.repetition==null
+  return reactcomp.state.task.repetition==null
 }
 
 const okHandler = function(reactcomp){
   if(isFinishingTask(reactcomp)){
     fireEvent('tasks-dao', 'finish-task', [reactcomp.state.task, reactcomp.state.repPlan, reactcomp.state.task.testings])
   } else {
-    fireEvent('tasks-dao', 'finish-repetition', [reactcomp.state.task, reactcomp.state.repetition])
+    fireEvent('tasks-dao', 'finish-repetition', [reactcomp.state.task, reactcomp.state.task.repetition])
   }
 }
 
@@ -123,7 +137,7 @@ const tableOfRepetitions = function(reactcomp){
     const result = []
     var count = 1
     task.repetitions.forEach(rep => {
-      const style = rep.id == reactcomp.state.repetition.id? {fontWeight:'bold'}:{}
+      const style = task.repetition != null && task.repetition.id == rep.id? {fontWeight:'bold'}:{}
       result.push( <tr id={rep.id} style={style}>
                       <td>{count++}</td>
                       <td>{formatDate(rep.planDate)}</td>
