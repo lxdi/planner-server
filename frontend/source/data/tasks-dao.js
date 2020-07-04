@@ -1,5 +1,5 @@
 import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
-import {insertObj, deleteObj, swapObjs} from 'js-utils'
+import {insertObj, deleteObj, swapObjs, makeMap} from 'js-utils'
 import {sendDelete, sendPost, sendGet} from './postoffice'
 
 registerEvent('tasks-dao', 'add-task', (stateSetter, subject, task)=>{
@@ -95,6 +95,14 @@ registerEvent('tasks-dao', 'finish-repetition', (stateSetter, task, repetition)=
 registerEvent('tasks-dao', 'repetition-finished', (stateSetter, task, repetition)=>{
   stateSetter('actual-tasks', null)
 })
+
+registerEvent('tasks-dao', 'get-repetitions', (stSetter, task)=>{
+  sendGet('task/'+task.id+'/details/repetitions', (data)=>{
+    task.repetitions = makeMap(data, 'id')
+    fireEvent('tasks-dao', 'got-repetitions', [task])
+  })
+})
+registerEvent('tasks-dao', 'got-repetitions', (stSetter, task)=>task)
 
 const getMaxTaskPosition = function(tasks){
     var result = 0

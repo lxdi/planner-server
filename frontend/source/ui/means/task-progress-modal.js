@@ -1,9 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {ButtonToolbar, DropdownButton, MenuItem, Button} from 'react-bootstrap'
+import {ButtonToolbar, DropdownButton, MenuItem, Button, Table} from 'react-bootstrap'
 
 import {CommonModal} from './../common-modal'
 import {TestingsList} from './testings-list'
+import {formatDate} from '../../utils/date-utils'
 
 import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
 
@@ -18,6 +19,7 @@ export class TaskProgressModal extends React.Component {
     registerEvent('task-progress-modal', 'close', (stateSetter)=>this.setState(defaultState()))
 
     registerReaction('task-progress-modal', 'tasks-dao', ['task-finished', 'repetition-finished'], ()=>{fireEvent('task-progress-modal', 'close')})
+    registerReaction('task-progress-modal', 'tasks-dao', ['got-repetitions'], ()=>{this.setState({})})
     registerReaction('task-progress-modal', 'rep-plans-dao', ['plans-received'], ()=>{this.setState({})})
   }
 
@@ -111,6 +113,32 @@ const availableRepPlans = function(repPlans){
 
 const finishRepetitionContent = function(reactcomp){
   return <div>
-            <div style={{display:'inline-block'}}>{reactcomp.state.repetition.planDate}</div>
+            <div>{tableOfRepetitions(reactcomp)}</div>
           </div>
+}
+
+const tableOfRepetitions = function(reactcomp){
+  const task = reactcomp.state.task
+  if(task.repetitions != null){
+    const result = []
+    task.repetitions.forEach(rep => {
+      const style = rep.id == reactcomp.state.repetition.id? {fontWeight:'bold'}:{}
+      result.push( <tr id={rep.id} style={style}>
+                      <td>{formatDate(rep.planDate)}</td>
+                      <td>{rep.factDate!=null?formatDate(rep.factDate):''}</td>
+                    </tr>)
+    })
+    return <Table striped bordered condensed hover >
+            <tbody>
+              <tr>
+                <td>Plan date</td>
+                <td>Fact date</td>
+              </tr>
+              {result}
+            </tbody>
+            </Table>
+  } else {
+    fireEvent('tasks-dao', 'get-repetitions', [task])
+    return 'Loading...'
+  }
 }

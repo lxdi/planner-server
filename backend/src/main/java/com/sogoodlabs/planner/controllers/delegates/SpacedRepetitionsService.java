@@ -23,6 +23,9 @@ import java.util.Map;
 @Transactional
 public class SpacedRepetitionsService {
 
+    private static final String REPETITION_FIELD = "repetition";
+
+
     @Autowired
     IRepDAO repDAO;
 
@@ -76,7 +79,7 @@ public class SpacedRepetitionsService {
     private Map<String, Object> getTaskDto(Task task, Repetition repetition){
         Map<String, Object> taskDto = tasksDtoMapper.mapToDtoFull(task);
         if(repetition!=null){
-            taskDto.put("repetition", commonMapper.mapToDto(repetition, new HashMap<>()));
+            taskDto.put(REPETITION_FIELD, commonMapper.mapToDto(repetition, new HashMap<>()));
         }
         return taskDto;
     }

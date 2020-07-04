@@ -6,10 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
@@ -79,6 +76,11 @@ public class TasksRESTController {
     @RequestMapping(path = "/task/get/to/repeat/all" , method = RequestMethod.GET)
     public ResponseEntity<Map<Integer, List<Map<String, Object>>>> getTasksToRepeat(){
         return new ResponseEntity<>(spacedRepetitionsService.getActualTaskToRepeat(), HttpStatus.OK);
+    }
+
+    @RequestMapping(path="/task/{taskid}/details/repetitions", method = RequestMethod.GET)
+    public @ResponseBody List<Map<String, Object>> getRepetitionsForTask(@PathVariable("taskid") long taskid){
+        return tasksDelegate.getRepetitionsForTask(taskid);
     }
 
 //    @RequestMapping(path = "/task/testing/add/{taskid}" , method = RequestMethod.POST)

@@ -10,6 +10,7 @@ import com.sogoodlabs.planner.services.DateUtils;
 
 import java.sql.Date;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -115,6 +116,11 @@ public class TasksDelegate {
             taskTestingDAO.save(taskTesting);
             return commonMapper.mapToDto(taskTesting, new HashMap<>());
         } else return null;
+    }
+
+    public List<Map<String, Object>> getRepetitionsForTask(long taskid){
+        List<Repetition> repetitions = repDAO.getRepsbySpacedRepId(spacedRepDAO.getSRforTask(taskid).getId());
+        return repetitions.stream().map(commonMapper::mapToDto).collect(Collectors.toList());
     }
 
     private void finishTask(TaskMapper taskMapper){
