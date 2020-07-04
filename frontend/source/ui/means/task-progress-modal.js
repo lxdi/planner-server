@@ -121,9 +121,11 @@ const tableOfRepetitions = function(reactcomp){
   const task = reactcomp.state.task
   if(task.repetitions != null){
     const result = []
+    var count = 1
     task.repetitions.forEach(rep => {
       const style = rep.id == reactcomp.state.repetition.id? {fontWeight:'bold'}:{}
       result.push( <tr id={rep.id} style={style}>
+                      <td>{count++}</td>
                       <td>{formatDate(rep.planDate)}</td>
                       <td>{rep.factDate!=null?formatDate(rep.factDate):''}</td>
                     </tr>)
@@ -131,6 +133,7 @@ const tableOfRepetitions = function(reactcomp){
     return <Table striped bordered condensed hover >
             <tbody>
               <tr>
+                <td>#</td>
                 <td>Plan date</td>
                 <td>Fact date</td>
               </tr>
