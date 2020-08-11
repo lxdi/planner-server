@@ -6,6 +6,7 @@ import {CommonCrudeTemplate} from './../common-crud-template'
 import {TopicsList} from './topics-list'
 import {TestingsList} from './testings-list'
 import {StatefulTextField} from '../common/stateful-text-field'
+import {TextArea} from '../common/text-area'
 import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
 
 const createState = function(isOpen, isStatic, isEdit, subject, task, progress){
@@ -54,6 +55,7 @@ const getState = function(subject, task, isViewOnly, withprogress){
   if(withprogress==true){
     state.mode.progress = true
   }
+  state.showTestings = false
   return state
 }
 
@@ -84,10 +86,21 @@ const modalContent = function(component){
                       <StatefulTextField obj={component.state.task} valName={'title'} isEdit={component.state.mode.isEdit} onInput={()=>component.setState({})}/>
                     </div>
                     <TopicsList topics={component.state.task.topics} isEdit={component.state.mode.isEdit} />
-                    <TestingsList testings={component.state.task.testings} isEdit={component.state.mode.isEdit} />
+                    {getTestingsUI(component)}
                     </FormGroup>
                   </form>
                 </CommonCrudeTemplate>
+}
+
+const getTestingsUI = function(component){
+  if(component.state.showTestings==true || !(component.state.mode.isEdit==false && component.state.mode.isStatic==true)){
+    return <TestingsList testings={component.state.task.testings} isEdit={component.state.mode.isEdit} testingsGuesses={component.state.testingObjectives} />
+  }
+  component.state.testingObjectives = ''
+  return <div>
+            <TextArea obj={component.state} valName={'testingObjectives'} valNameUI={'objectives'}/>
+            <Button onClick={()=>component.setState({showTestings:true})}>Show testings</Button>
+        </div>
 }
 
 const progressButton = function(component){

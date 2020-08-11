@@ -8,7 +8,7 @@ import {StatefulTextField} from '../common/stateful-text-field'
 
 var newTestingId = 1
 
-//props: testings, isEdit
+//props: testings, isEdit, testingsGuesses
 export class TestingsList extends React.Component {
   constructor(props){
     super(props)
@@ -46,6 +46,7 @@ const content = function(component){
   }
   return <div style={{border:'1px solid lightgrey', padding:'5px', borderRadius:'10px'}}>
           <div><strong>Testings:</strong></div>
+          {component.props.testingsGuesses!=null && component.props.testingsGuesses!=''?<TextArea obj={component.props} valName={'testingsGuesses'} valNameUI={'objectives'} readOnly={true}/>:null}
           {result}
           {addTestingButton(component)}
         </div>
