@@ -67,4 +67,9 @@ public class RepDaoImpl implements IRepDAO {
             save(rep);
         });
     }
+
+    @Override
+    public void delete(Repetition repetition) {
+        this.entityManager.unwrap(Session.class).delete(repetition);
+    }
 }

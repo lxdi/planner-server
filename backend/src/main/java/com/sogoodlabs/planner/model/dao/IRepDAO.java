@@ -14,5 +14,6 @@ public interface IRepDAO {
     List<Repetition> getUnFinishedWithPlanDateInRange(Date from, Date to);
     long numberOfRepetitionsInRange(Date from, Date to, boolean isRepOnly);
     void makeRepOnlyAllUnfinished(SpacedRepetitions spacedRepetition);
+    void delete(Repetition repetition);
 
 }

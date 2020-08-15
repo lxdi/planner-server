@@ -104,6 +104,7 @@ public class TasksDelegateTests extends SpringTestConfig {
                 createTaskTestingDTO(0, "testing1 q", null),
                 createTaskTestingDTO(existingTesting.getId(), "testing2 q", task.getId())));
 
+        entityManager.unwrap(Session.class).flush();
         entityManager.unwrap(Session.class).clear();
 
         tasksDelegate.finishTaskWithRepetition(task.getId(), defaultRepPlan.getId(), testingsDto);
@@ -189,6 +190,48 @@ public class TasksDelegateTests extends SpringTestConfig {
         testingDto.put("question", "test q");
 
         tasksDelegate.addNewTestingToTask(task.getId(), testingDto);
+    }
+
+
+    @Test
+    public void removeRepetitionsLeftForTaskTest(){
+        Task task = new Task();
+        tasksDAO.saveOrUpdate(task);
+
+        TaskMapper taskMapper = new TaskMapper();
+        taskMapper.setTask(task);
+        taskMappersDAO.saveOrUpdate(taskMapper);
+
+        SpacedRepetitions spacedRepetitions = new SpacedRepetitions();
+        spacedRepetitions.setTaskMapper(taskMapper);
+        spacedRepDAO.save(spacedRepetitions);
+
+        Repetition finishedRep = new Repetition();
+        finishedRep.setSpacedRepetitions(spacedRepetitions);
+        finishedRep.setPlanDate(DateUtils.currentDate());
+        finishedRep.setFactDate(DateUtils.currentDate());
+        repDAO.save(finishedRep);
+
+        Repetition finishedRep2 = new Repetition();
+        finishedRep2.setSpacedRepetitions(spacedRepetitions);
+        finishedRep2.setPlanDate(DateUtils.currentDate());
+        finishedRep2.setFactDate(DateUtils.currentDate());
+        repDAO.save(finishedRep2);
+
+        Repetition unfinishedRep = new Repetition();
+        unfinishedRep.setSpacedRepetitions(spacedRepetitions);
+        unfinishedRep.setPlanDate(DateUtils.currentDate());
+        repDAO.save(unfinishedRep);
+
+        entityManager.unwrap(Session.class).flush();
+
+        tasksDelegate.removeRepetitionsLeftForTask(task.getId());
+
+        List<Repetition> repetitions = repDAO.getRepsbySpacedRepId(spacedRepDAO.getSRforTask(task.getId()).getId());
+        assertEquals(2, repetitions.size());
+        assertEquals(finishedRep.getId(), repetitions.get(0).getId());
+        assertEquals(finishedRep2.getId(), repetitions.get(1).getId());
+
     }
 
     private Map<String, Object> createTaskTestingDTO(long id, String question, Long taskid){

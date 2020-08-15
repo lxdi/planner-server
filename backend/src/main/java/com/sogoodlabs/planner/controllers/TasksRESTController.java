@@ -73,6 +73,12 @@ public class TasksRESTController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @RequestMapping(path = "/task/{taskid}/repetition/all/left/remove" , method = RequestMethod.DELETE)
+    public ResponseEntity removeAllRepetitionsLeft(@PathVariable("taskid") long taskid){
+        tasksDelegate.removeRepetitionsLeftForTask(taskid);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @RequestMapping(path = "/task/get/to/repeat/all" , method = RequestMethod.GET)
     public ResponseEntity<Map<Integer, List<Map<String, Object>>>> getTasksToRepeat(){
         return new ResponseEntity<>(spacedRepetitionsService.getActualTaskToRepeat(), HttpStatus.OK);

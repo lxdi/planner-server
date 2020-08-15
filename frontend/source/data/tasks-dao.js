@@ -104,6 +104,13 @@ registerEvent('tasks-dao', 'get-repetitions', (stSetter, task)=>{
 })
 registerEvent('tasks-dao', 'got-repetitions', (stSetter, task)=>task)
 
+registerEvent('tasks-dao', 'repetitions-unfinished-remove', (stSetter, task)=>{
+  sendDelete('/task/'+task.id+'/repetition/all/left/remove', ()=>{
+    fireEvent('tasks-dao', 'repetitions-unfinished-removed')
+  })
+})
+registerEvent('tasks-dao', 'repetitions-unfinished-removed', ()=>{})
+
 const getMaxTaskPosition = function(tasks){
     var result = 0
     if(tasks!=null){

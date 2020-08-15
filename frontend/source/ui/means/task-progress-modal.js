@@ -20,6 +20,7 @@ export class TaskProgressModal extends React.Component {
     registerReaction('task-progress-modal', 'tasks-dao', ['task-finished', 'repetition-finished'], ()=>{fireEvent('task-progress-modal', 'close')})
     registerReaction('task-progress-modal', 'tasks-dao', ['got-repetitions'], ()=>{this.setState({})})
     registerReaction('task-progress-modal', 'rep-plans-dao', ['plans-received'], ()=>{this.setState({})})
+    registerReaction('task-progress-modal', 'tasks-dao', ['repetitions-unfinished-removed'], ()=>{this.state.task.repetitions=null; this.setState({})})
   }
 
   render(){
@@ -127,6 +128,12 @@ const availableRepPlans = function(repPlans){
 
 const finishRepetitionContent = function(reactcomp){
   return <div>
+            <div>
+              <Button bsStyle="danger" bsSize="xs"
+                  onClick={()=>reactcomp.state.removeUnfinished?fireEvent('tasks-dao', 'repetitions-unfinished-remove', [reactcomp.state.task]):reactcomp.setState({removeUnfinished:true})}>
+                {reactcomp.state.removeUnfinished?'Removing unfinished - confirm':'Remove unfinished'}
+              </Button>
+            </div>
             <div>{tableOfRepetitions(reactcomp)}</div>
           </div>
 }

@@ -103,6 +103,21 @@ public class TasksDelegate {
         repDAO.makeRepOnlyAllUnfinished(repetition.getSpacedRepetitions());
     }
 
+
+    /**
+     *  Removes all the unfinished repetitions related to the task
+     *
+     */
+    public void removeRepetitionsLeftForTask(long taskid){
+        SpacedRepetitions spacedRepetitions = spacedRepDAO.getSRforTask(taskid);
+        List<Repetition> repetitions = repDAO.getRepsbySpacedRepId(spacedRepetitions.getId());
+        repetitions.forEach(rep -> {
+            if(rep.getFactDate()==null){
+                repDAO.delete(rep);
+            }
+        });
+    }
+
     public Map<String, Object> addNewTestingToTask(long taskid, Map<String, Object> testingDto){
         if(testingDto!=null) {
             if (testingDto.get("id") != null) {
