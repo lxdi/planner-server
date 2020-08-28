@@ -1,0 +1,24 @@
+
+security.require-ssl: true
+
+server:
+  port: 8090
+  ssl:
+    key-store-type: override
+    key-store: override
+    key-store-password: override
+    key-alias: override
+
+
+zuul:
+  routes:
+    planner:
+      path: /**
+      url: http://localhost:8080
+
+
+okta:
+  oauth2:
+    issuer: override
+    client-id: override
+    client-secret: override

@@ -1,0 +1,19 @@
+version: '3.4'
+services:
+  planner:
+    image: planner:latest
+    ports:
+      - "8090:8090"
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:9.4
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      PGDATA: /data/postgres
+    volumes:
+      - /home/alex/installs/postgres/data:/data/postgres

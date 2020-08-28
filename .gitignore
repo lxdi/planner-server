@@ -1,6 +1,5 @@
 HELP.md
 .gradle
-backend/build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**
 !**/src/test/**
@@ -27,5 +26,9 @@ frontend/package-lock.json
 
 backend/src/main/resources/static/
 backend/out/
+backend/build/
+
+api-gateway/out/
+api-gateway/build/
 
 localconf/
