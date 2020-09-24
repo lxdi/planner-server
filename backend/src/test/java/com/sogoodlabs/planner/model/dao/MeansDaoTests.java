@@ -24,15 +24,6 @@ public class MeansDaoTests extends AbstractTestsWithTargetsWithMeans {
     ISlotDAO slotDAO;
 
     @Test
-    public void deleteTest(){
-        meansDao.deleteMean(1);
-
-        assertTrue(meansDao.meanById(1)==null);
-        assertTrue(meansDao.meanById(2)==null);
-        assertTrue(meansDao.meanById(3)==null);
-    }
-
-    @Test
     public void getChildrenTest(){
         List<Mean> children = meansDao.getChildren(meansDao.meanById(1));
 

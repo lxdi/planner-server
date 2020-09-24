@@ -10,6 +10,6 @@ public interface ISubjectDAO {
     void saveOrUpdate(Subject subject);
     List<Subject> subjectsByLayer(Layer layer);
     Subject getById(long id);
-    void delete(long id);
+    void delete(Subject subject);
 
 }

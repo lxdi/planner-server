@@ -37,4 +37,9 @@ public class TopicDao implements ITopicDAO{
                 .setParameter("taskid", taskid)
                 .getResultList();
     }
+
+    @Override
+    public void remove(Topic topic) {
+        this.entityManager.unwrap(Session.class).remove(topic);
+    }
 }

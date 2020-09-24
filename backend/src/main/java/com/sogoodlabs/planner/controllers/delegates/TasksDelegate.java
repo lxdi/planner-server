@@ -3,6 +3,7 @@ package com.sogoodlabs.planner.controllers.delegates;
 import com.sogoodlabs.common_mapper.CommonMapper;
 import com.sogoodlabs.planner.model.dao.*;
 import com.sogoodlabs.planner.model.entities.*;
+import com.sogoodlabs.planner.services.SafeDeleteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,6 +38,9 @@ public class TasksDelegate {
     @Autowired
     ITaskTestingDAO taskTestingDAO;
 
+    @Autowired
+    private SafeDeleteService safeDeleteService;
+
     public Map<String, Object> createTask(Map<String, Object> taskDto){
         Task task = commonMapper.mapToEntity(taskDto, new Task());
         tasksDAO.saveOrUpdate(task);
@@ -44,7 +48,7 @@ public class TasksDelegate {
     }
 
     public void delete(long id){
-        tasksDAO.delete(id);
+        safeDeleteService.deleteTask(id);
     }
 
     public Map<String, Object> update(Map<String, Object> taskDto){

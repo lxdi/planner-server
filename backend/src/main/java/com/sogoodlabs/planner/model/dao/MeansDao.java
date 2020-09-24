@@ -25,9 +25,6 @@ public class MeansDao implements IMeansDAO {
     @PersistenceContext
     EntityManager entityManager;
 
-    @Autowired
-    ILayerDAO layerDAO;
-
     @Override
     public List<Mean> getAllMeans() {
         return entityManager.unwrap(Session.class).createQuery("FROM Mean").list();
@@ -41,31 +38,6 @@ public class MeansDao implements IMeansDAO {
     @Override
     public void saveOrUpdate(Mean mean) {
         entityManager.unwrap(Session.class).saveOrUpdate(mean);
-    }
-
-    @Override
-    public void deleteMean(long id) {
-        Mean meanToDelete = this.meanById(id);
-        Mean prevMean = this.getPrevMean(meanToDelete);
-        if(prevMean!=null ){
-            if(meanToDelete.getNext()!=null){
-                prevMean.setNext(meanToDelete.getNext());
-            } else {
-                prevMean.setNext(null);
-            }
-            this.saveOrUpdate(prevMean);
-        }
-
-        for(Mean childMean : this.getChildren(meanToDelete)){
-            this.deleteMean(childMean.getId());
-        }
-
-        for(Layer dependedLayer : layerDAO.getLyersOfMean(meanToDelete)){
-            layerDAO.delete(dependedLayer);
-        }
-
-        entityManager.unwrap(Session.class).delete(meanToDelete);
-
     }
 
     @Override
@@ -121,7 +93,8 @@ public class MeansDao implements IMeansDAO {
     }
 
     @Override
-    public void validateMean(Mean mean){
-        //validateByQuarter(mean);
+    public void delete(Mean mean) {
+        this.entityManager.unwrap(Session.class).remove(mean);
     }
+
 }

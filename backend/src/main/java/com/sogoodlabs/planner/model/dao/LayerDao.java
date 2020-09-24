@@ -85,10 +85,6 @@ public class LayerDao implements ILayerDAO {
 
     @Override
     public void delete(Layer layer) {
-        List<Subject> subjects = subjectDAO.subjectsByLayer(layer);
-        if(subjects.size()>0){
-            subjects.forEach(s->subjectDAO.delete(s.getId()));
-        }
         entityManager.unwrap(Session.class).delete(layer);
     }
 

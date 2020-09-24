@@ -7,5 +7,6 @@ public interface ISpacedRepDAO {
     void save(SpacedRepetitions spacedRepetitions);
     SpacedRepetitions getSRforTaskMapper(long tmId);
     SpacedRepetitions getSRforTask(long taskid);
+    void remove(SpacedRepetitions spacedRepetitions);
 
 }

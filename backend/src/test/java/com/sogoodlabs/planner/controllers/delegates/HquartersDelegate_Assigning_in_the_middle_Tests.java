@@ -2,13 +2,10 @@ package com.sogoodlabs.planner.controllers.delegates;
 
 import com.sogoodlabs.planner.model.dao.*;
 import com.sogoodlabs.planner.model.entities.*;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
+import com.sogoodlabs.planner.services.SafeDeleteService;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import com.sogoodlabs.planner.test_configs.ATestsWithTargetsMeansQuartalsGenerated;
 
@@ -45,6 +42,9 @@ public class HquartersDelegate_Assigning_in_the_middle_Tests extends ATestsWithT
 
     @Autowired
     IWeekDAO weekDAO;
+
+    @Autowired
+    private SafeDeleteService safeDeleteService;
 
     Mean mean;
     HQuarter hQuarter1;
@@ -208,7 +208,7 @@ public class HquartersDelegate_Assigning_in_the_middle_Tests extends ATestsWithT
         hquartersDelegate.assign(mean.getId(), slot3.getId());
         hquartersDelegate.assign(mean.getId(), slot2.getId());
 
-        tasksDAO.delete(tasksDAO.byTitle("task 1").getId());
+        safeDeleteService.deleteTask(tasksDAO.byTitle("task 1").getId());
 
         assertTrue(tasksDAO.byTitle("task 1")==null);
     }

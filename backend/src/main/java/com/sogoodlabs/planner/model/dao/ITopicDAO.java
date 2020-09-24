@@ -10,4 +10,5 @@ public interface ITopicDAO {
     void saveOrUpdate(Topic topic);
     Topic getById(long id);
     List<Topic> getByTaskId(long taskid);
+    void remove(Topic topic);
 }

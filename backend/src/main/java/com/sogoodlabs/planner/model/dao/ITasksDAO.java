@@ -14,7 +14,7 @@ public interface ITasksDAO {
     Task getById(long id);
     Task byTitle(String title);
     void saveOrUpdate(Task task);
-    void delete(long id);
+    void delete(Task task);
     List<Task> allTasks();
     List<Task> tasksBySubject(Subject subject);
     List<Task> tasksByLayer(Layer layer);

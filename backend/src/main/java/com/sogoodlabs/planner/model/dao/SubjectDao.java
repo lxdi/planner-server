@@ -44,12 +44,7 @@ public class SubjectDao implements ISubjectDAO {
     }
 
     @Override
-    public void delete(long id) {
-        Subject subject = this.getById(id);
-        List<Task> tasks = tasksDAO.tasksBySubject(subject);
-        if(tasks.size()>0){
-            tasks.forEach(t->tasksDAO.delete(t.getId()));
-        }
+    public void delete(Subject subject) {
         entityManager.unwrap(Session.class).delete(subject);
     }
 }

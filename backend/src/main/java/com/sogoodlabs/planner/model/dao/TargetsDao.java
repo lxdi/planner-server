@@ -64,28 +64,6 @@ public class TargetsDao implements ITargetsDAO {
         entityManager.unwrap(Session.class).delete(targetToDelete);
     }
 
-    @Deprecated
-    private void deleteDependedMeans(Target target){
-        String hql = "select m from Mean m join m.targets t where t = :target";
-        Query query = entityManager.unwrap(Session.class).createQuery(hql);
-        query.setParameter("target", target);
-        List<Mean> means = query.list();
-
-        for(Mean mean: means){
-            if(mean.getTargets().size()==1){
-                meansDAO.deleteMean(mean.getId());
-            } else {
-                Iterator iterator = mean.getTargets().iterator();
-                while (iterator.hasNext()){
-                    Target curTarget = (Target) iterator.next();
-                    if(curTarget.getId()==target.getId()){
-                        iterator.remove();
-                    }
-                }
-            }
-        }
-    }
-
     private void anassignMeans(Target target){
         List<Mean> means = meansDAO.meansAssignedToTarget(target);
         if(means.size()>0){

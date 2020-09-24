@@ -38,4 +38,9 @@ public class SpacedRepDAOimpl implements ISpacedRepDAO {
                 .setParameter("taskid", taskid)
                 .uniqueResult();
     }
+
+    @Override
+    public void remove(SpacedRepetitions spacedRepetitions) {
+        this.entityManager.unwrap(Session.class).remove(spacedRepetitions);
+    }
 }
