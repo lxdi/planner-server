@@ -1,0 +1,19 @@
+version: '3.4'
+services:
+  planner:
+    image: planner-mono:latest
+    ports:
+      - "8090:8090"
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:9.4
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      PGDATA: /data/postgres
+    volumes:
+      - /Users/alexander/installs/postgres/data-docker:/data/postgres
