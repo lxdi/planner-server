@@ -1,4 +1,4 @@
-package com.sogoodlabs.planner.controllers.delegates;
+package com.sogoodlabs.planner.services;
 
 import com.sogoodlabs.common_mapper.CommonMapper;
 import com.sogoodlabs.planner.model.dao.IHQuarterDAO;

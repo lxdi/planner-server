@@ -1,4 +1,4 @@
-package com.sogoodlabs.planner.controllers.delegates;
+package com.sogoodlabs.planner.services;
 
 import com.sogoodlabs.planner.model.dao.IHQuarterDAO;
 import com.sogoodlabs.planner.model.dao.ISlotDAO;

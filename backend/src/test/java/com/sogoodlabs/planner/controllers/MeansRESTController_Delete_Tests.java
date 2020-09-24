@@ -1,7 +1,7 @@
 package com.sogoodlabs.planner.controllers;
 
 import com.sogoodlabs.planner.controllers.delegates.MeansDelegate;
-import com.sogoodlabs.planner.controllers.delegates.TaskMappersService;
+import com.sogoodlabs.planner.services.TaskMappersService;
 import com.sogoodlabs.planner.model.entities.Mean;
 import org.junit.Before;
 import org.junit.Test;

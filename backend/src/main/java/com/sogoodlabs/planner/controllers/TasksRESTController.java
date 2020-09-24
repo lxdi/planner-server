@@ -1,6 +1,6 @@
 package com.sogoodlabs.planner.controllers;
 
-import com.sogoodlabs.planner.controllers.delegates.SpacedRepetitionsService;
+import com.sogoodlabs.planner.services.SpacedRepetitionsService;
 import com.sogoodlabs.planner.controllers.delegates.TasksDelegate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
