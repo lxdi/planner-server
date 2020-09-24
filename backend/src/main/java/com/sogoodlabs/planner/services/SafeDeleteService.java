@@ -67,7 +67,7 @@ public class SafeDeleteService {
     }
 
     public void deleteSubject(long id) {
-        deleteSubject(subjectDAO.getById(id));
+        deleteSubject(subjectDAO.getOne(id));
     }
 
     public void deleteSubject(Subject subject){
@@ -82,8 +82,8 @@ public class SafeDeleteService {
     public void deleteTask(Task task){
         long id = task.getId();
 
-        topicDAO.getByTaskId(id).forEach(topicDAO::remove);
-        taskTestingDAO.getByTask(id).forEach(teting -> taskTestingDAO.delete(teting.getId()));
+        topicDAO.getByTaskId(id).forEach(topicDAO::delete);
+        taskTestingDAO.getByTaskId(id).forEach(teting -> taskTestingDAO.delete(teting));
 
         SpacedRepetitions spacedRepetitions = spacedRepDAO.getSRforTask(id);
         if(spacedRepetitions!=null){

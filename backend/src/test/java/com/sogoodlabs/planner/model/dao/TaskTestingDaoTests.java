@@ -1,6 +1,5 @@
 package com.sogoodlabs.planner.model.dao;
 
-import com.sogoodlabs.planner.model.dao.*;
 import com.sogoodlabs.planner.model.entities.*;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +38,7 @@ public class TaskTestingDaoTests extends SpringTestConfig {
 
         Subject subject = new Subject();
         subject.setLayer(layer);
-        subjectDAO.saveOrUpdate(subject);
+        subjectDAO.save(subject);
 
         Task task1 = new Task();
         task1.setSubject(subject);
@@ -61,12 +60,12 @@ public class TaskTestingDaoTests extends SpringTestConfig {
         taskTesting21.setTask(task2);
         taskTestingDAO.save(taskTesting21);
 
-        List<TaskTesting> testingsForTask1 = taskTestingDAO.getByTask(task1.getId());
+        List<TaskTesting> testingsForTask1 = taskTestingDAO.getByTaskId(task1.getId());
         assertTrue(testingsForTask1.size()==2);
         assertTrue(testingsForTask1.get(0).getId()==taskTesting1.getId());
         assertTrue(testingsForTask1.get(1).getId()==taskTesting2.getId());
 
-        List<TaskTesting> testingsForTask2 = taskTestingDAO.getByTask(task2.getId());
+        List<TaskTesting> testingsForTask2 = taskTestingDAO.getByTaskId(task2.getId());
         assertTrue(testingsForTask2.size()==1);
         assertTrue(testingsForTask2.get(0).getId()==taskTesting21.getId());
 

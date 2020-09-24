@@ -5,9 +5,6 @@ import com.sogoodlabs.planner.model.dao.ITaskMappersDAO;
 import com.sogoodlabs.planner.model.dao.ITaskTestingDAO;
 import com.sogoodlabs.planner.model.dao.ITopicDAO;
 import com.sogoodlabs.planner.model.entities.Task;
-import com.sogoodlabs.planner.model.entities.TaskMapper;
-import com.sogoodlabs.planner.model.entities.TaskTesting;
-import com.sogoodlabs.planner.model.entities.Topic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.sogoodlabs.planner.services.StringUtils;
@@ -40,7 +37,7 @@ public class AdditionalTasksMapping {
     }
 
     public void fillTestingsInTaskDto(Map<String, Object> taskDto, Task task){
-        fillList(taskDto, TESTINGS_FIELD_NAME, testingDAO.getByTask(task.getId()));
+        fillList(taskDto, TESTINGS_FIELD_NAME, testingDAO.getByTaskId(task.getId()));
     }
 
     public void fillFullName(Map<String, Object> taskDto, Task task){

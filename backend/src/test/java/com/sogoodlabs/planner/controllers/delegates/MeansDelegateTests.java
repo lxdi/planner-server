@@ -73,10 +73,6 @@ public class MeansDelegateTests extends SpringTestConfig {
     @Autowired
     IHQuarterDAO ihQuarterDAO;
 
-    @Autowired
-    IWeekDAO weekDAO;
-
-
     @Test
     public void updateTest(){
 
@@ -108,8 +104,8 @@ public class MeansDelegateTests extends SpringTestConfig {
 
         assertTrue(meansDAO.meanById(mean.getId()).getTitle().equals("mean changed"));
         assertTrue(tasksDAO.getById(task.getId()).getTitle().equals("task changed"));
-        assertTrue(topicDAO.getById(topic.getId()).getTitle().equals("topic changed"));
-        assertTrue(taskTestingDAO.findOne(taskTesting.getId()).getQuestion().equals("testing changed"));
+        assertTrue(topicDAO.getOne(topic.getId()).getTitle().equals("topic changed"));
+        assertTrue(taskTestingDAO.getOne(taskTesting.getId()).getQuestion().equals("testing changed"));
     }
 
     @Test

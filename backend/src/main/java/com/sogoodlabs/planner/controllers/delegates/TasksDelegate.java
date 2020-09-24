@@ -71,7 +71,7 @@ public class TasksDelegate {
         if(spacedRepetitions == null){
             spacedRepetitions = new SpacedRepetitions();
             spacedRepetitions.setTaskMapper(taskMapper);
-            spacedRepetitions.setRepetitionPlan(repPlanDAO.getById(repPlanid));
+            spacedRepetitions.setRepetitionPlan(repPlanDAO.getOne(repPlanid));
             spacedRepDAO.save(spacedRepetitions);
             planRepetitions(spacedRepetitions);
         } else {

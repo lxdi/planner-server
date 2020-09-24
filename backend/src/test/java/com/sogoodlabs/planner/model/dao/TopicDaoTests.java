@@ -30,15 +30,15 @@ public class TopicDaoTests extends SpringTestConfig {
 
         Topic topic1 = new Topic();
         topic1.setTask(task1);
-        topicDAO.saveOrUpdate(topic1);
+        topicDAO.save(topic1);
 
         Topic topic2 = new Topic();
         topic2.setTask(task1);
-        topicDAO.saveOrUpdate(topic2);
+        topicDAO.save(topic2);
 
         Topic topic3 = new Topic();
         topic3.setTask(task2);
-        topicDAO.saveOrUpdate(topic3);
+        topicDAO.save(topic3);
 
         List<Topic> topicsOfTask1 = topicDAO.getByTaskId(task1.getId());
         assertTrue(topicsOfTask1.size()==2);

@@ -44,6 +44,9 @@ public class TestCreators extends ATestCreators {
     @Autowired
     IRepDAO repDAO;
 
+    @Autowired
+    IMapperExclusionDAO mapperExclusionDAO;
+
 
     @Override
     public void save(Object object) {
@@ -60,13 +63,13 @@ public class TestCreators extends ATestCreators {
             ihQuarterDAO.saveOrUpdate((HQuarter) object);
         }
         if(object instanceof Subject){
-            subjectDAO.saveOrUpdate((Subject) object);
+            subjectDAO.save((Subject) object);
         }
         if(object instanceof Task){
             tasksDAO.saveOrUpdate((Task) object);
         }
         if(object instanceof Topic){
-            topicDAO.saveOrUpdate((Topic) object);
+            topicDAO.save((Topic) object);
         }
         if(object instanceof Layer){
             layerDAO.saveOrUpdate((Layer) object);
@@ -85,6 +88,9 @@ public class TestCreators extends ATestCreators {
         }
         if(object instanceof Repetition){
             repDAO.save((Repetition) object);
+        }
+        if(object instanceof MapperExclusion){
+            mapperExclusionDAO.save((MapperExclusion) object);
         }
 
     }

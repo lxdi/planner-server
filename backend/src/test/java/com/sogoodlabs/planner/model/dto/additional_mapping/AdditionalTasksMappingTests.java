@@ -66,7 +66,7 @@ public class AdditionalTasksMappingTests extends SpringTestConfig {
         Subject subject = new Subject();
         subject.setTitle("subject");
         subject.setLayer(layer);
-        subjectDAO.saveOrUpdate(subject);
+        subjectDAO.save(subject);
 
         Task task = new Task();
         task.setTitle("task");

@@ -42,7 +42,7 @@ public class TasksDaoTests extends AbstractTestsWithTargets {
 
         Subject subject =  new Subject();
         subject.setLayer(layer);
-        subjectDAO.saveOrUpdate(subject);
+        subjectDAO.save(subject);
 
         Task task1 = new Task();
         task1.setSubject(subject);

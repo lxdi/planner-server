@@ -29,9 +29,6 @@ public class LayerDao implements ILayerDAO {
     @Autowired
     ILayerDAO layerDAO;
 
-    @Autowired
-    ISubjectDAO subjectDAO;
-
     @Override
     public List<Layer> getLyersOfMean(Mean mean) {
         String hql = "from Layer lr where lr.mean = :mean order by lr.priority asc";

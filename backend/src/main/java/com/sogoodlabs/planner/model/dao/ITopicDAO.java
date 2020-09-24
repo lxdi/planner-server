@@ -2,13 +2,16 @@ package com.sogoodlabs.planner.model.dao;
 
 import com.sogoodlabs.planner.model.entities.Task;
 import com.sogoodlabs.planner.model.entities.Topic;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-public interface ITopicDAO {
+@Transactional
+public interface ITopicDAO extends JpaRepository<Topic, Long> {
 
-    void saveOrUpdate(Topic topic);
-    Topic getById(long id);
-    List<Topic> getByTaskId(long taskid);
-    void remove(Topic topic);
+    @Query("from Topic where task.id = :taskId")
+    List<Topic> getByTaskId(@Param("taskId") long taskid);
 }

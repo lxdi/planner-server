@@ -50,9 +50,6 @@ public class HquartersDelegate {
     HquarterMapper hquarterMapper;
 
     @Autowired
-    ITaskMappersDAO taskMappersDAO;
-
-    @Autowired
     IWeekDAO weekDAO;
 
     @Autowired
@@ -289,7 +286,7 @@ public class HquartersDelegate {
 
     private void cleanExclusions(Slot slot){
         List<SlotPosition> slotPositions = slotDAO.getSlotPositionsForSlot(slot);
-        mapperExclusionDAO.deleteBySlotPositions(slotPositions);
+        mapperExclusionDAO.deleteBySlotPosition(slotPositions);
     }
 
 }

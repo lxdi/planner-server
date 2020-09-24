@@ -116,14 +116,14 @@ public class HquartersDelegate_Unassigns_with2hquarters_Tests extends ATestsWith
         layerDAO.saveOrUpdate(layer1);
 
         Subject subject1 = new Subject(layer1, 1);
-        subjectDAO.saveOrUpdate(subject1);
+        subjectDAO.save(subject1);
 
         createTask("task 1", subject1, 1);
         createTask("task 2", subject1, 2);
         createTask("task 3", subject1, 3);
 
         Subject subject2 = new Subject(layer1, 2);
-        subjectDAO.saveOrUpdate(subject2);
+        subjectDAO.save(subject2);
 
         createTask("task 5", subject2, 2);
         createTask("task 6", subject2, 3);
@@ -131,7 +131,7 @@ public class HquartersDelegate_Unassigns_with2hquarters_Tests extends ATestsWith
         createTask("task 7", subject2, 4);
 
         Subject subject3 = new Subject(layer1, 3);
-        subjectDAO.saveOrUpdate(subject3);
+        subjectDAO.save(subject3);
 
         createTask("task 9", subject3, 2);
         createTask("task 8", subject3, 1);
@@ -142,7 +142,7 @@ public class HquartersDelegate_Unassigns_with2hquarters_Tests extends ATestsWith
         //--
         Subject subject21 = new Subject(layer2, 1);
         subject21.setLayer(layer2);
-        subjectDAO.saveOrUpdate(subject21);
+        subjectDAO.save(subject21);
 
         createTask("task 2-1", subject21, 1);
         createTask("task 2-4", subject21, 4);

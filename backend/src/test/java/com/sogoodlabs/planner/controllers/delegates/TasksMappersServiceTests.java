@@ -1,12 +1,15 @@
 package com.sogoodlabs.planner.controllers.delegates;
 
 import com.sogoodlabs.planner.model.dao.IHQuarterDAO;
+import com.sogoodlabs.planner.model.dao.IMapperExclusionDAO;
 import com.sogoodlabs.planner.model.dao.ITaskMappersDAO;
 import com.sogoodlabs.planner.model.dao.IWeekDAO;
 import com.sogoodlabs.planner.model.entities.*;
 import com.sogoodlabs.planner.services.TaskMappersService;
+import com.sogoodlabs.planner.test_configs.TestCreators;
 import org.hibernate.Session;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +18,7 @@ import com.sogoodlabs.planner.test_configs.SpringTestConfig;
 import com.sogoodlabs.planner.test_configs.TestCreatorsAnotherSession;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.*;
 
 import static junit.framework.TestCase.assertTrue;
@@ -26,7 +30,7 @@ public class TasksMappersServiceTests extends SpringTestConfig {
     EntityManager entityManager;
 
     @Autowired
-    TestCreatorsAnotherSession testCreators;
+    TestCreators testCreators;
 
     @Autowired
     QuarterGenerator quarterGenerator;
@@ -60,7 +64,8 @@ public class TasksMappersServiceTests extends SpringTestConfig {
 
         quarterGenerator.generateYear(2019);
         hQuarter = ihQuarterDAO.getHQuartersInYear(2019).get(3);
-        entityManager.unwrap(Session.class).getTransaction().commit();
+        entityManager.unwrap(Session.class).flush();
+        entityManager.unwrap(Session.class).clear();
 
         slot = testCreators.createSlot(layer, mean, hQuarter);
         slotPositions = new ArrayList<>();
@@ -180,5 +185,4 @@ public class TasksMappersServiceTests extends SpringTestConfig {
         assertTrue(taskMappersDAO.taskMapperForTask(tasks.get(itask)).getSlotPosition().getId()==slotPositions.get(isp).getId());
         assertTrue(taskMappersDAO.taskMapperForTask(tasks.get(itask)).getWeek().getId()==weeks.get(iw).getId());
     }
-
 }

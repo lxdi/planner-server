@@ -23,7 +23,7 @@ public class RepPlanDelegate {
 
     public List<Map<String, Object>> getAll(){
         List<Map<String, Object>> result = new ArrayList<>();
-        repPlanDAO.getAll().forEach((rp)->result.add(commonMapper.mapToDto(rp, new HashMap<>())));
+        repPlanDAO.findAll().forEach((rp)->result.add(commonMapper.mapToDto(rp, new HashMap<>())));
         return result;
     }
 

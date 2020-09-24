@@ -62,7 +62,7 @@ public class AdditionalSubjectsMappingTests extends SpringTestConfig {
 
     private Subject createSubject(){
         Subject subject = new Subject();
-        subjectDAO.saveOrUpdate(subject);
+        subjectDAO.save(subject);
         return subject;
     }
 

@@ -83,7 +83,7 @@ public class AdditionalLayersMappingTests extends SpringTestConfig {
     private Subject createSubject(Layer layer){
         Subject subject = new Subject();
         subject.setLayer(layer);
-        subjectDAO.saveOrUpdate(subject);
+        subjectDAO.save(subject);
         return subject;
     }
 

@@ -2,14 +2,17 @@ package com.sogoodlabs.planner.model.dao;
 
 import com.sogoodlabs.planner.model.entities.Layer;
 import com.sogoodlabs.planner.model.entities.Subject;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-public interface ISubjectDAO {
+@Transactional
+public interface ISubjectDAO extends JpaRepository<Subject, Long> {
 
-    void saveOrUpdate(Subject subject);
-    List<Subject> subjectsByLayer(Layer layer);
-    Subject getById(long id);
-    void delete(Subject subject);
+    @Query("from Subject where layer = :layer")
+    List<Subject> subjectsByLayer(@Param("layer") Layer layer);
 
 }

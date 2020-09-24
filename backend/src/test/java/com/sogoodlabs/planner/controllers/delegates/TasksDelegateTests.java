@@ -3,10 +3,7 @@ package com.sogoodlabs.planner.controllers.delegates;
 import com.sogoodlabs.planner.model.dao.*;
 import com.sogoodlabs.planner.model.entities.*;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,7 +59,7 @@ public class TasksDelegateTests extends SpringTestConfig {
         taskMapper.setTask(task);
         taskMappersDAO.saveOrUpdate(taskMapper);
 
-        defaultRepPlan = repPlanDAO.getAll().get(0);
+        defaultRepPlan = repPlanDAO.findAll().get(0);
     }
 
     @Test
@@ -123,7 +120,7 @@ public class TasksDelegateTests extends SpringTestConfig {
         assertTrue(DateUtils.fromDate(repetitions.get(1).getPlanDate())
                 .equals(DateUtils.fromDate(DateUtils.addWeeks(DateUtils.currentDate(), 6))));
 
-        List<TaskTesting> testings = taskTestingDAO.getByTask(task.getId());
+        List<TaskTesting> testings = taskTestingDAO.getByTaskId(task.getId());
 
         assertTrue(testings.size()==2);
         assertTrue(testings.get(0).getQuestion().equals("testing2 q"));
@@ -171,7 +168,7 @@ public class TasksDelegateTests extends SpringTestConfig {
 
         tasksDelegate.addNewTestingToTask(task.getId(), testingDto);
 
-        List<TaskTesting> testings = taskTestingDAO.getByTask(task.getId());
+        List<TaskTesting> testings = taskTestingDAO.getByTaskId(task.getId());
 
         assertTrue(testings.size()==1);
         assertTrue(testings.get(0).getQuestion().equals("test q"));

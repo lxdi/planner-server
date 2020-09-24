@@ -4,15 +4,19 @@ import com.sogoodlabs.planner.model.entities.DaysOfWeek;
 import com.sogoodlabs.planner.model.entities.MapperExclusion;
 import com.sogoodlabs.planner.model.entities.SlotPosition;
 import com.sogoodlabs.planner.model.entities.Week;
+import org.hibernate.Session;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import com.sogoodlabs.planner.test_configs.SpringTestConfig;
 import com.sogoodlabs.planner.test_configs.TestCreatorsAnotherSession;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.Arrays;
 import java.util.List;
 
+import static junit.framework.TestCase.assertFalse;
 import static junit.framework.TestCase.assertTrue;
 
 @Transactional
@@ -82,14 +86,14 @@ public class MapperExclusionDaoTests extends SpringTestConfig {
         MapperExclusion mapperExclusion3 = testCreators.createMapperExclusion(week3, slotPosition2);
         MapperExclusion mapperExclusion4 = testCreators.createMapperExclusion(week1, slotPosition3);
 
-        mapperExclusionDAO.deleteBySlotPositions(Arrays.asList(slotPosition1, slotPosition2));
+        mapperExclusionDAO.deleteBySlotPosition(Arrays.asList(slotPosition1, slotPosition2));
 
         //List<MapperExclusion> exclusions = mapperExclusionDAO.
 
-        assertTrue(mapperExclusionDAO.findOne(mapperExclusion1.getId())==null);
-        assertTrue(mapperExclusionDAO.findOne(mapperExclusion2.getId())==null);
-        assertTrue(mapperExclusionDAO.findOne(mapperExclusion3.getId())==null);
-        assertTrue(mapperExclusionDAO.findOne(mapperExclusion4.getId()).getId()==mapperExclusion4.getId());
+        assertFalse(mapperExclusionDAO.existsById(mapperExclusion1.getId()));
+        assertFalse(mapperExclusionDAO.existsById(mapperExclusion2.getId()));
+        assertFalse(mapperExclusionDAO.existsById(mapperExclusion3.getId()));
+        assertTrue(mapperExclusionDAO.getOne(mapperExclusion4.getId()).getId()==mapperExclusion4.getId());
 
     }
 

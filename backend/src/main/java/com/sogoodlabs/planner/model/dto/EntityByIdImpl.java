@@ -67,19 +67,19 @@ public class EntityByIdImpl implements IEntityById {
             result = layerDAO.layerById(id);
         }
         if(aClass == Subject.class){
-            result = subjectDAO.getById(id);
+            result = subjectDAO.getOne(id);
         }
         if(aClass == Task.class){
             result = tasksDAO.getById(id);
         }
         if(aClass == Topic.class){
-            result = topicDAO.getById(id);
+            result = topicDAO.getOne(id);
         }
         if(aClass == RepetitionPlan.class){
-            result = repPlanDAO.getById(id);
+            result = repPlanDAO.getOne(id);
         }
         if(aClass == TaskTesting.class){
-            result = testingDAO.findOne(id);
+            result = testingDAO.getOne(id);
         }
         if(aClass == Repetition.class){
             result = repDAO.findOne(id);

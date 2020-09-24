@@ -180,7 +180,7 @@ public class MeansDelegate {
                     subjectDto.put("layerid", layerid);
                     Subject subject = commonMapper.mapToEntity(subjectDto, new Subject());
                     //TODO validate before saving
-                    subjectDAO.saveOrUpdate(subject);
+                    subjectDAO.save(subject);
                     saveTasks((List<Map<String, Object>>) subjectDto.get("tasks"), subject.getId());
                 }
             }
@@ -210,7 +210,7 @@ public class MeansDelegate {
                     if(topic.getTask()==null){
                         throw new NullPointerException();
                     }
-                    topicDAO.saveOrUpdate(topic);
+                    topicDAO.save(topic);
                 }
             }
         }

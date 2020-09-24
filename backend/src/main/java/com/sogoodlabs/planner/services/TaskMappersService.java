@@ -107,7 +107,7 @@ public class TaskMappersService {
             mapperExclusion = new MapperExclusion();
             mapperExclusion.setWeek(week);
             mapperExclusion.setSlotPosition(sp);
-            mapperExclusionDAO.save(mapperExclusion);
+            mapperExclusion = mapperExclusionDAO.save(mapperExclusion);
         }
         return mapperExclusion;
     }

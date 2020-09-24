@@ -41,7 +41,7 @@ public class SubjectsDelegate {
     }
 
     public Map<String, Object> delete(long subjectid){
-        Subject subject = subjectDAO.getById(subjectid);
+        Subject subject = subjectDAO.getOne(subjectid);
         if(subject!=null) {
             safeDeleteService.deleteSubject(subject);
             return commonMapper.mapToDto(subject);

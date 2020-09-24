@@ -58,7 +58,7 @@ public class SpacedRepetitionsServiceTests extends SpringTestConfig {
 
         Topic topicForTask5 = new Topic();
         topicForTask5.setTask(task5);
-        topicDAO.saveOrUpdate(topicForTask5);
+        topicDAO.save(topicForTask5);
 
         Repetition repetitionDone = new Repetition();
         repetitionDone.setPlanDate(DateUtils.addDays(DateUtils.currentDate(), 3));
