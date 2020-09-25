@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 
@@ -61,7 +62,7 @@ public class TargetsDelegateTests extends SpringTestConfig {
 
         Map<String, Object> newTargetMap = commonMapper.mapToDto(newTarget);
 
-        assertTrue(meansDAO.meansAssignedToTarget(target).size()==2);
+        assertEquals(2, meansDAO.meansAssignedToTarget(target).size());
 
         Map<String, Object> result = targetsDelegate.createTarget(newTargetMap);
 

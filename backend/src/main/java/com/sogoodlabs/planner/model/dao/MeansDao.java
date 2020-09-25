@@ -86,7 +86,7 @@ public class MeansDao implements IMeansDAO {
 
     @Override
     public List<Mean> meansAssignedToTarget(Target target) {
-        String hql = "from Mean where :target in elements(targets)";
+        String hql = "from Mean m where :target in elements(targets)"; //"select m from Mean m left join m.targets t where t = :target "
         Query query = this.entityManager.unwrap(Session.class).createQuery(hql)
                 .setParameter("target", target);
         return query.list();

@@ -1,6 +1,8 @@
 package com.sogoodlabs.planner.controllers;
 
 import com.sogoodlabs.planner.controllers.delegates.TargetsDelegate;
+import org.hibernate.Session;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,13 +28,14 @@ public class TargetsRESTControllerWithOrmTests extends AbstractTestsWithTargets 
     @Autowired
     TargetsDelegate targetsDelegate;
 
-    private MockMvc mockMvc;
+    @Autowired
     private TargetsRESTController targetsRESTController;
+
+    private MockMvc mockMvc;
 
     @Before
     public void init(){
         super.init();
-        targetsRESTController = new TargetsRESTController(targetsDelegate);
         mockMvc = MockMvcBuilders.standaloneSetup(targetsRESTController).build();
     }
 
@@ -82,7 +85,6 @@ public class TargetsRESTControllerWithOrmTests extends AbstractTestsWithTargets 
         assertTrue(targetsDAO.targetById(2).getTitle().equals("default child changed"));
         assertTrue(result.getResponse().getContentAsString().contains("\"id\":2"));
         assertTrue(result.getResponse().getContentAsString().contains("default child changed"));
-        System.out.println(result.getResponse().getContentAsString());
     }
 
     @Test(expected = NestedServletException.class)

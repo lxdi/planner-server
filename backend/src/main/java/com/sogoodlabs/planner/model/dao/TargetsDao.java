@@ -1,19 +1,15 @@
 package com.sogoodlabs.planner.model.dao;
 
-import com.sogoodlabs.planner.model.entities.Mean;
 import com.sogoodlabs.planner.model.entities.Realm;
 import com.sogoodlabs.planner.model.entities.Target;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceContext;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -55,7 +51,7 @@ public class TargetsDao implements ITargetsDAO {
     public void deleteTarget(long id) {
         Target targetToDelete = this.targetById(id);
         //deleteDependedMeans(targetToDelete);
-        anassignMeans(targetToDelete);
+        unassignMeans(targetToDelete);
         handlePrevForDeleting(targetToDelete);
 
         for(Target target : this.getChildren(targetToDelete)){
@@ -64,20 +60,11 @@ public class TargetsDao implements ITargetsDAO {
         entityManager.unwrap(Session.class).delete(targetToDelete);
     }
 
-    private void anassignMeans(Target target){
-        List<Mean> means = meansDAO.meansAssignedToTarget(target);
-        if(means.size()>0){
-            means.forEach(mean->{
-                Iterator<Target> targetIterator = mean.getTargets().iterator();
-                while(targetIterator.hasNext()){
-                    Target curTarget = targetIterator.next();
-                    if(curTarget.getId()==target.getId()){
-                        targetIterator.remove();
-                    }
-                }
-                meansDAO.saveOrUpdate(mean);
-            });
-        }
+    private void unassignMeans(Target target) {
+        meansDAO.meansAssignedToTarget(target).forEach(mean -> {
+            mean.getTargets().removeIf(curTarget -> curTarget.getId() == target.getId());
+            meansDAO.saveOrUpdate(mean);
+        });
     }
 
     private void handlePrevForDeleting(Target target){
