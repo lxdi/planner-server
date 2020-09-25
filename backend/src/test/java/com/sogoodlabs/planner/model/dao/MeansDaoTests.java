@@ -11,7 +11,7 @@ import com.sogoodlabs.planner.test_configs.AbstractTestsWithTargetsWithMeans;
 
 import java.util.List;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * Created by Alexander on 08.04.2018.
@@ -55,10 +55,10 @@ public class MeansDaoTests extends AbstractTestsWithTargetsWithMeans {
         assertTrue(meansDao.meanById(2)!=null);
         assertTrue(meansDao.meanById(3)!=null);
 
-        assertTrue(targetsDAO.targetById(1)!=null);
-        assertTrue(targetsDAO.targetById(2)==null);
-        assertTrue(targetsDAO.targetById(3)!=null);
-        assertTrue(targetsDAO.targetById(4)!=null);
+        assertNotNull(targetsDAO.targetById(parentTarget.getId()));
+        assertNull(targetsDAO.targetById(target.getId()));
+        assertNotNull(targetsDAO.targetById(target2.getId()));
+        assertNotNull(targetsDAO.targetById(target3.getId()));
     }
 
     @Test

@@ -6,6 +6,7 @@ import com.sogoodlabs.planner.model.entities.Target;
 import org.junit.Before;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -22,6 +23,11 @@ public abstract class AbstractTestsWithTargets extends SpringTestConfig {
 
     protected Realm realm;
 
+    protected Target parentTarget;
+    protected Target target;
+    protected Target target2;
+    protected Target target3;
+
     protected String defaultParentTarget = "drefault parent";
     protected String defaultChildTarget = "default child";
     protected String defaultChild2Target = "default child2";
@@ -32,22 +38,26 @@ public abstract class AbstractTestsWithTargets extends SpringTestConfig {
         super.init();
         realm = realmDAO.createRealm("test realm");
 
-        Target parentTarget = new Target(defaultParentTarget, realm);
+        parentTarget = new Target(defaultParentTarget, realm);
         targetsDAO.saveOrUpdate(parentTarget);
-        Target target = new Target(defaultChildTarget, realm);
-        Target target2 = new Target(defaultChild2Target, realm);
-        Target target3 = new Target(defaultChildChildTarget, realm);
-        target.setParent(parentTarget);
+
+        target2 = new Target(defaultChild2Target, realm);
         target2.setParent(parentTarget);
-        target3.setParent(target2);
-        targetsDAO.saveOrUpdate(target);
         targetsDAO.saveOrUpdate(target2);
+
+        target = new Target(defaultChildTarget, realm);
+        target.setParent(parentTarget);
+        target.setNext(target2);
+        targetsDAO.saveOrUpdate(target);
+
+        target3 = new Target(defaultChildChildTarget, realm);
+        target3.setParent(target2);
         targetsDAO.saveOrUpdate(target3);
 
-        assertTrue(parentTarget.getId()==1);
-        assertTrue(target.getId()==2);
-        assertTrue(target2.getId()==3);
-        assertTrue(target3.getId()==4);
+        assertTrue(parentTarget.getId()>0);
+        assertTrue(target.getId()>0);
+        assertTrue(target2.getId()>0);
+        assertTrue(target3.getId()>0);
     }
 
 }

@@ -14,6 +14,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -52,6 +53,14 @@ public class TargetsDaoTests extends AbstractTestsWithTargets {
         assertTrue(childTargets.size()==2);
         assertTrue(childTargets.get(0).getId()==2);
         assertTrue(childTargets.get(1).getId()==3);
+    }
+
+    @Test
+    public void getLastChildTest(){
+        Target parent = targetsDAO.targetById(1);
+        Target childTarget = targetsDAO.getLastOfChildren(parent, realm);
+
+        assertNotNull(childTarget);
     }
 
     @Test

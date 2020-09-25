@@ -13,7 +13,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.util.NestedServletException;
 import com.sogoodlabs.planner.test_configs.AbstractTestsWithTargets;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -55,24 +55,24 @@ public class TargetsRESTControllerWithOrmTests extends AbstractTestsWithTargets 
 
     @Test
     public void deleteTest() throws Exception {
-        MvcResult result = mockMvc.perform(delete("/target/delete/2"))
+        MvcResult result = mockMvc.perform(delete("/target/delete/"+target.getId()))
                 .andExpect(status().isOk()).andReturn();
 
-        assertTrue(targetsDAO.targetById(1)!=null);
-        assertTrue(targetsDAO.targetById(2)==null);
-        assertTrue(targetsDAO.targetById(3)!=null);
-        assertTrue(targetsDAO.targetById(4)!=null);
+        assertNotNull(targetsDAO.targetById(parentTarget.getId()));
+        assertNull(targetsDAO.targetById(target.getId()));
+        assertNotNull(targetsDAO.targetById(target2.getId()));
+        assertNotNull(targetsDAO.targetById(target3.getId()));
     }
 
     @Test
     public void deleteParentTest() throws Exception {
-        MvcResult result = mockMvc.perform(delete("/target/delete/1"))
+        MvcResult result = mockMvc.perform(delete("/target/delete/"+parentTarget.getId()))
                 .andExpect(status().isOk()).andReturn();
 
-        assertTrue(targetsDAO.targetById(1)==null);
-        assertTrue(targetsDAO.targetById(2)==null);
-        assertTrue(targetsDAO.targetById(3)==null);
-        assertTrue(targetsDAO.targetById(4)==null);
+        assertNull(targetsDAO.targetById(parentTarget.getId()));
+        assertNull(targetsDAO.targetById(target.getId()));
+        assertNull(targetsDAO.targetById(target2.getId()));
+        assertNull(targetsDAO.targetById(target3.getId()));
     }
 
     @Test

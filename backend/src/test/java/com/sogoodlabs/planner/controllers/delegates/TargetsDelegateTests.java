@@ -18,8 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 
 @Transactional
@@ -70,6 +69,18 @@ public class TargetsDelegateTests extends SpringTestConfig {
         assertTrue(meansDAO.meansAssignedToTarget(target).size()==0);
         assertTrue(meansDAO.meansAssignedToTarget(newTarget).size()==2);
 
+    }
+
+    @Test
+    public void createTargetRootTest(){
+        Target newTarget= new Target();
+        newTarget.setRealm(realm);
+        Map<String, Object> newTargetMap = commonMapper.mapToDto(newTarget);
+
+        Map<String, Object> result = targetsDelegate.createTarget(newTargetMap);
+
+        newTarget = targetsDAO.targetById((Long) result.get("id"));
+        assertNotNull(newTarget);
     }
 
     @Test

@@ -104,12 +104,11 @@ public class TargetsDao implements ITargetsDAO {
 
     @Override
     public Target getLastOfChildren(Target targetParent, Realm realm) {
-        String hql = "FROM Target where realm = :realm and next is null and "
-                + (targetParent!=null?"parent = :parent":"parent is null");
+        String hql = "FROM Target where realm = :realm and next is null and parent = :parent";
         Query query = entityManager.unwrap(Session.class).createQuery(hql);
-        if(targetParent!=null){
-            query.setParameter("parent", targetParent);
-        }
+        query.setParameter("parent", targetParent);
+//        if(targetParent!=null){
+//        }
         query.setParameter("realm", realm);
         return (Target) query.uniqueResult();
     }
