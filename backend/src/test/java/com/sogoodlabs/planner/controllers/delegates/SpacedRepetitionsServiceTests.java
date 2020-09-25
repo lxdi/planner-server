@@ -3,12 +3,16 @@ package com.sogoodlabs.planner.controllers.delegates;
 import com.sogoodlabs.planner.model.dao.*;
 import com.sogoodlabs.planner.model.entities.*;
 import com.sogoodlabs.planner.services.SpacedRepetitionsService;
+import org.hibernate.Session;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.sogoodlabs.planner.util.DateUtils;
 import com.sogoodlabs.planner.services.WeeksGenerator;
 import com.sogoodlabs.planner.test_configs.SpringTestConfig;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.sql.Date;
 import java.util.Calendar;
 import java.util.List;
@@ -16,25 +20,14 @@ import java.util.Map;
 
 import static org.junit.Assert.assertTrue;
 
+@Transactional
 public class SpacedRepetitionsServiceTests extends SpringTestConfig {
 
-    @Autowired
-    IRepDAO repDAO;
-
-    @Autowired
-    ITasksDAO tasksDAO;
-
-    @Autowired
-    ITaskMappersDAO taskMappersDAO;
-
-    @Autowired
-    ISpacedRepDAO spacedRepDAO;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Autowired
     SpacedRepetitionsService spacedRepetitionsService;
-
-    @Autowired
-    ITopicDAO topicDAO;
 
     @Autowired
     WeeksGenerator weeksGenerator;
@@ -42,49 +35,52 @@ public class SpacedRepetitionsServiceTests extends SpringTestConfig {
     @Autowired
     IWeekDAO weekDAO;
 
-    @Autowired
-    ISlotDAO slotDAO;
-
-    @Autowired
-    private ISlotPositionDAO slotPositionDAO;
-
     @Test
     public void getActualTaskToRepeatTest(){
+
+        Session session = entityManager.unwrap(Session.class);
 
         Task task1 = initEntChain(DateUtils.currentDate());
         Task task2 = initEntChain(DateUtils.addDays(DateUtils.currentDate(), 2));
         Task task3 = initEntChain(DateUtils.addDays(DateUtils.currentDate(), -1));
-
         Task task4 = initEntChain(DateUtils.addDays(DateUtils.currentDate(), -5));
-
         Task task5 = initEntChain(DateUtils.addDays(DateUtils.currentDate(), 6));
-
-        Topic topicForTask5 = new Topic();
-        topicForTask5.setTask(task5);
-        topicDAO.save(topicForTask5);
-
-        Repetition repetitionDone = new Repetition();
-        repetitionDone.setPlanDate(DateUtils.addDays(DateUtils.currentDate(), 3));
-        repetitionDone.setFactDate(DateUtils.addDays(DateUtils.currentDate(), 4));
-        repDAO.save(repetitionDone);
-
-        Task currentTask = new Task();
-        tasksDAO.save(currentTask);
 
         int currentYear = Calendar.getInstance().get(Calendar.YEAR);
         weeksGenerator.generateYear(currentYear);
         Week currentWeek = weekDAO.weekOfDate(DateUtils.currentDate());
         DaysOfWeek currentDayOfWeek = DaysOfWeek.findById(DateUtils.differenceInDays(currentWeek.getStartDay(), DateUtils.currentDate()));
 
+        Task currentTask = new Task();
+        session.save(currentTask);
+
         SlotPosition slotPosition = new SlotPosition();
         slotPosition.setDayOfWeek(currentDayOfWeek);
-        slotPositionDAO.save(slotPosition);
+        session.save(slotPosition);
 
         TaskMapper taskMapper = new TaskMapper();
         taskMapper.setWeek(currentWeek);
         taskMapper.setSlotPosition(slotPosition);
         taskMapper.setTask(currentTask);
-        taskMappersDAO.saveOrUpdate(taskMapper);
+        session.save(taskMapper);
+
+        RepetitionPlan repetitionPlan = new RepetitionPlan();
+        session.save(repetitionPlan);
+
+        SpacedRepetitions spacedRepetitions = new SpacedRepetitions();
+        spacedRepetitions.setTaskMapper(taskMapper);
+        spacedRepetitions.setRepetitionPlan(repetitionPlan);
+        session.save(spacedRepetitions);
+
+        Topic topicForTask5 = new Topic();
+        topicForTask5.setTask(task5);
+        session.save(topicForTask5);
+
+        Repetition repetitionDone = new Repetition();
+        repetitionDone.setSpacedRepetitions(spacedRepetitions);
+        repetitionDone.setPlanDate(DateUtils.addDays(DateUtils.currentDate(), 3));
+        repetitionDone.setFactDate(DateUtils.addDays(DateUtils.currentDate(), 4));
+        session.save(repetitionDone);
 
         Map<Integer, List<Map<String, Object>>> tasks = spacedRepetitionsService.getActualTaskToRepeat();
 
@@ -106,21 +102,27 @@ public class SpacedRepetitionsServiceTests extends SpringTestConfig {
     }
 
     private Task initEntChain(Date planDate){
+        Session session = entityManager.unwrap(Session.class);
+
         Task task = new Task();
-        tasksDAO.save(task);
+        session.save(task);
 
         TaskMapper taskMapper = new TaskMapper();
         taskMapper.setTask(task);
-        taskMappersDAO.saveOrUpdate(taskMapper);
+        session.save(taskMapper);
+
+        RepetitionPlan repetitionPlan = new RepetitionPlan();
+        session.save(repetitionPlan);
 
         SpacedRepetitions spacedRepetitions = new SpacedRepetitions();
         spacedRepetitions.setTaskMapper(taskMapper);
-        spacedRepDAO.save(spacedRepetitions);
+        spacedRepetitions.setRepetitionPlan(repetitionPlan);
+        session.save(spacedRepetitions);
 
         Repetition repetition = new Repetition();
         repetition.setSpacedRepetitions(spacedRepetitions);
         repetition.setPlanDate(planDate);
-        repDAO.save(repetition);
+        session.save(repetition);
 
         return task;
     }
