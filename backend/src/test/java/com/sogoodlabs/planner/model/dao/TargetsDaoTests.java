@@ -2,9 +2,8 @@ package com.sogoodlabs.planner.model.dao;
 
 import com.sogoodlabs.planner.model.entities.Realm;
 import com.sogoodlabs.planner.model.entities.Target;
+import com.sogoodlabs.planner.services.SafeDeleteService;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,8 +13,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * Created by Alexander on 10.03.2018.
@@ -27,9 +25,12 @@ public class TargetsDaoTests extends AbstractTestsWithTargets {
     @PersistenceContext
     EntityManager entityManager;
 
+    @Autowired
+    private SafeDeleteService safeDeleteService;
+    
     @Test
     public void gettingAllTargetsTest(){
-        List<Target> targets = targetsDAO.allTargets();
+        List<Target> targets = targetsDAO.findAll();
         assertTrue(targets.size()==4);
     }
 
@@ -40,14 +41,14 @@ public class TargetsDaoTests extends AbstractTestsWithTargets {
 
         Target target = new Target("new child", realm);
         target.setId(2);
-        targetsDAO.saveOrUpdate(target);
+        targetsDAO.save(target);
 
-        assertTrue(targetsDAO.targetById(2).getTitle().equals("new child"));
+        assertTrue(targetsDAO.getOne(2l).getTitle().equals("new child"));
     }
 
     @Test
     public void getChildrenTest(){
-        Target parent = targetsDAO.targetById(1);
+        Target parent = targetsDAO.getOne(1l);
         List<Target> childTargets = targetsDAO.getChildren(parent);
 
         assertTrue(childTargets.size()==2);
@@ -57,7 +58,7 @@ public class TargetsDaoTests extends AbstractTestsWithTargets {
 
     @Test
     public void getLastChildTest(){
-        Target parent = targetsDAO.targetById(1);
+        Target parent = targetsDAO.getOne(1l);
         Target childTarget = targetsDAO.getLastOfChildren(parent, realm);
 
         assertNotNull(childTarget);
@@ -72,84 +73,86 @@ public class TargetsDaoTests extends AbstractTestsWithTargets {
     @Test
     public void deletingLastTargetTest(){
         Target target2 = new Target("test Target2", realm);
-        targetsDAO.saveOrUpdate(target2);
+        targetsDAO.save(target2);
 
         Target target1 = new Target("test Target1", realm);
         target1.setNext(target2);
-        targetsDAO.saveOrUpdate(target1);
+        targetsDAO.save(target1);
 
-        targetsDAO.deleteTarget(target2.getId());
+        safeDeleteService.deleteTarget(target2.getId());
 
-        assertTrue(targetsDAO.targetById(target2.getId())==null);
-        assertTrue(targetsDAO.targetById(target1.getId()).getNext()==null);
+
+
+        assertFalse(isExists(target2.getId(), Target.class));
+        assertNull(targetsDAO.getOne(target1.getId()).getNext());
 
     }
 
     @Test
     public void deletingTargetInTheMiddleTest(){
         Target target3 = new Target("test Target3", realm);
-        targetsDAO.saveOrUpdate(target3);
+        targetsDAO.save(target3);
 
         Target target2 = new Target("test Target2", realm);
         target2.setNext(target3);
-        targetsDAO.saveOrUpdate(target2);
+        targetsDAO.save(target2);
 
         Target target1 = new Target("test Target1", realm);
         target1.setNext(target2);
-        targetsDAO.saveOrUpdate(target1);
+        targetsDAO.save(target1);
 
-        targetsDAO.deleteTarget(target2.getId());
+        safeDeleteService.deleteTarget(target2.getId());
 
-        assertTrue(targetsDAO.targetById(target2.getId())==null);
-        assertTrue(targetsDAO.targetById(target1.getId()).getNext().getId()==target3.getId());
+        assertFalse(isExists(target2.getId(), Target.class));
+        assertEquals(targetsDAO.getOne(target1.getId()).getNext().getId(), target3.getId());
     }
 
     @Test
     public void deletingParentTargetTest(){
         Target parentTarget = new Target("test parent Target", realm);
-        targetsDAO.saveOrUpdate(parentTarget);
+        targetsDAO.save(parentTarget);
 
         Target child2 = new Target("test child Target2", realm);
         child2.setParent(parentTarget);
-        targetsDAO.saveOrUpdate(child2);
+        targetsDAO.save(child2);
 
         Target child1 = new Target("test child Target1", realm);
         child1.setParent(parentTarget);
         child1.setNext(child2);
-        targetsDAO.saveOrUpdate(child1);
+        targetsDAO.save(child1);
 
-        targetsDAO.deleteTarget(parentTarget.getId());
+        safeDeleteService.deleteTarget(parentTarget.getId());
 
-        assertTrue(targetsDAO.targetById(parentTarget.getId())==null);
-        assertTrue(targetsDAO.targetById(child1.getId())==null);
-        assertTrue(targetsDAO.targetById(child2.getId())==null);
+        assertFalse(isExists(parentTarget.getId(), Target.class));
+        assertFalse(isExists(child1.getId(), Target.class));
+        assertFalse(isExists(child2.getId(), Target.class));
 
     }
 
     @Test
     public void deepDeletingParentTargetTest(){
         Target parentTarget = new Target("test parent Target", realm);
-        targetsDAO.saveOrUpdate(parentTarget);
+        targetsDAO.save(parentTarget);
 
         Target child2 = new Target("test child Target2", realm);
         child2.setParent(parentTarget);
-        targetsDAO.saveOrUpdate(child2);
+        targetsDAO.save(child2);
 
         Target child1 = new Target("test child Target1", realm);
         child1.setParent(parentTarget);
         child1.setNext(child2);
-        targetsDAO.saveOrUpdate(child1);
+        targetsDAO.save(child1);
 
         Target childChild = new Target("test childChild Target", realm);
         childChild.setParent(child1);
-        targetsDAO.saveOrUpdate(childChild);
+        targetsDAO.save(childChild);
 
-        targetsDAO.deleteTarget(parentTarget.getId());
+        safeDeleteService.deleteTarget(parentTarget.getId());
 
-        assertTrue(targetsDAO.targetById(parentTarget.getId())==null);
-        assertTrue(targetsDAO.targetById(child1.getId())==null);
-        assertTrue(targetsDAO.targetById(child2.getId())==null);
-        assertTrue(targetsDAO.targetById(childChild.getId())==null);
+        assertFalse(isExists(parentTarget.getId(), Target.class));
+        assertFalse(isExists(child1.getId(), Target.class));
+        assertFalse(isExists(child2.getId(), Target.class));
+        assertFalse(isExists(childChild.getId(), Target.class));
 
     }
 
@@ -172,7 +175,7 @@ public class TargetsDaoTests extends AbstractTestsWithTargets {
     private Target createTarget(String title, Target parentTarget, Realm realm){
         Target target = new Target(title, realm);
         target.setParent(parentTarget);
-        targetsDAO.saveOrUpdate(target);
+        targetsDAO.save(target);
         return target;
     }
 

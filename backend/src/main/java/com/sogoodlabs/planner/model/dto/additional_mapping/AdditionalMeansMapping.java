@@ -52,7 +52,7 @@ public class AdditionalMeansMapping {
         if(dto.get(TARGETSIDS_FIELD_TITLE )!=null){
             List<Long> targetsIds = convertToListLong((List) dto.get(TARGETSIDS_FIELD_TITLE ));
             for(Long id : targetsIds){
-                Target target = targetsDAO.targetById(id);
+                Target target = targetsDAO.getOne(id);
                 if(target!=null){
                     mean.getTargets().add(target);
                 }

@@ -7,8 +7,7 @@ import com.sogoodlabs.planner.model.dto.BasicDtoValidator;
 import com.sogoodlabs.planner.model.dto.TargetsMapper;
 import com.sogoodlabs.planner.model.entities.Mean;
 import com.sogoodlabs.planner.model.entities.Target;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
+import com.sogoodlabs.planner.services.SafeDeleteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,9 +36,12 @@ public class TargetsDelegate {
     @Autowired
     IMeansDAO meansDAO;
 
+    @Autowired
+    private SafeDeleteService safeDeleteService;
+
     public List<Map<String, Object>> getAllTargets(){
         List<Map<String, Object>> result = new ArrayList<>();
-        targetsDAO.allTargets().forEach(t -> result.add(targetsMapper.mapToDto(t)));
+        targetsDAO.findAll().forEach(t -> result.add(targetsMapper.mapToDto(t)));
         return result;
     }
 
@@ -49,19 +51,19 @@ public class TargetsDelegate {
         }
         Target target = commonMapper.mapToEntity(targetDto, new Target());
         Target prevTarget = targetsDAO.getLastOfChildren(target.getParent(), target.getRealm());
-        targetsDAO.saveOrUpdate(target);
+        targetsDAO.save(target);
         reassignMeansFromParent(target);
         Map<String, Object> resultDto = targetsMapper.mapToDto(target);
         if(prevTarget!=null){
             prevTarget.setNext(target);
-            targetsDAO.saveOrUpdate(prevTarget);
+            targetsDAO.save(prevTarget);
             resultDto.put("previd", prevTarget.getId());
         }
         return resultDto;
     }
 
     public void delete(long id){
-        targetsDAO.deleteTarget(id);
+        safeDeleteService.deleteTarget(id);
     }
 
     public Map<String, Object> update(Map<String, Object> targetDto) {
@@ -69,7 +71,7 @@ public class TargetsDelegate {
             throw new RuntimeException("Not valid Target Dto received to update");
         }
         Target target = commonMapper.mapToEntity(targetDto, new Target());
-        targetsDAO.saveOrUpdate(target);
+        targetsDAO.save(target);
         return targetsMapper.mapToDto(target);
     }
 
@@ -79,8 +81,8 @@ public class TargetsDelegate {
         for(Map<String, Object> targetDtoLazy : targetDtoLazies) {
             //Target target = commonMapper.mapToEntity(targetDtoLazy, new Target());
             Target target = commonMapper.mapToEntity(targetDtoLazy,
-                    targetsDAO.targetById(JsonParsingFixUtils.returnLong(targetDtoLazy.get("id"))));
-            targetsDAO.saveOrUpdate(target);
+                    targetsDAO.getOne(JsonParsingFixUtils.returnLong(targetDtoLazy.get("id"))));
+            targetsDAO.save(target);
             updated.add(target);
         }
         List<Map<String, Object>> result = new ArrayList<>();

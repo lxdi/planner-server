@@ -2,6 +2,7 @@ package com.sogoodlabs.planner.services;
 
 import com.sogoodlabs.planner.model.dao.*;
 import com.sogoodlabs.planner.model.entities.*;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,6 +11,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 public class SafeDeleteService {
+
+    @Autowired
+    private ITargetsDAO targetsDAO;
 
     @Autowired
     private IMeansDAO meansDAO;
@@ -37,6 +41,40 @@ public class SafeDeleteService {
 
     @Autowired
     private ITaskMappersDAO taskMappersDAO;
+
+    public void deleteTarget(long id){
+        deleteTarget(targetsDAO.getOne(id));
+    }
+
+    public void deleteTarget(Target targetToDelete) {
+        //deleteDependedMeans(targetToDelete);
+        unassignMeans(targetToDelete);
+        handlePrevForDeleting(targetToDelete);
+
+        for(Target target : targetsDAO.getChildren(targetToDelete)){
+            this.deleteTarget(target.getId());
+        }
+        targetsDAO.delete(targetToDelete);
+    }
+
+    private void unassignMeans(Target target) {
+        meansDAO.meansAssignedToTarget(target).forEach(mean -> {
+            mean.getTargets().removeIf(curTarget -> curTarget.getId() == target.getId());
+            meansDAO.save(mean);
+        });
+    }
+
+    private void handlePrevForDeleting(Target target){
+        Target prevTarget = targetsDAO.getPrevTarget(target);
+        if(prevTarget!=null ){
+            if(target.getNext()!=null){
+                prevTarget.setNext(target.getNext());
+            } else {
+                prevTarget.setNext(null);
+            }
+            targetsDAO.save(prevTarget);
+        }
+    }
 
     public void deleteMean(long id) {
         deleteMean(meansDAO.getOne(id));

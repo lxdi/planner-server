@@ -1,8 +1,7 @@
 package com.sogoodlabs.planner.controllers;
 
 import com.sogoodlabs.planner.controllers.delegates.TargetsDelegate;
-import org.hibernate.Session;
-import org.junit.After;
+import com.sogoodlabs.planner.model.entities.Target;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +11,8 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.util.NestedServletException;
 import com.sogoodlabs.planner.test_configs.AbstractTestsWithTargets;
+
+import javax.transaction.Transactional;
 
 import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -23,6 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Created by Alexander on 10.03.2018.
  */
 
+@Transactional
 public class TargetsRESTControllerWithOrmTests extends AbstractTestsWithTargets {
 
     @Autowired
@@ -46,8 +48,8 @@ public class TargetsRESTControllerWithOrmTests extends AbstractTestsWithTargets 
                 .contentType(MediaType.APPLICATION_JSON).content(content))
                 .andExpect(status().isOk()).andReturn();
         int newId = 5;
-        assertTrue(targetsDAO.targetById(newId)!=null);
-        assertTrue(targetsDAO.targetById(newId).getTitle().equals("new target"));
+        assertTrue(isExists(newId, Target.class));
+        assertTrue(targetsDAO.getOne((long)newId).getTitle().equals("new target"));
         assertTrue(result.getResponse().getContentAsString().contains("\"id\":"+newId));
         assertTrue(result.getResponse().getContentAsString().contains("new target"));
         System.out.println(result.getResponse().getContentAsString());
@@ -58,10 +60,10 @@ public class TargetsRESTControllerWithOrmTests extends AbstractTestsWithTargets 
         MvcResult result = mockMvc.perform(delete("/target/delete/"+target.getId()))
                 .andExpect(status().isOk()).andReturn();
 
-        assertNotNull(targetsDAO.targetById(parentTarget.getId()));
-        assertNull(targetsDAO.targetById(target.getId()));
-        assertNotNull(targetsDAO.targetById(target2.getId()));
-        assertNotNull(targetsDAO.targetById(target3.getId()));
+        assertTrue(isExists(parentTarget.getId(), Target.class));
+        assertFalse(isExists(target.getId(), Target.class));
+        assertTrue(isExists(target2.getId(), Target.class));
+        assertTrue(isExists(target3.getId(), Target.class));
     }
 
     @Test
@@ -69,10 +71,10 @@ public class TargetsRESTControllerWithOrmTests extends AbstractTestsWithTargets 
         MvcResult result = mockMvc.perform(delete("/target/delete/"+parentTarget.getId()))
                 .andExpect(status().isOk()).andReturn();
 
-        assertNull(targetsDAO.targetById(parentTarget.getId()));
-        assertNull(targetsDAO.targetById(target.getId()));
-        assertNull(targetsDAO.targetById(target2.getId()));
-        assertNull(targetsDAO.targetById(target3.getId()));
+        assertFalse(isExists(parentTarget.getId(), Target.class));
+        assertFalse(isExists(target.getId(), Target.class));
+        assertFalse(isExists(target2.getId(), Target.class));
+        assertFalse(isExists(target3.getId(), Target.class));
     }
 
     @Test
@@ -82,7 +84,7 @@ public class TargetsRESTControllerWithOrmTests extends AbstractTestsWithTargets 
                 .contentType(MediaType.APPLICATION_JSON).content(content))
                 .andExpect(status().isOk()).andReturn();
 
-        assertTrue(targetsDAO.targetById(2).getTitle().equals("default child changed"));
+        assertTrue(targetsDAO.getOne(2l).getTitle().equals("default child changed"));
         assertTrue(result.getResponse().getContentAsString().contains("\"id\":2"));
         assertTrue(result.getResponse().getContentAsString().contains("default child changed"));
     }

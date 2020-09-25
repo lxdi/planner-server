@@ -58,7 +58,7 @@ public class EntityByIdImpl implements IEntityById {
             result = realmDAO.realmById(id);
         }
         if(aClass == Target.class){
-            result = targetsDAO.targetById(id);
+            result = targetsDAO.getOne(id);
         }
         if(aClass == Mean.class){
             result = meansDAO.getOne(id);

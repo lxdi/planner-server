@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.sogoodlabs.planner.test_configs.SpringTestConfig;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -65,7 +64,7 @@ public class TargetsDelegateTests extends SpringTestConfig {
 
         Map<String, Object> result = targetsDelegate.createTarget(newTargetMap);
 
-        newTarget = targetsDAO.targetById((Long) result.get("id"));
+        newTarget = targetsDAO.getOne((Long) result.get("id"));
         assertTrue(meansDAO.meansAssignedToTarget(target).size()==0);
         assertTrue(meansDAO.meansAssignedToTarget(newTarget).size()==2);
 
@@ -79,7 +78,7 @@ public class TargetsDelegateTests extends SpringTestConfig {
 
         Map<String, Object> result = targetsDelegate.createTarget(newTargetMap);
 
-        newTarget = targetsDAO.targetById((Long) result.get("id"));
+        newTarget = targetsDAO.getOne((Long) result.get("id"));
         assertNotNull(newTarget);
     }
 
@@ -105,7 +104,7 @@ public class TargetsDelegateTests extends SpringTestConfig {
         Target target = new Target();
         target.setRealm(realm);
         target.setParent(parent);
-        targetsDAO.saveOrUpdate(target);
+        targetsDAO.save(target);
         return target;
     }
 

@@ -1,9 +1,9 @@
 package com.sogoodlabs.planner.model.dao;
 
-import com.sogoodlabs.planner.model.dao.ISlotDAO;
 import com.sogoodlabs.planner.model.entities.Mean;
 import com.sogoodlabs.planner.model.entities.Slot;
 import com.sogoodlabs.planner.model.entities.Target;
+import com.sogoodlabs.planner.services.SafeDeleteService;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +23,9 @@ public class MeansDaoTests extends AbstractTestsWithTargetsWithMeans {
     @Autowired
     ISlotDAO slotDAO;
 
+    @Autowired
+    private SafeDeleteService safeDeleteService;
+
     @Test
     public void getChildrenTest(){
         List<Mean> children = meansDao.getChildren(meansDao.getOne(1l));
@@ -35,30 +38,30 @@ public class MeansDaoTests extends AbstractTestsWithTargetsWithMeans {
 
     @Test
     public void deleteLinkedTarget(){
-        targetsDAO.deleteTarget(targetsDAO.getTargetByTitle(defaultParentTarget).getId());
+        safeDeleteService.deleteTarget(targetsDAO.getTargetByTitle(defaultParentTarget).getId());
 
         assertTrue(meansDao.getOne(1l)!=null);
         assertTrue(meansDao.getOne(2l)!=null);
         assertTrue(meansDao.getOne(3l)!=null);
 
-        assertTrue(targetsDAO.targetById(1)==null);
-        assertTrue(targetsDAO.targetById(2)==null);
-        assertTrue(targetsDAO.targetById(3)==null);
-        assertTrue(targetsDAO.targetById(4)==null);
+        assertFalse(isExists(parentTarget.getId(), Target.class));
+        assertFalse(isExists(target.getId(), Target.class));
+        assertFalse(isExists(target2.getId(), Target.class));
+        assertFalse(isExists(target3.getId(), Target.class));
     }
 
     @Test
     public void deleteLinkedTarget2(){
-        targetsDAO.deleteTarget(targetsDAO.getTargetByTitle(defaultChildTarget).getId());
+        safeDeleteService.deleteTarget(targetsDAO.getTargetByTitle(defaultChildTarget).getId());
 
         assertTrue(meansDao.getOne(1l)!=null);
         assertTrue(meansDao.getOne(2l)!=null);
         assertTrue(meansDao.getOne(3l)!=null);
 
-        assertNotNull(targetsDAO.targetById(parentTarget.getId()));
-        assertNull(targetsDAO.targetById(target.getId()));
-        assertNotNull(targetsDAO.targetById(target2.getId()));
-        assertNotNull(targetsDAO.targetById(target3.getId()));
+        assertTrue(isExists(parentTarget.getId(), Target.class));
+        assertFalse(isExists(target.getId(), Target.class));
+        assertTrue(isExists(target2.getId(), Target.class));
+        assertTrue(isExists(target3.getId(), Target.class));
     }
 
     @Test
@@ -114,10 +117,10 @@ public class MeansDaoTests extends AbstractTestsWithTargetsWithMeans {
     @Test
     public void updateMeanWithRemovingTargetAssignsTest(){
         Target target1 = new Target("target test 1", realm);
-        targetsDAO.saveOrUpdate(target1);
+        targetsDAO.save(target1);
 
         Target target2 = new Target("target test 2", realm);
-        targetsDAO.saveOrUpdate(target2);
+        targetsDAO.save(target2);
 
         Mean mean = new Mean("Mean test 1", realm);
         mean.getTargets().add(target1);
@@ -139,7 +142,7 @@ public class MeansDaoTests extends AbstractTestsWithTargetsWithMeans {
     @Test
     public void numberOfMeansAssignedToTarget(){
         Target target = new Target("target test 1", realm);
-        targetsDAO.saveOrUpdate(target);
+        targetsDAO.save(target);
 
         Mean mean = new Mean("Mean test 1", realm);
         mean.getTargets().add(target);

@@ -39,20 +39,20 @@ public abstract class AbstractTestsWithTargets extends SpringTestConfig {
         realm = realmDAO.createRealm("test realm");
 
         parentTarget = new Target(defaultParentTarget, realm);
-        targetsDAO.saveOrUpdate(parentTarget);
+        targetsDAO.save(parentTarget);
 
         target2 = new Target(defaultChild2Target, realm);
         target2.setParent(parentTarget);
-        targetsDAO.saveOrUpdate(target2);
+        targetsDAO.save(target2);
 
         target = new Target(defaultChildTarget, realm);
         target.setParent(parentTarget);
         target.setNext(target2);
-        targetsDAO.saveOrUpdate(target);
+        targetsDAO.save(target);
 
         target3 = new Target(defaultChildChildTarget, realm);
         target3.setParent(target2);
-        targetsDAO.saveOrUpdate(target3);
+        targetsDAO.save(target3);
 
         assertTrue(parentTarget.getId()>0);
         assertTrue(target.getId()>0);

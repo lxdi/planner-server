@@ -54,7 +54,7 @@ public class TestCreators extends ATestCreators {
             realmDAO.saveOrUpdate((Realm) object);
         }
         if(object instanceof Target){
-            targetsDAO.saveOrUpdate((Target) object);
+            targetsDAO.save((Target) object);
         }
         if(object instanceof Mean){
             meansDAO.save((Mean) object);
