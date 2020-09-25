@@ -91,10 +91,10 @@ public class EntityByIdImpl implements IEntityById {
             result = hquarterDao.getById(id);
         }
         if(aClass == Slot.class){
-            result = slotDAO.getById(id);
+            result = slotDAO.getOne(id);
         }
         if(aClass == SlotPosition.class){
-            result = slotDAO.getSlotPositionById(id);
+            result = slotDAO.getOne(id);
         }
 
         if(result ==null){

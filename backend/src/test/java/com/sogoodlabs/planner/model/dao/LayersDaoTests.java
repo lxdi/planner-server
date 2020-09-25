@@ -1,7 +1,5 @@
 package com.sogoodlabs.planner.model.dao;
 
-import com.sogoodlabs.planner.model.dao.IHQuarterDAO;
-import com.sogoodlabs.planner.model.dao.ISlotDAO;
 import com.sogoodlabs.planner.model.entities.*;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,7 +58,7 @@ public class LayersDaoTests extends ATestsWithTargetsWithMeansWithLayers{
 
         Slot slot = new Slot();
         slot.setMean(mean);
-        slotDAO.saveOrUpdate(slot);
+        slotDAO.save(slot);
 
         Layer currentLayer = layerDAO.getNextLayerToSchedule(mean);
 
@@ -97,15 +95,15 @@ public class LayersDaoTests extends ATestsWithTargetsWithMeansWithLayers{
 
         Slot slot1 = new Slot(hQuarters.get(1), 1);
         slot1.setMean(mean);
-        slotDAO.saveOrUpdate(slot1);
+        slotDAO.save(slot1);
 
         Slot slot2 = new Slot(hQuarters.get(1), 2);
         slot2.setMean(mean);
-        slotDAO.saveOrUpdate(slot2);
+        slotDAO.save(slot2);
 
         Slot slot3 = new Slot(hQuarters.get(5), 1);
         slot2.setMean(mean);
-        slotDAO.saveOrUpdate(slot3);
+        slotDAO.save(slot3);
 
         assertTrue(layerDAO.getLayerToScheduleForSlot(slot1).getId()==layer.getId());
         assertTrue(layerDAO.getLayerToScheduleForSlot(slot2).getId()==layer2.getId());

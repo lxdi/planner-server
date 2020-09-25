@@ -2,7 +2,6 @@ package com.sogoodlabs.planner.model.dao;
 
 import com.sogoodlabs.planner.model.entities.*;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +44,9 @@ public class TaskMapperDaoTests extends AbstractTestsWithTargets {
 
     @Autowired
     TestCreatorsAnotherSession testCreators;
+
+    @Autowired
+    private ISlotPositionDAO slotPositionDAO;
 
     @Before
     public void init(){
@@ -92,7 +94,7 @@ public class TaskMapperDaoTests extends AbstractTestsWithTargets {
     public void byWeekAndDayTest(){
         SlotPosition slotPosition = new SlotPosition();
         slotPosition.setDayOfWeek(DaysOfWeek.fri);
-        slotDAO.saveOrUpdate(slotPosition);
+        slotPositionDAO.save(slotPosition);
 
         Week week = new Week();
         weekDAO.saveOrUpdate(week);

@@ -92,7 +92,7 @@ public class MeansDaoTests extends AbstractTestsWithTargetsWithMeans {
 
         Slot slot = new Slot();
         slot.setMean(mean);
-        slotDAO.saveOrUpdate(slot);
+        slotDAO.save(slot);
 
         Mean mean2 = new Mean("Mean test 2", realm);
         meansDao.save(mean2);
@@ -102,11 +102,11 @@ public class MeansDaoTests extends AbstractTestsWithTargetsWithMeans {
 
         Slot slot2 = new Slot();
         slot2.setMean(mean3);
-        slotDAO.saveOrUpdate(slot2);
+        slotDAO.save(slot2);
 
         Slot slot3 = new Slot();
         slot3.setMean(mean3);
-        slotDAO.saveOrUpdate(slot3);
+        slotDAO.save(slot3);
 
         assertTrue(meansDao.assignsMeansCount(mean)==1);
         assertTrue(meansDao.assignsMeansCount(mean3)==2);

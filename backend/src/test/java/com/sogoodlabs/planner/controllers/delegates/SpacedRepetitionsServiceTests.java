@@ -45,6 +45,9 @@ public class SpacedRepetitionsServiceTests extends SpringTestConfig {
     @Autowired
     ISlotDAO slotDAO;
 
+    @Autowired
+    private ISlotPositionDAO slotPositionDAO;
+
     @Test
     public void getActualTaskToRepeatTest(){
 
@@ -75,7 +78,7 @@ public class SpacedRepetitionsServiceTests extends SpringTestConfig {
 
         SlotPosition slotPosition = new SlotPosition();
         slotPosition.setDayOfWeek(currentDayOfWeek);
-        slotDAO.saveOrUpdate(slotPosition);
+        slotPositionDAO.save(slotPosition);
 
         TaskMapper taskMapper = new TaskMapper();
         taskMapper.setWeek(currentWeek);

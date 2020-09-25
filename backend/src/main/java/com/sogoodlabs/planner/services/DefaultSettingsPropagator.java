@@ -2,6 +2,7 @@ package com.sogoodlabs.planner.services;
 
 import com.sogoodlabs.planner.model.dao.IHQuarterDAO;
 import com.sogoodlabs.planner.model.dao.ISlotDAO;
+import com.sogoodlabs.planner.model.dao.ISlotPositionDAO;
 import com.sogoodlabs.planner.model.entities.HQuarter;
 import com.sogoodlabs.planner.model.entities.Slot;
 import com.sogoodlabs.planner.model.entities.SlotPosition;
@@ -22,6 +23,9 @@ public class DefaultSettingsPropagator {
     @Autowired
     ISlotDAO slotDAO;
 
+    @Autowired
+    private ISlotPositionDAO slotPositionDAO;
+
     public void propagateSettingsFrom(HQuarter defaultHquarter){
         List<Slot> defaultSlots = slotDAO.getSlotsForHquarter(defaultHquarter);
         if(defaultSlots.size()>0) {
@@ -33,7 +37,7 @@ public class DefaultSettingsPropagator {
                         slot = new Slot();
                         slot.setPosition(defaultSlot.getPosition());
                         slot.setHquarter(hQuarter);
-                        slotDAO.saveOrUpdate(slot);
+                        slotDAO.save(slot);
                     }
                     Stack<SlotPosition> slotPositionsPool = new Stack<>();
                     for(SlotPosition slotPosition : slotDAO.getSlotPositionsForSlot(slot)){
@@ -50,7 +54,7 @@ public class DefaultSettingsPropagator {
                         if(slotPosition.getDayOfWeek()!=defaultSlotPosition.getDayOfWeek() || slotPosition.getPosition()!=defaultSlotPosition.getPosition()){
                             slotPosition.setDayOfWeek(defaultSlotPosition.getDayOfWeek());
                             slotPosition.setPosition(defaultSlotPosition.getPosition());
-                            slotDAO.saveOrUpdate(slotPosition);
+                            slotPositionDAO.save(slotPosition);
                         }
                     }
                     //TODO remove all SlotPositions left in the slotPositionsPool

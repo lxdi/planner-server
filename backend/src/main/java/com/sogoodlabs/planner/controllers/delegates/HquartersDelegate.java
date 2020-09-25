@@ -55,6 +55,9 @@ public class HquartersDelegate {
     @Autowired
     IMapperExclusionDAO mapperExclusionDAO;
 
+    @Autowired
+    private ISlotPositionDAO slotPositionDAO;
+
     public List<Map<String, Object>> getAllQuarters(){
         List<Map<String, Object>> result = new ArrayList<>();
         for(HQuarter hQuarter : quarterDAO.getAllHQuartals()){
@@ -124,20 +127,20 @@ public class HquartersDelegate {
 
     public Map<String, Object> assign(long meanid, long slotid){
         Mean mean = meansDAO.getOne(meanid);
-        Slot slot = slotDAO.getById(slotid);
+        Slot slot = slotDAO.getOne(slotid);
         slot.setMean(mean);
-        slotDAO.saveOrUpdate(slot);
+        slotDAO.save(slot);
         cleanExclusions(slot);
         taskMappersService.rescheduleTaskMappers(mean, false);
         return slotMapper.mapToDtoFull(slot);
     }
 
     public Map<String, Object> unassign(long slotid){
-        Slot slot = slotDAO.getById(slotid);
+        Slot slot = slotDAO.getOne(slotid);
         Mean mean = slot.getMean();
         slot.setLayer(null);
         slot.setMean(null);
-        slotDAO.saveOrUpdate(slot);
+        slotDAO.save(slot);
         cleanExclusions(slot);
         taskMappersService.rescheduleTaskMappers(mean, false);
         return slotMapper.mapToDtoFull(slot);
@@ -235,7 +238,7 @@ public class HquartersDelegate {
                     slotDto.put("hquarterid", hquarterid);
                     Slot slot = slotMapper.mapToEntity(slotDto);
                     //TODO validate before saving
-                    slotDAO.saveOrUpdate(slot);
+                    slotDAO.save(slot);
                     saveSlotPositions((List<Map<String, Object>>) slotDto.get("slotPositions"), slot.getId());
                 }
             }
@@ -248,7 +251,7 @@ public class HquartersDelegate {
                 if(slotPosDto!=null) {
                     slotPosDto.put("slotid", slotid);
                     //TODO validate before saving
-                    slotDAO.saveOrUpdate(commonMapper.mapToEntity(slotPosDto, new SlotPosition()));
+                    slotPositionDAO.save(commonMapper.mapToEntity(slotPosDto, new SlotPosition()));
                 }
             }
         }

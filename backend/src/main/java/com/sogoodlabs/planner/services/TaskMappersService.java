@@ -68,7 +68,7 @@ public class TaskMappersService {
             if(isFullReschedule || slots.get(i).getLayer()==null || slots.get(i).getLayer().getId()!=layers.get(i).getId()){
                 createTaskMappers(layers.get(i), slots.get(i));
                 slots.get(i).setLayer(layers.get(i));
-                slotDAO.saveOrUpdate(slots.get(i));
+                slotDAO.save(slots.get(i));
             }
         }
 
@@ -82,7 +82,7 @@ public class TaskMappersService {
             for(int j = i;j<slots.size();j++){
                 if(slots.get(j).getLayer()!=null) {
                     slots.get(j).setLayer(null);
-                    slotDAO.saveOrUpdate(slots.get(j));
+                    slotDAO.save(slots.get(j));
                 }
             }
         }

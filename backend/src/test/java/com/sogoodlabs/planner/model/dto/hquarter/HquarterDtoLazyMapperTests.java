@@ -2,6 +2,7 @@ package com.sogoodlabs.planner.model.dto.hquarter;
 
 import com.sogoodlabs.planner.model.dao.IHQuarterDAO;
 import com.sogoodlabs.planner.model.dao.ISlotDAO;
+import com.sogoodlabs.planner.model.dao.ISlotPositionDAO;
 import com.sogoodlabs.planner.model.dao.IWeekDAO;
 import com.sogoodlabs.planner.model.dto.HquarterMapper;
 import com.sogoodlabs.planner.model.entities.*;
@@ -30,6 +31,9 @@ public class HquarterDtoLazyMapperTests extends AbstractTestsWithTargets {
     @Autowired
     HquarterMapper hquarterMapper;
 
+    @Autowired
+    private ISlotPositionDAO slotPositionDAO;
+
     HQuarter hQuarter;
     SlotPosition slotPosition;
     Slot slot;
@@ -56,13 +60,13 @@ public class HquarterDtoLazyMapperTests extends AbstractTestsWithTargets {
         slot = new Slot();
         slot.setHquarter(hQuarter);
         slot.setPosition(1);
-        slotDAO.saveOrUpdate(slot);
+        slotDAO.save(slot);
 
         slotPosition = new SlotPosition();
         slotPosition.setSlot(slot);
         slotPosition.setDayOfWeek(DaysOfWeek.thu);
         slotPosition.setPosition(2);
-        slotDAO.saveOrUpdate(slotPosition);
+        slotPositionDAO.save(slotPosition);
 
     }
 

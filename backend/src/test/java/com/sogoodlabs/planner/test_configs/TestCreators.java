@@ -47,6 +47,9 @@ public class TestCreators extends ATestCreators {
     @Autowired
     IMapperExclusionDAO mapperExclusionDAO;
 
+    @Autowired
+    private ISlotPositionDAO slotPositionDAO;
+
 
     @Override
     public void save(Object object) {
@@ -78,10 +81,10 @@ public class TestCreators extends ATestCreators {
             taskTestingDAO.save((TaskTesting) object);
         }
         if(object instanceof Slot){
-            slotDAO.saveOrUpdate((Slot) object);
+            slotDAO.save((Slot) object);
         }
         if(object instanceof SlotPosition){
-            slotDAO.saveOrUpdate((SlotPosition) object);
+            slotPositionDAO.save((SlotPosition) object);
         }
         if(object instanceof SpacedRepetitions){
             spacedRepDAO.save((SpacedRepetitions) object);

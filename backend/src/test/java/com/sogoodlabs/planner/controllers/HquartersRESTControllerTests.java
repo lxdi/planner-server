@@ -1,13 +1,9 @@
 package com.sogoodlabs.planner.controllers;
 
 import com.sogoodlabs.planner.controllers.delegates.HquartersDelegate;
-import com.sogoodlabs.planner.model.dao.IHQuarterDAO;
-import com.sogoodlabs.planner.model.dao.IMeansDAO;
-import com.sogoodlabs.planner.model.dao.ISlotDAO;
-import com.sogoodlabs.planner.model.dao.IWeekDAO;
+import com.sogoodlabs.planner.model.dao.*;
 import com.sogoodlabs.planner.model.entities.*;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -57,6 +53,9 @@ public class HquartersRESTControllerTests extends AbstractTestsWithTargets {
 
     @Autowired
     HquartersDelegate hquartersDelegate;
+
+    @Autowired
+    private ISlotPositionDAO slotPositionDAO;
 
     @Before
     public void init(){
@@ -125,20 +124,20 @@ public class HquartersRESTControllerTests extends AbstractTestsWithTargets {
         HQuarter hQuarter = quarterDAO.getAllHQuartals().get(0);
         Slot slot =  new Slot();
         slot.setHquarter(hQuarter);
-        slotDAO.saveOrUpdate(slot);
+        slotDAO.save(slot);
 
         SlotPosition slotPosition = new SlotPosition();
         slotPosition.setDayOfWeek(DaysOfWeek.mon);
         slotPosition.setPosition(1);
         slotPosition.setSlot(slot);
-        slotDAO.saveOrUpdate(slotPosition);
+        slotPositionDAO.save(slotPosition);
 
         MvcResult result = mockMvc.perform(post("/hquarter/assignmean/"+mean.getId()+"/toslot/"+slot.getId()))
                 .andExpect(status().isOk()).andReturn();
 
-        assertTrue(slotDAO.getById(slot.getId()).getMean()!=null);
-        assertTrue(slotDAO.getById(slot.getId()).getMean().getId()==mean.getId());
-        assertTrue(slotDAO.getById(slot.getId()).getMean().getTitle().equals(mean.getTitle()));
+        assertTrue(slotDAO.getOne(slot.getId()).getMean()!=null);
+        assertTrue(slotDAO.getOne(slot.getId()).getMean().getId()==mean.getId());
+        assertTrue(slotDAO.getOne(slot.getId()).getMean().getTitle().equals(mean.getTitle()));
 
     }
 
@@ -151,14 +150,14 @@ public class HquartersRESTControllerTests extends AbstractTestsWithTargets {
         Slot slot =  new Slot();
         slot.setHquarter(hQuarter);
         slot.setMean(mean);
-        slotDAO.saveOrUpdate(slot);
+        slotDAO.save(slot);
 
         MvcResult result = mockMvc.perform(post("/hquarter/slot/unassign/"+slot.getId()))
                 .andExpect(status().isOk()).andReturn();
 
         //assertTrue(slot.getMean()!=null);
 
-        slot = slotDAO.getById(slot.getId());
+        slot = slotDAO.getOne(slot.getId());
         assertTrue(slot.getMean()==null);
     }
 

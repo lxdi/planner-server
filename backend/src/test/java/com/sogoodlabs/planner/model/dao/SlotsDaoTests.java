@@ -1,8 +1,5 @@
 package com.sogoodlabs.planner.model.dao;
 
-import com.sogoodlabs.planner.model.dao.IHQuarterDAO;
-import com.sogoodlabs.planner.model.dao.IMeansDAO;
-import com.sogoodlabs.planner.model.dao.ISlotDAO;
 import com.sogoodlabs.planner.model.entities.*;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,26 +37,26 @@ public class SlotsDaoTests extends ATestsWithTargetsMeansQuartalsGenerated {
 
         Slot slot1 = new Slot(hQuarters.get(1), 1);
         slot1.setMean(mean);
-        slotDAO.saveOrUpdate(slot1);
+        slotDAO.save(slot1);
 
         Slot slot2 = new Slot(hQuarters.get(3), 1);
         slot2.setMean(mean);
-        slotDAO.saveOrUpdate(slot2);
+        slotDAO.save(slot2);
 
         Slot slot3 = new Slot(hQuarters.get(7), 1);
         slot3.setMean(mean);
-        slotDAO.saveOrUpdate(slot3);
+        slotDAO.save(slot3);
 
-        List<Slot> slotsAfter1 = slotDAO.slotsAfter(slot1);
+        List<Slot> slotsAfter1 = slotDAO.slotsAfter(slot1.getMean(), slot1.getHquarter().getStartWeek().getStartDay());
         assertTrue(slotsAfter1.size()==2);
         assertTrue(slotsAfter1.get(0).getId()==slot2.getId());
         assertTrue(slotsAfter1.get(1).getId()==slot3.getId());
 
-        List<Slot> slotsAfter2 = slotDAO.slotsAfter(slot2);
+        List<Slot> slotsAfter2 = slotDAO.slotsAfter(slot2.getMean(), slot2.getHquarter().getStartWeek().getStartDay());
         assertTrue(slotsAfter2.size()==1);
         assertTrue(slotsAfter2.get(0).getId()==slot3.getId());
 
-        List<Slot> slotsAfter3 = slotDAO.slotsAfter(slot3);
+        List<Slot> slotsAfter3 = slotDAO.slotsAfter(slot3.getMean(), slot3.getHquarter().getStartWeek().getStartDay());
         assertTrue(slotsAfter3.size()==0);
 
     }
@@ -73,18 +70,18 @@ public class SlotsDaoTests extends ATestsWithTargetsMeansQuartalsGenerated {
 
         Slot slot1 = new Slot(hQuarters.get(1), 1);
         slot1.setMean(mean);
-        slotDAO.saveOrUpdate(slot1);
+        slotDAO.save(slot1);
 
         Slot slot2 = new Slot(hQuarters.get(3), 1);
-        slotDAO.saveOrUpdate(slot2);
+        slotDAO.save(slot2);
 
         Slot slot4 = new Slot(hQuarters.get(7), 2);
         slot4.setMean(mean);
-        slotDAO.saveOrUpdate(slot4);
+        slotDAO.save(slot4);
 
         Slot slot3 = new Slot(hQuarters.get(7), 1);
         slot3.setMean(mean);
-        slotDAO.saveOrUpdate(slot3);
+        slotDAO.save(slot3);
 
         List<Slot> slotsWithMean = slotDAO.slotsWithMean(mean);
 
@@ -120,7 +117,7 @@ public class SlotsDaoTests extends ATestsWithTargetsMeansQuartalsGenerated {
         Slot slot = new Slot(hQuarter, position);
         slot.setMean(mean);
         slot.setLayer(layer);
-        slotDAO.saveOrUpdate(slot);
+        slotDAO.save(slot);
         return slot;
     }
 

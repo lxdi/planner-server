@@ -3,7 +3,6 @@ package com.sogoodlabs.planner.controllers.delegates;
 import com.sogoodlabs.planner.model.dao.*;
 import com.sogoodlabs.planner.model.entities.*;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,6 +42,9 @@ public class HquartersDelegate_Unassigns_with2hquarters_Tests extends ATestsWith
     @Autowired
     IWeekDAO weekDAO;
 
+    @Autowired
+    private ISlotPositionDAO slotPositionDAO;
+
     Mean mean;
     HQuarter hQuarter1;
     Slot slot1;
@@ -70,42 +72,42 @@ public class HquartersDelegate_Unassigns_with2hquarters_Tests extends ATestsWith
 
         //----
         slot1 = new Slot(hQuarter1, 1);
-        slotDAO.saveOrUpdate(slot1);
+        slotDAO.save(slot1);
 
         slotPosition11 = new SlotPosition(slot1, DaysOfWeek.mon, 1);
-        slotDAO.saveOrUpdate(slotPosition11);
+        slotPositionDAO.save(slotPosition11);
 
         slotPosition12 = new SlotPosition(slot1, DaysOfWeek.fri, 3);
-        slotDAO.saveOrUpdate(slotPosition12);
+        slotPositionDAO.save(slotPosition12);
 
         slotPosition13 = new SlotPosition(slot1, DaysOfWeek.sun, 2);
-        slotDAO.saveOrUpdate(slotPosition13);
+        slotPositionDAO.save(slotPosition13);
 
         //----
         slot2 = new Slot(hQuarter1, 2);
-        slotDAO.saveOrUpdate(slot2);
+        slotDAO.save(slot2);
 
         slotPosition21 = new SlotPosition(slot2, DaysOfWeek.tue, 1);
-        slotDAO.saveOrUpdate(slotPosition21);
+        slotPositionDAO.save(slotPosition21);
 
         slotPosition22 = new SlotPosition(slot2, DaysOfWeek.fri, 1);
-        slotDAO.saveOrUpdate(slotPosition22);
+        slotPositionDAO.save(slotPosition22);
 
         slotPosition23 = new SlotPosition(slot2, DaysOfWeek.fri, 2);
-        slotDAO.saveOrUpdate(slotPosition23);
+        slotPositionDAO.save(slotPosition23);
 
         //------
         slot3 = new Slot(hQuarter2, 1);
-        slotDAO.saveOrUpdate(slot3);
+        slotDAO.save(slot3);
 
         slotPosition31 = new SlotPosition(slot3, DaysOfWeek.mon, 3);
-        slotDAO.saveOrUpdate(slotPosition31);
+        slotPositionDAO.save(slotPosition31);
 
         slotPosition32 = new SlotPosition(slot3, DaysOfWeek.thu, 1);
-        slotDAO.saveOrUpdate(slotPosition32);
+        slotPositionDAO.save(slotPosition32);
 
         slotPosition33 = new SlotPosition(slot3, DaysOfWeek.fri, 1);
-        slotDAO.saveOrUpdate(slotPosition33);
+        slotPositionDAO.save(slotPosition33);
 
         //----
         mean = new Mean("test mean", realm);
@@ -165,25 +167,25 @@ public class HquartersDelegate_Unassigns_with2hquarters_Tests extends ATestsWith
         hquartersDelegate.assign(mean.getId(), slot2.getId());
         hquartersDelegate.assign(mean.getId(), slot3.getId());
 
-        assertTrue(slotDAO.getById(slot1.getId()).getMean().getId()==mean.getId());
-        assertTrue(slotDAO.getById(slot1.getId()).getLayer().getId()==layerDAO.getLayerAtPriority(mean, 1).getId());
+        assertTrue(slotDAO.getOne(slot1.getId()).getMean().getId()==mean.getId());
+        assertTrue(slotDAO.getOne(slot1.getId()).getLayer().getId()==layerDAO.getLayerAtPriority(mean, 1).getId());
 
-        assertTrue(slotDAO.getById(slot2.getId()).getMean().getId()==mean.getId());
-        assertTrue(slotDAO.getById(slot2.getId()).getLayer().getId()==layerDAO.getLayerAtPriority(mean, 2).getId());
+        assertTrue(slotDAO.getOne(slot2.getId()).getMean().getId()==mean.getId());
+        assertTrue(slotDAO.getOne(slot2.getId()).getLayer().getId()==layerDAO.getLayerAtPriority(mean, 2).getId());
 
-        assertTrue(slotDAO.getById(slot3.getId()).getMean().getId()==mean.getId());
-        assertTrue(slotDAO.getById(slot3.getId()).getLayer()==null);
+        assertTrue(slotDAO.getOne(slot3.getId()).getMean().getId()==mean.getId());
+        assertTrue(slotDAO.getOne(slot3.getId()).getLayer()==null);
 
         hquartersDelegate.unassign(slot2.getId());
 
-        assertTrue(slotDAO.getById(slot1.getId()).getMean().getId()==mean.getId());
-        assertTrue(slotDAO.getById(slot1.getId()).getLayer().getId()==layerDAO.getLayerAtPriority(mean, 1).getId());
+        assertTrue(slotDAO.getOne(slot1.getId()).getMean().getId()==mean.getId());
+        assertTrue(slotDAO.getOne(slot1.getId()).getLayer().getId()==layerDAO.getLayerAtPriority(mean, 1).getId());
 
-        assertTrue(slotDAO.getById(slot2.getId()).getMean()==null);
-        assertTrue(slotDAO.getById(slot2.getId()).getLayer()==null);
+        assertTrue(slotDAO.getOne(slot2.getId()).getMean()==null);
+        assertTrue(slotDAO.getOne(slot2.getId()).getLayer()==null);
 
-        assertTrue(slotDAO.getById(slot3.getId()).getMean().getId()==mean.getId());
-        assertTrue(slotDAO.getById(slot3.getId()).getLayer().getId()==layerDAO.getLayerAtPriority(mean, 2).getId());
+        assertTrue(slotDAO.getOne(slot3.getId()).getMean().getId()==mean.getId());
+        assertTrue(slotDAO.getOne(slot3.getId()).getLayer().getId()==layerDAO.getLayerAtPriority(mean, 2).getId());
 
         List<Week> weeksHq1 = weekDAO.weeksOfHquarter(hQuarter1);
         List<Week> weeksHq2 = weekDAO.weeksOfHquarter(hQuarter2);

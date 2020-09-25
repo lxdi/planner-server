@@ -3,6 +3,7 @@ package com.sogoodlabs.planner.controllers;
 import com.sogoodlabs.planner.controllers.delegates.HquartersDelegate;
 import com.sogoodlabs.planner.model.dao.IHQuarterDAO;
 import com.sogoodlabs.planner.model.dao.ISlotDAO;
+import com.sogoodlabs.planner.model.dao.ISlotPositionDAO;
 import com.sogoodlabs.planner.model.dao.IWeekDAO;
 import com.sogoodlabs.planner.model.entities.*;
 import org.junit.Before;
@@ -39,6 +40,9 @@ public class HquartersRESTController_default_tests extends AbstractTestsWithTarg
     @Autowired
     HquartersDelegate hquartersDelegate;
 
+    @Autowired
+    private ISlotPositionDAO slotPositionDAO;
+
     @Before
     public void init(){
         super.init();
@@ -68,10 +72,10 @@ public class HquartersRESTController_default_tests extends AbstractTestsWithTarg
 
         Slot slot1 = new Slot();
         slot1.setHquarter(defaultHquarter);
-        slotDAO.saveOrUpdate(slot1);
+        slotDAO.save(slot1);
 
         SlotPosition slotPosition1 = new SlotPosition(slot1, DaysOfWeek.sat, 1);
-        slotDAO.saveOrUpdate(slotPosition1);
+        slotPositionDAO.save(slotPosition1);
 
 
         String content = "{\"id\":"+defaultHquarter.getId()+","+

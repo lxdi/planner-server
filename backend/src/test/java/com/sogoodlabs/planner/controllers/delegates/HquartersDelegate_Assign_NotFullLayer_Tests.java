@@ -42,6 +42,9 @@ public class HquartersDelegate_Assign_NotFullLayer_Tests extends ATestsWithTarge
     @Autowired
     IWeekDAO weekDAO;
 
+    @Autowired
+    private ISlotPositionDAO slotPositionDAO;
+
     Mean mean;
     HQuarter hQuarter1;
     Slot slot1;
@@ -64,29 +67,29 @@ public class HquartersDelegate_Assign_NotFullLayer_Tests extends ATestsWithTarge
 
         //----
         slot1 = new Slot(hQuarter1, 1);
-        slotDAO.saveOrUpdate(slot1);
+        slotDAO.save(slot1);
 
         slotPosition11 = new SlotPosition(slot1, DaysOfWeek.mon, 1);
-        slotDAO.saveOrUpdate(slotPosition11);
+        slotPositionDAO.save(slotPosition11);
 
         slotPosition12 = new SlotPosition(slot1, DaysOfWeek.fri, 3);
-        slotDAO.saveOrUpdate(slotPosition12);
+        slotPositionDAO.save(slotPosition12);
 
         slotPosition13 = new SlotPosition(slot1, DaysOfWeek.sun, 2);
-        slotDAO.saveOrUpdate(slotPosition13);
+        slotPositionDAO.save(slotPosition13);
 
         //----
         slot2 = new Slot(hQuarter2, 1);
-        slotDAO.saveOrUpdate(slot2);
+        slotDAO.save(slot2);
 
         slotPosition21 = new SlotPosition(slot2, DaysOfWeek.tue, 1);
-        slotDAO.saveOrUpdate(slotPosition21);
+        slotPositionDAO.save(slotPosition21);
 
         slotPosition22 = new SlotPosition(slot2, DaysOfWeek.fri, 1);
-        slotDAO.saveOrUpdate(slotPosition22);
+        slotPositionDAO.save(slotPosition22);
 
         slotPosition23 = new SlotPosition(slot2, DaysOfWeek.fri, 2);
-        slotDAO.saveOrUpdate(slotPosition23);
+        slotPositionDAO.save(slotPosition23);
 
         //----
         mean = new Mean("test mean", realm);
