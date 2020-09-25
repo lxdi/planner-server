@@ -11,7 +11,7 @@ import java.util.List;
 @Transactional
 public interface IRepPlanDAO extends JpaRepository<RepetitionPlan, Long> {
 
-    @Query("from RepetitionPlan where title = :title")
-    RepetitionPlan getByTitle(@Param("title") String title);
+    //@Query("from RepetitionPlan where title = :title")
+    RepetitionPlan findByTitle(String title);
 
 }

@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 
 @Service
 @Transactional
@@ -134,6 +136,20 @@ public class SafeDeleteService {
         }
 
         tasksDAO.delete(task);
+    }
+
+    /**
+     *  Removes all the unfinished repetitions related to the task
+     *
+     */
+    public void removeRepetitionsLeftForTask(long taskid){
+        SpacedRepetitions spacedRepetitions = spacedRepDAO.getSRforTask(taskid);
+        List<Repetition> repetitions = repDAO.getRepsbySpacedRepId(spacedRepetitions.getId());
+        repetitions.forEach(rep -> {
+            if(rep.getFactDate()==null){
+                repDAO.delete(rep);
+            }
+        });
     }
 
 }

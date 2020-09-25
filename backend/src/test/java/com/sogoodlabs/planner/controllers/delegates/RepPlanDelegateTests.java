@@ -26,8 +26,7 @@ public class RepPlanDelegateTests extends SpringTestConfig {
         List<Map<String, Object>> result = repPlanDelegate.getAll();
         RepetitionPlan repetitionPlanReceived = commonMapper.mapToEntity(result.get(0), new RepetitionPlan());
 
-        assertTrue(result.size()==3);
-        assertTrue(repetitionPlanReceived.getId() == 1);
+        assertTrue(result.size()==4);
         assertTrue(repetitionPlanReceived.getTitle().equals(DefaultRepPlanCreationJob.ONE_YEAR_LONG_REP_PLAN_TITLE));
 
     }

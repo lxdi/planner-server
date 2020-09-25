@@ -3,6 +3,7 @@ package com.sogoodlabs.planner.controllers.delegates;
 import com.sogoodlabs.common_mapper.CommonMapper;
 import com.sogoodlabs.planner.model.dao.*;
 import com.sogoodlabs.planner.model.entities.*;
+import com.sogoodlabs.planner.services.RepetitionsPlannerService;
 import com.sogoodlabs.planner.services.SafeDeleteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,9 +28,6 @@ public class TasksDelegate {
     ISpacedRepDAO spacedRepDAO;
 
     @Autowired
-    IRepPlanDAO repPlanDAO;
-
-    @Autowired
     IRepDAO repDAO;
 
     @Autowired
@@ -40,6 +38,9 @@ public class TasksDelegate {
 
     @Autowired
     private SafeDeleteService safeDeleteService;
+
+    @Autowired
+    private RepetitionsPlannerService repetitionsPlannerService;
 
     public Map<String, Object> createTask(Map<String, Object> taskDto){
         Task task = commonMapper.mapToEntity(taskDto, new Task());
@@ -67,59 +68,8 @@ public class TasksDelegate {
         Task task = tasksDAO.getOne(taskid);
         TaskMapper taskMapper = taskMappersDAO.taskMapperForTask(task);
         finishTask(taskMapper);
-        SpacedRepetitions spacedRepetitions = spacedRepDAO.getSRforTaskMapper(taskMapper.getId());
-        if(spacedRepetitions == null){
-            spacedRepetitions = new SpacedRepetitions();
-            spacedRepetitions.setTaskMapper(taskMapper);
-            spacedRepetitions.setRepetitionPlan(repPlanDAO.getOne(repPlanid));
-            spacedRepDAO.save(spacedRepetitions);
-            planRepetitions(spacedRepetitions);
-        } else {
-            //TODO clean spacedRep
-        }
-        if(testingsDto!=null){
-            testingsDto.forEach(testingDto -> {
-                if(testingDto.get("id")==null)
-                    addNewTestingToTask(taskid, testingDto);
-                else {
-                    if(testingDto.get("taskid")==null || Long.parseLong(""+testingDto.get("taskid"))!=taskid){
-                        throw new UnsupportedOperationException("This taskTesting is not for the current task");
-                    }
-                    taskTestingDAO.save(commonMapper.mapToEntity(testingDto, new TaskTesting()));
-                }
-            });
-        }
-    }
-
-    public Repetition finishRepetition(long repId){
-        Repetition repetition = repDAO.getOne(repId);
-        repetition.setFactDate(DateUtils.currentDate());
-        repDAO.save(repetition);
-        return repetition;
-    }
-
-    /**
-     * Finishes repetition and make repetitionOnly all repetitions after
-     * @param repId
-     */
-    public void finishRepetitionWithLowing(long repId){
-        Repetition repetition = finishRepetition(repId);
-        repDAO.makeRepOnlyAllUnfinished(repetition.getSpacedRepetitions());
-    }
-
-
-    /**
-     *  Removes all the unfinished repetitions related to the task
-     *
-     */
-    public void removeRepetitionsLeftForTask(long taskid){
-        SpacedRepetitions spacedRepetitions = spacedRepDAO.getSRforTask(taskid);
-        List<Repetition> repetitions = repDAO.getRepsbySpacedRepId(spacedRepetitions.getId());
-        repetitions.forEach(rep -> {
-            if(rep.getFactDate()==null){
-                repDAO.delete(rep);
-            }
-        });
+        repetitionsPlannerService.getOrCreateSpacedRepetition(taskMapper, repPlanid);
+        saveTestings(taskid, testingsDto);
     }
 
     public Map<String, Object> addNewTestingToTask(long taskid, Map<String, Object> testingDto){
@@ -142,8 +92,9 @@ public class TasksDelegate {
         if(sr == null){
             return new ArrayList<>();
         }
-        List<Repetition> repetitions = repDAO.getRepsbySpacedRepId(sr.getId());
-        return repetitions.stream().map(commonMapper::mapToDto).collect(Collectors.toList());
+        return repDAO.getRepsbySpacedRepId(sr.getId()).stream()
+                .map(commonMapper::mapToDto)
+                .collect(Collectors.toList());
     }
 
     private void finishTask(TaskMapper taskMapper){
@@ -154,18 +105,19 @@ public class TasksDelegate {
         taskMappersDAO.saveOrUpdate(taskMapper);
     }
 
-    private List<Repetition> planRepetitions(SpacedRepetitions spacedRepetitions){
-        List<Repetition> repetitions = new ArrayList<>();
-        RepetitionPlan repetitionPlan = spacedRepetitions.getRepetitionPlan();
-        for(int weeksToRep : repetitionPlan.getPlan()){
-            Repetition repetition = new Repetition();
-            repetition.setSpacedRepetitions(spacedRepetitions);
-            Date planDate = DateUtils.addWeeks(spacedRepetitions.getTaskMapper().getFinishDate(), weeksToRep);
-            repetition.setPlanDate(planDate);
-            repDAO.save(repetition);
+    private void saveTestings(long taskid, List<Map<String, Object>> testingsDto){
+        if(testingsDto!=null){
+            testingsDto.forEach(testingDto -> {
+                if(testingDto.get("id")==null)
+                    addNewTestingToTask(taskid, testingDto);
+                else {
+                    if(testingDto.get("taskid")==null || Long.parseLong(""+testingDto.get("taskid"))!=taskid){
+                        throw new UnsupportedOperationException("This taskTesting is not for the current task");
+                    }
+                    taskTestingDAO.save(commonMapper.mapToEntity(testingDto, new TaskTesting()));
+                }
+            });
         }
-        return repetitions;
     }
-
 
 }

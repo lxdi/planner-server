@@ -16,6 +16,8 @@ public class RepetitionPlan {
 
     int[] plan;
 
+    boolean dayStep;
+
     public long getId() {
         return id;
     }
@@ -35,5 +37,12 @@ public class RepetitionPlan {
     }
     public void setPlan(int[] plan) {
         this.plan = plan;
+    }
+
+    public boolean getDayStep() {
+        return dayStep;
+    }
+    public void setDayStep(boolean dayStep) {
+        this.dayStep = dayStep;
     }
 }
