@@ -23,6 +23,7 @@ import java.util.Map;
 public class SpacedRepetitionsService {
 
     private static final String REPETITION_FIELD = "repetition";
+    private static final String DAY_REPETITION_FIELD = "day_rep";
 
 
     @Autowired
@@ -78,7 +79,9 @@ public class SpacedRepetitionsService {
     private Map<String, Object> getTaskDto(Task task, Repetition repetition){
         Map<String, Object> taskDto = tasksDtoMapper.mapToDtoFull(task);
         if(repetition!=null){
-            taskDto.put(REPETITION_FIELD, commonMapper.mapToDto(repetition, new HashMap<>()));
+            Map<String, Object> repDto = commonMapper.mapToDto(repetition, new HashMap<>());
+            repDto.put(DAY_REPETITION_FIELD, repetition.getSpacedRepetitions().getRepetitionPlan().getDayStep());
+            taskDto.put(REPETITION_FIELD, repDto);
         }
         return taskDto;
     }

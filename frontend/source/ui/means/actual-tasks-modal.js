@@ -101,6 +101,15 @@ const taskLink = function(task, highlight){
                       onMouseEnter={()=>fireEvent('overlay-info', 'show', [task.fullname])}
   										onMouseOver={(e)=>fireEvent('overlay-info', 'update-pos', [e.nativeEvent.clientX+15, e.nativeEvent.clientY-10])}
   										onMouseLeave={()=>fireEvent('overlay-info', 'hide')}>
-            <a href='#' onClick={()=>fireEvent('task-modal', 'open', [null, task, true, true])}>{task.title}</a>
+            <a href='#' onClick={()=>fireEvent('task-modal', 'open', [null, task, true, true])}>{taskTitle(task)}</a>
       </div>
+}
+
+const taskTitle = function(task){
+  console.log(task)
+  if(task.repetition != null && task.repetition.day_rep){
+    return task.title + ' [m]'
+  } else {
+    return task.title
+  }
 }
