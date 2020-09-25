@@ -1,4 +1,4 @@
-package com.sogoodlabs.planner.services;
+package com.sogoodlabs.planner.util;
 
 import java.sql.Date;
 import java.text.ParseException;

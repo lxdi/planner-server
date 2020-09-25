@@ -1,9 +1,9 @@
 package com.sogoodlabs.planner.services;
 
+import com.sogoodlabs.planner.util.DateUtils;
 import org.junit.Test;
 
 import java.sql.Date;
-import java.time.temporal.ChronoUnit;
 
 import static org.junit.Assert.assertTrue;
 

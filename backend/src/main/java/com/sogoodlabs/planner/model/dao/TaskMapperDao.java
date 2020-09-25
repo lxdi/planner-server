@@ -2,17 +2,13 @@ package com.sogoodlabs.planner.model.dao;
 
 import com.sogoodlabs.planner.model.entities.*;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.sogoodlabs.planner.services.DateUtils;
+import com.sogoodlabs.planner.util.DateUtils;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceContext;
 import java.sql.Date;
-import java.time.DayOfWeek;
 import java.util.ArrayList;
 import java.util.List;
 

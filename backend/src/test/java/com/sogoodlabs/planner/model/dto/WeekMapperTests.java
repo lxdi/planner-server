@@ -8,7 +8,7 @@ import org.junit.Test;
 import java.util.TimeZone;
 
 import static junit.framework.TestCase.assertTrue;
-import static com.sogoodlabs.planner.services.DateUtils.toDate;
+import static com.sogoodlabs.planner.util.DateUtils.toDate;
 
 public class WeekMapperTests {
 

@@ -7,7 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-import com.sogoodlabs.planner.services.DateUtils;
+import com.sogoodlabs.planner.util.DateUtils;
 import com.sogoodlabs.planner.test_configs.SpringTestConfig;
 
 import javax.persistence.EntityManager;

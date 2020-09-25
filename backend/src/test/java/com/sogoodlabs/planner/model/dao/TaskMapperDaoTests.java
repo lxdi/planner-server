@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import com.sogoodlabs.planner.services.QuarterGenerator;
 import com.sogoodlabs.planner.test_configs.AbstractTestsWithTargets;
-import com.sogoodlabs.planner.services.DateUtils;
+import com.sogoodlabs.planner.util.DateUtils;
 import com.sogoodlabs.planner.test_configs.TestCreatorsAnotherSession;
 
 import javax.persistence.EntityManager;

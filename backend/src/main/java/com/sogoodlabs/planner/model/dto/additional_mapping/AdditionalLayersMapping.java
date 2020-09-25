@@ -7,7 +7,7 @@ import com.sogoodlabs.planner.model.entities.Layer;
 import com.sogoodlabs.planner.model.entities.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.sogoodlabs.planner.services.StringUtils;
+import com.sogoodlabs.planner.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;

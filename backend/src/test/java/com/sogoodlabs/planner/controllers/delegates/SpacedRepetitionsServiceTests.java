@@ -5,7 +5,7 @@ import com.sogoodlabs.planner.model.entities.*;
 import com.sogoodlabs.planner.services.SpacedRepetitionsService;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import com.sogoodlabs.planner.services.DateUtils;
+import com.sogoodlabs.planner.util.DateUtils;
 import com.sogoodlabs.planner.services.WeeksGenerator;
 import com.sogoodlabs.planner.test_configs.SpringTestConfig;
 

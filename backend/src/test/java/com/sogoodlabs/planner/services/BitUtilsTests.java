@@ -1,5 +1,6 @@
 package com.sogoodlabs.planner.services;
 
+import com.sogoodlabs.planner.util.BitUtils;
 import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;

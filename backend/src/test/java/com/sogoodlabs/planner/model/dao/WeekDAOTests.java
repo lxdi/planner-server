@@ -1,14 +1,11 @@
 package com.sogoodlabs.planner.model.dao;
 
-import com.sogoodlabs.planner.model.dao.IHQuarterDAO;
-import com.sogoodlabs.planner.model.dao.IWeekDAO;
 import com.sogoodlabs.planner.model.entities.HQuarter;
 import com.sogoodlabs.planner.model.entities.Week;
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-import com.sogoodlabs.planner.services.DateUtils;
+import com.sogoodlabs.planner.util.DateUtils;
 import com.sogoodlabs.planner.test_configs.AbstractTestsWithTargets;
 import com.sogoodlabs.planner.services.QuarterGenerator;
 
@@ -17,7 +14,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static com.sogoodlabs.planner.services.DateUtils.toDate;
+import static com.sogoodlabs.planner.util.DateUtils.toDate;
 
 /**
  * Created by Alexander on 23.04.2018.

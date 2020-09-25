@@ -1,9 +1,9 @@
 package com.sogoodlabs.planner.services;
 
-import com.sogoodlabs.common_mapper.CommonMapper;
 import com.sogoodlabs.planner.model.entities.DaysOfWeek;
 import com.sogoodlabs.planner.model.entities.Subject;
 import com.sogoodlabs.planner.model.entities.Task;
+import com.sogoodlabs.planner.util.StringUtils;
 import org.junit.Test;
 
 import java.util.ArrayList;

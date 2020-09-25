@@ -7,7 +7,7 @@ import com.sogoodlabs.planner.model.dao.ITopicDAO;
 import com.sogoodlabs.planner.model.entities.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.sogoodlabs.planner.services.StringUtils;
+import com.sogoodlabs.planner.util.StringUtils;
 
 import java.util.*;
 

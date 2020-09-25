@@ -3,8 +3,8 @@ package com.sogoodlabs.planner.model.dto;
 import com.sogoodlabs.planner.model.entities.*;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import com.sogoodlabs.planner.services.DateUtils;
-import com.sogoodlabs.planner.services.StringUtils;
+import com.sogoodlabs.planner.util.DateUtils;
+import com.sogoodlabs.planner.util.StringUtils;
 import com.sogoodlabs.planner.test_configs.SpringTestConfig;
 import com.sogoodlabs.planner.test_configs.TestCreatorsAnotherSession;
 

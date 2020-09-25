@@ -1,4 +1,4 @@
-package com.sogoodlabs.planner.services;
+package com.sogoodlabs.planner.util;
 
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;

@@ -7,7 +7,6 @@ import com.sogoodlabs.planner.model.entities.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.sogoodlabs.planner.services.DateUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;

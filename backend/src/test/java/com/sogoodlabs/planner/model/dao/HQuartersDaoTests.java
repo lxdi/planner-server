@@ -6,14 +6,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-import com.sogoodlabs.planner.services.DateUtils;
+import com.sogoodlabs.planner.util.DateUtils;
 import com.sogoodlabs.planner.test_configs.ATestsWithTargetsMeansQuartalsGenerated;
 
 import java.sql.Date;
 import java.util.List;
 
 import static junit.framework.TestCase.assertTrue;
-import static com.sogoodlabs.planner.services.DateUtils.fromDate;
+import static com.sogoodlabs.planner.util.DateUtils.fromDate;
 
 @Transactional
 public class HQuartersDaoTests extends ATestsWithTargetsMeansQuartalsGenerated {

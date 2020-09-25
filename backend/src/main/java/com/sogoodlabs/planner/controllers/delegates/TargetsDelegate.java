@@ -11,7 +11,7 @@ import com.sogoodlabs.planner.services.SafeDeleteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.sogoodlabs.planner.services.JsonParsingFixUtils;
+import com.sogoodlabs.planner.util.JsonParsingFixUtils;
 
 import java.util.ArrayList;
 import java.util.List;

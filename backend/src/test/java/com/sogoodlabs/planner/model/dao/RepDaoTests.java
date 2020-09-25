@@ -1,10 +1,9 @@
 package com.sogoodlabs.planner.model.dao;
 
-import com.sogoodlabs.planner.model.dao.IRepDAO;
 import com.sogoodlabs.planner.model.entities.Repetition;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import com.sogoodlabs.planner.services.DateUtils;
+import com.sogoodlabs.planner.util.DateUtils;
 import com.sogoodlabs.planner.test_configs.SpringTestConfig;
 
 import java.util.List;

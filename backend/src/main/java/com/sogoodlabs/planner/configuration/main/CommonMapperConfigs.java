@@ -6,7 +6,7 @@ import com.sogoodlabs.common_mapper.util.GetterSetterUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import com.sogoodlabs.planner.services.DateUtils;
+import com.sogoodlabs.planner.util.DateUtils;
 
 import java.lang.reflect.Method;
 import java.sql.Date;

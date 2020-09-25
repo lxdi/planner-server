@@ -1,8 +1,7 @@
 package com.sogoodlabs.planner.test_configs;
 
 import com.sogoodlabs.planner.model.entities.*;
-import org.springframework.stereotype.Service;
-import com.sogoodlabs.planner.services.DateUtils;
+import com.sogoodlabs.planner.util.DateUtils;
 
 import java.sql.Date;
 import java.util.ArrayList;

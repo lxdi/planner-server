@@ -8,7 +8,7 @@ import com.sogoodlabs.planner.model.entities.Mean;
 import com.sogoodlabs.planner.model.entities.Target;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.sogoodlabs.planner.services.JsonParsingFixUtils;
+import com.sogoodlabs.planner.util.JsonParsingFixUtils;
 
 import java.util.ArrayList;
 import java.util.List;

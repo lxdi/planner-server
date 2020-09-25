@@ -10,7 +10,7 @@ import com.sogoodlabs.planner.model.entities.Task;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-import com.sogoodlabs.planner.services.StringUtils;
+import com.sogoodlabs.planner.util.StringUtils;
 import com.sogoodlabs.planner.test_configs.SpringTestConfig;
 
 import java.util.HashMap;

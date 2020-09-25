@@ -9,13 +9,13 @@ import com.sogoodlabs.planner.model.entities.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import com.sogoodlabs.planner.services.StringUtils;
+import com.sogoodlabs.planner.util.StringUtils;
 import com.sogoodlabs.planner.test_configs.AbstractTestsWithTargets;
 
 import java.util.Map;
 
 import static junit.framework.TestCase.assertTrue;
-import static com.sogoodlabs.planner.services.DateUtils.toDate;
+import static com.sogoodlabs.planner.util.DateUtils.toDate;
 
 public class HquarterDtoLazyMapperTests extends AbstractTestsWithTargets {
 

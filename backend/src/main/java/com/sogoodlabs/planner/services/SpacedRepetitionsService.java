@@ -6,12 +6,11 @@ import com.sogoodlabs.planner.model.dao.IRepDAO;
 import com.sogoodlabs.planner.model.dao.ITaskMappersDAO;
 import com.sogoodlabs.planner.model.dao.IWeekDAO;
 import com.sogoodlabs.planner.model.dto.TasksDtoMapper;
-import com.sogoodlabs.planner.model.dto.additional_mapping.AdditionalTasksMapping;
 import com.sogoodlabs.planner.model.entities.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.sogoodlabs.planner.services.DateUtils;
+import com.sogoodlabs.planner.util.DateUtils;
 
 import java.sql.Date;
 import java.util.ArrayList;

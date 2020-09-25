@@ -10,7 +10,7 @@ import com.sogoodlabs.planner.services.TaskMappersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.sogoodlabs.planner.services.DateUtils;
+import com.sogoodlabs.planner.util.DateUtils;
 import com.sogoodlabs.planner.services.QuarterGenerator;
 
 import java.sql.Date;

@@ -1,4 +1,4 @@
-package com.sogoodlabs.planner.model;
+package com.sogoodlabs.planner.util;
 
 import com.sogoodlabs.planner.model.entities.SlotPosition;
 import com.sogoodlabs.planner.model.entities.Task;
@@ -7,11 +7,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@Service
-@Transactional
 public class SortUtils {
 
-    public List<Task> sortTasks(List<Task> taskList){
+    public static List<Task> sortTasks(List<Task> taskList){
         taskList.sort((task1, task2) -> {
             if(task1.getSubject().getPosition()>task2.getSubject().getPosition()){
                 return 1;
@@ -32,7 +30,7 @@ public class SortUtils {
         return taskList;
     }
 
-    public List<SlotPosition> sortSlotPositions(List<SlotPosition> slotPositionList){
+    public static List<SlotPosition> sortSlotPositions(List<SlotPosition> slotPositionList){
         slotPositionList.sort((sp1, sp2) -> {
             if(sp1.getDayOfWeek().getId()>sp2.getDayOfWeek().getId()){
                 return 1;

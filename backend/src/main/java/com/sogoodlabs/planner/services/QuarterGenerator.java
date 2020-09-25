@@ -12,8 +12,8 @@ import java.sql.Date;
 import java.time.DayOfWeek;
 import java.util.List;
 
-import static com.sogoodlabs.planner.services.DateUtils.fromDate;
-import static com.sogoodlabs.planner.services.DateUtils.toDate;
+import static com.sogoodlabs.planner.util.DateUtils.fromDate;
+import static com.sogoodlabs.planner.util.DateUtils.toDate;
 
 /**
  * Created by Alexander on 22.04.2018.

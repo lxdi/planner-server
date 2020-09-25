@@ -1,8 +1,8 @@
 package com.sogoodlabs.planner.services;
 
-import com.sogoodlabs.planner.model.SortUtils;
 import com.sogoodlabs.planner.model.dao.*;
 import com.sogoodlabs.planner.model.entities.*;
+import com.sogoodlabs.planner.util.SortUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,9 +30,6 @@ public class TaskMappersService {
     ITaskMappersDAO taskMappersDAO;
 
     @Autowired
-    SortUtils sortUtils;
-
-    @Autowired
     IMapperExclusionDAO mapperExclusionDAO;
 
     public void unassignTasksForLayer(Layer layer){
@@ -47,16 +44,6 @@ public class TaskMappersService {
                 }
             }
         }
-    }
-
-    private Stack<Task> tasksInStack(List<Task> tasks){
-        Stack<Task> result = new Stack<>();
-        if(tasks.size()>0) {
-            for (int i = tasks.size() - 1; i >= 0; i--) {
-                result.push(tasks.get(i));
-            }
-        }
-        return result;
     }
 
     public void rescheduleTaskMappers(Mean mean, boolean isFullReschedule){
@@ -101,6 +88,26 @@ public class TaskMappersService {
         slots.forEach(slot -> createTaskMappers(slot.getLayer(), slot));
     }
 
+    public void createTaskMappers(Layer layerToMap, Slot slot){
+        if(layerToMap!=null){
+            List<Task> tasks = SortUtils.sortTasks(tasksDAO.findByLayer(layerToMap));
+            if(tasks.size()>0) {
+                List<SlotPosition> slotPositions = SortUtils.sortSlotPositions(slotDAO.getSlotPositionsForSlot(slot));
+                createTaskMappers(weekDAO.weeksOfHquarter(slot.getHquarter()), slotPositions, putTasksInStack(tasks));
+            }
+        }
+    }
+
+    private Stack<Task> putTasksInStack(List<Task> tasks){
+        Stack<Task> result = new Stack<>();
+        if(tasks.size()>0) {
+            for (int i = tasks.size() - 1; i >= 0; i--) {
+                result.push(tasks.get(i));
+            }
+        }
+        return result;
+    }
+
     private MapperExclusion getOrCreateMapperExclusion(Week week, SlotPosition sp){
         MapperExclusion mapperExclusion = mapperExclusionDAO.getByWeekBySP(week, sp);
         if(mapperExclusion==null){
@@ -110,16 +117,6 @@ public class TaskMappersService {
             mapperExclusion = mapperExclusionDAO.save(mapperExclusion);
         }
         return mapperExclusion;
-    }
-
-    public void createTaskMappers(Layer layerToMap, Slot slot){
-        if(layerToMap!=null){
-            List<Task> tasks = sortUtils.sortTasks(tasksDAO.findByLayer(layerToMap));
-            if(tasks.size()>0) {
-                List<SlotPosition> slotPositions = sortUtils.sortSlotPositions(slotDAO.getSlotPositionsForSlot(slot));
-                createTaskMappers(weekDAO.weeksOfHquarter(slot.getHquarter()), slotPositions, tasksInStack(tasks));
-            }
-        }
     }
 
     private void createTaskMappers(List<Week> weeks, List<SlotPosition> slotPositions, Stack<Task> taskStack){

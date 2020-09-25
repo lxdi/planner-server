@@ -25,7 +25,7 @@ import static junit.framework.TestCase.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static com.sogoodlabs.planner.services.DateUtils.fromDate;
+import static com.sogoodlabs.planner.util.DateUtils.fromDate;
 
 @Transactional(propagation = Propagation.REQUIRES_NEW)
 public class HquartersRESTControllerTests extends AbstractTestsWithTargets {

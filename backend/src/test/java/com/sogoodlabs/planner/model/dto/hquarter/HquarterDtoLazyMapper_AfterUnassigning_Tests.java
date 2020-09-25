@@ -8,7 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-import com.sogoodlabs.planner.services.StringUtils;
+import com.sogoodlabs.planner.util.StringUtils;
 import com.sogoodlabs.planner.test_configs.ATestsWithTargetsMeansQuartalsGenerated;
 import com.sogoodlabs.planner.test_configs.WeeksMappingChecker;
 

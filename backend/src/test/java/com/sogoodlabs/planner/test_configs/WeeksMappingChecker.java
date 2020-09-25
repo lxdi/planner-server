@@ -1,7 +1,7 @@
 package com.sogoodlabs.planner.test_configs;
 
 import com.sogoodlabs.planner.model.entities.DaysOfWeek;
-import com.sogoodlabs.planner.services.StringUtils;
+import com.sogoodlabs.planner.util.StringUtils;
 
 import java.util.List;
 import java.util.Map;
