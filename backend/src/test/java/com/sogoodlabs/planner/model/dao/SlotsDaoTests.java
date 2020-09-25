@@ -34,7 +34,7 @@ public class SlotsDaoTests extends ATestsWithTargetsMeansQuartalsGenerated {
     @Test
     public void slotsAfterTest(){
         Mean mean = new Mean("test mean", realm);
-        meansDAO.saveOrUpdate(mean);
+        meansDAO.save(mean);
 
         List<HQuarter> hQuarters = ihQuarterDAO.getHQuartersInYear(2018);
 
@@ -67,7 +67,7 @@ public class SlotsDaoTests extends ATestsWithTargetsMeansQuartalsGenerated {
     @Test
     public void slotsWithMeanTest(){
         Mean mean = new Mean("test mean", realm);
-        meansDAO.saveOrUpdate(mean);
+        meansDAO.save(mean);
 
         List<HQuarter> hQuarters = ihQuarterDAO.getHQuartersInYear(2018);
 
@@ -126,7 +126,7 @@ public class SlotsDaoTests extends ATestsWithTargetsMeansQuartalsGenerated {
 
     private Mean createMean(String title, Realm realm){
         Mean mean = new Mean(title, realm);
-        meansDAO.saveOrUpdate(mean);
+        meansDAO.save(mean);
         return mean;
     }
 

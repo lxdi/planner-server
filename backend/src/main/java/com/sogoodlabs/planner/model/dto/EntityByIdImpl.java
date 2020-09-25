@@ -61,7 +61,7 @@ public class EntityByIdImpl implements IEntityById {
             result = targetsDAO.targetById(id);
         }
         if(aClass == Mean.class){
-            result = meansDAO.meanById(id);
+            result = meansDAO.getOne(id);
         }
         if(aClass == Layer.class){
             result = layerDAO.layerById(id);

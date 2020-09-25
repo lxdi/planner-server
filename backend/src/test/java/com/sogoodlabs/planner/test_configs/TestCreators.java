@@ -57,7 +57,7 @@ public class TestCreators extends ATestCreators {
             targetsDAO.saveOrUpdate((Target) object);
         }
         if(object instanceof Mean){
-            meansDAO.saveOrUpdate((Mean) object);
+            meansDAO.save((Mean) object);
         }
         if(object instanceof HQuarter){
             ihQuarterDAO.saveOrUpdate((HQuarter) object);

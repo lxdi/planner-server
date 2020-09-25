@@ -56,7 +56,7 @@ public class AdditionalTasksMappingTests extends SpringTestConfig {
         Mean mean = new Mean();
         mean.setTitle("mean");
         mean.setRealm(realm);
-        meansDAO.saveOrUpdate(mean);
+        meansDAO.save(mean);
 
         Layer layer = new Layer();
         layer.setPriority(1);

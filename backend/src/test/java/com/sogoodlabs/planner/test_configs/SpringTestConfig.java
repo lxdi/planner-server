@@ -13,7 +13,10 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.naming.NamingException;
+import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityNotFoundException;
+import javax.persistence.PersistenceContext;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -23,9 +26,9 @@ import javax.persistence.EntityManagerFactory;
 @Sql(scripts = {"/scripts/clean_db.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 abstract public class SpringTestConfig {
 
-//    @Autowired
-//    EntityManagerFactory etf;
-//
+    @PersistenceContext
+    EntityManager entityManager;
+
     @Before
     public void init(){
 //        SessionFactory sessionFactory = etf.unwrap(SessionFactory.class);
@@ -56,6 +59,14 @@ abstract public class SpringTestConfig {
 //        session.flush();
 //        session.getTransaction().commit();
 //        session.close();
+    }
+
+    protected boolean isExists(long id, Class clazz){
+        try {
+            return entityManager.unwrap(Session.class).get(clazz, id) != null;
+        } catch (EntityNotFoundException ex){
+            return false;
+        }
     }
 
 }

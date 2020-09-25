@@ -62,7 +62,7 @@ public class MeansDelegate {
 
     public List<Map<String, Object>> getAllMeans(){
         List<Map<String, Object>> result = new ArrayList<>();
-        meansDAO.getAllMeans().forEach(m -> result.add(meansMapper.mapToDtoLazy(m)));
+        meansDAO.findAll().forEach(m -> result.add(meansMapper.mapToDtoLazy(m)));
         return result;
     }
 
@@ -74,13 +74,13 @@ public class MeansDelegate {
         Mean prevMean = mean.getParent()!=null? meansDAO.getLastOfChildren(mean.getParent(), mean.getRealm()):
                 meansDAO.getLastOfChildrenRoot(mean.getRealm());
         //TODO do not save the mean if layers are not valid
-        meansDAO.saveOrUpdate(mean);
+        meansDAO.save(mean);
         reassignTargetsFromParent(mean);
 
         Map<String, Object> result = new HashMap<>();
         if(prevMean!=null){
             prevMean.setNext(mean);
-            meansDAO.saveOrUpdate(prevMean);
+            meansDAO.save(prevMean);
             result.put("previd", prevMean.getId());
         }
         if(meanDtoFull.get("layers")!=null){
@@ -103,24 +103,24 @@ public class MeansDelegate {
 
     public List<Map<String, Object>> reposition(List<Map<String, Object>> meanDtoLazyList){
         for(Map<String, Object> dto : meanDtoLazyList){
-            Mean mean = meansDAO.meanById(Long.parseLong(""+dto.get("id")));
-            mean.setNext(dto.get("nextid")!=null?meansDAO.meanById(Long.parseLong(""+dto.get("nextid"))):null);
-            mean.setParent(dto.get("parentid")!=null?meansDAO.meanById(Long.parseLong(""+dto.get("parentid"))):null);
-            meansDAO.saveOrUpdate(mean);
+            Mean mean = meansDAO.getOne(Long.parseLong(""+dto.get("id")));
+            mean.setNext(dto.get("nextid")!=null?meansDAO.getOne(Long.parseLong(""+dto.get("nextid"))):null);
+            mean.setParent(dto.get("parentid")!=null?meansDAO.getOne(Long.parseLong(""+dto.get("parentid"))):null);
+            meansDAO.save(mean);
         }
         return meanDtoLazyList;
     }
 
     public Map<String, Object> getFull(long meanid){
-        Mean mean = meansDAO.meanById(meanid);
+        Mean mean = meansDAO.getOne(meanid);
         Map<String, Object> result = meansMapper.mapToDtoFull(mean);
         return result;
     }
 
     public Map<String, Object> hideChildren(long id, boolean val){
-        Mean mean = meansDAO.meanById(id);
+        Mean mean = meansDAO.getOne(id);
         mean.setHideChildren(val);
-        meansDAO.saveOrUpdate(mean);
+        meansDAO.save(mean);
         //TODO map with additinal
         return meansMapper.mapToDtoLazy(mean);
     }
@@ -130,10 +130,10 @@ public class MeansDelegate {
             List<Target> targets = mean.getParent().getTargets();
             if(targets.size()>0){
                 mean.getParent().setTargets(new ArrayList<>());
-                meansDAO.saveOrUpdate(mean.getParent());
+                meansDAO.save(mean.getParent());
 
                 mean.setTargets(makeOne(mean.getTargets(), targets));
-                meansDAO.saveOrUpdate(mean);
+                meansDAO.save(mean);
             }
         }
     }
@@ -152,7 +152,7 @@ public class MeansDelegate {
     private Mean updateMean(Map<String, Object> meanDtoFull){
         Mean mean = meansMapper.mapToEntity(meanDtoFull);
         //TODO validate before saving
-        meansDAO.saveOrUpdate(mean);
+        meansDAO.save(mean);
         if(meanDtoFull.get("layers")!=null){
             saveLayers((List<Map<String, Object>>) meanDtoFull.get("layers"), mean.getId());
         }

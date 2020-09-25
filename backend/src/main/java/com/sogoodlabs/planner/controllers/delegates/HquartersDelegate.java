@@ -123,7 +123,7 @@ public class HquartersDelegate {
     }
 
     public Map<String, Object> assign(long meanid, long slotid){
-        Mean mean = meansDAO.meanById(meanid);
+        Mean mean = meansDAO.getOne(meanid);
         Slot slot = slotDAO.getById(slotid);
         slot.setMean(mean);
         slotDAO.saveOrUpdate(slot);

@@ -53,12 +53,12 @@ public class MeansRESTController_Creating_Tests extends ATestsWithTargetsMeansQu
                 .andExpect(status().isOk()).andReturn();
 
         long newId = meansDao.meanByTitle("new mean").getId();
-        assertTrue(meansDao.meanById(newId)!=null);
-        assertTrue(meansDao.meanById(newId).getTitle().equals("new mean"));
-        assertTrue(meansDao.meanById(newId).getTargets().size()==4);
+        assertTrue(meansDao.getOne(newId)!=null);
+        assertTrue(meansDao.getOne(newId).getTitle().equals("new mean"));
+        assertTrue(meansDao.getOne(newId).getTargets().size()==4);
         Set<String> targetsTitles = new HashSet<>(Arrays.asList(
                 defaultParentTarget, defaultChildChildTarget, defaultChildTarget, defaultChild2Target));
-        checkTargets(meansDao.meanById(newId).getTargets(), targetsTitles);
+        checkTargets(meansDao.getOne(newId).getTargets(), targetsTitles);
         assertTrue(result.getResponse().getContentAsString().contains("\"id\":"+newId));
         assertTrue(result.getResponse().getContentAsString().contains("new mean"));
         System.out.println(result.getResponse().getContentAsString());
@@ -111,16 +111,16 @@ public class MeansRESTController_Creating_Tests extends ATestsWithTargetsMeansQu
     @Test
     public void createMeanOnTheLastPositionTest() throws Exception {
         Mean mean = new Mean("parent mean test", realm);
-        meansDao.saveOrUpdate(mean);
+        meansDao.save(mean);
 
         Mean child2 = new Mean("child 2 mean test", realm);
         child2.setParent(mean);
-        meansDao.saveOrUpdate(child2);
+        meansDao.save(child2);
 
         Mean child1 = new Mean("child 1 mean test", realm);
         child1.setParent(mean);
         child1.setNext(child2);
-        meansDao.saveOrUpdate(child1);
+        meansDao.save(child1);
 
         String content = "{\"id\":0,\"title\":\"new mean to add\"," +
                 "\"parentid\":"+mean.getId()+", " +
@@ -131,7 +131,7 @@ public class MeansRESTController_Creating_Tests extends ATestsWithTargetsMeansQu
                 .andExpect(status().isOk()).andReturn();
 
         Mean newMean = meansDao.meanByTitle("new mean to add");
-        child2 = meansDao.meanById(child2.getId());
+        child2 = meansDao.getOne(child2.getId());
         assertTrue(newMean.getParent().getId()==mean.getId());
         assertTrue(newMean.getParent().getId()==mean.getId());
         assertTrue(child2.getNext().getId()==newMean.getId());
@@ -141,15 +141,15 @@ public class MeansRESTController_Creating_Tests extends ATestsWithTargetsMeansQu
     public void createMeanOnTheLastPositionOfRootTest() throws Exception {
 
         Mean root2 = new Mean("root 2 mean test", realm);
-        meansDao.saveOrUpdate(root2);
+        meansDao.save(root2);
 
         Mean root1 = new Mean("root 1 mean test", realm);
         root1.setNext(root2);
-        meansDao.saveOrUpdate(root1);
+        meansDao.save(root1);
 
         Mean parentMean = meansDao.meanByTitle(parentMeanTitle);
         parentMean.setNext(root1);
-        meansDao.saveOrUpdate(parentMean);
+        meansDao.save(parentMean);
 
         String content = "{\"id\":0,\"title\":\"new root mean to add\"," +
                 "\"children\":[]," +
@@ -159,7 +159,7 @@ public class MeansRESTController_Creating_Tests extends ATestsWithTargetsMeansQu
                 .andExpect(status().isOk()).andReturn();
 
         Mean newMean = meansDao.meanByTitle("new root mean to add");
-        root2 = meansDao.meanById(root2.getId());
+        root2 = meansDao.getOne(root2.getId());
         assertTrue(newMean.getParent()==null);
         assertTrue(root2.getNext().getId()==newMean.getId());
     }

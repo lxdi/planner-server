@@ -92,7 +92,7 @@ public class HquarterDtoLazyMapper_WeeksMappingTests extends ATestsWithTargetsMe
 
         //----
         mean = new Mean("test mean", realm);
-        meansDAO.saveOrUpdate(mean);
+        meansDAO.save(mean);
 
         //--
         Layer layer1 = new Layer(mean, 1);

@@ -25,7 +25,7 @@ public class MeansDaoTests extends AbstractTestsWithTargetsWithMeans {
 
     @Test
     public void getChildrenTest(){
-        List<Mean> children = meansDao.getChildren(meansDao.meanById(1));
+        List<Mean> children = meansDao.getChildren(meansDao.getOne(1l));
 
         assertTrue(children.size()==2);
         assertTrue(children.get(0).getId()==2 || children.get(0).getId()==3);
@@ -37,9 +37,9 @@ public class MeansDaoTests extends AbstractTestsWithTargetsWithMeans {
     public void deleteLinkedTarget(){
         targetsDAO.deleteTarget(targetsDAO.getTargetByTitle(defaultParentTarget).getId());
 
-        assertTrue(meansDao.meanById(1)!=null);
-        assertTrue(meansDao.meanById(2)!=null);
-        assertTrue(meansDao.meanById(3)!=null);
+        assertTrue(meansDao.getOne(1l)!=null);
+        assertTrue(meansDao.getOne(2l)!=null);
+        assertTrue(meansDao.getOne(3l)!=null);
 
         assertTrue(targetsDAO.targetById(1)==null);
         assertTrue(targetsDAO.targetById(2)==null);
@@ -51,9 +51,9 @@ public class MeansDaoTests extends AbstractTestsWithTargetsWithMeans {
     public void deleteLinkedTarget2(){
         targetsDAO.deleteTarget(targetsDAO.getTargetByTitle(defaultChildTarget).getId());
 
-        assertTrue(meansDao.meanById(1)!=null);
-        assertTrue(meansDao.meanById(2)!=null);
-        assertTrue(meansDao.meanById(3)!=null);
+        assertTrue(meansDao.getOne(1l)!=null);
+        assertTrue(meansDao.getOne(2l)!=null);
+        assertTrue(meansDao.getOne(3l)!=null);
 
         assertNotNull(targetsDAO.targetById(parentTarget.getId()));
         assertNull(targetsDAO.targetById(target.getId()));
@@ -70,7 +70,7 @@ public class MeansDaoTests extends AbstractTestsWithTargetsWithMeans {
 
     @Test
     public void getAllTest(){
-        List<Mean> allMeans = meansDao.getAllMeans();
+        List<Mean> allMeans = meansDao.findAll();
 
         boolean find = false;
         for(Mean mean : allMeans){
@@ -85,17 +85,17 @@ public class MeansDaoTests extends AbstractTestsWithTargetsWithMeans {
     @Test
     public void assignsMeansCountTest(){
         Mean mean = new Mean("Mean test 1", realm);
-        meansDao.saveOrUpdate(mean);
+        meansDao.save(mean);
 
         Slot slot = new Slot();
         slot.setMean(mean);
         slotDAO.saveOrUpdate(slot);
 
         Mean mean2 = new Mean("Mean test 2", realm);
-        meansDao.saveOrUpdate(mean2);
+        meansDao.save(mean2);
 
         Mean mean3 = new Mean("Mean test 3", realm);
-        meansDao.saveOrUpdate(mean3);
+        meansDao.save(mean3);
 
         Slot slot2 = new Slot();
         slot2.setMean(mean3);
@@ -122,16 +122,16 @@ public class MeansDaoTests extends AbstractTestsWithTargetsWithMeans {
         Mean mean = new Mean("Mean test 1", realm);
         mean.getTargets().add(target1);
         mean.getTargets().add(target2);
-        meansDao.saveOrUpdate(mean);
+        meansDao.save(mean);
 
-        mean = meansDao.meanById(mean.getId());
+        mean = meansDao.getOne(mean.getId());
         assertTrue(mean.getTargets().size()==2);
 
         mean.getTargets().remove(0);
         mean.getTargets().remove(0);
-        meansDao.saveOrUpdate(mean);
+        meansDao.save(mean);
 
-        mean = meansDao.meanById(mean.getId());
+        mean = meansDao.getOne(mean.getId());
         assertTrue(mean.getTargets().size()==0);
 
     }
@@ -143,11 +143,11 @@ public class MeansDaoTests extends AbstractTestsWithTargetsWithMeans {
 
         Mean mean = new Mean("Mean test 1", realm);
         mean.getTargets().add(target);
-        meansDao.saveOrUpdate(mean);
+        meansDao.save(mean);
 
         Mean mean2 = new Mean("Mean test 1", realm);
         mean2.getTargets().add(target);
-        meansDao.saveOrUpdate(mean2);
+        meansDao.save(mean2);
 
         assertTrue(meansDao.meansAssignedToTarget(target).size()==2);
 

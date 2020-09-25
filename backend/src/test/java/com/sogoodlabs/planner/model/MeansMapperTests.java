@@ -45,7 +45,7 @@ public class MeansMapperTests extends SpringTestConfig {
         Target target = testCreators.createTarget(realm);
 
         mean.getTargets().add(target);
-        meansDAO.saveOrUpdate(mean);
+        meansDAO.save(mean);
 
         Map<String, Object> result = meansMapper.mapToDtoLazy(mean);
 
@@ -69,7 +69,7 @@ public class MeansMapperTests extends SpringTestConfig {
         Target target = testCreators.createTarget(realm);
 
         mean.getTargets().add(target);
-        meansDAO.saveOrUpdate(mean);
+        meansDAO.save(mean);
 
         Map<String, Object> result = meansMapper.mapToDtoFull(mean);
 

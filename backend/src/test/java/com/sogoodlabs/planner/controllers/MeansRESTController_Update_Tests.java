@@ -55,7 +55,7 @@ public class MeansRESTController_Update_Tests extends ATestsWithTargetsMeansQuar
                 .contentType(MediaType.APPLICATION_JSON).content(content))
                 .andExpect(status().isOk()).andReturn();
 
-        assertTrue(meansDao.meanById(1).getTitle().equals("Parent mean changed"));
+        assertTrue(meansDao.getOne(1l).getTitle().equals("Parent mean changed"));
         assertTrue(result.getResponse().getContentAsString().contains("\"id\":1"));
         assertTrue(result.getResponse().getContentAsString().contains("Parent mean changed"));
         System.out.println(result.getResponse().getContentAsString());
@@ -72,16 +72,16 @@ public class MeansRESTController_Update_Tests extends ATestsWithTargetsMeansQuar
     @Test
     public void repositionListTest() throws Exception {
         Mean mean = new Mean("parent mean test", realm);
-        meansDao.saveOrUpdate(mean);
+        meansDao.save(mean);
 
         Mean child2 = new Mean("child 2 mean test", realm);
         child2.setParent(mean);
-        meansDao.saveOrUpdate(child2);
+        meansDao.save(child2);
 
         Mean child1 = new Mean("child 1 mean test", realm);
         child1.setParent(mean);
         child1.setNext(child2);
-        meansDao.saveOrUpdate(child1);
+        meansDao.save(child1);
 
         String child1content = "{\"id\":"+child1.getId()+", " +
                 "\"title\":\"child 1 mean test\", " +
@@ -102,8 +102,8 @@ public class MeansRESTController_Update_Tests extends ATestsWithTargetsMeansQuar
                 .contentType(MediaType.APPLICATION_JSON).content(content))
                 .andExpect(status().isOk()).andReturn();
 
-        child1 = meansDao.meanById(child1.getId());
-        child2 = meansDao.meanById(child2.getId());
+        child1 = meansDao.getOne(child1.getId());
+        child2 = meansDao.getOne(child2.getId());
 
         assertTrue(child1.getNext()==null);
         assertTrue(child2.getNext().getId()==child1.getId());
@@ -114,15 +114,15 @@ public class MeansRESTController_Update_Tests extends ATestsWithTargetsMeansQuar
     public void repositionListAndGetTest() throws Exception {
 
         Mean mean3 = new Mean("mean3", realm);
-        meansDao.saveOrUpdate(mean3);
+        meansDao.save(mean3);
 
         Mean mean2 = new Mean("mean2", realm);
         mean2.setNext(mean3);
-        meansDao.saveOrUpdate(mean2);
+        meansDao.save(mean2);
 
         Mean mean1 = new Mean("mean1", realm);
         mean1.setNext(mean2);
-        meansDao.saveOrUpdate(mean1);
+        meansDao.save(mean1);
 
         String mean1content = "{\"id\":"+mean1.getId()+", " +
                 "\"title\":\"mean1\", " +
@@ -150,7 +150,7 @@ public class MeansRESTController_Update_Tests extends ATestsWithTargetsMeansQuar
         MvcResult getresult = mockMvc.perform(get("/mean/all/lazy"))
                 .andExpect(status().isOk()).andReturn();
 
-        mean2 = meansDao.meanById(mean2.getId());
+        mean2 = meansDao.getOne(mean2.getId());
         assertTrue(mean2.getNext()==null);
 
     }

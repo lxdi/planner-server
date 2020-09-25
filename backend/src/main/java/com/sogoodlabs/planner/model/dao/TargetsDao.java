@@ -63,7 +63,7 @@ public class TargetsDao implements ITargetsDAO {
     private void unassignMeans(Target target) {
         meansDAO.meansAssignedToTarget(target).forEach(mean -> {
             mean.getTargets().removeIf(curTarget -> curTarget.getId() == target.getId());
-            meansDAO.saveOrUpdate(mean);
+            meansDAO.save(mean);
         });
     }
 

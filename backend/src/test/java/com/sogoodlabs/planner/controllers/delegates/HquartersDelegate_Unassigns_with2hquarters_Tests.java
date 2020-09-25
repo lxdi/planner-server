@@ -109,7 +109,7 @@ public class HquartersDelegate_Unassigns_with2hquarters_Tests extends ATestsWith
 
         //----
         mean = new Mean("test mean", realm);
-        meansDAO.saveOrUpdate(mean);
+        meansDAO.save(mean);
 
         //--
         Layer layer1 = new Layer(mean, 1);

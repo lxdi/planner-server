@@ -112,7 +112,7 @@ public class HquartersDelegate_Unassigns_Tests extends ATestsWithTargetsMeansQua
 
         //----
         mean = new Mean("test mean", realm);
-        meansDAO.saveOrUpdate(mean);
+        meansDAO.save(mean);
 
         //--
         Layer layer1 = new Layer(mean, 1);

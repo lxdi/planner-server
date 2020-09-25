@@ -113,7 +113,7 @@ public class TargetsDelegateTests extends SpringTestConfig {
         Mean mean = new Mean();
         mean.setParent(parent);
         mean.setTargets(targets);
-        meansDAO.saveOrUpdate(mean);
+        meansDAO.save(mean);
         return mean;
     }
 

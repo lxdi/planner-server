@@ -112,7 +112,7 @@ public class HquartersDelegate_Assigning_in_the_middle_Tests extends ATestsWithT
 
         //----
         mean = new Mean("test mean", realm);
-        meansDAO.saveOrUpdate(mean);
+        meansDAO.save(mean);
 
         //--
         Layer layer1 = new Layer(mean, 1);

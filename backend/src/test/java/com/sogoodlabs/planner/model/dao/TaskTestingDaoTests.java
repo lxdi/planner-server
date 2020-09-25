@@ -30,7 +30,7 @@ public class TaskTestingDaoTests extends SpringTestConfig {
     public void getByTaskIdTest(){
 
         Mean mean = new Mean();
-        meansDAO.saveOrUpdate(mean);
+        meansDAO.save(mean);
 
         Layer layer = new Layer();
         layer.setMean(mean);

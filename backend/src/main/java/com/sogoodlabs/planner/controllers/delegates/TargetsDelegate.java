@@ -101,7 +101,7 @@ public class TargetsDelegate {
                         if(curTar.getId()!=target.getParent().getId())newTargets.add(curTar);
                     });
                     mean.setTargets(newTargets);
-                    meansDAO.saveOrUpdate(mean);
+                    meansDAO.save(mean);
                 }
             }
         }

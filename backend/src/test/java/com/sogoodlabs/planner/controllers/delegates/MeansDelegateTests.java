@@ -102,7 +102,7 @@ public class MeansDelegateTests extends SpringTestConfig {
 
         meansDelegate.update(dto);
 
-        assertTrue(meansDAO.meanById(mean.getId()).getTitle().equals("mean changed"));
+        assertTrue(meansDAO.getOne(mean.getId()).getTitle().equals("mean changed"));
         assertTrue(tasksDAO.getById(task.getId()).getTitle().equals("task changed"));
         assertTrue(topicDAO.getOne(topic.getId()).getTitle().equals("topic changed"));
         assertTrue(taskTestingDAO.getOne(taskTesting.getId()).getQuestion().equals("testing changed"));
@@ -122,9 +122,9 @@ public class MeansDelegateTests extends SpringTestConfig {
         Target target = testCreators2.createTarget(realm);
 
         mean.getTargets().add(target);
-        meansDAO.saveOrUpdate(mean);
+        meansDAO.save(mean);
 
-        assertTrue(meansDAO.meanById(mean.getId()).getTargets().get(0).getId()==target.getId());
+        assertTrue(meansDAO.getOne(mean.getId()).getTargets().get(0).getId()==target.getId());
 
         List<Map<String, Object>> result = meansDelegate.getAllMeans();
 
@@ -164,12 +164,12 @@ public class MeansDelegateTests extends SpringTestConfig {
 
         Map<String, Object> newMeanMap = commonMapper.mapToDto(newMean);
 
-        assertTrue(meansDAO.meanById(rootMean.getId()).getTargets().size()==1);
+        assertTrue(meansDAO.getOne(rootMean.getId()).getTargets().size()==1);
 
         Map<String, Object> result = meansDelegate.create(newMeanMap);
 
-        newMean = meansDAO.meanById((Long) result.get("id"));
-        assertTrue(meansDAO.meanById(rootMean.getId()).getTargets().size()==0);
+        newMean = meansDAO.getOne((Long) result.get("id"));
+        assertTrue(meansDAO.getOne(rootMean.getId()).getTargets().size()==0);
         assertTrue(newMean.getTargets().size()==1);
 
     }
@@ -190,12 +190,12 @@ public class MeansDelegateTests extends SpringTestConfig {
         Map<String, Object> newMeanMap = commonMapper.mapToDto(newMean);
         additionalMeansMapping.mapTargetsIdsToDto(newMean, newMeanMap);
 
-        assertTrue(meansDAO.meanById(rootMean.getId()).getTargets().size()==1);
+        assertTrue(meansDAO.getOne(rootMean.getId()).getTargets().size()==1);
 
         Map<String, Object> result = meansDelegate.create(newMeanMap);
 
-        newMean = meansDAO.meanById((Long) result.get("id"));
-        assertTrue(meansDAO.meanById(rootMean.getId()).getTargets().size()==0);
+        newMean = meansDAO.getOne((Long) result.get("id"));
+        assertTrue(meansDAO.getOne(rootMean.getId()).getTargets().size()==0);
         assertTrue(newMean.getTargets().size()==1);
 
     }

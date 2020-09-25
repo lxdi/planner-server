@@ -50,7 +50,7 @@ public class LayersDaoTests extends ATestsWithTargetsWithMeansWithLayers{
     @Test
     public void gettingCurrentLayerTest(){
         Mean mean = new Mean("test mean 1", realm);
-        meansDao.saveOrUpdate(mean);
+        meansDao.save(mean);
 
         Layer layer = new Layer(mean, 1);
         layerDAO.saveOrUpdate(layer);
@@ -71,7 +71,7 @@ public class LayersDaoTests extends ATestsWithTargetsWithMeansWithLayers{
     @Test
     public void gettingCurrentLayerAsFirstTest(){
         Mean mean = new Mean("test mean 1", realm);
-        meansDao.saveOrUpdate(mean);
+        meansDao.save(mean);
 
         Layer layer = new Layer(mean, 1);
         layerDAO.saveOrUpdate(layer);
@@ -133,7 +133,7 @@ public class LayersDaoTests extends ATestsWithTargetsWithMeansWithLayers{
 
     private Mean createMean(String title, Realm realm){
         Mean mean = new Mean(title, realm);
-        meansDao.saveOrUpdate(mean);
+        meansDao.save(mean);
         return mean;
     }
 

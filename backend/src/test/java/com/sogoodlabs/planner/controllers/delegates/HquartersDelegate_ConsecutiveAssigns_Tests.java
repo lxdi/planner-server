@@ -91,7 +91,7 @@ public class HquartersDelegate_ConsecutiveAssigns_Tests extends ATestsWithTarget
 
         //----
         mean = new Mean("test mean", realm);
-        meansDAO.saveOrUpdate(mean);
+        meansDAO.save(mean);
 
         //--
         Layer layer1 = new Layer(mean, 1);

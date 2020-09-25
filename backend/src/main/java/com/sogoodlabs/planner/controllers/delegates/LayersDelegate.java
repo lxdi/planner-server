@@ -46,7 +46,7 @@ public class LayersDelegate {
 
     public List<Map<String, Object>> layersOfMean(long meanid){
         List<Map<String, Object>> result = new ArrayList<>();
-        for(Layer layer : layerDAO.getLyersOfMean(meansDAO.meanById(meanid))){
+        for(Layer layer : layerDAO.getLyersOfMean(meansDAO.getOne(meanid))){
             result.add(commonMapper.mapToDto(layer));
         }
         return result;

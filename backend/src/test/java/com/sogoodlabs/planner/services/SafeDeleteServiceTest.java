@@ -112,12 +112,4 @@ public class SafeDeleteServiceTest extends SpringTestConfig {
 
     }
 
-    private boolean isExists(long id, Class clazz){
-        try {
-            return entityManager.unwrap(Session.class).get(clazz, id) != null;
-        } catch (EntityNotFoundException ex){
-            return false;
-        }
-    }
-
 }

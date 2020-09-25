@@ -39,7 +39,7 @@ public class SafeDeleteService {
     private ITaskMappersDAO taskMappersDAO;
 
     public void deleteMean(long id) {
-        deleteMean(meansDAO.meanById(id));
+        deleteMean(meansDAO.getOne(id));
     }
 
     public void deleteMean(Mean mean){
@@ -50,7 +50,7 @@ public class SafeDeleteService {
             } else {
                 prevMean.setNext(null);
             }
-            meansDAO.saveOrUpdate(prevMean);
+            meansDAO.save(prevMean);
         }
         meansDAO.getChildren(mean).forEach(this::deleteMean);
         layerDAO.getLyersOfMean(mean).forEach(this::deleteLayer);
