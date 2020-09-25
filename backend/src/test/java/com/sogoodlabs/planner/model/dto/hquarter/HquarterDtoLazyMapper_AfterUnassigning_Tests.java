@@ -293,7 +293,7 @@ public class HquarterDtoLazyMapper_AfterUnassigning_Tests extends ATestsWithTarg
 
     private Task createTask(String title, Subject subject, int position){
         Task task = new Task(title, subject, position);
-        tasksDAO.saveOrUpdate(task);
+        tasksDAO.save(task);
         return task;
     }
 

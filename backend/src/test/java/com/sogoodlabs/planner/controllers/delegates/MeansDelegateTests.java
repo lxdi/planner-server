@@ -5,16 +5,8 @@ import com.sogoodlabs.planner.model.dao.*;
 import com.sogoodlabs.planner.model.dto.additional_mapping.AdditionalMeansMapping;
 import com.sogoodlabs.planner.model.entities.*;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import com.sogoodlabs.planner.services.QuarterGenerator;
@@ -103,7 +95,7 @@ public class MeansDelegateTests extends SpringTestConfig {
         meansDelegate.update(dto);
 
         assertTrue(meansDAO.getOne(mean.getId()).getTitle().equals("mean changed"));
-        assertTrue(tasksDAO.getById(task.getId()).getTitle().equals("task changed"));
+        assertTrue(tasksDAO.getOne(task.getId()).getTitle().equals("task changed"));
         assertTrue(topicDAO.getOne(topic.getId()).getTitle().equals("topic changed"));
         assertTrue(taskTestingDAO.getOne(taskTesting.getId()).getQuestion().equals("testing changed"));
     }

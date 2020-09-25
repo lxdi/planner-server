@@ -194,7 +194,7 @@ public class MeansDelegate {
                 if(taskDto!=null) {
                     taskDto.putIfAbsent("subjectid", subjectid);
                     Task task = tasksDtoMapper.mapToEntity(taskDto);
-                    tasksDAO.saveOrUpdate(task);
+                    tasksDAO.save(task);
                     saveTaskTopics((List<Map<String, Object>>) taskDto.get("topics"), task.getId());
                     saveTaskTestings((List<Map<String, Object>>) taskDto.get("testings"), task.getId());
                 }

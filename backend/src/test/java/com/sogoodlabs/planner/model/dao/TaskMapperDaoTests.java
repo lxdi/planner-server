@@ -56,7 +56,7 @@ public class TaskMapperDaoTests extends AbstractTestsWithTargets {
     @Test
     public void taskMapperByTaskTest(){
         Task task = new Task();
-        tasksDAO.saveOrUpdate(task);
+        tasksDAO.save(task);
 
         TaskMapper taskMapper = new TaskMapper();
         taskMapper.setTask(task);
@@ -68,7 +68,7 @@ public class TaskMapperDaoTests extends AbstractTestsWithTargets {
     @Test
     public void getFinishDateTest(){
         Task task = new Task();
-        tasksDAO.saveOrUpdate(task);
+        tasksDAO.save(task);
 
         TaskMapper taskMapper = new TaskMapper();
         taskMapper.setTask(task);
@@ -81,7 +81,7 @@ public class TaskMapperDaoTests extends AbstractTestsWithTargets {
     @Test
     public void getEmptyFinishDateTest(){
         Task task = new Task();
-        tasksDAO.saveOrUpdate(task);
+        tasksDAO.save(task);
 
         TaskMapper taskMapper = new TaskMapper();
         taskMapper.setTask(task);

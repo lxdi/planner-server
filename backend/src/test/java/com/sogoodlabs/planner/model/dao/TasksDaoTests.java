@@ -1,9 +1,7 @@
 package com.sogoodlabs.planner.model.dao;
 
-import com.sogoodlabs.planner.model.dao.*;
 import com.sogoodlabs.planner.model.entities.*;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,18 +44,18 @@ public class TasksDaoTests extends AbstractTestsWithTargets {
 
         Task task1 = new Task();
         task1.setSubject(subject);
-        tasksDAO.saveOrUpdate(task1);
+        tasksDAO.save(task1);
 
         Task task2 = new Task();
         task2.setSubject(subject);
-        tasksDAO.saveOrUpdate(task2);
+        tasksDAO.save(task2);
 
         Task task3 = new Task();
-        tasksDAO.saveOrUpdate(task3);
+        tasksDAO.save(task3);
 
-        List<Task> tasks = tasksDAO.tasksByLayer(layer);
+        List<Task> tasks = tasksDAO.findByLayer(layer);
 
-        assertTrue(tasksDAO.tasksByLayer(layer0).size()==0);
+        assertTrue(tasksDAO.findByLayer(layer0).size()==0);
 
         assertTrue(tasks.size()==2);
         assertTrue(tasks.get(0).getId()==task1.getId());

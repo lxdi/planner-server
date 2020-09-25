@@ -155,7 +155,7 @@ public class HquarterDtoLazyMapper_WeeksMappingTests extends ATestsWithTargetsMe
 
     private Task createTask(String title, Subject subject, int position){
         Task task = new Task(title, subject, position);
-        tasksDAO.saveOrUpdate(task);
+        tasksDAO.save(task);
         return task;
     }
 

@@ -1,7 +1,5 @@
 package com.sogoodlabs.planner.model.dao;
 
-import com.sogoodlabs.planner.model.dao.ITasksDAO;
-import com.sogoodlabs.planner.model.dao.ITopicDAO;
 import com.sogoodlabs.planner.model.entities.Task;
 import com.sogoodlabs.planner.model.entities.Topic;
 import org.junit.Test;
@@ -23,10 +21,10 @@ public class TopicDaoTests extends SpringTestConfig {
     @Test
     public void getByTaskidTest(){
         Task task1 = new Task();
-        tasksDAO.saveOrUpdate(task1);
+        tasksDAO.save(task1);
 
         Task task2 = new Task();
-        tasksDAO.saveOrUpdate(task2);
+        tasksDAO.save(task2);
 
         Topic topic1 = new Topic();
         topic1.setTask(task1);

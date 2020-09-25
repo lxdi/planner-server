@@ -53,7 +53,7 @@ public class TasksDelegateTests extends SpringTestConfig {
     public void init(){
         super.init();
         task = new Task();
-        tasksDAO.saveOrUpdate(task);
+        tasksDAO.save(task);
 
         taskMapper = new TaskMapper();
         taskMapper.setTask(task);
@@ -164,7 +164,7 @@ public class TasksDelegateTests extends SpringTestConfig {
     @Test
     public void addNewTestingToTaskTest(){
         Task task = new Task();
-        tasksDAO.saveOrUpdate(task);
+        tasksDAO.save(task);
 
         Map<String, Object> testingDto = new HashMap<>();
         testingDto.put("question", "test q");
@@ -180,7 +180,7 @@ public class TasksDelegateTests extends SpringTestConfig {
     @Test(expected = UnsupportedOperationException.class)
     public void addExistingTestingToTaskTest(){
         Task task = new Task();
-        tasksDAO.saveOrUpdate(task);
+        tasksDAO.save(task);
 
         TaskTesting taskTesting = new TaskTesting();
         taskTestingDAO.save(taskTesting);
@@ -196,7 +196,7 @@ public class TasksDelegateTests extends SpringTestConfig {
     @Test
     public void removeRepetitionsLeftForTaskTest(){
         Task task = new Task();
-        tasksDAO.saveOrUpdate(task);
+        tasksDAO.save(task);
 
         TaskMapper taskMapper = new TaskMapper();
         taskMapper.setTask(task);

@@ -37,7 +37,7 @@ public class TaskMappersService {
 
     public void unassignTasksForLayer(Layer layer){
         if(layer!=null) {
-            List<Task> tasks = tasksDAO.tasksByLayer(layer);
+            List<Task> tasks = tasksDAO.findByLayer(layer);
             for(Task task : tasks){
                 TaskMapper taskMapper = taskMappersDAO.taskMapperForTask(task);
                 if(taskMapper!=null){
@@ -114,7 +114,7 @@ public class TaskMappersService {
 
     public void createTaskMappers(Layer layerToMap, Slot slot){
         if(layerToMap!=null){
-            List<Task> tasks = sortUtils.sortTasks(tasksDAO.tasksByLayer(layerToMap));
+            List<Task> tasks = sortUtils.sortTasks(tasksDAO.findByLayer(layerToMap));
             if(tasks.size()>0) {
                 List<SlotPosition> slotPositions = sortUtils.sortSlotPositions(slotDAO.getSlotPositionsForSlot(slot));
                 createTaskMappers(weekDAO.weeksOfHquarter(slot.getHquarter()), slotPositions, tasksInStack(tasks));

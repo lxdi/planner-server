@@ -70,7 +70,7 @@ public class EntityByIdImpl implements IEntityById {
             result = subjectDAO.getOne(id);
         }
         if(aClass == Task.class){
-            result = tasksDAO.getById(id);
+            result = tasksDAO.getOne(id);
         }
         if(aClass == Topic.class){
             result = topicDAO.getOne(id);

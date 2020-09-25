@@ -2,7 +2,6 @@ package com.sogoodlabs.planner.services;
 
 import com.sogoodlabs.planner.model.dao.*;
 import com.sogoodlabs.planner.model.entities.*;
-import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -109,12 +108,12 @@ public class SafeDeleteService {
     }
 
     public void deleteSubject(Subject subject){
-        tasksDAO.tasksBySubject(subject).forEach(this::deleteTask);
+        tasksDAO.findBySubject(subject).forEach(this::deleteTask);
         subjectDAO.delete(subject);
     }
 
     public void deleteTask(long id) {
-        deleteTask(tasksDAO.getById(id));
+        deleteTask(tasksDAO.getOne(id));
     }
 
     public void deleteTask(Task task){
@@ -126,7 +125,7 @@ public class SafeDeleteService {
         SpacedRepetitions spacedRepetitions = spacedRepDAO.getSRforTask(id);
         if(spacedRepetitions!=null){
             repDAO.getRepsbySpacedRepId(spacedRepetitions.getId()).forEach(repDAO::delete);
-            spacedRepDAO.remove(spacedRepetitions);
+            spacedRepDAO.delete(spacedRepetitions);
         }
 
         TaskMapper taskMapper = taskMappersDAO.taskMapperForTask(task);

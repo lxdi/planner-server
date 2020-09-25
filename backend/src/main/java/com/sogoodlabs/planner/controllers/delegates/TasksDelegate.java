@@ -43,7 +43,7 @@ public class TasksDelegate {
 
     public Map<String, Object> createTask(Map<String, Object> taskDto){
         Task task = commonMapper.mapToEntity(taskDto, new Task());
-        tasksDAO.saveOrUpdate(task);
+        tasksDAO.save(task);
         return commonMapper.mapToDto(task);
     }
 
@@ -53,18 +53,18 @@ public class TasksDelegate {
 
     public Map<String, Object> update(Map<String, Object> taskDto){
         Task task = commonMapper.mapToEntity(taskDto, new Task());
-        tasksDAO.saveOrUpdate(task);
+        tasksDAO.save(task);
         return commonMapper.mapToDto(task);
     }
 
     public void finishTask(long taskid){
-        Task task = tasksDAO.getById(taskid);
+        Task task = tasksDAO.getOne(taskid);
         TaskMapper taskMapper = taskMappersDAO.taskMapperForTask(task);
         finishTask(taskMapper);
     }
 
     public void finishTaskWithRepetition(long taskid, long repPlanid, List<Map<String, Object>> testingsDto){
-        Task task = tasksDAO.getById(taskid);
+        Task task = tasksDAO.getOne(taskid);
         TaskMapper taskMapper = taskMappersDAO.taskMapperForTask(task);
         finishTask(taskMapper);
         SpacedRepetitions spacedRepetitions = spacedRepDAO.getSRforTaskMapper(taskMapper.getId());

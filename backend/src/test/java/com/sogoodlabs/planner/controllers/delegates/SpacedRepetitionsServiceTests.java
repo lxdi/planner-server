@@ -69,7 +69,7 @@ public class SpacedRepetitionsServiceTests extends SpringTestConfig {
         repDAO.save(repetitionDone);
 
         Task currentTask = new Task();
-        tasksDAO.saveOrUpdate(currentTask);
+        tasksDAO.save(currentTask);
 
         int currentYear = Calendar.getInstance().get(Calendar.YEAR);
         weeksGenerator.generateYear(currentYear);
@@ -107,7 +107,7 @@ public class SpacedRepetitionsServiceTests extends SpringTestConfig {
 
     private Task initEntChain(Date planDate){
         Task task = new Task();
-        tasksDAO.saveOrUpdate(task);
+        tasksDAO.save(task);
 
         TaskMapper taskMapper = new TaskMapper();
         taskMapper.setTask(task);

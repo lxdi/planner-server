@@ -21,7 +21,7 @@ public class AdditionalSubjectsMapping {
 
     public void mapTasks(Subject subject, Map<String, Object> result){
         result.putIfAbsent("tasks", new ArrayList<>());
-        tasksDAO.tasksBySubject(subject).forEach(task ->
+        tasksDAO.findBySubject(subject).forEach(task ->
             ((List)result.get("tasks")).add(tasksDtoMapper.mapToDtoFull(task)));
     }
 

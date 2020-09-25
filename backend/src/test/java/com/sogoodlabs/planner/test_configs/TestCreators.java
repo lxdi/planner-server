@@ -69,7 +69,7 @@ public class TestCreators extends ATestCreators {
             subjectDAO.save((Subject) object);
         }
         if(object instanceof Task){
-            tasksDAO.saveOrUpdate((Task) object);
+            tasksDAO.save((Task) object);
         }
         if(object instanceof Topic){
             topicDAO.save((Topic) object);

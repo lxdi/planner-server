@@ -71,7 +71,7 @@ public class AdditionalTasksMappingTests extends SpringTestConfig {
         Task task = new Task();
         task.setTitle("task");
         task.setSubject(subject);
-        tasksDAO.saveOrUpdate(task);
+        tasksDAO.save(task);
 
 //        TaskTesting taskTesting1 = new TaskTesting();
 //        taskTesting1.setQuestion("test question");
@@ -111,7 +111,7 @@ public class AdditionalTasksMappingTests extends SpringTestConfig {
         Map<String, Object> result = new HashMap<>();
         result.put("id", task.getId());
 
-        additionalTasksMapping.fillTopicsInTaskDto(result, tasksDAO.getById(task.getId()));
+        additionalTasksMapping.fillTopicsInTaskDto(result, tasksDAO.getOne(task.getId()));
 
         assertTrue(((List)result.get("topics")).size()==2);
         List<Map<String, Object>> topicsDto = (List)result.get("topics");

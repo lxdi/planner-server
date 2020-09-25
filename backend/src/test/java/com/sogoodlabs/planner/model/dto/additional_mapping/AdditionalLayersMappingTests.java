@@ -90,7 +90,7 @@ public class AdditionalLayersMappingTests extends SpringTestConfig {
     private Task createTask(Subject subject){
         Task task = new Task();
         task.setSubject(subject);
-        tasksDAO.saveOrUpdate(task);
+        tasksDAO.save(task);
         return task;
     }
 

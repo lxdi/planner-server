@@ -42,7 +42,7 @@ public class TaskTestingDaoTests extends SpringTestConfig {
 
         Task task1 = new Task();
         task1.setSubject(subject);
-        tasksDAO.saveOrUpdate(task1);
+        tasksDAO.save(task1);
 
         TaskTesting taskTesting1 = new TaskTesting();
         taskTesting1.setTask(task1);
@@ -54,7 +54,7 @@ public class TaskTestingDaoTests extends SpringTestConfig {
 
         Task task2 = new Task();
         task2.setSubject(subject);
-        tasksDAO.saveOrUpdate(task2);
+        tasksDAO.save(task2);
 
         TaskTesting taskTesting21 = new TaskTesting();
         taskTesting21.setTask(task2);
