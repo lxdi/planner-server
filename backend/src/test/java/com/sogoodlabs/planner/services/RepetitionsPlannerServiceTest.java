@@ -34,8 +34,10 @@ public class RepetitionsPlannerServiceTest extends SpringTestConfig {
     private ISpacedRepDAO spacedRepDAO;
 
     private RepetitionPlan repetitionPlan;
-    private TaskMapper taskMapper;
     private int[] plan = new int[]{1,2,3};
+    private RepetitionPlan repetitionPlan2;
+    private int[] plan2 = new int[]{4,6};
+    private TaskMapper taskMapper;
     private Date finishDate = DateUtils.currentDate();
 
     private void initData(boolean dayStep){
@@ -50,6 +52,11 @@ public class RepetitionsPlannerServiceTest extends SpringTestConfig {
         repetitionPlan.setPlan(plan);
         repetitionPlan.setDayStep(dayStep);
         session.save(repetitionPlan);
+
+        repetitionPlan2 = new RepetitionPlan();
+        repetitionPlan2.setPlan(plan2);
+        repetitionPlan2.setDayStep(dayStep);
+        session.save(repetitionPlan2);
 
         session.flush();
         session.clear();
@@ -86,6 +93,26 @@ public class RepetitionsPlannerServiceTest extends SpringTestConfig {
         assertEquals(DateUtils.addWeeks(finishDate, plan[0]), repetitions.get(0).getPlanDate());
         assertEquals(DateUtils.addWeeks(finishDate, plan[1]), repetitions.get(1).getPlanDate());
         assertEquals(DateUtils.addWeeks(finishDate, plan[2]), repetitions.get(2).getPlanDate());
+    }
+
+    @Test
+    public void getOrCreateSpacedRepetitionTest_MultipleFinishing(){
+        initData(false);
+
+        repetitionsPlannerService.getOrCreateSpacedRepetition(taskMapper, repetitionPlan.getId());
+        SpacedRepetitions spacedRepetitions =  repetitionsPlannerService.getOrCreateSpacedRepetition(taskMapper, repetitionPlan2.getId());
+
+        assertEquals(taskMapper.getId(), spacedRepetitions.getTaskMapper().getId());
+        assertEquals(repetitionPlan2.getId(), spacedRepetitions.getRepetitionPlan().getId());
+
+        List<Repetition> repetitions = repDAO.getRepsbySpacedRepId(spacedRepetitions.getId());
+        assertEquals(plan2.length+plan.length, repetitions.size());
+        assertEquals(DateUtils.addWeeks(finishDate, plan[0]), repetitions.get(0).getPlanDate());
+        assertEquals(DateUtils.addWeeks(finishDate, plan[1]), repetitions.get(1).getPlanDate());
+        assertEquals(DateUtils.addWeeks(finishDate, plan[2]), repetitions.get(2).getPlanDate());
+
+        assertEquals(DateUtils.addWeeks(finishDate, plan2[0]), repetitions.get(3).getPlanDate());
+        assertEquals(DateUtils.addWeeks(finishDate, plan2[1]), repetitions.get(4).getPlanDate());
     }
 
     @Test

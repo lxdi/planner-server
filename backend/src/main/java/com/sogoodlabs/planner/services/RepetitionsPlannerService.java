@@ -31,11 +31,11 @@ public class RepetitionsPlannerService {
         SpacedRepetitions spacedRepetitions = spacedRepDAO.getSRforTaskMapper(taskMapper.getId());
         if(spacedRepetitions == null){
             spacedRepetitions = new SpacedRepetitions();
-            spacedRepetitions.setTaskMapper(taskMapper);
-            spacedRepetitions.setRepetitionPlan(repPlanDAO.getOne(repPlanid));
-            spacedRepDAO.save(spacedRepetitions);
-            planRepetitions(spacedRepetitions);
         }
+        spacedRepetitions.setTaskMapper(taskMapper);
+        spacedRepetitions.setRepetitionPlan(repPlanDAO.getOne(repPlanid));
+        spacedRepDAO.save(spacedRepetitions);
+        planRepetitions(spacedRepetitions);
         return spacedRepetitions;
     }
 
