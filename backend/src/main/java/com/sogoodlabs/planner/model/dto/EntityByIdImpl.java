@@ -82,7 +82,7 @@ public class EntityByIdImpl implements IEntityById {
             result = testingDAO.getOne(id);
         }
         if(aClass == Repetition.class){
-            result = repDAO.findOne(id);
+            result = repDAO.getOne(id);
         }
         if(aClass == Week.class){
             result = weekDAO.getById(id);

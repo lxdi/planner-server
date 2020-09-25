@@ -92,7 +92,7 @@ public class TasksDelegate {
     }
 
     public Repetition finishRepetition(long repId){
-        Repetition repetition = repDAO.findOne(repId);
+        Repetition repetition = repDAO.getOne(repId);
         repetition.setFactDate(DateUtils.currentDate());
         repDAO.save(repetition);
         return repetition;

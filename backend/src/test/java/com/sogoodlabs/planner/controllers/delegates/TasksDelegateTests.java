@@ -101,7 +101,7 @@ public class TasksDelegateTests extends SpringTestConfig {
                 createTaskTestingDTO(0, "testing1 q", null),
                 createTaskTestingDTO(existingTesting.getId(), "testing2 q", task.getId())));
 
-        entityManager.unwrap(Session.class).flush();
+        //entityManager.unwrap(Session.class).flush();
         entityManager.unwrap(Session.class).clear();
 
         tasksDelegate.finishTaskWithRepetition(task.getId(), defaultRepPlan.getId(), testingsDto);
@@ -133,7 +133,7 @@ public class TasksDelegateTests extends SpringTestConfig {
 
         tasksDelegate.finishRepetition(repetition.getId());
 
-        repetition = repDAO.findOne(repetition.getId());
+        repetition = repDAO.getOne(repetition.getId());
         assertTrue(DateUtils.fromDate(repetition.getFactDate()).equals(DateUtils.currentDateString()));
     }
 
@@ -148,10 +148,13 @@ public class TasksDelegateTests extends SpringTestConfig {
 
         tasksDelegate.finishRepetitionWithLowing(repetition.getId());
 
-        repetitionBefore = repDAO.findOne(repetitionBefore.getId());
-        repetition = repDAO.findOne(repetition.getId());
-        repetitionAfter = repDAO.findOne(repetitionAfter.getId());
-        otherRepetition = repDAO.findOne(otherRepetition.getId());
+        //entityManager.unwrap(Session.class).flush();
+        entityManager.unwrap(Session.class).clear();
+
+        repetitionBefore = repDAO.getOne(repetitionBefore.getId());
+        repetition = repDAO.getOne(repetition.getId());
+        repetitionAfter = repDAO.getOne(repetitionAfter.getId());
+        otherRepetition = repDAO.getOne(otherRepetition.getId());
         assertEquals(DateUtils.fromDate(repetition.getFactDate()), DateUtils.currentDateString());
         assertFalse(otherRepetition.getIsRepetitionOnly());
         assertFalse(repetitionBefore.getIsRepetitionOnly());
