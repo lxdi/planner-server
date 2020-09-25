@@ -71,7 +71,8 @@ public class MeansDelegate {
             throw new RuntimeException("Not valid Mean to create");
         }
         Mean mean = meansMapper.mapToEntity(meanDtoFull);
-        Mean prevMean = meansDAO.getLastOfChildren(mean.getParent(), mean.getRealm());
+        Mean prevMean = mean.getParent()!=null? meansDAO.getLastOfChildren(mean.getParent(), mean.getRealm()):
+                meansDAO.getLastOfChildrenRoot(mean.getRealm());
         //TODO do not save the mean if layers are not valid
         meansDAO.saveOrUpdate(mean);
         reassignTargetsFromParent(mean);

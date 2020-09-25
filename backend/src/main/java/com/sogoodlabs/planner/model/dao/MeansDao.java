@@ -66,12 +66,17 @@ public class MeansDao implements IMeansDAO {
 
     @Override
     public Mean getLastOfChildren(Mean mean, Realm realm) {
-        String hql = "FROM Mean mean where mean.realm = :realm and mean.next is null and "
-                + (mean!=null?"mean.parent = :parent":"mean.parent is null");
+        String hql = "FROM Mean where realm = :realm and next is null and parent = :parent";
         Query query = entityManager.unwrap(Session.class).createQuery(hql);
-        if(mean!=null){
-            query.setParameter("parent", mean);
-        }
+        query.setParameter("parent", mean);
+        query.setParameter("realm", realm);
+        return (Mean) query.uniqueResult();
+    }
+
+    @Override
+    public Mean getLastOfChildrenRoot(Realm realm) {
+        String hql = "FROM Mean where realm = :realm and next is null and parent is null";
+        Query query = entityManager.unwrap(Session.class).createQuery(hql);
         query.setParameter("realm", realm);
         return (Mean) query.uniqueResult();
     }

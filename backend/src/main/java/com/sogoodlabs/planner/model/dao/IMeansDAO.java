@@ -19,6 +19,7 @@ public interface IMeansDAO {
     Mean meanByTitle(String title);
     Mean getPrevMean(Mean mean);
     Mean getLastOfChildren(Mean mean, Realm realm);
+    Mean getLastOfChildrenRoot(Realm realm);
     long assignsMeansCount(Mean mean);
     List<Mean> meansAssignedToTarget(Target target);
     void delete(Mean mean);
