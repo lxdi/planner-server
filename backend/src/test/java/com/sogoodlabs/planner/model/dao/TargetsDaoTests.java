@@ -2,7 +2,7 @@ package com.sogoodlabs.planner.model.dao;
 
 import com.sogoodlabs.planner.model.entities.Realm;
 import com.sogoodlabs.planner.model.entities.Target;
-import com.sogoodlabs.planner.services.SafeDeleteService;
+import com.sogoodlabs.planner.services.GracefulDeleteService;
 import org.hibernate.Session;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +26,7 @@ public class TargetsDaoTests extends AbstractTestsWithTargets {
     EntityManager entityManager;
 
     @Autowired
-    private SafeDeleteService safeDeleteService;
+    private GracefulDeleteService gracefulDeleteService;
     
     @Test
     public void gettingAllTargetsTest(){
@@ -79,7 +79,7 @@ public class TargetsDaoTests extends AbstractTestsWithTargets {
         target1.setNext(target2);
         targetsDAO.save(target1);
 
-        safeDeleteService.deleteTarget(target2.getId());
+        gracefulDeleteService.deleteTarget(target2.getId());
 
 
 
@@ -101,7 +101,7 @@ public class TargetsDaoTests extends AbstractTestsWithTargets {
         target1.setNext(target2);
         targetsDAO.save(target1);
 
-        safeDeleteService.deleteTarget(target2.getId());
+        gracefulDeleteService.deleteTarget(target2.getId());
 
         assertFalse(isExists(target2.getId(), Target.class));
         assertEquals(targetsDAO.getOne(target1.getId()).getNext().getId(), target3.getId());
@@ -121,7 +121,7 @@ public class TargetsDaoTests extends AbstractTestsWithTargets {
         child1.setNext(child2);
         targetsDAO.save(child1);
 
-        safeDeleteService.deleteTarget(parentTarget.getId());
+        gracefulDeleteService.deleteTarget(parentTarget.getId());
 
         assertFalse(isExists(parentTarget.getId(), Target.class));
         assertFalse(isExists(child1.getId(), Target.class));
@@ -147,7 +147,7 @@ public class TargetsDaoTests extends AbstractTestsWithTargets {
         childChild.setParent(child1);
         targetsDAO.save(childChild);
 
-        safeDeleteService.deleteTarget(parentTarget.getId());
+        gracefulDeleteService.deleteTarget(parentTarget.getId());
 
         assertFalse(isExists(parentTarget.getId(), Target.class));
         assertFalse(isExists(child1.getId(), Target.class));

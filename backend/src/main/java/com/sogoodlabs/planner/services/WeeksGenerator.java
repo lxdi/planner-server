@@ -2,6 +2,8 @@ package com.sogoodlabs.planner.services;
 
 import com.sogoodlabs.planner.model.dao.IWeekDAO;
 import com.sogoodlabs.planner.model.entities.Week;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.threeten.extra.YearWeek;
@@ -20,6 +22,8 @@ import static com.sogoodlabs.planner.util.DateUtils.toDate;
 @Service
 public class WeeksGenerator {
 
+    Logger log = LoggerFactory.getLogger(WeeksGenerator.class);
+
     @Autowired
     IWeekDAO weekDAO;
 
@@ -30,7 +34,7 @@ public class WeeksGenerator {
     }
 
     public void generateYear(int year){
-        System.out.println("Generating weeks for " + year);
+        log.info("Generating weeks for " + year);
         YearWeek start = YearWeek.of(year,1);
         int numberOfWeeks = start.is53WeekYear()? 53: 54;
         YearWeek yw = start ;
@@ -39,7 +43,7 @@ public class WeeksGenerator {
             //Date endDate = toDate(year, yw.atDay( DayOfWeek.SUNDAY ).getMonthValue(), yw.atDay( DayOfWeek.SUNDAY ).getDayOfMonth());
             Date endDate = addDays(startDate, 6);
             String message = "Week: " + yw + " | start: " + yw.atDay( DayOfWeek.MONDAY ) + " | stop: " + yw.atDay( DayOfWeek.SUNDAY ) ;
-            System.out.println(message);
+            log.info(message);
             getOrCreateWeek(startDate, endDate, i);
             // Prepare for next loop.
             yw = yw.plusWeeks( 1 ) ;

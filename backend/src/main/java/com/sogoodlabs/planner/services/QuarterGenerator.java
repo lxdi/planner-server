@@ -4,6 +4,8 @@ import com.sogoodlabs.planner.model.dao.IHQuarterDAO;
 import com.sogoodlabs.planner.model.dao.IWeekDAO;
 import com.sogoodlabs.planner.model.entities.HQuarter;
 import com.sogoodlabs.planner.model.entities.Week;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.threeten.extra.YearWeek;
@@ -21,6 +23,8 @@ import static com.sogoodlabs.planner.util.DateUtils.toDate;
 
 @Service
 public class QuarterGenerator {
+
+    Logger log = LoggerFactory.getLogger(QuarterGenerator.class);
 
     private static final int HQUARTERS_PER_YEAR = 12;
     private static final int HQUARTERS_DURATION = 4;
@@ -44,7 +48,7 @@ public class QuarterGenerator {
     public void generateYear(int year){
         assert quartalDAO.getHQuartersInYear(year).size()==0;
         weeksGenerator.generateYear(year);
-        System.out.println("Generating quarters for " + year);
+        log.info("Generating quarters for " + year);
         YearWeek start = YearWeek.of(year,1);
         int numberOfWeeks = start.is53WeekYear()? 53: 54;
         YearWeek yw = start;
@@ -65,7 +69,7 @@ public class QuarterGenerator {
                 //hquartersPerYearLimit--;
 
                 String message = "HQuarter: " + HQuarter.getStartWeek().getNumber() + " | start: " + fromDate(HQuarter.getStartWeek().getStartDay());
-                System.out.println(message);
+                log.info(message);
         }
     }
 

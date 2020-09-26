@@ -6,7 +6,7 @@ import com.sogoodlabs.planner.model.dto.BasicDtoValidator;
 import com.sogoodlabs.planner.model.dto.MeansMapper;
 import com.sogoodlabs.planner.model.dto.TasksDtoMapper;
 import com.sogoodlabs.planner.model.entities.*;
-import com.sogoodlabs.planner.services.SafeDeleteService;
+import com.sogoodlabs.planner.services.GracefulDeleteService;
 import com.sogoodlabs.planner.services.TaskMappersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -55,7 +55,7 @@ public class MeansDelegate {
     ITopicDAO topicDAO;
 
     @Autowired
-    private SafeDeleteService safeDeleteService;
+    private GracefulDeleteService gracefulDeleteService;
 
 
     public MeansDelegate(){}
@@ -90,7 +90,7 @@ public class MeansDelegate {
     }
 
     public void delete(long id){
-        safeDeleteService.deleteMean(id);
+        gracefulDeleteService.deleteMean(id);
     }
 
     public Map<String, Object> update(Map<String, Object> meanDtoFull){

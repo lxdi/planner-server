@@ -1,7 +1,7 @@
 package com.sogoodlabs.planner.controllers;
 
 import com.sogoodlabs.planner.services.RepetitionsPlannerService;
-import com.sogoodlabs.planner.services.SafeDeleteService;
+import com.sogoodlabs.planner.services.GracefulDeleteService;
 import com.sogoodlabs.planner.services.SpacedRepetitionsService;
 import com.sogoodlabs.planner.controllers.delegates.TasksDelegate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +30,7 @@ public class TasksRESTController {
     private RepetitionsPlannerService repetitionsPlannerService;
 
     @Autowired
-    private SafeDeleteService safeDeleteService;
+    private GracefulDeleteService gracefulDeleteService;
 
     public TasksRESTController(){
     }
@@ -83,7 +83,7 @@ public class TasksRESTController {
 
     @RequestMapping(path = "/task/{taskid}/repetition/all/left/remove" , method = RequestMethod.DELETE)
     public ResponseEntity removeAllRepetitionsLeft(@PathVariable("taskid") long taskid){
-        safeDeleteService.removeRepetitionsLeftForTask(taskid);
+        gracefulDeleteService.removeRepetitionsLeftForTask(taskid);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

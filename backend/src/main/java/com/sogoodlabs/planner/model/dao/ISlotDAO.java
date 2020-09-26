@@ -36,4 +36,8 @@ public interface ISlotDAO extends JpaRepository<Slot, Long> {
     @Query("FROM Slot s WHERE s.layer in :layers")
     List<Slot> slotsWithLayers(@Param("layers") List<Layer> layers);
 
+    List<Slot> findByLayer(Layer layer);
+
+    List<Slot> findByMean(Mean mean);
+
 }

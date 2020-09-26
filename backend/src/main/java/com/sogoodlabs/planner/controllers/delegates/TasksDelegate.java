@@ -4,13 +4,12 @@ import com.sogoodlabs.common_mapper.CommonMapper;
 import com.sogoodlabs.planner.model.dao.*;
 import com.sogoodlabs.planner.model.entities.*;
 import com.sogoodlabs.planner.services.RepetitionsPlannerService;
-import com.sogoodlabs.planner.services.SafeDeleteService;
+import com.sogoodlabs.planner.services.GracefulDeleteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.sogoodlabs.planner.util.DateUtils;
 
-import java.sql.Date;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -37,7 +36,7 @@ public class TasksDelegate {
     ITaskTestingDAO taskTestingDAO;
 
     @Autowired
-    private SafeDeleteService safeDeleteService;
+    private GracefulDeleteService gracefulDeleteService;
 
     @Autowired
     private RepetitionsPlannerService repetitionsPlannerService;
@@ -49,7 +48,7 @@ public class TasksDelegate {
     }
 
     public void delete(long id){
-        safeDeleteService.deleteTask(id);
+        gracefulDeleteService.deleteTask(id);
     }
 
     public Map<String, Object> update(Map<String, Object> taskDto){

@@ -7,7 +7,7 @@ import com.sogoodlabs.planner.model.dto.BasicDtoValidator;
 import com.sogoodlabs.planner.model.dto.TargetsMapper;
 import com.sogoodlabs.planner.model.entities.Mean;
 import com.sogoodlabs.planner.model.entities.Target;
-import com.sogoodlabs.planner.services.SafeDeleteService;
+import com.sogoodlabs.planner.services.GracefulDeleteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,7 +37,7 @@ public class TargetsDelegate {
     IMeansDAO meansDAO;
 
     @Autowired
-    private SafeDeleteService safeDeleteService;
+    private GracefulDeleteService gracefulDeleteService;
 
     public List<Map<String, Object>> getAllTargets(){
         List<Map<String, Object>> result = new ArrayList<>();
@@ -63,7 +63,7 @@ public class TargetsDelegate {
     }
 
     public void delete(long id){
-        safeDeleteService.deleteTarget(id);
+        gracefulDeleteService.deleteTarget(id);
     }
 
     public Map<String, Object> update(Map<String, Object> targetDto) {

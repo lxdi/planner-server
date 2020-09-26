@@ -2,7 +2,7 @@ package com.sogoodlabs.planner.controllers.delegates;
 
 import com.sogoodlabs.planner.model.dao.*;
 import com.sogoodlabs.planner.model.entities.*;
-import com.sogoodlabs.planner.services.SafeDeleteService;
+import com.sogoodlabs.planner.services.GracefulDeleteService;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +44,7 @@ public class HquartersDelegate_Assigning_in_the_middle_Tests extends ATestsWithT
     IWeekDAO weekDAO;
 
     @Autowired
-    private SafeDeleteService safeDeleteService;
+    private GracefulDeleteService gracefulDeleteService;
 
     @Autowired
     private ISlotPositionDAO slotPositionDAO;
@@ -211,7 +211,7 @@ public class HquartersDelegate_Assigning_in_the_middle_Tests extends ATestsWithT
         hquartersDelegate.assign(mean.getId(), slot3.getId());
         hquartersDelegate.assign(mean.getId(), slot2.getId());
 
-        safeDeleteService.deleteTask(tasksDAO.findByTitle("task 1").getId());
+        gracefulDeleteService.deleteTask(tasksDAO.findByTitle("task 1").getId());
 
         assertTrue(tasksDAO.findByTitle("task 1")==null);
     }

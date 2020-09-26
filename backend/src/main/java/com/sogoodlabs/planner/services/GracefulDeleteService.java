@@ -7,11 +7,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
 @Transactional
-public class SafeDeleteService {
+public class GracefulDeleteService {
 
     @Autowired
     private ITargetsDAO targetsDAO;
@@ -43,12 +44,14 @@ public class SafeDeleteService {
     @Autowired
     private ITaskMappersDAO taskMappersDAO;
 
+    @Autowired
+    private ISlotDAO slotDAO;
+
     public void deleteTarget(long id){
         deleteTarget(targetsDAO.getOne(id));
     }
 
     public void deleteTarget(Target targetToDelete) {
-        //deleteDependedMeans(targetToDelete);
         unassignMeans(targetToDelete);
         handlePrevForDeleting(targetToDelete);
 
@@ -93,6 +96,9 @@ public class SafeDeleteService {
         }
         meansDAO.getChildren(mean).forEach(this::deleteMean);
         layerDAO.getLyersOfMean(mean).forEach(this::deleteLayer);
+        slotDAO.saveAll(slotDAO.findByMean(mean).stream()
+                .peek(slot -> slot.setMean(null))
+                .collect(Collectors.toList()));
         meansDAO.delete(mean);
     }
 
@@ -101,6 +107,10 @@ public class SafeDeleteService {
     }
 
     public void deleteLayer(Layer layer){
+        slotDAO.saveAll(slotDAO.findByLayer(layer).stream()
+                .peek(slot -> slot.setLayer(null))
+                .collect(Collectors.toList()));
+
         subjectDAO.subjectsByLayer(layer).forEach(this::deleteSubject);
         layerDAO.delete(layer);
     }

@@ -12,22 +12,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityNotFoundException;
 import javax.persistence.PersistenceContext;
 
 import java.util.List;
 
-import static junit.framework.TestCase.assertEquals;
-import static junit.framework.TestCase.assertFalse;
+import static junit.framework.TestCase.*;
 
 @Transactional
-public class SafeDeleteServiceTest extends SpringTestConfig {
+public class GracefulDeleteServiceTest extends SpringTestConfig {
 
     @PersistenceContext
     private EntityManager entityManager;
 
     @Autowired
-    private SafeDeleteService safeDeleteService;
+    private GracefulDeleteService gracefulDeleteService;
 
     @Autowired
     private IRepDAO repDAO;
@@ -35,6 +33,9 @@ public class SafeDeleteServiceTest extends SpringTestConfig {
     @Autowired
     private ISpacedRepDAO spacedRepDAO;
 
+    private Mean mean;
+    private Layer layer;
+    private Subject subject;
     private Task task;
     private Topic topic;
     private TaskTesting taskTesting;
@@ -43,6 +44,8 @@ public class SafeDeleteServiceTest extends SpringTestConfig {
     private Repetition finishedRep;
     private Repetition finishedRep2;
     private Repetition unfinishedRep;
+    private Slot slot;
+    private SlotPosition slotPosition;
 
 
     @Before
@@ -50,10 +53,22 @@ public class SafeDeleteServiceTest extends SpringTestConfig {
         super.init();
     }
 
-    private void initEntities(boolean withTaskMappers, boolean withSP){
+    private void initEntities(boolean withTaskMappers, boolean withSP, boolean withSlot){
         Session session = entityManager.unwrap(Session.class);
 
+        mean = new Mean();
+        session.save(mean);
+
+        layer = new Layer();
+        layer.setMean(mean);
+        session.saveOrUpdate(layer);
+
+        subject = new Subject();
+        subject.setLayer(layer);
+        session.saveOrUpdate(subject);
+
         task = new Task();
+        task.setSubject(subject);
         session.saveOrUpdate(task);
 
         topic = new Topic();
@@ -92,6 +107,20 @@ public class SafeDeleteServiceTest extends SpringTestConfig {
                 unfinishedRep.setPlanDate(DateUtils.currentDate());
                 session.save(unfinishedRep);
             }
+
+            if (withSlot) {
+                slot = new Slot();
+                slot.setMean(mean);
+                slot.setLayer(layer);
+                session.saveOrUpdate(slot);
+
+                slotPosition = new SlotPosition();
+                slotPosition.setSlot(slot);
+                session.saveOrUpdate(slotPosition);
+
+                taskMapper.setSlotPosition(slotPosition);
+                session.saveOrUpdate(taskMapper);
+            }
         }
 
         session.flush();
@@ -99,10 +128,37 @@ public class SafeDeleteServiceTest extends SpringTestConfig {
     }
 
     @Test
-    public void deleteTaskTest(){
-        initEntities(true, true);
+    public void deleteMeanTest(){
+        initEntities(true, true, true);
 
-        safeDeleteService.deleteTask(task.getId());
+        gracefulDeleteService.deleteMean(mean.getId());
+
+        entityManager.unwrap(Session.class).flush();
+        entityManager.unwrap(Session.class).clear();
+
+        assertFalse(isExists(mean.getId(), Mean.class));
+        assertFalse(isExists(layer.getId(), Layer.class));
+        assertFalse(isExists(subject.getId(), Subject.class));
+        assertFalse(isExists(task.getId(), Task.class));
+        assertFalse(isExists(topic.getId(), Topic.class));
+        assertFalse(isExists(taskTesting.getId(), TaskTesting.class));
+        assertFalse(isExists(taskMapper.getId(), TaskMapper.class));
+        assertFalse(isExists(spacedRepetitions.getId(), SpacedRepetitions.class));
+        assertFalse(isExists(finishedRep.getId(), Repetition.class));
+
+        assertTrue(isExists(slot.getId(), Slot.class));
+        assertTrue(isExists(slotPosition.getId(), SlotPosition.class));
+
+    }
+
+    @Test
+    public void deleteTaskTest(){
+        initEntities(true, true, true);
+
+        gracefulDeleteService.deleteTask(task.getId());
+
+        entityManager.unwrap(Session.class).flush();
+        entityManager.unwrap(Session.class).clear();
 
         assertFalse(isExists(task.getId(), Task.class));
         assertFalse(isExists(topic.getId(), Topic.class));
@@ -115,10 +171,12 @@ public class SafeDeleteServiceTest extends SpringTestConfig {
 
     @Test
     public void deleteTaskTest_NoSpacedRepetitions(){
-        initEntities(true, false);
+        initEntities(true, false, true);
 
+        gracefulDeleteService.deleteTask(task.getId());
 
-        safeDeleteService.deleteTask(task.getId());
+        entityManager.unwrap(Session.class).flush();
+        entityManager.unwrap(Session.class).clear();
 
         assertFalse(isExists(task.getId(), Task.class));
         assertFalse(isExists(topic.getId(), Topic.class));
@@ -129,9 +187,12 @@ public class SafeDeleteServiceTest extends SpringTestConfig {
 
     @Test
     public void deleteTaskTest_NoTaskMapper(){
-        initEntities(false, false);
+        initEntities(false, false, true);
 
-        safeDeleteService.deleteTask(task.getId());
+        gracefulDeleteService.deleteTask(task.getId());
+
+        entityManager.unwrap(Session.class).flush();
+        entityManager.unwrap(Session.class).clear();
 
         assertFalse(isExists(task.getId(), Task.class));
         assertFalse(isExists(topic.getId(), Topic.class));
@@ -141,9 +202,12 @@ public class SafeDeleteServiceTest extends SpringTestConfig {
 
     @Test
     public void removeRepetitionsLeftForTaskTest(){
-        initEntities(true, true);
+        initEntities(true, true, true);
 
-        safeDeleteService.removeRepetitionsLeftForTask(task.getId());
+        gracefulDeleteService.removeRepetitionsLeftForTask(task.getId());
+
+        entityManager.unwrap(Session.class).flush();
+        entityManager.unwrap(Session.class).clear();
 
         List<Repetition> repetitions = repDAO.getRepsbySpacedRepId(spacedRepDAO.getSRforTask(task.getId()).getId());
         assertEquals(2, repetitions.size());

@@ -4,10 +4,8 @@ package com.sogoodlabs.planner.controllers.delegates;
 import com.sogoodlabs.common_mapper.CommonMapper;
 import com.sogoodlabs.planner.model.dao.ILayerDAO;
 import com.sogoodlabs.planner.model.dao.ISubjectDAO;
-import com.sogoodlabs.planner.model.dao.ITasksDAO;
 import com.sogoodlabs.planner.model.entities.Subject;
-import com.sogoodlabs.planner.model.entities.Task;
-import com.sogoodlabs.planner.services.SafeDeleteService;
+import com.sogoodlabs.planner.services.GracefulDeleteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +25,7 @@ public class SubjectsDelegate {
     ILayerDAO layerDAO;
 
     @Autowired
-    SafeDeleteService safeDeleteService;
+    GracefulDeleteService gracefulDeleteService;
 
     @Autowired
     CommonMapper commonMapper;
@@ -43,7 +41,7 @@ public class SubjectsDelegate {
     public Map<String, Object> delete(long subjectid){
         Subject subject = subjectDAO.getOne(subjectid);
         if(subject!=null) {
-            safeDeleteService.deleteSubject(subject);
+            gracefulDeleteService.deleteSubject(subject);
             return commonMapper.mapToDto(subject);
         } else {
             throw new RuntimeException("Subject doesn't exist");

@@ -3,7 +3,7 @@ package com.sogoodlabs.planner.model.dao;
 import com.sogoodlabs.planner.model.entities.Mean;
 import com.sogoodlabs.planner.model.entities.Slot;
 import com.sogoodlabs.planner.model.entities.Target;
-import com.sogoodlabs.planner.services.SafeDeleteService;
+import com.sogoodlabs.planner.services.GracefulDeleteService;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,7 +24,7 @@ public class MeansDaoTests extends AbstractTestsWithTargetsWithMeans {
     ISlotDAO slotDAO;
 
     @Autowired
-    private SafeDeleteService safeDeleteService;
+    private GracefulDeleteService gracefulDeleteService;
 
     @Test
     public void getChildrenTest(){
@@ -38,7 +38,7 @@ public class MeansDaoTests extends AbstractTestsWithTargetsWithMeans {
 
     @Test
     public void deleteLinkedTarget(){
-        safeDeleteService.deleteTarget(targetsDAO.getTargetByTitle(defaultParentTarget).getId());
+        gracefulDeleteService.deleteTarget(targetsDAO.getTargetByTitle(defaultParentTarget).getId());
 
         assertTrue(meansDao.getOne(1l)!=null);
         assertTrue(meansDao.getOne(2l)!=null);
@@ -52,7 +52,7 @@ public class MeansDaoTests extends AbstractTestsWithTargetsWithMeans {
 
     @Test
     public void deleteLinkedTarget2(){
-        safeDeleteService.deleteTarget(targetsDAO.getTargetByTitle(defaultChildTarget).getId());
+        gracefulDeleteService.deleteTarget(targetsDAO.getTargetByTitle(defaultChildTarget).getId());
 
         assertTrue(meansDao.getOne(1l)!=null);
         assertTrue(meansDao.getOne(2l)!=null);
