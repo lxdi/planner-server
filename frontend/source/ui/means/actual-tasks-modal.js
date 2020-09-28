@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {CommonModal} from './../common-modal'
 
-import {currentDateString, tomorrowDateString, yesterdayDateString} from '../../utils/date-utils'
+import {formatDate, currentDateString, tomorrowDateString, yesterdayDateString} from '../../utils/date-utils'
 
 import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
 
@@ -155,4 +155,5 @@ const getIncomingTag = function(task){
   if(task.repetition.planDate == tomorrowDateString('-')){
     return 'tomorrow'
   }
+  return formatDate(task.repetition.planDate)
 }
