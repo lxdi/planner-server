@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {CommonModal} from './../common-modal'
 
-import {currentDateString} from '../../utils/date-utils'
+import {currentDateString, tomorrowDateString, yesterdayDateString} from '../../utils/date-utils'
 
 import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
 
@@ -44,15 +44,6 @@ const content = function(reactcomp){
 
 const currentTasks = function(){
   return tasksUI(chkSt('tasks-dao', 'actual-tasks')[100], 'Current tasks')
-  // const result = []
-  // const tasks = chkSt('tasks-dao', 'actual-tasks')[100]
-  // for(var i in tasks){
-  //   result.push(taskLink(tasks[i], true))
-  // }
-  // return <div>
-  //           <div>Current tasks</div>
-  //           {result}
-  //         </div>
 }
 
 const outdatedCurrenttasks = function(){
@@ -79,7 +70,11 @@ const spacedRepetitionsUI = function(reactcomp){
                 <td style={Object.assign({border:'1px solid purple'}, tdStyle)}>Memorizing</td>
               </tr>
               <tr>
-                <td>{tasksListUI(getOnlyMemoOnDateTasks(chkSt('tasks-dao', 'actual-tasks')[-0], currentDateString('-')))}</td>
+                <td>
+                  {tasksMemoListUI(getOnlyMemoOnDateTasks(chkSt('tasks-dao', 'actual-tasks')[-0], yesterdayDateString('-')), 'yesterday')}
+                  {tasksMemoListUI(getOnlyMemoOnDateTasks(chkSt('tasks-dao', 'actual-tasks')[-0], currentDateString('-')), 'today')}
+                  {tasksMemoListUI(getOnlyMemoOnDateTasks(chkSt('tasks-dao', 'actual-tasks')[-0], tomorrowDateString('-')), 'tomorrow')}
+                </td>
               </tr>
             </table>
 
@@ -100,6 +95,15 @@ const spacedRepetitionsUI = function(reactcomp){
         </div>
 }
 
+const tasksMemoListUI = function(tasks, tag){
+  if(tasks.length<1){
+    return null
+  }
+  const result = []
+  tasks.forEach((task)=>result.push(taskLink(task, false)))
+  return <div>{result}</div>
+}
+
 const tasksListUI = function(tasks){
   const result = []
   tasks.forEach((task)=>result.push(taskLink(task, false)))
@@ -113,6 +117,7 @@ const taskLink = function(task, highlight){
   										onMouseOver={(e)=>fireEvent('overlay-info', 'update-pos', [e.nativeEvent.clientX+15, e.nativeEvent.clientY-10])}
   										onMouseLeave={()=>fireEvent('overlay-info', 'hide')}>
             <a href='#' onClick={()=>fireEvent('task-modal', 'open', [null, task, true, true])}>{task.title}</a>
+            <div style={{fontSize:'9px', fontColor:'lightGrey', marginLeft: '5px', display: 'inline-block'}}>{getIncomingTag(task)}</div>
       </div>
 }
 
@@ -135,4 +140,19 @@ const getOnlyMemoOnDateTasks = function(tasks, dateString){
 
 const isMemoTask = function(task){
   return task.repetition != null && task.repetition.day_rep
+}
+
+const getIncomingTag = function(task){
+  if(task.repetition == null || task.repetition.planDate == null){
+    return null
+  }
+  if(task.repetition.planDate == yesterdayDateString('-')){
+    return 'yesterday'
+  }
+  if(task.repetition.planDate == currentDateString('-')){
+    return 'today'
+  }
+  if(task.repetition.planDate == tomorrowDateString('-')){
+    return 'tomorrow'
+  }
 }

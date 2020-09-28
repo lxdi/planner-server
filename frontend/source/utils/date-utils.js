@@ -1,4 +1,5 @@
 
+const oneDayMs =  24 * 60 * 60 * 1000
 
 export const formatDate = function(dateString){
   const date = new Date(dateString)
@@ -6,11 +7,25 @@ export const formatDate = function(dateString){
 }
 
 export const currentDateString = function(divisor){
+  return dateToString(new Date(), divisor)
+}
+
+export const tomorrowDateString = function(divisor){
+  return dateToString(new Date(new Date().getTime() + oneDayMs), divisor)
+}
+
+export const yesterdayDateString = function(divisor){
+  return dateToString(new Date(new Date().getTime() - oneDayMs), divisor)
+}
+
+
+const dateToString = function(date, divisor){
   if(divisor==null){
     divisor = '.'
   }
-  var today = new Date();
-  return today.getFullYear()+divisor+formatDateNumber(today.getMonth())+divisor+formatDateNumber(today.getDate())
+  return date.getFullYear()
+              +divisor+formatDateNumber(date.getMonth()+1)
+              +divisor+formatDateNumber(date.getDate())
 }
 
 const formatDateNumber = function(num){
