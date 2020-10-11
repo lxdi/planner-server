@@ -50,7 +50,9 @@ public class TargetsDelegate {
             throw new RuntimeException("Not valid Target Dto received to create");
         }
         Target target = commonMapper.mapToEntity(targetDto, new Target());
-        Target prevTarget = targetsDAO.getLastOfChildren(target.getParent(), target.getRealm());
+        Target prevTarget = target.getParent()!=null
+                ? targetsDAO.getLastOfChildren(target.getParent(), target.getRealm())
+                : targetsDAO.getLastOfChildrenRoot(target.getRealm());
         targetsDAO.save(target);
         reassignMeansFromParent(target);
         Map<String, Object> resultDto = targetsMapper.mapToDto(target);

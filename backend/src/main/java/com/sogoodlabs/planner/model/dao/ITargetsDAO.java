@@ -1,5 +1,6 @@
 package com.sogoodlabs.planner.model.dao;
 
+import com.sogoodlabs.planner.model.entities.Mean;
 import com.sogoodlabs.planner.model.entities.Realm;
 import com.sogoodlabs.planner.model.entities.Target;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -28,6 +29,9 @@ public interface ITargetsDAO extends JpaRepository<Target, Long> {
 
     @Query("FROM Target where realm = :realm and next is null and parent = :parent")
     Target getLastOfChildren(@Param("parent") Target targetParent, @Param("realm") Realm realm);
+
+    @Query("FROM Target where realm = :realm and next is null and parent is null")
+    Target getLastOfChildrenRoot(@Param("realm")Realm realm);
 
     @Query("select count(*)=0 from Target where parent = :target")
     boolean isLeafTarget(@Param("target") Target target);
