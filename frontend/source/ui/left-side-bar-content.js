@@ -2,6 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {Button} from 'react-bootstrap'
 
+import {filterOutMemoTask} from '../utils/task-utils'
+
 import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
 
 export class LeftSideBarContent extends React.Component {
@@ -31,10 +33,10 @@ const content = function(reactcomp){
                   {getSquare(actualTasksMap['100'].length, 'blue')}
                   {getSquare(actualTasksMap['99'].length, 'red')}
                   {divisor()}
-                  {getSquare(actualTasksMap['-2'].length, 'red')}
-                  {getSquare(actualTasksMap['-1'].length, 'orange')}
-                  {getSquare(actualTasksMap['0'].length, 'green')}
-                  {getSquare(actualTasksMap['1'].length, 'grey')}
+                  {getSquare(filterOutMemoTask(actualTasksMap['-2']).length, 'red')}
+                  {getSquare(filterOutMemoTask(actualTasksMap['-1']).length, 'orange')}
+                  {getSquare(filterOutMemoTask(actualTasksMap['0']).length, 'green')}
+                  {getSquare(filterOutMemoTask(actualTasksMap['1']).length, 'grey')}
                 </div>
               </a>
               {divisor()}

@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import {CommonModal} from './../common-modal'
 
 import {formatDate, currentDateString, tomorrowDateString, yesterdayDateString} from '../../utils/date-utils'
+import {filterOutMemoTask, getOnlyMemoOnDateTasks} from '../../utils/task-utils'
 
 import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
 
@@ -119,27 +120,6 @@ const taskLink = function(task, highlight){
             <a href='#' onClick={()=>fireEvent('task-modal', 'open', [null, task, true, true])}>{task.title}</a>
             <div style={{fontSize:'9px', fontColor:'lightGrey', marginLeft: '5px', display: 'inline-block'}}>{getIncomingTag(task)}</div>
       </div>
-}
-
-const filterOutMemoTask = function(tasks){
-  var result = []
-  tasks
-    .filter(task => !isMemoTask(task))
-    .forEach(task => result.push(task))
-  return result
-}
-
-const getOnlyMemoOnDateTasks = function(tasks, dateString){
-  var result = []
-  tasks
-    .filter(task => isMemoTask(task))
-    .filter(task => task.repetition!=null && task.repetition.planDate == dateString)
-    .forEach(task => result.push(task))
-  return result
-}
-
-const isMemoTask = function(task){
-  return task.repetition != null && task.repetition.day_rep
 }
 
 const getIncomingTag = function(task){

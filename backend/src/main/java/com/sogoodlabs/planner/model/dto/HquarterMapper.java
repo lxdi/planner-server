@@ -67,10 +67,10 @@ public class HquarterMapper {
         }
         if(hQuarter.getStartWeek()!=null && hQuarter.getEndWeek()!=null){
             dto.put(NUMBER_OF_REPETITIONS,
-                    repDAO.numberOfRepetitionsInRange(
+                    repDAO.numberOfRepetitionsInRangeMonthStep(
                             hQuarter.getStartWeek().getStartDay(), hQuarter.getEndWeek().getEndDay(), false));
             dto.put(NUMBER_OF_REPETITIONS_ONLY,
-                    repDAO.numberOfRepetitionsInRange(
+                    repDAO.numberOfRepetitionsInRangeMonthStep(
                             hQuarter.getStartWeek().getStartDay(), hQuarter.getEndWeek().getEndDay(), true));
         }
         return dto;
@@ -141,9 +141,9 @@ public class HquarterMapper {
             }
         }
         dto.put(NUMBER_OF_REPETITIONS,
-                repDAO.numberOfRepetitionsInRange(week.getStartDay(), week.getEndDay(), false));
+                repDAO.numberOfRepetitionsInRangeMonthStep(week.getStartDay(), week.getEndDay(), false));
         dto.put(NUMBER_OF_REPETITIONS_ONLY,
-                repDAO.numberOfRepetitionsInRange(week.getStartDay(), week.getEndDay(), true));
+                repDAO.numberOfRepetitionsInRangeMonthStep(week.getStartDay(), week.getEndDay(), true));
         return dto;
     }
 

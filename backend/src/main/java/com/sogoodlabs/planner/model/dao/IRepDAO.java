@@ -23,6 +23,11 @@ public interface IRepDAO extends JpaRepository<Repetition, Long> {
     @Query("select count(*) from Repetition where planDate >= :from and planDate <= :to and factDate is null and isRepetitionOnly is :isRepOnly")
     long numberOfRepetitionsInRange(@Param("from") Date from, @Param("to") Date to, @Param("isRepOnly") boolean isRepOnly);
 
+    @Query("select count(*) from Repetition where spacedRepetitions.repetitionPlan.dayStep is false " +
+            "and planDate >= :from and planDate <= :to and factDate is null " +
+            "and isRepetitionOnly is :isRepOnly")
+    long numberOfRepetitionsInRangeMonthStep(@Param("from") Date from, @Param("to") Date to, @Param("isRepOnly") boolean isRepOnly);
+
     @Modifying
     @Query("update Repetition set isRepetitionOnly = true where spacedRepetitions = :sp and factDate is null")
     void makeRepOnlyAllUnfinished(@Param("sp") SpacedRepetitions spacedRepetition);
