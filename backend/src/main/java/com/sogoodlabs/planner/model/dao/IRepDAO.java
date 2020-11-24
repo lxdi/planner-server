@@ -12,7 +12,7 @@ import java.sql.Date;
 import java.util.List;
 
 @Transactional
-public interface IRepDAO extends JpaRepository<Repetition, Long> {
+public interface IRepDAO extends JpaRepository<Repetition, String> {
 
     @Query("from Repetition where spacedRepetitions.id = :srId")
     List<Repetition> getRepsbySpacedRepId(@Param("srId") long srId);

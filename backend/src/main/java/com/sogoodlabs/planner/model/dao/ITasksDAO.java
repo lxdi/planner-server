@@ -15,7 +15,7 @@ import java.util.List;
  */
 
 @Transactional
-public interface ITasksDAO extends JpaRepository<Task, Long> {
+public interface ITasksDAO extends JpaRepository<Task, String> {
 
     Task findByTitle(String title);
     List<Task> findBySubject(Subject subject);

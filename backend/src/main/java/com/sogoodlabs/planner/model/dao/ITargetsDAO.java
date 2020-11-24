@@ -15,7 +15,7 @@ import java.util.List;
  */
 
 @Transactional
-public interface ITargetsDAO extends JpaRepository<Target, Long> {
+public interface ITargetsDAO extends JpaRepository<Target, String> {
 
 
     @Query("from Target t where t.parent = :target")

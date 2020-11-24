@@ -34,19 +34,10 @@ public class EntityByIdImpl implements IEntityById {
     ITopicDAO topicDAO;
 
     @Autowired
-    ISubjectDAO subjectDAO;
-
-    @Autowired
     IRepDAO repDAO;
 
     @Autowired
     IWeekDAO weekDAO;
-
-    @Autowired
-    IHQuarterDAO hquarterDao;
-
-    @Autowired
-    ISlotDAO slotDAO;
 
     @Override
     public Object get(long id, Class aClass) {
@@ -66,9 +57,6 @@ public class EntityByIdImpl implements IEntityById {
         if(aClass == Layer.class){
             result = layerDAO.layerById(id);
         }
-        if(aClass == Subject.class){
-            result = subjectDAO.getOne(id);
-        }
         if(aClass == Task.class){
             result = tasksDAO.getOne(id);
         }
@@ -86,15 +74,6 @@ public class EntityByIdImpl implements IEntityById {
         }
         if(aClass == Week.class){
             result = weekDAO.getById(id);
-        }
-        if(aClass == HQuarter.class){
-            result = hquarterDao.getById(id);
-        }
-        if(aClass == Slot.class){
-            result = slotDAO.getOne(id);
-        }
-        if(aClass == SlotPosition.class){
-            result = slotDAO.getOne(id);
         }
 
         if(result ==null){

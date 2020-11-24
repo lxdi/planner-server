@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Transactional
-public interface ITopicDAO extends JpaRepository<Topic, Long> {
+public interface ITopicDAO extends JpaRepository<Topic, String> {
 
     @Query("from Topic where task.id = :taskId")
     List<Topic> getByTaskId(@Param("taskId") long taskid);

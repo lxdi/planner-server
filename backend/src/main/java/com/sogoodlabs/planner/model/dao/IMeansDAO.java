@@ -16,7 +16,7 @@ import java.util.List;
  */
 
 @Transactional
-public interface IMeansDAO extends JpaRepository<Mean, Long> {
+public interface IMeansDAO extends JpaRepository<Mean, String> {
 
     @Query("FROM Mean mean where mean.parent = :parent")
     List<Mean> getChildren(@Param("parent") Mean mean);

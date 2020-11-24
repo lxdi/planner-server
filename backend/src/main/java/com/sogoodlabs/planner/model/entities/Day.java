@@ -20,7 +20,7 @@ public class Day {
 
     @Basic
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private Date day;
+    private Date date;
 
     private int num;
 
@@ -49,12 +49,11 @@ public class Day {
         this.weekDay = weekDay;
     }
 
-    public Date getDay() {
-        return day;
+    public Date getDate() {
+        return date;
     }
-
-    public void setDay(Date day) {
-        this.day = day;
+    public void setDate(Date date) {
+        this.date = date;
     }
 
     public int getNum() {

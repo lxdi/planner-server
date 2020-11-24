@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Transactional
-public interface ITaskTestingDAO extends JpaRepository<TaskTesting, Long> {
+public interface ITaskTestingDAO extends JpaRepository<TaskTesting, String> {
 
     @Query("from TaskTesting where task.id = :taskId")
     List<TaskTesting> getByTaskId(@Param("taskId") long taskid);
