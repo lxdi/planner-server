@@ -9,59 +9,44 @@ import java.sql.Date;
 public class TaskMapper {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    long id;
+    String id;
 
     @OneToOne(fetch = FetchType.LAZY)
     Task task;
 
     @OneToOne(fetch = FetchType.LAZY)
-    SlotPosition slotPosition;
+    Day planDay;
 
     @OneToOne(fetch = FetchType.LAZY)
-    Week week;
+    Day finishDay;
 
-    @Column(name = "finishdate")
-    @Basic
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    Date finishDate;
-
-    public long getId() {
+    public String getId() {
         return id;
     }
-
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
     public Task getTask() {
         return task;
     }
-
     public void setTask(Task task) {
         this.task = task;
     }
 
-    public SlotPosition getSlotPosition() {
-        return slotPosition;
+    public Day getPlanDay() {
+        return planDay;
     }
 
-    public void setSlotPosition(SlotPosition slotPosition) {
-        this.slotPosition = slotPosition;
+    public void setPlanDay(Day planDay) {
+        this.planDay = planDay;
     }
 
-    public Week getWeek() {
-        return week;
+    public Day getFinishDay() {
+        return finishDay;
     }
 
-    public void setWeek(Week week) {
-        this.week = week;
-    }
-
-    public Date getFinishDate() {
-        return finishDate;
-    }
-    public void setFinishDate(Date finishDate) {
-        this.finishDate = finishDate;
+    public void setFinishDay(Day finishDay) {
+        this.finishDay = finishDay;
     }
 }

@@ -1,6 +1,5 @@
 package com.sogoodlabs.planner.model.entities;
 
-import com.sogoodlabs.common_mapper.annotations.MapForLazy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
@@ -16,8 +15,7 @@ import java.util.List;
 public class Mean {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    long id;
+    String id;
     String title;
     String criteria;
 
@@ -47,18 +45,10 @@ public class Mean {
     @Column(name = "hidechildren")
     boolean hideChildren = false;
 
-    public Mean(){}
-
-    public Mean(String title, Realm realm){
-        assert title!=null && !title.trim().equals("") && realm!=null;
-        this.realm = realm;
-        this.title = title;
-    }
-
-    public long getId() {
+    public String getId() {
         return id;
     }
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

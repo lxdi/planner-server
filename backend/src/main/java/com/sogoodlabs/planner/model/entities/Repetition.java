@@ -9,49 +9,45 @@ import java.sql.Date;
 public class Repetition {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    long id;
+    String id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    SpacedRepetitions spacedRepetitions;
+    RepetitionPlan repetitionPlan;
 
-    @Basic
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    Date planDate;
+    @OneToOne(fetch = FetchType.LAZY)
+    Day planDay;
 
-    @Basic
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    Date factDate;
+    @OneToOne(fetch = FetchType.LAZY)
+    Day factDay;
 
     private boolean isRepetitionOnly = false;
 
-    public long getId() {
+    public String getId() {
         return id;
     }
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public SpacedRepetitions getSpacedRepetitions() {
-        return spacedRepetitions;
+    public RepetitionPlan getRepetitionPlan() {
+        return repetitionPlan;
     }
-    public void setSpacedRepetitions(SpacedRepetitions spacedRepetitions) {
-        this.spacedRepetitions = spacedRepetitions;
-    }
-
-    public Date getPlanDate() {
-        return planDate;
-    }
-    public void setPlanDate(Date planDate) {
-        this.planDate = planDate;
+    public void setRepetitionPlan(RepetitionPlan repetitionPlan) {
+        this.repetitionPlan = repetitionPlan;
     }
 
-    public Date getFactDate() {
-        return factDate;
+    public Day getPlanDay() {
+        return planDay;
+    }
+    public void setPlanDay(Day planDay) {
+        this.planDay = planDay;
     }
 
-    public void setFactDate(Date factDate) {
-        this.factDate = factDate;
+    public Day getFactDay() {
+        return factDay;
+    }
+    public void setFactDay(Day factDay) {
+        this.factDay = factDay;
     }
 
     public boolean getIsRepetitionOnly() {

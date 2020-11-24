@@ -6,8 +6,7 @@ import javax.persistence.*;
 public class Topic {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    long id;
+    String id;
 
     String title;
     String source;
@@ -15,20 +14,10 @@ public class Topic {
     @ManyToOne(fetch = FetchType.LAZY)
     Task task;
 
-    public Topic(){}
-
-    public Topic(String title, Task task){
-//        if(title==null || title.isEmpty() || task==null){
-//            throw new RuntimeException("Topic to create is not full");
-//        }
-        this.title = title;
-        this.task = task;
-    }
-
-    public long getId() {
+    public String getId() {
         return id;
     }
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

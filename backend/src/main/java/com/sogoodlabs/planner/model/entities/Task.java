@@ -14,35 +14,18 @@ import java.util.Set;
 public class Task{
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    long id;
+    String id;
     String title;
 
-
     @ManyToOne(fetch = FetchType.LAZY)
-    Subject subject;
+    Layer layer;
+
     int position;
 
-    //@Cascade(org.hibernate.annotations.CascadeType.ALL)
-//    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-//    Set<Topic> topics = new HashSet<>();
-//
-//    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-//    Set<TaskTesting> testings = new HashSet<>();
-
-    public Task(){}
-
-    public Task(String title, Subject subject, int position){
-        assert subject!=null && position>0 && title!=null && !title.isEmpty();
-        this.title = title;
-        this.subject = subject;
-        this.position = position;
-    }
-
-    public long getId() {
+    public String getId() {
         return id;
     }
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -53,11 +36,11 @@ public class Task{
         this.title = title;
     }
 
-    public Subject getSubject() {
-        return subject;
+    public Layer getLayer() {
+        return layer;
     }
-    public void setSubject(Subject subject) {
-        this.subject = subject;
+    public void setLayer(Layer layer) {
+        this.layer = layer;
     }
 
     public int getPosition() {
