@@ -1,4 +1,4 @@
-package com.sogoodlabs.planner.test_configs;
+package com.sogoodlabs.planner;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;

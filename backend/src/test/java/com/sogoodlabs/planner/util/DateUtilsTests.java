@@ -1,4 +1,4 @@
-package com.sogoodlabs.planner.services;
+package com.sogoodlabs.planner.util;
 
 import com.sogoodlabs.planner.util.DateUtils;
 import org.junit.Test;

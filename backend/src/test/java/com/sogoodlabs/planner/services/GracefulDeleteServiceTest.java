@@ -3,7 +3,7 @@ package com.sogoodlabs.planner.services;
 import com.sogoodlabs.planner.model.dao.IRepDAO;
 import com.sogoodlabs.planner.model.dao.ISpacedRepDAO;
 import com.sogoodlabs.planner.model.entities.*;
-import com.sogoodlabs.planner.test_configs.SpringTestConfig;
+import com.sogoodlabs.planner.SpringTestConfig;
 import com.sogoodlabs.planner.util.DateUtils;
 import org.hibernate.Session;
 import org.junit.Before;
