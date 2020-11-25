@@ -5,7 +5,7 @@ import {getMaxVal, addToLastLL, replaceDraggableUtil, addAsChildDraggableUtil, m
 
 
 registerEvent('means-dao', 'means-request', function(stateSetter){
-    sendGet("/mean/all/lazy", function(data) {
+    sendGet("/mean/get/all", function(data) {
               var receivedData = typeof data == 'string'? JSON.parse(data): data
               importMeansDto(stateSetter, receivedData)
               fireEvent('means-dao', 'means-received', [])

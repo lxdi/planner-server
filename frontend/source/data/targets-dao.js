@@ -38,7 +38,7 @@ registerEvent('targets-dao', 'modify', function(stateSetter, target){
 registerEvent('targets-dao', 'target-modified', (stateSetter, target)=>target)
 
 registerEvent('targets-dao', 'targets-request', function(stateSetter){
-  sendGet("/target/all/lazy", function(data) {
+  sendGet("/target/get/all", function(data) {
             var receivedData = typeof data == 'string'? JSON.parse(data): data
             importTargetsDto(stateSetter, receivedData)
             fireEvent('targets-dao', 'targets-received', [])

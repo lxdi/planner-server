@@ -3,7 +3,7 @@ import {sendGet, sendPut, sendPost} from './postoffice'
 import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
 
 registerEvent('realms-dao', 'realms-request', function(stateSetter){
-  sendGet("/realm/all", (data)=>{
+  sendGet("/realm/get/all", (data)=>{
     var receivedData = typeof data == 'string'? JSON.parse(data): data
     importRealms(stateSetter, receivedData)
     for(var i in chkSt('realms-dao', 'realms')){

@@ -11,11 +11,10 @@ import javax.persistence.*;
 public class Week {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
 
     private int year;
-    private int number;
+    private int num;
 
     public String getId() {
         return id;
@@ -31,10 +30,10 @@ public class Week {
         this.year = year;
     }
 
-    public int getNumber() {
-        return number;
+    public int getNum() {
+        return num;
     }
-    public void setNumber(int number) {
-        this.number = number;
+    public void setNum(int num) {
+        this.num = num;
     }
 }

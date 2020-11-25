@@ -15,6 +15,7 @@ import java.sql.Date;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 import static com.sogoodlabs.planner.util.DateUtils.toDate;
 
@@ -61,10 +62,11 @@ public class WeeksGenerator {
     }
 
     private Week getOrCreateWeek(int year, int number){
-        Week week = weekDAO.findByYearByNum(year, number);
+        Week week = weekDAO.findByYearAndNum(year, number);
         if(week==null){
             week = new Week();
-            week.setNumber(number);
+            week.setId(UUID.randomUUID().toString());
+            week.setNum(number);
             week.setYear(year);
             weekDAO.save(week);
         }
@@ -80,6 +82,7 @@ public class WeeksGenerator {
         Day day = dayDao.findByDate(date);
         if(day==null){
             day = new Day();
+            day.setId(UUID.randomUUID().toString());
             day.setDate(date);
             day.setWeek(week);
             day.setNum(num);

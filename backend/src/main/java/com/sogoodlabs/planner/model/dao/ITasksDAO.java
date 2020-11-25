@@ -17,8 +17,6 @@ import java.util.List;
 public interface ITasksDAO extends JpaRepository<Task, String> {
 
     Task findByTitle(String title);
-
-    @Query("from Task t where t.subject.layer = :layer")
-    List<Task> findByLayer(@Param("layer") Layer layer);
+    List<Task> findByLayer(Layer layer);
 
 }

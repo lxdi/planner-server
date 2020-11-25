@@ -32,9 +32,6 @@ public interface IMeansDAO extends JpaRepository<Mean, String> {
     @Query("FROM Mean where realm = :realm and next is null and parent is null")
     Mean getLastOfChildrenRoot(@Param("realm")Realm realm);
 
-    @Query("select count(*) from Slot s where s.mean = :mean")
-    long assignsMeansCount(@Param("mean")Mean mean);
-
     @Query("from Mean m where :target in elements(targets)")
     List<Mean> meansAssignedToTarget(@Param("target") Target target);
 

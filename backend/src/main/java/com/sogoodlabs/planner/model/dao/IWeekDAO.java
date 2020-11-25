@@ -14,6 +14,6 @@ import java.util.List;
 @Transactional
 public interface IWeekDAO extends JpaRepository<Week, String> {
 
-    Week findByYearByNum(int year, int num);
+    Week findByYearAndNum(int year, int num);
 
 }
