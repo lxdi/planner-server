@@ -1,69 +1,67 @@
 package com.sogoodlabs.planner.controllers;
 
-import com.sogoodlabs.planner.controllers.delegates.MeansDelegate;
+import com.sogoodlabs.common_mapper.CommonMapper;
+import com.sogoodlabs.planner.model.dao.IMeansDAO;
+import com.sogoodlabs.planner.model.entities.Mean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * Created by Alexander on 23.02.2018.
  */
 
-@Controller
+@RestController
+@RequestMapping(path = "/mean")
 public class MeansRESTController {
 
     @Autowired
-    MeansDelegate meansDelegate;
+    private IMeansDAO meansDAO;
 
-    public MeansRESTController(){}
+    @Autowired
+    private CommonMapper commonMapper;
 
-    public MeansRESTController(MeansDelegate meansDelegate){
-        this.meansDelegate = meansDelegate;
+    @GetMapping("/get/all")
+    public List<Map<String, Object>> getAllTargets(){
+        return meansDAO.findAll().stream()
+                .map(commonMapper::mapToDto)
+                .collect(Collectors.toList());
     }
 
-    @RequestMapping(path = "/mean/all/lazy")
-    public ResponseEntity<List<Map<String, Object>>> getAllMeans(){;
-        return new ResponseEntity<>(meansDelegate.getAllMeans(), HttpStatus.OK);
+    @PutMapping("/create")
+    public Map<String, Object> createTarget(@RequestBody Map<String, Object> meanDto) {
+        Mean mean = commonMapper.mapToEntity(meanDto, new Mean());
+        mean.setId(UUID.randomUUID().toString());
+        meansDAO.save(mean);
+        return commonMapper.mapToDto(mean);
     }
 
-    @RequestMapping(path = "/mean/full/{meanid}")
-    public ResponseEntity<Map<String, Object>> getFull(@PathVariable("meanid") long meanid){
-        return new ResponseEntity<>(meansDelegate.getFull(meanid), HttpStatus.OK);
+    @DeleteMapping("/delete/{targetId}")
+    public void delete(@PathVariable("targetId") String id) {
+        Mean mean = meansDAO.findById(id).orElseThrow(() -> new RuntimeException("Mean not found by " + id));
+        meansDAO.delete(mean);
     }
 
-    @RequestMapping(path = "/mean/create" , method = RequestMethod.PUT)
-    public ResponseEntity<Map<String, Object>> create(@RequestBody Map<String, Object> meanDtoFull){
-        return new ResponseEntity<>(meansDelegate.create(meanDtoFull), HttpStatus.OK);
+    @PostMapping("/update")
+    public Map<String, Object> update(@RequestBody Map<String, Object> targetDto) {
+        return updateOneMean(targetDto);
     }
 
-    @RequestMapping(path = "/mean/delete/{meanId}" , method = RequestMethod.DELETE)
-    public ResponseEntity delete(@PathVariable("meanId") long id){
-        meansDelegate.delete(id);
-        return new ResponseEntity(HttpStatus.OK);
+    @PostMapping("/update/list")
+    public List<Map<String, Object>> updateList(@RequestBody List<Map<String, Object>> meanDtoList){
+        return meanDtoList.stream()
+                .map(this::updateOneMean)
+                .collect(Collectors.toList());
     }
 
-    @RequestMapping(path = "/mean/update" , method = RequestMethod.POST)
-    public ResponseEntity<Map<String, Object>> update(@RequestBody Map<String, Object> meanDtoFull){
-        return new ResponseEntity<>(meansDelegate.update(meanDtoFull), HttpStatus.OK);
+    private Map<String, Object> updateOneMean(Map<String, Object> meanDto){
+        Mean mean = commonMapper.mapToEntity(meanDto, new Mean());
+        meansDAO.save(mean);
+        return commonMapper.mapToDto(mean);
     }
-
-    @RequestMapping(path = "/mean/reposition/list" , method = RequestMethod.POST)
-    public ResponseEntity<List<Map<String, Object>>> reposition(@RequestBody List<Map<String, Object>> meanDtoLazyList){
-        return new ResponseEntity<>(meansDelegate.reposition(meanDtoLazyList), HttpStatus.OK);
-    }
-
-    @RequestMapping(path = "/mean/{meanid}/hideChildren/{val}" , method = RequestMethod.POST)
-    public ResponseEntity<Map<String, Object>> hideChildren(@PathVariable("meanid") long id, @PathVariable("val") boolean val){
-        return new ResponseEntity<>(meansDelegate.hideChildren(id, val), HttpStatus.OK);
-    }
-
 
 }

@@ -1,24 +1,29 @@
 package com.sogoodlabs.planner.controllers;
 
+import com.sogoodlabs.common_mapper.CommonMapper;
 import com.sogoodlabs.planner.model.dao.IRealmDAO;
 import com.sogoodlabs.planner.model.entities.Realm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
-@Controller
+@RestController
 @RequestMapping(path = "/realm")
 public class RealmsRESTController {
 
     @Autowired
     IRealmDAO realmDAO;
+
+    @Autowired
+    private CommonMapper commonMapper;
 
     public RealmsRESTController(){}
 
@@ -26,22 +31,27 @@ public class RealmsRESTController {
         this.realmDAO = realmDAO;
     }
 
-    @RequestMapping(path = "/all")
-    public ResponseEntity<List<Realm>> getAllTargets(){
-        List<Realm> result = realmDAO.getAllRealms();
-        return new ResponseEntity<List<Realm>>(result, HttpStatus.OK);
+    @GetMapping("/get/all")
+    public List<Map<String, Object>> getAllTargets(){
+       return realmDAO.findAll()
+                .stream().map(commonMapper::mapToDto)
+                .collect(Collectors.toList());
     }
 
-    @RequestMapping(path = "/create" , method = RequestMethod.PUT)
-    public ResponseEntity<Realm> createRealm(@RequestBody Realm realm){
-        realmDAO.saveOrUpdate(realm);
-        return new ResponseEntity<Realm>(realm, HttpStatus.OK);
+    @PutMapping("/create")
+    public Map<String, Object> createRealm(@RequestBody Map<String, Object> realmDto){
+        Realm realm = commonMapper.mapToEntity(realmDto, new Realm());
+        realm.setId(UUID.randomUUID().toString());
+        realmDAO.save(realm);
+        return commonMapper.mapToDto(realm);
     }
 
-    @RequestMapping(path = "/setcurrent/{realmid}" , method = RequestMethod.POST)
-    public ResponseEntity setCurrent(@PathVariable("realmid") long realmid){
-        realmDAO.setCurrent(realmid);
-        return new ResponseEntity(HttpStatus.OK);
+    @PostMapping(path = "/setcurrent/{realmid}")
+    public void setCurrent(@PathVariable("realmid") String realmId){
+        Realm realm = realmDAO.findById(realmId).orElseThrow(() -> new RuntimeException("Realm not found by " + realmId));
+        realmDAO.clearCurrent();
+        realm.setCurrent(true);
+        realmDAO.save(realm);
     }
 
 }

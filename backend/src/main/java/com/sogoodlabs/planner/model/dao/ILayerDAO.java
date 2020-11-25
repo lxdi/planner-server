@@ -8,4 +8,6 @@ import java.util.List;
 
 public interface ILayerDAO extends JpaRepository<Layer, String> {
 
+    List<Layer> findByMean(Mean mean);
+
 }

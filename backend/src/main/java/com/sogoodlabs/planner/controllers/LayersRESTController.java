@@ -1,47 +1,36 @@
 package com.sogoodlabs.planner.controllers;
 
-import com.sogoodlabs.planner.controllers.delegates.LayersDelegate;
+import com.sogoodlabs.common_mapper.CommonMapper;
+import com.sogoodlabs.planner.model.dao.ILayerDAO;
+import com.sogoodlabs.planner.model.dao.IMeansDAO;
+import com.sogoodlabs.planner.model.entities.Mean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-@Controller
+@RestController
 @RequestMapping(path = "/layer")
 public class LayersRESTController {
 
     @Autowired
-    LayersDelegate layersDelegate;
+    private CommonMapper commonMapper;
 
-    public LayersRESTController(){}
+    @Autowired
+    private ILayerDAO layerDAO;
 
-    public LayersRESTController(LayersDelegate layersDelegate){
-        this.layersDelegate = layersDelegate;
-    }
+    @Autowired
+    private IMeansDAO meansDAO;
 
-    @Deprecated
-    @RequestMapping(path = "/create" , method = RequestMethod.PUT)
-    public ResponseEntity<Map<String, Object>> createLayer(@RequestBody Map<String, Object> layerDto){
-        return new ResponseEntity<>(layersDelegate.createLayer(layerDto), HttpStatus.OK);
-    }
+    @GetMapping("/get/bymean/{meanid}")
+    public List<Map<String, Object>> layersOfMean(@PathVariable("meanid") String meanid){
+        Mean mean = meansDAO.findById(meanid).orElseThrow(() -> new RuntimeException("Mean not found by " + meanid));
 
-    @Deprecated
-    @RequestMapping(path = "/create/list" , method = RequestMethod.PUT)
-    public ResponseEntity<List<Map<String, Object>>> createLayers(@RequestBody List<Map<String, Object>> layersDto){
-        return new ResponseEntity<>(layersDelegate.createLayers(layersDto), HttpStatus.OK);
-    }
-
-
-    @RequestMapping(path = "/get/bymean/{meanid}" , method = RequestMethod.GET)
-    public ResponseEntity<List<Map<String, Object>>> layersOfMean(@PathVariable("meanid") long meanid){
-        return new ResponseEntity(layersDelegate.layersOfMean(meanid), HttpStatus.OK);
+        return layerDAO.findByMean(mean).stream()
+                .map(commonMapper::mapToDto)
+                .collect(Collectors.toList());
     }
 
 }

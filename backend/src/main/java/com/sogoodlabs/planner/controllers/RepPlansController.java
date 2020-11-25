@@ -1,24 +1,29 @@
 package com.sogoodlabs.planner.controllers;
 
-import com.sogoodlabs.planner.controllers.delegates.RepPlanDelegate;
+import com.sogoodlabs.common_mapper.CommonMapper;
+import com.sogoodlabs.planner.model.dao.IRepPlanDAO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-@Controller
+@RestController
+@RequestMapping(path = "/repetition/plan")
 public class RepPlansController {
 
     @Autowired
-    RepPlanDelegate repPlanDelegate;
+    private CommonMapper commonMapper;
 
-    @RequestMapping(path = "/repetition/plan/all", method = RequestMethod.GET)
-    public ResponseEntity<List<Map<String, Object>>> getAll(){
-        return new ResponseEntity<>(repPlanDelegate.getAll(), HttpStatus.OK);
+    @Autowired
+    private IRepPlanDAO repPlanDAO;
+
+    @GetMapping(path = "/get/all")
+    public List<Map<String, Object>> getAll(){
+        return repPlanDAO.findAll().stream().map(commonMapper::mapToDto).collect(Collectors.toList());
     }
 
 }
