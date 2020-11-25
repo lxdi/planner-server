@@ -24,16 +24,10 @@ public class GracefulDeleteService {
     private ILayerDAO layerDAO;
 
     @Autowired
-    private ISubjectDAO subjectDAO;
-
-    @Autowired
     private ITasksDAO tasksDAO;
 
     @Autowired
     private ITopicDAO topicDAO;
-
-    @Autowired
-    private ISpacedRepDAO spacedRepDAO;
 
     @Autowired
     private ITaskTestingDAO taskTestingDAO;
@@ -44,10 +38,8 @@ public class GracefulDeleteService {
     @Autowired
     private ITaskMappersDAO taskMappersDAO;
 
-    @Autowired
-    private ISlotDAO slotDAO;
 
-    public void deleteTarget(long id){
+    public void deleteTarget(String id){
         deleteTarget(targetsDAO.getOne(id));
     }
 
@@ -63,7 +55,7 @@ public class GracefulDeleteService {
 
     private void unassignMeans(Target target) {
         meansDAO.meansAssignedToTarget(target).forEach(mean -> {
-            mean.getTargets().removeIf(curTarget -> curTarget.getId() == target.getId());
+            mean.getTargets().removeIf(curTarget -> curTarget.getId().equals(target.getId()));
             meansDAO.save(mean);
         });
     }
@@ -80,8 +72,8 @@ public class GracefulDeleteService {
         }
     }
 
-    public void deleteMean(long id) {
-        deleteMean(meansDAO.getOne(id));
+    public void deleteMean(String id) {
+        deleteMean(meansDAO.findById(id).orElseThrow(() -> new RuntimeException("Mean not found by " + id)));
     }
 
     public void deleteMean(Mean mean){
@@ -95,71 +87,29 @@ public class GracefulDeleteService {
             meansDAO.save(prevMean);
         }
         meansDAO.getChildren(mean).forEach(this::deleteMean);
-        layerDAO.getLyersOfMean(mean).forEach(this::deleteLayer);
-        slotDAO.saveAll(slotDAO.findByMean(mean).stream()
-                .peek(slot -> slot.setMean(null))
-                .collect(Collectors.toList()));
+        layerDAO.findByMean(mean).forEach(this::deleteLayer);
         meansDAO.delete(mean);
     }
 
-    public void deleteLayer(long id) {
-        deleteLayer(layerDAO.layerById(id));
+    public void deleteLayer(String id) {
+        deleteLayer(layerDAO.findById(id).orElseThrow(() -> new RuntimeException("No Layer found by " + id)));
     }
 
     public void deleteLayer(Layer layer){
-        slotDAO.saveAll(slotDAO.findByLayer(layer).stream()
-                .peek(slot -> slot.setLayer(null))
-                .collect(Collectors.toList()));
-
-        subjectDAO.subjectsByLayer(layer).forEach(this::deleteSubject);
+        tasksDAO.findByLayer(layer).forEach(this::deleteTask);
         layerDAO.delete(layer);
     }
 
-    public void deleteSubject(long id) {
-        deleteSubject(subjectDAO.getOne(id));
-    }
-
-    public void deleteSubject(Subject subject){
-        tasksDAO.findBySubject(subject).forEach(this::deleteTask);
-        subjectDAO.delete(subject);
-    }
-
-    public void deleteTask(long id) {
-        deleteTask(tasksDAO.getOne(id));
+    public void deleteTask(String id) {
+        deleteTask(tasksDAO.findById(id).orElseThrow(() -> new RuntimeException("Target not found by "+ id)));
     }
 
     public void deleteTask(Task task){
-        long id = task.getId();
-
-        topicDAO.getByTaskId(id).forEach(topicDAO::delete);
-        taskTestingDAO.getByTaskId(id).forEach(teting -> taskTestingDAO.delete(teting));
-
-        SpacedRepetitions spacedRepetitions = spacedRepDAO.getSRforTask(id);
-        if(spacedRepetitions!=null){
-            repDAO.getRepsbySpacedRepId(spacedRepetitions.getId()).forEach(repDAO::delete);
-            spacedRepDAO.delete(spacedRepetitions);
-        }
-
-        TaskMapper taskMapper = taskMappersDAO.taskMapperForTask(task);
-        if(taskMapper!=null){
-            taskMappersDAO.delete(taskMapper);
-        }
+        topicDAO.findByTask(task).forEach(topicDAO::delete);
+        taskTestingDAO.findByTask(task).forEach(teting -> taskTestingDAO.delete(teting));
+        taskMappersDAO.findByTask(task).forEach(taskMapper -> taskMappersDAO.delete(taskMapper));
 
         tasksDAO.delete(task);
-    }
-
-    /**
-     *  Removes all the unfinished repetitions related to the task
-     *
-     */
-    public void removeRepetitionsLeftForTask(long taskid){
-        SpacedRepetitions spacedRepetitions = spacedRepDAO.getSRforTask(taskid);
-        List<Repetition> repetitions = repDAO.getRepsbySpacedRepId(spacedRepetitions.getId());
-        repetitions.forEach(rep -> {
-            if(rep.getFactDate()==null){
-                repDAO.delete(rep);
-            }
-        });
     }
 
 }

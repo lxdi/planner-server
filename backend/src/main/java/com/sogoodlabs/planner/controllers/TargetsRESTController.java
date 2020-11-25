@@ -3,6 +3,7 @@ package com.sogoodlabs.planner.controllers;
 import com.sogoodlabs.common_mapper.CommonMapper;
 import com.sogoodlabs.planner.model.dao.ITargetsDAO;
 import com.sogoodlabs.planner.model.entities.Target;
+import com.sogoodlabs.planner.services.GracefulDeleteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +28,9 @@ public class TargetsRESTController {
     @Autowired
     private ITargetsDAO targetsDAO;
 
+    @Autowired
+    private GracefulDeleteService gracefulDeleteService;
+
     @GetMapping("/get/all")
     public List<Map<String, Object>> getAllTargets(){
         return targetsDAO.findAll().stream()
@@ -45,7 +49,7 @@ public class TargetsRESTController {
     @DeleteMapping("/delete/{targetId}")
     public void delete(@PathVariable("targetId") String id) {
         Target target = targetsDAO.findById(id).orElseThrow(() -> new RuntimeException("Target not found by " + id));
-        targetsDAO.delete(target);
+        gracefulDeleteService.deleteTarget(target);
     }
 
     @PostMapping("/update")

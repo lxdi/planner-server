@@ -8,4 +8,6 @@ import java.util.List;
 
 public interface ITaskMappersDAO extends JpaRepository<TaskMapper, String> {
 
+    List<TaskMapper> findByTask(Task task);
+
 }

@@ -13,5 +13,7 @@ import java.util.List;
 public interface ITopicDAO extends JpaRepository<Topic, String> {
 
     @Query("from Topic where task.id = :taskId")
-    List<Topic> getByTaskId(@Param("taskId") long taskid);
+    List<Topic> getByTaskId(@Param("taskId") String taskid);
+
+    List<Topic> findByTask(Task task);
 }

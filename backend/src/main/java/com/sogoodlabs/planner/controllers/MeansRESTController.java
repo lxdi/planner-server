@@ -3,6 +3,7 @@ package com.sogoodlabs.planner.controllers;
 import com.sogoodlabs.common_mapper.CommonMapper;
 import com.sogoodlabs.planner.model.dao.IMeansDAO;
 import com.sogoodlabs.planner.model.entities.Mean;
+import com.sogoodlabs.planner.services.GracefulDeleteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,6 +26,9 @@ public class MeansRESTController {
     @Autowired
     private CommonMapper commonMapper;
 
+    @Autowired
+    private GracefulDeleteService gracefulDeleteService;
+
     @GetMapping("/get/all")
     public List<Map<String, Object>> getAllTargets(){
         return meansDAO.findAll().stream()
@@ -43,7 +47,7 @@ public class MeansRESTController {
     @DeleteMapping("/delete/{targetId}")
     public void delete(@PathVariable("targetId") String id) {
         Mean mean = meansDAO.findById(id).orElseThrow(() -> new RuntimeException("Mean not found by " + id));
-        meansDAO.delete(mean);
+        gracefulDeleteService.deleteMean(mean);
     }
 
     @PostMapping("/update")
