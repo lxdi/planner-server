@@ -155,7 +155,7 @@ const targetsChooser = function(component){
 
 const availableTargetsUI = function(){
   const result = []
-  iterateTree(chkSt('targets-dao', 'targets')[chkSt('realms-dao', 'currentRealm').id], (target, level)=>{
+  iterateTree(chkSt('targets-dao', 'targets')[chkSt('realm-rep', 'currentRealm').id], (target, level)=>{
     const style = {marginLeft: (level*10)+'px'}
     result.push(<MenuItem style={style} eventKey={target}>{target.toString()}</MenuItem>)
   })

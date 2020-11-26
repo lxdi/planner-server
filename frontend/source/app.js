@@ -7,7 +7,8 @@ import {TaskProgressModal} from './ui/means/task-progress-modal'
 import {ActualTasksModal} from './ui/means/actual-tasks-modal'
 import {OverlayInfo} from './ui/overlay'
 
-import './data/realms-dao'
+import {createRealmRep} from './data/realms-dao'
+
 import './data/targets-dao'
 import './data/means-dao'
 //import './data/hquarters-dao'
@@ -15,6 +16,8 @@ import './data/layers-dao'
 //import './data/subjects-dao'
 import './data/tasks-dao'
 import './data/rep-plans-dao'
+
+createRealmRep()
 
 ReactDOM.render(<div id="app" />, document.body);
 const app = document.getElementById("app");

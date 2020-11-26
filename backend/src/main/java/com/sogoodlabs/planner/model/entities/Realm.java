@@ -26,7 +26,7 @@ public class Realm {
         this.title = title;
     }
 
-    public boolean isCurrent() {
+    public boolean getCurrent() {
         return current;
     }
     public void setCurrent(boolean current) {

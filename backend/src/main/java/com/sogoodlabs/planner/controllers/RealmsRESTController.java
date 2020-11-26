@@ -49,7 +49,7 @@ public class RealmsRESTController {
     @PostMapping(path = "/setcurrent/{realmid}")
     public void setCurrent(@PathVariable("realmid") String realmId){
         Realm realm = realmDAO.findById(realmId).orElseThrow(() -> new RuntimeException("Realm not found by " + realmId));
-        realmDAO.clearCurrent();
+        realmDAO.clearCurrent(realm);
         realm.setCurrent(true);
         realmDAO.save(realm);
     }

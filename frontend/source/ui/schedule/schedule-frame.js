@@ -211,7 +211,7 @@ const getHquarterLayoutStyle = function(hquarter){
 
 const getSlotTitleWithMean = function(meanid){
   const mean = findMean(meanid)
-  const realm = chkSt('realms-dao', 'realms')[mean.realmid]
+  const realm = chkSt('realm-rep', 'objects')[mean.realmid]
   var chain = []
   var currMean = mean
   while(currMean!=null){

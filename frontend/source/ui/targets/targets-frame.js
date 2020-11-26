@@ -2,11 +2,14 @@ import {createNewTargetButtonTitle, addNewTargetTitle} from './../../titles'
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {Button, FormGroup, ControlLabel, FormControl, ListGroup, ListGroupItem, ButtonGroup} from 'react-bootstrap'
+import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
+import {TreeComponent} from './../components/tree-component'
+
 import {CreateTarget, CreateRealm} from './../../data/creators'
 import {TargetModal} from './target-modal'
 import {RealmModal} from './realm-modal'
-import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
-import {TreeComponent} from './../components/tree-component'
+
+const newObjId = "new"
 
 export class TargetsFrame extends React.Component{
   constructor(props){
@@ -14,7 +17,7 @@ export class TargetsFrame extends React.Component{
     this.state = {editTree: false}
 
     registerEvent('targets-frame', 'update', ()=>this.setState({}))
-    registerReaction('targets-frame', 'realms-dao', ['realms-received', 'change-current-realm', 'realm-created'], ()=>this.setState({}))
+    registerReaction('targets-frame', 'realm-rep', ['all-response', 'change-current-realm', 'created'], ()=>this.setState({}))
 
     registerReaction('targets-frame', 'targets-dao',
             ['targets-received', 'replace-target',
@@ -30,7 +33,7 @@ export class TargetsFrame extends React.Component{
         <TargetModal/>
         <RealmModal/>
         <div>
-          <Button bsStyle="success" bsSize="xsmall" onClick={()=>fireEvent('realm-modal', 'open', [CreateRealm(0, '')])}>
+          <Button bsStyle="success" bsSize="xsmall" onClick={()=>fireEvent('realm-modal', 'open', [CreateRealm(newObjId, '')])}>
             Create New Realm
           </Button>
           <ListGroup>
@@ -43,18 +46,18 @@ export class TargetsFrame extends React.Component{
 }
 
 const realmsUI = function(component){
-  if(chkSt('realms-dao', 'realms')!=null){
+  const realms = chkSt('realm-rep','objects')
+  if(realms!=null){
     if(chkSt('targets-dao', 'targets')!=null){
       const result = []
-      const realms = chkSt('realms-dao','realms')
       for(var realmId in realms){
-        const realmidConst = realmId
-        const isCurrentRealm = realms[realmidConst]==chkSt('realms-dao','currentRealm')
-        result.push(<ListGroupItem key={"realm_"+realmidConst+(realms[realmidConst]==chkSt('realms-dao','currentRealm')?"_current":"_notcurrent")}>
+        const realmIdConst = realmId
+        const isCurrentRealm = realms[realmId]==chkSt('realm-rep','currentRealm')
+        result.push(<ListGroupItem key={"realm_"+realmIdConst+(isCurrentRealm?"_current":"_notcurrent")}>
             <div>
-              <h4 onClick={()=>fireEvent('realms-dao', 'change-current-realm', [realms[realmidConst]])}>
+              <h4 onClick={()=>fireEvent('realm-rep', 'change-current-realm', [realms[realmIdConst]])}>
                 <input type="radio" autocomplete="off" checked={isCurrentRealm?"checked":null} style={{marginRight:'5px'}} />
-                {realms[realmId].title}
+                {realms[realmIdConst].title}
               </h4>
             </div>
             <div>
@@ -68,7 +71,7 @@ const realmsUI = function(component){
       return null
     }
   } else {
-    fireEvent('realms-dao', 'realms-request', [])
+    fireEvent('realm-rep', 'all-request', [])
     return null
   }
 }
@@ -96,7 +99,7 @@ const currentHighlightedTargetUI = function(){
 
 const getControlButtonsForTargets = function(component){
   const result = []
-  result.push(<Button bsStyle="success" bsSize="xsmall" onClick={()=>fireEvent('target-modal', 'open', [CreateTarget(0, '', chkSt('realms-dao','currentRealm').id)])}>
+  result.push(<Button bsStyle="success" bsSize="xsmall" onClick={()=>fireEvent('target-modal', 'open', [CreateTarget(newObjId, '', chkSt('realm-rep','currentRealm').id)])}>
               {createNewTargetButtonTitle}
             </Button>)
   result.push(<Button bsStyle="default" bsSize="xsmall" onClick={()=>component.setState({isEdit: !component.state.isEdit})}>
@@ -107,10 +110,10 @@ const getControlButtonsForTargets = function(component){
 
 const targetsUIlist = function(component){
       var result = 'Loading...'
-      if(chkSt('realms-dao', 'currentRealm')!=null){
-        component.state.allNodes = chkSt('targets-dao', 'targets')[chkSt('realms-dao', 'currentRealm').id]
+      if(chkSt('realm-rep', 'currentRealm')!=null){
+        component.state.allNodes = chkSt('targets-dao', 'targets')[chkSt('realm-rep', 'currentRealm').id]
         result = <TreeComponent isEdit={component.state.isEdit}
-                  nodes={chkSt('targets-dao', 'targets')[chkSt('realms-dao', 'currentRealm').id]}
+                  nodes={chkSt('targets-dao', 'targets')[chkSt('realm-rep', 'currentRealm').id]}
                   viewCallback = {(target)=>targetUI(component, target)}
                   onDropCallback = {(alteredList)=>fireEvent('targets-dao', 'modify-list', [alteredList])}
                   rootStyle={{border:'1px solid lightgrey', borderRadius:'5px', marginBottom:'5px', padding:'3px'}}
@@ -129,7 +132,7 @@ const targetUI = function(component, target){
                           {target.title}
                         </a>
                         {highlightButtonUI(target)}
-                        <a href="#" style = {{marginLeft:'3px', color:'darkgreen'}} onClick={()=>fireEvent('target-modal', 'open', [CreateTarget(0, '', chkSt('realms-dao', 'currentRealm').id, []), target])}>
+                        <a href="#" style = {{marginLeft:'3px', color:'darkgreen'}} onClick={()=>fireEvent('target-modal', 'open', [CreateTarget(newObjId, '', chkSt('realm-rep', 'currentRealm').id, []), target])}>
                           {addNewTargetTitle}
                         </a>
                       </div>

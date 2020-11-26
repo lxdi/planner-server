@@ -9,6 +9,8 @@ import {CreateMean} from './../../data/creators'
 import {MeanModal} from './mean-modal'
 import {TaskModal} from './task-modal'
 
+const realmRepName = 'realm-rep'
+
 export class MeansFrame extends React.Component{
   constructor(props){
     super(props)
@@ -23,7 +25,7 @@ export class MeansFrame extends React.Component{
 
     registerReaction('means-frame', 'targets-dao', ['highlight', 'highlight-clean'], ()=>this.setState({}))
 
-    registerReaction('means-frame', 'realms-dao', 'change-current-realm', ()=>this.setState({}))
+    registerReaction('means-frame', realmRepName, 'change-current-realm', ()=>this.setState({}))
     registerReaction('means-frame', 'means-dao',
             ['means-received', 'replace-mean', 'mean-created',
             'mean-deleted', 'mean-modified', 'means-list-modified',
@@ -33,7 +35,7 @@ export class MeansFrame extends React.Component{
   render(){
     return(
       <div>
-        {chkSt('realms-dao', 'currentRealm')!=null?
+        {chkSt(realmRepName, 'currentRealm')!=null?
           <div style={{'margin-bottom': '3px'}}>
             {getControlButtons(this)}
             <MeanModal/>
@@ -47,7 +49,7 @@ export class MeansFrame extends React.Component{
 
 const getControlButtons = function(component){
   const result = []
-  result.push(<Button bsStyle="primary" bsSize="xsmall" onClick={()=>fireEvent('mean-modal', 'open', [CreateMean(0, '', chkSt('realms-dao', 'currentRealm').id, [])])}>
+  result.push(<Button bsStyle="primary" bsSize="xsmall" onClick={()=>fireEvent('mean-modal', 'open', [CreateMean(0, '', chkSt(realmRepName, 'currentRealm').id, [])])}>
                 {createNewMeanButtonTitle}
               </Button>)
   result.push(<Button bsStyle="default" bsSize="xsmall" onClick={()=>component.setState({isEdit: !component.state.isEdit})}>
@@ -58,9 +60,9 @@ const getControlButtons = function(component){
 
 const meansUIlist = function(component){
   if(chkSt('means-dao', 'means')!=null){
-      if(chkSt('realms-dao', 'currentRealm')!=null){
+      if(chkSt(realmRepName, 'currentRealm')!=null){
         return <TreeComponent isEdit={component.state.isEdit}
-                  nodes={chkSt('means-dao', 'means')[chkSt('realms-dao', 'currentRealm').id]}
+                  nodes={chkSt('means-dao', 'means')[chkSt(realmRepName, 'currentRealm').id]}
                   viewCallback = {(mean)=>meanUI(component, mean)}
                   onDropCallback = {(alteredList)=>{fireEvent('means-dao', 'modify-list', [alteredList]); fireEvent('means-dao', 'remove-draggable')}}
                   onDragStartCallback = {(mean)=>fireEvent('means-dao', 'add-draggable', [mean])}
@@ -87,7 +89,7 @@ const meanUI = function(component, mean){
                     <a href="#" onClick={()=>fireEvent('mean-modal', 'open', [mean])} style={meanLinkStyle}>
                         {markDraggableMeanTitle(mean)}
                     </a>
-                    <a href="#" style = {{marginLeft:'3px'}} onClick={()=>fireEvent('mean-modal', 'open', [CreateMean(0, '', chkSt('realms-dao', 'currentRealm').id, []), mean])}>
+                    <a href="#" style = {{marginLeft:'3px'}} onClick={()=>fireEvent('mean-modal', 'open', [CreateMean(0, '', chkSt(realmRepName, 'currentRealm').id, []), mean])}>
                       {addNewMeanTitle}
                     </a>
                     <span style={{color: 'green', fontSize:'8pt'}}> {targetsTagsString(mean)}</span>

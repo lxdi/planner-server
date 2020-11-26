@@ -14,7 +14,7 @@ registerEvent('means-dao', 'means-request', function(stateSetter){
 
 registerEvent('means-dao', 'means-received', ()=>{})
 
-registerReactionCombo('means-dao', {'realms-dao':'realms-received', 'targets-dao': 'targets-received'}, ()=>fireEvent('means-dao', 'means-request'))
+registerReactionCombo('means-dao', {'realm-rep':'all-response', 'targets-dao': 'targets-received'}, ()=>fireEvent('means-dao', 'means-request'))
 
 registerEvent('means-dao', 'get-full', (stateSetter, mean)=>{
   sendGet('/mean/full/'+mean.id, (data)=>{
@@ -46,7 +46,7 @@ registerEvent('means-dao', 'mean-created', (stateSetter, mean)=>mean)
 
 registerEvent('means-dao', 'delete', function(stateSetter, id, targetid){
   sendDelete('/mean/delete/'+id, function() {
-    deleteMeanUI(chkSt('means-dao', 'means')[chkSt('realms-dao', 'currentRealm').id][id])
+    deleteMeanUI(chkSt('means-dao', 'means')[chkSt('realm-rep', 'currentRealm').id][id])
     fireEvent('means-dao', 'mean-deleted', [id])
   })
 })
@@ -143,7 +143,7 @@ const resolveMean = function(mean){
 
 //delete Mean only form UI
 const deleteMeanUI = function(mean){
-  const means = chkSt('means-dao', 'means')[chkSt('realms-dao', 'currentRealm').id]
+  const means = chkSt('means-dao', 'means')[chkSt('realm-rep', 'currentRealm').id]
   for(var id in means){
     if(means[id].nextid == mean.id){
       means[id].nextid = mean.nextid
