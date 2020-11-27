@@ -10,10 +10,10 @@ const currentRealmObjName = 'currentRealm'
 const setCurrentRealmUrlOffset = '/setcurrent'
 
 export const createRealmRep = function(){
-  createRep(name, getCallback)
+  createRep(name, callback)
 }
 
-const getCallback = function(stSetter, spanName, arg){
+const callback = function(stSetter, spanName, arg){
   if(spanName == 'getAllSpan'){
     setCurrent(stSetter, arg)
   }

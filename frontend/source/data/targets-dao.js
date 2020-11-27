@@ -1,127 +1,38 @@
 //import $ from 'jquery'
-import {sendGet, sendPut, sendPost, sendDelete} from './postoffice'
+import {sendGet, sendPut, sendPost} from './postoffice'
 import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
-import {deleteNode} from 'js-utils'
 
-registerEvent('targets-dao', 'create', function(stateSetter, target, parent){
-  target.parentid = parent!=null? parent.id: null
-  sendPut('/target/create', JSON.stringify(target), function(data) {
-    if(data.previd!=null){
-      chkSt('targets-dao', 'targets')[data.realmid][data.previd].nextid = data.id
-    }
-    importOneTargetDto(data)
-    resolveTarget(data)
-    fireEvent('targets-dao', 'target-created', [data])
-  })
-})
+import {createRep} from './common/repFactory'
 
-registerEvent('targets-dao', 'target-created', (stateSetter, target)=>target)
+const name = 'target'
+const repName = name + '-rep'
+const indexByRealmid = 'index-by-realmid'
 
-registerEvent('targets-dao', 'delete', function(stateSetter, target){
-  sendDelete('/target/delete/'+target.id, function() {
-    deleteNode(chkSt('targets-dao', 'targets')[target.realmid], target)
-    //delete chkSt('targets-dao', 'targets')[target.realmid][id]
-    fireEvent('targets-dao', 'target-deleted', [target])
-  })
-})
+export const createTargetRep = function(){
+  createRep(name, callback)
+}
 
-registerEvent('targets-dao', 'target-deleted', (stateSetter, target)=>target)
-
-registerEvent('targets-dao', 'modify', function(stateSetter, target){
-  sendPost('/target/update', JSON.stringify(target), function(data) {
-    importOneTargetDto(data)
-    resolveTarget(chkSt('targets-dao', 'targets')[data.realmid][data.id])
-    fireEvent('targets-dao', 'target-modified', [target])
-  })
-})
-
-registerEvent('targets-dao', 'target-modified', (stateSetter, target)=>target)
-
-registerEvent('targets-dao', 'targets-request', function(stateSetter){
-  sendGet("/target/get/all", function(data) {
-            var receivedData = typeof data == 'string'? JSON.parse(data): data
-            importTargetsDto(stateSetter, receivedData)
-            fireEvent('targets-dao', 'targets-received', [])
-          })
-})
-
-registerEvent('targets-dao', 'targets-received', ()=>{})
-
-registerEvent('targets-dao', 'modify-list', function(stateSetter, targets){
-  sendPost('/target/update/list', JSON.stringify(targets), function(data) {
-    for(var i in data){
-      importOneTargetDto(data[i])
-      resolveTarget(chkSt('targets-dao', 'targets')[data[i].realmid][data[i].id])
-    }
-    fireEvent('targets-dao', 'targets-list-modified', [data])
-  })
-})
-
-registerEvent('targets-dao', 'targets-list-modified', (stateSetter, targets)=>targets)
-
-registerEvent('targets-dao', 'add-draggable', (stateSetter, target)=>{stateSetter('draggableTarget', target)})
-
-registerEvent('targets-dao', 'remove-draggable', (stateSetter)=>stateSetter('draggableTarget', null))
-
-registerEvent('targets-dao', 'highlight', (stateSetter, target)=>{
-  stateSetter('highlight', target)
-})
-
-registerEvent('targets-dao', 'highlight-clean', (stateSetter, target)=>{
-  stateSetter('highlight', null)
-})
-
-registerEvent('targets-dao', 'clear-rep', (stStr)=>{
-  stStr('targets', null)
-})
-
-const targetsProto = {
-  map: function(callback, filter){
-    var result = []
-    for (var i in this){
-      if(this.hasOwnProperty(i)){
-          if(filter!=null){
-            if(filter(this[i])){
-              result.push(callback(this[i]))
-            }
-          } else {
-            result.push(callback(this[i]))
-          }
-      }
-    }
-    return result
+const callback = function(stSetter, spanName, arg){
+  if(spanName == 'getAllSpan'){
+    stSetter(indexByRealmid, createIndexByRealmid(arg))
+  }
+  if(spanName == 'creationSpan'){
+    updateIndexByRealmid(arg, chkSt(repName, indexByRealmid))
   }
 }
 
-const targetsuper = {
-  toString: function(){
-    return this.title;
+const createIndexByRealmid = function(targets){
+  const index = {}
+  for(const id in targets){
+    const target = targets[id]
+    updateIndexByRealmid(target, index)
   }
+  return index
 }
 
-const importTargetsDto = function(stateSetter, targetsDto){
-  if(chkSt('targets-dao', 'targets')==null){
-    stateSetter('targets', [])
+const updateIndexByRealmid = function(target, index){
+  if(index[target.realmid]==null){
+    index[target.realmid] = {}
   }
-  for(var i in targetsDto){
-    importOneTargetDto(targetsDto[i])
-    resolveTarget(chkSt('targets-dao', 'targets')[targetsDto[i].realmid][targetsDto[i].id])
-  }
-  //resolveTargets();
-}
-
-const importOneTargetDto = function(targetDto){
-  const targets = chkSt('targets-dao', 'targets')
-  if(targets[targetDto.realmid]==null){
-    targets[targetDto.realmid] = []
-  }
-  targets[targetDto.realmid][targetDto.id] = targetDto
-}
-
-const resolveTarget = function(target){
-  target.__proto__ = targetsuper
-}
-
-export var GetTargetById = function(id){
-  return chkSt('targets-dao', 'targets').id
+  index[target.realmid][target.id] = target
 }

@@ -8,8 +8,8 @@ import {ActualTasksModal} from './ui/means/actual-tasks-modal'
 import {OverlayInfo} from './ui/overlay'
 
 import {createRealmRep} from './data/realms-dao'
+import {createTargetRep} from './data/targets-dao'
 
-import './data/targets-dao'
 import './data/means-dao'
 //import './data/hquarters-dao'
 import './data/layers-dao'
@@ -18,6 +18,7 @@ import './data/tasks-dao'
 import './data/rep-plans-dao'
 
 createRealmRep()
+createTargetRep()
 
 ReactDOM.render(<div id="app" />, document.body);
 const app = document.getElementById("app");

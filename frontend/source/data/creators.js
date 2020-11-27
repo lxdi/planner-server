@@ -18,16 +18,12 @@ export var CreateMean = function(id, title, realmid, targets, children){
   return newMean;
 }
 
-export var CreateTarget =  function(id, title, realmid){
-  //var childrenToAdd = children!=null? children:[];
+export var CreateTarget =  function(id, title, realmid, parentid){
   return {
-    'id': id,
-    'title': title,
-    'realmid': realmid,
-    //'children': childrenToAdd,
-    toString: function(){
-      return this.title;
-    }
+    id: id,
+    title: title,
+    realmid: realmid,
+    parentid: parentid
   }
 }
 

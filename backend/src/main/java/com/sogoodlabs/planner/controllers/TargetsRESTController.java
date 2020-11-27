@@ -42,7 +42,13 @@ public class TargetsRESTController {
     public Map<String, Object> createTarget(@RequestBody Map<String, Object> targetDto) {
         Target target = commonMapper.mapToEntity(targetDto, new Target());
         target.setId(UUID.randomUUID().toString());
+
+        Target lastTarget = target.getParent()==null? targetsDAO.getLastOfChildrenRoot(target.getRealm()):
+                targetsDAO.getLastOfChildren(target.getParent(), target.getRealm());
+
         targetsDAO.save(target);
+        lastTarget.setNext(target);
+        targetsDAO.save(lastTarget);
         return commonMapper.mapToDto(target);
     }
 
