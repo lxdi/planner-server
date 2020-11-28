@@ -5,26 +5,28 @@ import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
 
 import {filterOutMemoTask} from '../utils/task-utils'
 
+const taskRep = 'task-rep'
 
 export class LeftSideBarContent extends React.Component {
   constructor(props){
     super(props)
 
-    registerReaction('actual-tasks-ui', 'tasks-dao', ['actual-tasks-rs'], ()=>this.setState({}))
+    registerReaction('actual-tasks-ui', taskRep, ['actual-tasks-rs'], ()=>this.setState({}))
     registerReaction('actual-tasks-ui', 'main-ui', ['switch-mode'], ()=>this.setState({}))
 
-    registerReaction('actual-tasks-ui', 'tasks-dao', ['repetition-finished'], (stateSetter)=>this.setState({}))
+    registerReaction('actual-tasks-ui', taskRep, ['repetition-finished'], (stateSetter)=>this.setState({}))
   }
 
   render(){
-    return content(this)
+    return 'TODO'
+    //return content(this)
   }
 }
 
 const content = function(reactcomp){
-  const actualTasksMap = chkSt('tasks-dao', 'actual-tasks');
+  const actualTasksMap = chkSt(taskRep, 'actual-tasks');
   if(actualTasksMap==null){
-    fireEvent('tasks-dao', 'actual-tasks-rq')
+    fireEvent(taskRep, 'actual-tasks-rq')
     return 'Loading...'
   }
   return <div>

@@ -9,16 +9,22 @@ import {OverlayInfo} from './ui/overlay'
 
 import {createRealmRep} from './data/realms-dao'
 import {createTargetRep} from './data/targets-dao'
+import {createMeanRep} from './data/means-dao'
+import {createLayerRep} from './data/layers-dao'
+import {createTaskRep} from './data/tasks-dao'
 
-import './data/means-dao'
+//import './data/means-dao'
 //import './data/hquarters-dao'
-import './data/layers-dao'
+//import './data/layers-dao'
 //import './data/subjects-dao'
-import './data/tasks-dao'
+//import './data/tasks-dao'
 import './data/rep-plans-dao'
 
 createRealmRep()
 createTargetRep()
+createMeanRep()
+createLayerRep()
+createTaskRep()
 
 ReactDOM.render(<div id="app" />, document.body);
 const app = document.getElementById("app");

@@ -3,7 +3,9 @@ package com.sogoodlabs.planner.controllers;
 import com.sogoodlabs.common_mapper.CommonMapper;
 import com.sogoodlabs.planner.model.dao.IMeansDAO;
 import com.sogoodlabs.planner.model.entities.Mean;
+import com.sogoodlabs.planner.model.entities.Target;
 import com.sogoodlabs.planner.services.GracefulDeleteService;
+import com.sogoodlabs.planner.services.MeansService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +22,12 @@ import java.util.stream.Collectors;
 @RequestMapping(path = "/mean")
 public class MeansRESTController {
 
+    private static final String LAYERS_DTO_FIELD = "layers";
+    private static final String MEAN_ID_DTO_FIELD = "meanid";
+
+    @Autowired
+    private LayersRESTController layersRESTController;
+
     @Autowired
     private IMeansDAO meansDAO;
 
@@ -28,6 +36,9 @@ public class MeansRESTController {
 
     @Autowired
     private GracefulDeleteService gracefulDeleteService;
+
+    @Autowired
+    private MeansService meansService;
 
     @GetMapping("/get/all")
     public List<Map<String, Object>> getAllTargets(){
@@ -38,9 +49,14 @@ public class MeansRESTController {
 
     @PutMapping("/create")
     public Map<String, Object> createTarget(@RequestBody Map<String, Object> meanDto) {
-        Mean mean = commonMapper.mapToEntity(meanDto, new Mean());
-        mean.setId(UUID.randomUUID().toString());
-        meansDAO.save(mean);
+        Mean mean = meansService.createMean(commonMapper.mapToEntity(meanDto, new Mean()));
+
+        if(meanDto.get(LAYERS_DTO_FIELD)!=null){
+            for(Map<String, Object> layerDto : (List<Map<String, Object>>) meanDto.get(LAYERS_DTO_FIELD)){
+                layerDto.put(MEAN_ID_DTO_FIELD, mean.getId());
+                layersRESTController.create(layerDto);
+            }
+        }
         return commonMapper.mapToDto(mean);
     }
 

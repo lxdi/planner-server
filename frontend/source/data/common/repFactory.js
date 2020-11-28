@@ -25,30 +25,41 @@ const updateEventName = 'update'
 const updateCompleteEventName = 'updated'
 const updateUrlOffset = '/update'
 
+const cleanName = 'cleanSpan'
+const cleanEventName = 'clean'
+
 export const createRep = function(name, callback){
   createGetAll(name, callback)
   createCreation(name, callback)
   createDeletion(name, callback)
   updateCreation(name, callback)
+  cleaning(name, callback)
 }
 
-const createGetAll = function(name, callback){
+export const basicListReceiving = function(name, eventNameRequest, eventNameResponse, urlRequestOffset, spanName, callback){
   const repName = name + repOffset
-  registerEvent(repName, allRequestEventName, function(stateSetter){
-      sendGet("/"+name+allRequestUrlOffset, function(data) {
+  registerEvent(repName, eventNameRequest, function(stateSetter, pathVariable){
+      const pathVariableOffset = pathVariable!=null? '/' + pathVariable: ''
+
+      sendGet("/"+name+urlRequestOffset+pathVariableOffset, function(data) {
                 var objectsArr = typeof data == 'string'? JSON.parse(data): data
                 const objMap = {}
                 objectsArr.forEach(obj => objMap[obj.id]=obj)
                 stateSetter(objMapName, objMap)
 
                 if(callback!=null){
-                  callback(stateSetter, getAllName, objMap)
+                  callback(stateSetter, spanName, objMap, pathVariable)
                 }
 
-                fireEvent(repName, allRequestReceivedEventName, [objMap])
+                fireEvent(repName, eventNameResponse, [objMap])
               })
   })
-  registerEvent(repName, allRequestReceivedEventName, (stSetter, objMap)=>objMap)
+  registerEvent(repName, eventNameResponse, (stSetter, objMap)=>objMap)
+}
+
+const createGetAll = function(name, callback){
+  basicListReceiving(name, allRequestEventName, allRequestReceivedEventName,
+          allRequestUrlOffset, getAllName, callback)
 }
 
 const createCreation = function(name, callback){
@@ -99,4 +110,15 @@ const updateCreation = function(name, callback){
     })
   })
   registerEvent(repName, updateCompleteEventName, (stateSetter, obj) => obj)
+}
+
+const cleaning = function(name, callback){
+  const repName = name + repOffset
+  registerEvent(repName, cleanEventName, function(stateSetter){
+      stateSetter(objMapName, null)
+
+      if(callback!=null){
+        callback(stateSetter, cleanName)
+      }
+  })
 }

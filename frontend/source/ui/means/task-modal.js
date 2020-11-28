@@ -9,6 +9,8 @@ import {StatefulTextField} from '../common/stateful-text-field'
 import {TextArea} from '../common/text-area'
 import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
 
+const taskRep = 'task-rep'
+
 const createState = function(isOpen, isStatic, isEdit, subject, task, progress){
   return {
     isOpen: isOpen,
@@ -25,8 +27,8 @@ export class TaskModal extends React.Component {
     registerEvent('task-modal', 'open', (stateSetter, subject, task, isViewOnly, withprogress)=>this.setState(getState(subject, task, isViewOnly, withprogress)))
     registerEvent('task-modal', 'close', ()=>this.setState(createState(false, false, false, null, null, null)))
 
-    registerReaction('task-modal', 'tasks-dao', ['task-deleted', 'repetition-finished'], (stateSetter)=>fireEvent('task-modal', 'close'))
-    registerReaction('task-modal', 'tasks-dao', 'task-finished', (stateSetter)=>this.setState({}))
+    registerReaction('task-modal', taskRep, ['task-deleted', 'repetition-finished'], (stateSetter)=>fireEvent('task-modal', 'close'))
+    registerReaction('task-modal', taskRep, 'task-finished', (stateSetter)=>this.setState({}))
   }
 
   render(){
@@ -65,7 +67,7 @@ const isTaskValid = function(task){
 
 const okHandler = function(subject, task){
   if(task.id==null){
-    fireEvent('tasks-dao', 'add-task', [subject, task])
+    fireEvent(taskRep, 'add-task', [subject, task])
     task.id = 0
   }
   fireEvent('task-modal', 'close')
@@ -77,7 +79,7 @@ const modalContent = function(component){
   }
   return      <CommonCrudeTemplate editing = {component.state.mode}
                   changeEditHandler = {()=>component.setState({})}
-                  deleteHandler={()=>fireEvent('tasks-dao', 'delete-task', [component.state.subject, component.state.task])}>
+                  deleteHandler={()=>fireEvent(taskRep, 'delete-task', [component.state.subject, component.state.task])}>
                 <form>
                     {progressButton(component)}
                     <FormGroup controlId="formBasicText">
