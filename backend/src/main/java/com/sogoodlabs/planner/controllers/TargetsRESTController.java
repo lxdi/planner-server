@@ -47,8 +47,12 @@ public class TargetsRESTController {
                 targetsDAO.getLastOfChildren(target.getParent(), target.getRealm());
 
         targetsDAO.save(target);
-        lastTarget.setNext(target);
-        targetsDAO.save(lastTarget);
+
+        if(lastTarget!=null){
+            lastTarget.setNext(target);
+            targetsDAO.save(lastTarget);
+        }
+
         return commonMapper.mapToDto(target);
     }
 

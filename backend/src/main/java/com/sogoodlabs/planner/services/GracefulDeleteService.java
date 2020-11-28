@@ -62,12 +62,9 @@ public class GracefulDeleteService {
 
     private void handlePrevForDeleting(Target target){
         Target prevTarget = targetsDAO.getPrevTarget(target);
+
         if(prevTarget!=null ){
-            if(target.getNext()!=null){
-                prevTarget.setNext(target.getNext());
-            } else {
-                prevTarget.setNext(null);
-            }
+            prevTarget.setNext(target.getNext());
             targetsDAO.save(prevTarget);
         }
     }

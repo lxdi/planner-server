@@ -25,9 +25,8 @@ export class TargetsFrame extends React.Component{
     registerReaction('targets-frame', realmRep, ['all-response', 'change-current-realm', 'created'], ()=>this.setState({}))
 
     registerReaction('targets-frame', targetRep,
-            ['all-response', 'replace-target',
-            'target-created', 'target-deleted',
-            'target-modified', 'targets-list-modified',
+            ['all-response', 'created', 'deleted',
+            'replace-target', 'target-modified', 'targets-list-modified',
             'draggable-add-as-child', 'highlight', 'highlight-clean', 'clear-rep'], ()=>this.setState({}))
 
   }
@@ -118,7 +117,6 @@ const targetsUIlist = function(component){
       var result = 'Loading...'
       const targets = chkSt(realmRep, currentRealm)
       if(targets!=null){
-        component.state.allNodes = chkSt(targetRep, indexByRealmid)[chkSt(realmRep, currentRealm).id]
         result = <TreeComponent isEdit={component.state.isEdit}
                   nodes={chkSt(targetRep, indexByRealmid)[chkSt(realmRep, currentRealm).id]}
                   viewCallback = {(target)=>targetUI(component, target)}
