@@ -20,10 +20,16 @@ const deleteEventName = 'delete'
 const deleteCompleteEventName = 'deleted'
 const deleteUrlOffset = '/delete'
 
+const updateName = 'updateSpan'
+const updateEventName = 'update'
+const updateCompleteEventName = 'updated'
+const updateUrlOffset = '/update'
+
 export const createRep = function(name, callback){
   createGetAll(name, callback)
   createCreation(name, callback)
   createDeletion(name, callback)
+  updateCreation(name, callback)
 }
 
 const createGetAll = function(name, callback){
@@ -76,4 +82,21 @@ const createDeletion = function(name, callback){
     })
   })
   registerEvent(repName, deleteCompleteEventName, (stateSetter, obj) => obj)
+}
+
+const updateCreation = function(name, callback){
+  const repName = name + repOffset
+  registerEvent(repName, updateEventName, function(stateSetter, obj){
+    sendPost('/' + name + updateUrlOffset, JSON.stringify(obj), function(data) {
+      var receivedData = typeof data == 'string'? JSON.parse(data): data
+      chkSt(repName, objMapName)[""+receivedData.id] = receivedData
+
+      if(callback!=null){
+        callback(stateSetter, updateName, receivedData)
+      }
+
+      fireEvent(repName, updateCompleteEventName, [receivedData])
+    })
+  })
+  registerEvent(repName, updateCompleteEventName, (stateSetter, obj) => obj)
 }

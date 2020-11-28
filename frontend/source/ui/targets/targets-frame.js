@@ -9,7 +9,7 @@ import {CreateTarget, CreateRealm} from './../../data/creators'
 import {TargetModal} from './target-modal'
 import {RealmModal} from './realm-modal'
 
-const newObjId = "new"
+const newObjId = 'new'
 const realmRep = 'realm-rep'
 const targetRep = 'target-rep'
 const repObjects = 'objects'
@@ -20,15 +20,13 @@ export class TargetsFrame extends React.Component{
   constructor(props){
     super(props)
     this.state = {editTree: false}
-
     registerEvent('targets-frame', 'update', ()=>this.setState({}))
     registerReaction('targets-frame', realmRep, ['all-response', 'change-current-realm', 'created'], ()=>this.setState({}))
 
     registerReaction('targets-frame', targetRep,
-            ['all-response', 'created', 'deleted',
-            'replace-target', 'target-modified', 'targets-list-modified',
+            ['all-response', 'created', 'deleted', 'updated',
+            'replace-target', 'targets-list-modified',
             'draggable-add-as-child', 'highlight', 'highlight-clean', 'clear-rep'], ()=>this.setState({}))
-
   }
 
   render(){

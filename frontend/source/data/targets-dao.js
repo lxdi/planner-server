@@ -3,11 +3,13 @@ import {sendGet, sendPut, sendPost} from './postoffice'
 import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
 
 import {createRep} from './common/repFactory'
+import {createIndex, updateIndex} from './common/index-factory'
 
 const name = 'target'
 const repName = name + '-rep'
 const indexByRealmid = 'index-by-realmid'
 const objMapName = 'objects'
+const realmIdFieldName = 'realmid'
 
 export const createTargetRep = function(){
   createRep(name, callback)
@@ -15,35 +17,20 @@ export const createTargetRep = function(){
 
 const callback = function(stSetter, spanName, arg){
   if(spanName == 'getAllSpan'){
-    stSetter(indexByRealmid, createIndexByRealmid(arg))
+    stSetter(indexByRealmid, createIndex(arg, realmIdFieldName))
   }
   if(spanName == 'creationSpan'){
-    updateIndexByRealmid(arg, chkSt(repName, indexByRealmid))
+    updateIndex(arg, chkSt(repName, indexByRealmid), realmIdFieldName)
     addNextIdToLast(arg.parentid, arg.id, arg.realmid)
   }
   if(spanName == 'deleteSpan'){
     stSetter(objMapName, null)
     stSetter(indexByRealmid, null)
-    // const targetsObjMap = chkSt(repName, objMapName)
-    // removeObjById(arg, targetsObjMap)
-    // stSetter(indexByRealmid, createIndexByRealmid(targetsObjMap))
   }
-}
-
-const createIndexByRealmid = function(targets){
-  const index = {}
-  for(const id in targets){
-    const target = targets[id]
-    updateIndexByRealmid(target, index)
+  if(spanName == 'updateSpan'){
+    const targetsObjMap = chkSt(repName, objMapName)
+    stSetter(indexByRealmid, createIndex(targetsObjMap, realmIdFieldName))
   }
-  return index
-}
-
-const updateIndexByRealmid = function(target, index){
-  if(index[target.realmid]==null){
-    index[target.realmid] = {}
-  }
-  index[target.realmid][target.id] = target
 }
 
 const addNextIdToLast = function(parentId, idOfNext, realmid){
@@ -51,14 +38,6 @@ const addNextIdToLast = function(parentId, idOfNext, realmid){
   for(const id in targets){
     if(id != idOfNext && targets[id].parentid == parentId && targets[id].nextid == null){
       targets[id].nextid = idOfNext
-    }
-  }
-}
-
-const removeObjById = function(obj, objmap){
-  for(const id in objmap){
-    if(objmap[id].nextid == obj.id){
-      objmap[id].nextid = obj.nextid
     }
   }
 }
