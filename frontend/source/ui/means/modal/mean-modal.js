@@ -48,6 +48,9 @@ export class MeanModal extends React.Component {
     }.bind(this))
 
     registerEvent('mean-modal', 'close', function(){
+      this.state.currentMean.layers = null
+      fireEvent(layerRep, 'clean')
+      fireEvent(taskRep, 'clean')
       this.setState(defaultState())
     }.bind(this))
 
