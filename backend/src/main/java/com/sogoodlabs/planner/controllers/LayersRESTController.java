@@ -36,9 +36,16 @@ public class LayersRESTController {
     }
 
     @PutMapping("/create")
-    public Map<String, Object> create(Map<String, Object> layerDto){
+    public Map<String, Object> create(@RequestBody  Map<String, Object> layerDto){
         Layer layer = commonMapper.mapToEntity(layerDto, new Layer());
         layer.setId(UUID.randomUUID().toString());
+        layerDAO.save(layer);
+        return commonMapper.mapToDto(layer);
+    }
+
+    @PostMapping
+    public Map<String, Object> update(@RequestBody Map<String, Object> layerDto){
+        Layer layer = commonMapper.mapToEntity(layerDto, new Layer());
         layerDAO.save(layer);
         return commonMapper.mapToDto(layer);
     }

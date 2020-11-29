@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {Button} from 'react-bootstrap'
-import {StatefulTextField} from '../common/stateful-text-field'
+import {StatefulTextField} from '../../common/stateful-text-field'
 
 var newTopicId = 1
 

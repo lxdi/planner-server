@@ -22,6 +22,8 @@ import java.util.stream.Collectors;
 @RequestMapping(path = "/mean")
 public class MeansRESTController {
 
+    private static final String UUID_PATTERN = "[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}";
+    private static final String ID_DTO_FIELD = "id";
     private static final String LAYERS_DTO_FIELD = "layers";
     private static final String MEAN_ID_DTO_FIELD = "meanid";
 
@@ -67,21 +69,37 @@ public class MeansRESTController {
     }
 
     @PostMapping("/update")
-    public Map<String, Object> update(@RequestBody Map<String, Object> targetDto) {
-        return updateOneMean(targetDto);
+    public Map<String, Object> update(@RequestBody Map<String, Object> meanDto) {
+        Mean mean = updateOneMean(meanDto);
+
+        if(meanDto.get(LAYERS_DTO_FIELD)!=null){
+            for(Map<String, Object> layerDto : (List<Map<String, Object>>) meanDto.get(LAYERS_DTO_FIELD)){
+
+                layerDto.put(MEAN_ID_DTO_FIELD, mean.getId());
+                String id = (String) layerDto.get(ID_DTO_FIELD);
+
+                if(id.matches(UUID_PATTERN)){
+                    layersRESTController.update(layerDto);
+                } else {
+                    layersRESTController.create(layerDto);
+                }
+            }
+        }
+
+        return commonMapper.mapToDto(mean);
     }
 
     @PostMapping("/update/list")
     public List<Map<String, Object>> updateList(@RequestBody List<Map<String, Object>> meanDtoList){
         return meanDtoList.stream()
-                .map(this::updateOneMean)
+                .map(mean -> commonMapper.mapToDto(this.updateOneMean(mean)))
                 .collect(Collectors.toList());
     }
 
-    private Map<String, Object> updateOneMean(Map<String, Object> meanDto){
+    private Mean updateOneMean(Map<String, Object> meanDto){
         Mean mean = commonMapper.mapToEntity(meanDto, new Mean());
         meansDAO.save(mean);
-        return commonMapper.mapToDto(mean);
+        return mean;
     }
 
 }

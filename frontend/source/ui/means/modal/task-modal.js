@@ -1,13 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {FormGroup, ControlLabel, FormControl, Button} from 'react-bootstrap'
-import {CommonModal} from './../common-modal'
-import {CommonCrudeTemplate} from './../common-crud-template'
+import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
+
+import {CommonModal} from './../../common-modal'
+import {CommonCrudeTemplate} from './../../common-crud-template'
+import {StatefulTextField} from '../../common/stateful-text-field'
+import {TextArea} from '../../common/text-area'
+
 import {TopicsList} from './topics-list'
 import {TestingsList} from './testings-list'
-import {StatefulTextField} from '../common/stateful-text-field'
-import {TextArea} from '../common/text-area'
-import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
 
 const taskRep = 'task-rep'
 

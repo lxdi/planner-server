@@ -2,9 +2,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {ButtonToolbar, DropdownButton, MenuItem, Button, Table} from 'react-bootstrap'
 
-import {CommonModal} from './../common-modal'
+import {CommonModal} from './../../common-modal'
+import {formatDate} from '../../../utils/date-utils'
 import {TestingsList} from './testings-list'
-import {formatDate} from '../../utils/date-utils'
 
 import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
 

@@ -6,8 +6,8 @@ import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
 import {TreeComponent} from './../components/tree-component'
 
 import {CreateMean} from './../../data/creators'
-import {MeanModal} from './mean-modal'
-import {TaskModal} from './task-modal'
+import {MeanModal} from './modal/mean-modal'
+import {TaskModal} from './modal/task-modal'
 
 const newId = 'new'
 const realmRepName = 'realm-rep'
@@ -89,6 +89,7 @@ const meansUIlist = function(component){
 
 const meanUI = function(component, mean){
   var meanLinkStyle = {}
+
   if(chkSt(targetRepName, 'highlight')!=null){
     if(!isMeanAssignedToTarget(chkSt(targetRepName, 'highlight'), mean)){
       meanLinkStyle = {color:'grey', fontSize:'9pt'}
@@ -96,6 +97,7 @@ const meanUI = function(component, mean){
       meanLinkStyle = {fontSize:'12pt'}
     }
   }
+
   return <div style={mean.parentid!=null?{borderLeft:'1px solid grey', paddingLeft:'3px'}:null}>
                     {hideShowChildrenControlUI(component, mean)}
                     <a href="#" onClick={()=>fireEvent('mean-modal', 'open', [mean])} style={meanLinkStyle}>

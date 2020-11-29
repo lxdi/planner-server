@@ -1,9 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {Button} from 'react-bootstrap'
-import {TextField} from '../common/text-field'
-import {TextArea} from '../common/text-area'
-import {StatefulTextField} from '../common/stateful-text-field'
+
+import {TextField} from '../../common/text-field'
+import {TextArea} from '../../common/text-area'
+import {StatefulTextField} from '../../common/stateful-text-field'
 
 
 var newTestingId = 1

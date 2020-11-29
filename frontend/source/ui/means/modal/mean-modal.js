@@ -4,11 +4,12 @@ import {Button, ButtonToolbar,  DropdownButton, MenuItem,  FormGroup, ControlLab
 import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
 import {iterateLLfull, iterateTree} from 'js-utils'
 
-import {CreateMean, CreateTarget, CreateLayer} from './../../data/creators'
-import {meanModalHeaderTitle, targetsDropDownTitle} from './../../titles'
-import {CommonModal} from './../common-modal'
-import {CommonCrudeTemplate} from './../common-crud-template'
-import {isValidMean} from '../../utils/mean-validator'
+import {CreateMean, CreateTarget, CreateLayer} from './../../../data/creators'
+import {meanModalHeaderTitle, targetsDropDownTitle} from './../../../titles'
+import {CommonModal} from './../../common-modal'
+import {CommonCrudeTemplate} from './../../common-crud-template'
+import {isValidMean} from '../../../utils/mean-validator'
+import {prepareMean, addNewLayerToMean} from '../../../data/mean-loader'
 
 const newId = 'new'
 const realmRep = 'realm-rep'
@@ -80,9 +81,6 @@ export class MeanModal extends React.Component {
   }
 
   render(){
-    // if(!prepareMean(this.state.currentMean)){
-    //   return 'Loading...'
-    // }
     return renderUI(this)
   }
 }
@@ -96,6 +94,7 @@ const renderUI = function(component){
             cancelHandler = {()=>fireEvent('mean-modal', 'close', [])}
             title={meanModalHeaderTitle}
             styleClass='mean-modal-style'>
+
             {modalBody(component)}
     </CommonModal>
 }
@@ -104,9 +103,14 @@ const modalBody = function(component){
     if(!prepareMean(component.state.currentMean)){
       return 'Loading...'
     }
-    return <CommonCrudeTemplate editing = {component.state.mode} changeEditHandler = {component.forceUpdate.bind(component)} deleteHandler={()=>fireEvent(meanRep, 'delete', [component.state.currentMean.id])}>
+
+    return <CommonCrudeTemplate editing = {component.state.mode}
+                  changeEditHandler = {component.forceUpdate.bind(component)}
+                  deleteHandler={()=>fireEvent(meanRep, 'delete', [component.state.currentMean])}>
+
               {rememberButton(component)}
               {showAlerts(component.state.alerts)}
+
               <form>
                 <FormGroup controlId="formBasicText">
                   <div style={{display:'inline-block', paddingRight:'3px'}}>
@@ -122,61 +126,9 @@ const modalBody = function(component){
                   </div>
                 </FormGroup>
               </form>
+
               {layersBlock(component, component.state.currentMean, component.state.mode.isEdit)}
           </CommonCrudeTemplate>
-}
-
-const prepareMean = function(mean){
-  if(mean.layers!=null){
-    return true
-  }
-
-  if(mean.id == newId){
-    mean.layers = []
-    return true
-  }
-
-  const layersByMean = chkSt(layerRep, indexByMean)
-  if(layersByMean==null){
-    fireEvent(layerRep, byMeanRequest, [mean.id])
-    return false
-  }
-
-  const layers = chkSt(layerRep, indexByMean)[mean.id]
-
-  if(layers==null){
-    mean.layers = []
-    return true
-  }
-  mean.layers = getEntriesAsList(layers)
-  mean.layers.forEach(layer => layer.tasks = [])
-
-  const allTasksByMean = chkSt(taskRep, indexByMean)
-  if(allTasksByMean == null){
-    fireEvent(taskRep, byMeanRequest, [mean.id])
-    return false
-  }
-
-  const tasks = chkSt(taskRep, indexByMean)[mean.id]
-
-  if(tasks == null){
-    return true
-  }
-
-  for(const id in tasks){
-    const layerid = tasks[id].layerid
-    layers[layerid].tasks.push(tasks[id])
-  }
-
-  return true
-}
-
-const getEntriesAsList = function(obj){
-  const result = []
-  for(const id in obj){
-    result.push(obj[id])
-  }
-  return result
 }
 
 const rememberButton = function(component){
@@ -206,6 +158,12 @@ const layersBlock = function(component, mean, isEdit){
             </ListGroup>
 }
 
+const getCreateLayerButton = function(component, mean){
+  return <Button bsStyle="primary" bsSize="xsmall"  onClick={()=>{addNewLayerToMean(mean); component.setState({})}}>
+                              Create layer
+                          </Button>
+}
+
 const listLayersGroupContent = function(mean, isEdit){
     const result = []
 
@@ -217,23 +175,6 @@ const listLayersGroupContent = function(mean, isEdit){
                             </ListGroupItem>)
     }
     return result
-}
-
-const getCreateLayerButton = function(component, mean){
-  return <Button bsStyle="primary" bsSize="xsmall"  onClick={()=>{addNewLayerToMean(mean); component.setState({})}}>
-                              Create layer
-                          </Button>
-}
-
-const addNewLayerToMean = function(mean){
-  var priority = 0
-  for(const id in mean.layers){
-    if(mean.layers[id].priority>priority){
-      priority = mean.layers[id].priority
-    }
-  }
-  priority = priority + 1
-  mean.layers.push(CreateLayer(newId, priority, mean.id))
 }
 
 const showAlerts = function(alerts){

@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 
 import {Main} from './ui/main'
 import {LeftSideBarContent} from './ui/left-side-bar-content'
-import {TaskProgressModal} from './ui/means/task-progress-modal'
+import {TaskProgressModal} from './ui/means/modal/task-progress-modal'
 import {ActualTasksModal} from './ui/means/actual-tasks-modal'
 import {OverlayInfo} from './ui/overlay'
 
