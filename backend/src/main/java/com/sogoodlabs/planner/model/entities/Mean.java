@@ -1,5 +1,6 @@
 package com.sogoodlabs.planner.model.entities;
 
+import com.sogoodlabs.common_mapper.annotations.MapToClass;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
@@ -39,11 +40,11 @@ public class Mean {
     @ManyToOne(fetch = FetchType.LAZY)
     Realm realm;
 
-    @OneToMany(mappedBy = "mean", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
-    List<Layer> layers = new ArrayList();
-
     @Column(name = "hidechildren")
     boolean hideChildren = false;
+
+    @Transient
+    List<Layer> layers = new ArrayList();
 
     public String getId() {
         return id;
@@ -104,6 +105,8 @@ public class Mean {
     public List<Layer> getLayers() {
         return layers;
     }
+
+    @MapToClass(value = Layer.class)
     public void setLayers(List<Layer> layers) {
         this.layers = layers;
     }

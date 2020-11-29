@@ -43,11 +43,4 @@ public class LayersRESTController {
         return commonMapper.mapToDto(layer);
     }
 
-    @PostMapping
-    public Map<String, Object> update(@RequestBody Map<String, Object> layerDto){
-        Layer layer = commonMapper.mapToEntity(layerDto, new Layer());
-        layerDAO.save(layer);
-        return commonMapper.mapToDto(layer);
-    }
-
 }

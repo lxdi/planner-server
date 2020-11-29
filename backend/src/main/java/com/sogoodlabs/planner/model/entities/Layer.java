@@ -1,6 +1,9 @@
 package com.sogoodlabs.planner.model.entities;
 
+import com.sogoodlabs.common_mapper.annotations.MapToClass;
+
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 public class Layer {
@@ -12,6 +15,9 @@ public class Layer {
 
     @ManyToOne(fetch = FetchType.LAZY)
     Mean mean;
+
+    @Transient
+    private List<Task> tasks;
 
     public String getId() {
         return id;
@@ -34,4 +40,12 @@ public class Layer {
         this.mean = mean;
     }
 
+    public List<Task> getTasks() {
+        return tasks;
+    }
+
+    @MapToClass(value = Task.class)
+    public void setTasks(List<Task> tasks) {
+        this.tasks = tasks;
+    }
 }
