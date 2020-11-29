@@ -13,7 +13,16 @@ export const prepareMean = function(mean){
     return true
   }
 
+  if(!prepareLayers(mean)){
+    return false
+  }
+
+  return prepareTasks(mean)
+}
+
+const prepareLayers = function(mean){
   const layersByMean = chkSt(dataConstants.layerRep, dataConstants.indexByMean)
+
   if(layersByMean==null){
     fireEvent(dataConstants.layerRep, dataConstants.byMeanRequest, [mean.id])
     return false
@@ -25,15 +34,21 @@ export const prepareMean = function(mean){
     mean.layers = []
     return true
   }
-  mean.layers = getEntriesAsList(layers)
-  mean.layers.forEach(layer => layer.tasks = [])
 
+  mean.layers = getEntriesAsList(layers)
+  return true
+}
+
+const prepareTasks = function(mean){
   const allTasksByMean = chkSt(dataConstants.taskRep, dataConstants.indexByMean)
+
   if(allTasksByMean == null){
     fireEvent(dataConstants.taskRep, dataConstants.byMeanRequest, [mean.id])
     return false
   }
 
+  const layers = mean.layers
+  layers.forEach(layer => layer.tasks = [])
   const tasks = chkSt(dataConstants.taskRep, dataConstants.indexByMean)[mean.id]
 
   if(tasks == null){

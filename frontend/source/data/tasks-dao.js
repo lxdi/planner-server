@@ -32,6 +32,9 @@ const callback = function(stSetter, spanName, arg, pathVariable){
   if(spanName == getByMeanSpanName){
     stSetter(indexByMean, createIndexByMean(arg, pathVariable))
   }
+  if(spanName == 'cleanSpan'){
+    stSetter(indexByMean, null)
+  }
 }
 
 const createIndexByMean = function(tasksMap, meanid){

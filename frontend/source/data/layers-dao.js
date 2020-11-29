@@ -32,4 +32,7 @@ const callback = function(stSetter, spanName, arg){
   if(spanName == getByMeanSpanName){
     stSetter(indexByMean, createIndex(arg, meanIdFieldName))
   }
+  if(spanName == 'cleanSpan'){
+    stSetter(indexByMean, null)
+  }
 }
