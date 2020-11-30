@@ -6,10 +6,12 @@ import {TextField} from '../../common/text-field'
 import {TextArea} from '../../common/text-area'
 import {StatefulTextField} from '../../common/stateful-text-field'
 
+import {DataConstants} from '../../../data/data-constants'
+
 
 var newTestingId = 1
 
-//props: testings, isEdit, testingsGuesses
+//props: task, isEdit, testingsGuesses
 export class TestingsList extends React.Component {
   constructor(props){
     super(props)
@@ -27,11 +29,12 @@ const content = function(component){
   const styleRemoveLink = {width:'10%'}
   Object.assign(styleFields, commonStyle)
   Object.assign(styleRemoveLink, commonStyle)
-  const testings = component.props.testings
+  const testings = component.props.task.taskTestings
+
   for(var indx in testings){
     const testing = testings[indx]
-    const key = testing.id==null?testing.tempId:testing.id
-    result.push(<div key={key} style={{borderBottom:'1px solid lightgrey', marginBottom:'3px'}}>
+
+    result.push(<div key={testing.id} style={{borderBottom:'1px solid lightgrey', marginBottom:'3px'}}>
                 <div>
                     <div style={styleFields}>
                       <StatefulTextField obj={testing} valName={'question'} isEdit={component.props.isEdit}>
@@ -45,6 +48,7 @@ const content = function(component){
                 </div>
               </div>)
   }
+
   return <div style={{border:'1px solid lightgrey', padding:'5px', borderRadius:'10px'}}>
           <div><strong>Testings:</strong></div>
           {component.props.testingsGuesses!=null && component.props.testingsGuesses!=''?<TextArea obj={component.props} valName={'testingsGuesses'} valNameUI={'objectives'} readOnly={true}/>:null}
@@ -55,8 +59,24 @@ const content = function(component){
 
 const addTestingButton = function(component){
   if(component.props.isEdit){
-    return <Button onClick={()=>{component.props.testings.push({tempId:'new_'+newTestingId++, question:''}); component.setState({})}}>+ Add testing</Button>
+    return <Button onClick={()=>addTestingHandler(component)}>+ Add testing</Button>
   }
+}
+
+const addTestingHandler = function(component){
+  const task = component.props.task
+
+  if(task.taskTestings == null){
+    task.taskTestings = []
+  }
+
+  task.taskTestings.push({
+    id: DataConstants.newId+newTestingId++,
+    question: '',
+    taskid: component.props.task.id
+  })
+
+  component.setState({})
 }
 
 const removeTestingLink = function(component, testings, testing){

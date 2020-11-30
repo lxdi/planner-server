@@ -1,5 +1,6 @@
 package com.sogoodlabs.planner.model.dao;
 
+import com.sogoodlabs.planner.model.entities.Mean;
 import com.sogoodlabs.planner.model.entities.Task;
 import com.sogoodlabs.planner.model.entities.Topic;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,4 +17,7 @@ public interface ITopicDAO extends JpaRepository<Topic, String> {
     List<Topic> getByTaskId(@Param("taskId") String taskid);
 
     List<Topic> findByTask(Task task);
+
+    @Query("from Topic where task.layer.mean = :mean")
+    List<Topic> findByMean(@Param("mean") Mean mean);
 }

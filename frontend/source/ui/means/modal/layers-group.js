@@ -3,9 +3,10 @@ import ReactDOM from 'react-dom';
 import {Button, ButtonToolbar,  DropdownButton, MenuItem,  FormGroup, ControlLabel, FormControl,  ListGroup, ListGroupItem, Alert} from 'react-bootstrap'
 import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
 
+import {TasksGroup} from './tasks-group'
 import {DataConstants} from '../../../data/data-constants'
 import {CreateLayer, CreateTask} from '../../../data/creators'
-import {TasksGroup} from './tasks-group'
+import {addNewLayerToMean} from '../../../data/mean-loader'
 
 // props: mean, isEdit
 export class LayersGroup extends React.Component {

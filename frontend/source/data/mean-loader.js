@@ -4,13 +4,14 @@ import {DataConstants} from './data-constants'
 import {CreateMean, CreateLayer} from './creators'
 
 export const prepareMean = function(mean){
-  if(mean.layers!=null){
+  if(mean.isFull){
     return true
   }
 
   if(mean.id == DataConstants.newId){
     mean.layers = []
     addNewLayerToMean(mean)
+    mean.isFull = true
     return true
   }
 
@@ -18,7 +19,21 @@ export const prepareMean = function(mean){
     return false
   }
 
-  return prepareTasks(mean)
+  if(!prepareTasks(mean)){
+    return false
+  }
+
+  if(!prepareWhateverInTask(mean, DataConstants.topicRep, 'topics')){
+    return false
+  }
+
+  if(!prepareWhateverInTask(mean, DataConstants.tasktestingRep, 'taskTestings')){
+    return false
+  }
+
+  mean.isFull = true
+
+  return true
 }
 
 const prepareLayers = function(mean){
@@ -56,9 +71,48 @@ const prepareTasks = function(mean){
     return true
   }
 
+  const layersMap = chkSt(DataConstants.layerRep, DataConstants.indexByMean)[mean.id]
+
+  for(const id in layersMap){
+    if(layersMap[id].tasks==null){
+      layersMap[id].tasks = []
+    }
+  }
+
   for(const id in tasks){
     const layerid = tasks[id].layerid
-    layers[layerid].tasks.push(tasks[id])
+    layersMap[layerid].tasks.push(tasks[id])
+  }
+
+  return true
+}
+
+const prepareWhateverInTask = function(mean, repName, fieldName){
+  const allByMean = chkSt(repName, DataConstants.indexByMean)
+
+  if(allByMean == null){
+    fireEvent(repName, DataConstants.byMeanRequest, [mean.id])
+    return false
+  }
+
+  const objMap = chkSt(repName, DataConstants.indexByMean)[mean.id]
+
+  if(objMap == null){
+    return true
+  }
+
+  const tasksMap = chkSt(DataConstants.taskRep, DataConstants.indexByMean)[mean.id]
+
+  for(const id in tasksMap){
+    if(tasksMap[id][fieldName]==null){
+      tasksMap[id][fieldName] = []
+    }
+  }
+
+  for(const id in objMap){
+    const taskid = objMap[id].taskid
+    const task = tasksMap[taskid]
+    task[fieldName].push(objMap[id])
   }
 
   return true

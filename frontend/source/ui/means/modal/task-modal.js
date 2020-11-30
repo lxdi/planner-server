@@ -7,11 +7,10 @@ import {CommonModal} from './../../common-modal'
 import {CommonCrudeTemplate} from './../../common-crud-template'
 import {StatefulTextField} from '../../common/stateful-text-field'
 import {TextArea} from '../../common/text-area'
+import {DataConstants} from '../../../data/data-constants'
 
 import {TopicsList} from './topics-list'
 import {TestingsList} from './testings-list'
-
-const taskRep = 'task-rep'
 
 const createState = function(isOpen, isStatic, isEdit, layer, task, progress){
   return {
@@ -26,11 +25,14 @@ export class TaskModal extends React.Component {
   constructor(props){
     super(props)
     this.state = createState(false, false, false, null, null)
-    registerEvent('task-modal', 'open', (stateSetter, layer, task, isViewOnly, withprogress)=>this.setState(getState(layer, task, isViewOnly, withprogress)))
+
+    registerEvent('task-modal', 'open',
+                (stateSetter, layer, task, isViewOnly, withprogress)=>this.setState(getState(layer, task, isViewOnly, withprogress)))
+
     registerEvent('task-modal', 'close', ()=>this.setState(createState(false, false, false, null, null, null)))
 
-    registerReaction('task-modal', taskRep, ['task-deleted', 'repetition-finished'], (stateSetter)=>fireEvent('task-modal', 'close'))
-    registerReaction('task-modal', taskRep, 'task-finished', (stateSetter)=>this.setState({}))
+    registerReaction('task-modal', DataConstants.taskRep, ['task-deleted', 'repetition-finished'], (stateSetter)=>fireEvent('task-modal', 'close'))
+    registerReaction('task-modal', DataConstants.taskRep, 'task-finished', (stateSetter)=>this.setState({}))
   }
 
   render(){
@@ -47,7 +49,7 @@ export class TaskModal extends React.Component {
 
 const getState = function(layer, task, isViewOnly, withprogress){
   var state = null
-  if(task.id == null || task.id == 0){
+  if(task.id == null || task.id == DataConstants.newId){
     state = createState(true, true, true, layer, task)
   } else {
     state = createState(true, false, false, layer, task)
@@ -68,10 +70,13 @@ const isTaskValid = function(task){
 }
 
 const okHandler = function(layer, task){
-  if(task.id==null){
-    fireEvent(taskRep, 'add-task', [layer, task])
-    task.id = 0
+  if(task.id==DataConstants.newId && (layer.tasks == null || !layer.tasks.includes(task))){
+    if(layer.tasks == null){
+      layer.tasks = []
+    }
+    layer.tasks.push(task)
   }
+
   fireEvent('task-modal', 'close')
 }
 
@@ -81,16 +86,18 @@ const modalContent = function(component){
   }
   return      <CommonCrudeTemplate editing = {component.state.mode}
                   changeEditHandler = {()=>component.setState({})}
-                  deleteHandler={()=>fireEvent(taskRep, 'delete-task', [component.state.layer, component.state.task])}>
+                  deleteHandler={()=>fireEvent(DataConstants.taskRep, 'delete-task', [component.state.layer, component.state.task])}>
                 <form>
                     {progressButton(component)}
                     <FormGroup controlId="formBasicText">
-                    <div style={{display:'inline-block', paddingRight:'5px'}}><ControlLabel>Title:</ControlLabel></div>
-                    <div style={{display:'inline-block'}}>
-                      <StatefulTextField obj={component.state.task} valName={'title'} isEdit={component.state.mode.isEdit} onInput={()=>component.setState({})}/>
-                    </div>
-                    <TopicsList topics={component.state.task.topics} isEdit={component.state.mode.isEdit} />
-                    {getTestingsUI(component)}
+                      <div style={{display:'inline-block', paddingRight:'5px'}}><ControlLabel>Title:</ControlLabel></div>
+
+                      <div style={{display:'inline-block'}}>
+                        <StatefulTextField obj={component.state.task} valName={'title'} isEdit={component.state.mode.isEdit} onInput={()=>component.setState({})}/>
+                      </div>
+
+                      <TopicsList topics={component.state.task.topics} isEdit={component.state.mode.isEdit} />
+                      {getTestingsUI(component)}
                     </FormGroup>
                   </form>
                 </CommonCrudeTemplate>
@@ -98,7 +105,7 @@ const modalContent = function(component){
 
 const getTestingsUI = function(component){
   if(component.state.showTestings==true || !(component.state.mode.isEdit==false && component.state.mode.isStatic==true)){
-    return <TestingsList testings={component.state.task.testings} isEdit={component.state.mode.isEdit} testingsGuesses={component.state.testingObjectives} />
+    return <TestingsList task={component.state.task} isEdit={component.state.mode.isEdit} testingsGuesses={component.state.testingObjectives} />
   }
   component.state.testingObjectives = ''
   return <div>

@@ -10,7 +10,6 @@ import {CreateLayer, CreateTask} from '../../../data/creators'
 export class TasksGroup extends React.Component {
   constructor(props){
     super(props)
-
   }
 
   render(){
@@ -27,6 +26,7 @@ const taskCssStyle = {
 const tasksUI = function(layer, isEdit){
   const tasksHTML = []
   if(layer.tasks!=null){
+
     for(var taskPos in layer.tasks){
       const task = layer.tasks[taskPos]
       tasksHTML.push(<div key={'layer_'+layer.priority+'_task_'+taskPos}
@@ -42,14 +42,15 @@ const tasksUI = function(layer, isEdit){
     }
   }
 
-  tasksHTML.push(<div key={'layer_'+layer.priority+'_task_phantom'}
-                      style={taskCssStyle}
-                      draggable={isEdit?"true":"false"}
-                      onDragOver={(e)=>moveEvent(e, layer, null, 'task', isEdit)}>
-                      <span style={{width:'50px'}} />
-                  </div>)
-
   if(isEdit){
+
+    tasksHTML.push(<div key={'layer_'+layer.priority+'_task_phantom'}
+                        style={taskCssStyle}
+                        draggable={isEdit?"true":"false"}
+                        onDragOver={(e)=>moveEvent(e, layer, null, 'task', isEdit)}>
+                        <span style={{width:'50px'}} />
+                    </div>)
+
     tasksHTML.push(<div key={'layer_'+layer.priority+'_task_toAdd'} style={taskCssStyle}>
                         <Button bsStyle="success" bsSize="xsmall"  onClick={()=>fireEvent('task-modal', 'open', [layer, CreateTask(DataConstants.newId, '', layer.id)])}>
                             +Add task

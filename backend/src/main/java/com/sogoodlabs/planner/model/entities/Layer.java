@@ -1,12 +1,13 @@
 package com.sogoodlabs.planner.model.entities;
 
 import com.sogoodlabs.common_mapper.annotations.MapToClass;
+import com.sogoodlabs.planner.model.IEntity;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
-public class Layer {
+public class Layer implements IEntity {
 
     @Id
     private String id;

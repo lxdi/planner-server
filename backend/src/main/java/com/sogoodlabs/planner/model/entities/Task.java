@@ -1,5 +1,8 @@
 package com.sogoodlabs.planner.model.entities;
 
+import com.sogoodlabs.common_mapper.annotations.MapToClass;
+import com.sogoodlabs.planner.model.IEntity;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -11,7 +14,7 @@ import java.util.Set;
  */
 
 @Entity
-public class Task{
+public class Task implements IEntity {
 
     @Id
     String id;
@@ -22,6 +25,13 @@ public class Task{
 
     int position;
 
+    @Transient
+    private List<Topic> topics;
+
+    @Transient
+    private List<TaskTesting> taskTestings;
+
+    @Override
     public String getId() {
         return id;
     }
@@ -50,4 +60,21 @@ public class Task{
         this.position = position;
     }
 
+    public List<Topic> getTopics() {
+        return topics;
+    }
+
+    @MapToClass(value = Topic.class)
+    public void setTopics(List<Topic> topics) {
+        this.topics = topics;
+    }
+
+    public List<TaskTesting> getTaskTestings() {
+        return taskTestings;
+    }
+
+    @MapToClass(value = TaskTesting.class)
+    public void setTaskTestings(List<TaskTesting> taskTestings) {
+        this.taskTestings = taskTestings;
+    }
 }

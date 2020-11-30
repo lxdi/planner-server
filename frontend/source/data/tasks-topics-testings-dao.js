@@ -5,10 +5,11 @@ import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
 import {createRep, basicListReceiving} from './common/repFactory'
 import {createIndex, updateIndex} from './common/index-factory'
 
-const name = 'task'
-const repName = name + '-rep'
+const taskName = 'task'
+const topicName = 'topic'
+const tasktestingName = 'tasktesting'
+
 const objMapName = 'objects'
-const meanIdFieldName = 'meanid'
 
 const indexByMean = 'index-by-mean'
 const getByMeanSpanName = 'getByMean'
@@ -17,8 +18,14 @@ const byMeanResponse = 'by-mean-response'
 const byMeanUrl = '/get/by/mean'
 
 export const createTaskRep = function(){
-  createRep(name, callback)
-  basicListReceiving(name, byMeanRequest, byMeanResponse, byMeanUrl, getByMeanSpanName, callback)
+  createRep(taskName, callback)
+  basicListReceiving(taskName, byMeanRequest, byMeanResponse, byMeanUrl, getByMeanSpanName, callback)
+
+  createRep(topicName, callback)
+  basicListReceiving(topicName, byMeanRequest, byMeanResponse, byMeanUrl, getByMeanSpanName, callback)
+
+  createRep(tasktestingName, callback)
+  basicListReceiving(tasktestingName, byMeanRequest, byMeanResponse, byMeanUrl, getByMeanSpanName, callback)
 }
 
 const callback = function(stSetter, spanName, arg, pathVariable){
@@ -39,9 +46,9 @@ const callback = function(stSetter, spanName, arg, pathVariable){
 
 const createIndexByMean = function(tasksMap, meanid){
   const index = {}
-  index[meanid] = []
+  index[meanid] = {}
   for(const id in tasksMap){
-    index[meanid] = tasksMap[id]
+    index[meanid][id] = tasksMap[id]
   }
   return index
 }
