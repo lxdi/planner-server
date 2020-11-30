@@ -13,11 +13,11 @@ import {TestingsList} from './testings-list'
 
 const taskRep = 'task-rep'
 
-const createState = function(isOpen, isStatic, isEdit, subject, task, progress){
+const createState = function(isOpen, isStatic, isEdit, layer, task, progress){
   return {
     isOpen: isOpen,
     mode: {isStatic: isStatic, isEdit: isEdit, progress:progress},
-    subject: subject,
+    layer: layer,
     task: task
   }
 }
@@ -26,7 +26,7 @@ export class TaskModal extends React.Component {
   constructor(props){
     super(props)
     this.state = createState(false, false, false, null, null)
-    registerEvent('task-modal', 'open', (stateSetter, subject, task, isViewOnly, withprogress)=>this.setState(getState(subject, task, isViewOnly, withprogress)))
+    registerEvent('task-modal', 'open', (stateSetter, layer, task, isViewOnly, withprogress)=>this.setState(getState(layer, task, isViewOnly, withprogress)))
     registerEvent('task-modal', 'close', ()=>this.setState(createState(false, false, false, null, null, null)))
 
     registerReaction('task-modal', taskRep, ['task-deleted', 'repetition-finished'], (stateSetter)=>fireEvent('task-modal', 'close'))
@@ -38,19 +38,19 @@ export class TaskModal extends React.Component {
     return <CommonModal title="Task"
                         isOpen={this.state.isOpen}
                         cancelHandler={()=>fireEvent('task-modal', 'close')}
-                        okHandler={!isViewOnly && isTaskValid(this.state.task)?()=>okHandler(this.state.subject, this.state.task):null}
+                        okHandler={!isViewOnly && isTaskValid(this.state.task)?()=>okHandler(this.state.layer, this.state.task):null}
                         styleClass="task-modal-style">
               {this.state.task!=null? modalContent(this): null}
             </CommonModal>
   }
 }
 
-const getState = function(subject, task, isViewOnly, withprogress){
+const getState = function(layer, task, isViewOnly, withprogress){
   var state = null
   if(task.id == null || task.id == 0){
-    state = createState(true, true, true, subject, task)
+    state = createState(true, true, true, layer, task)
   } else {
-    state = createState(true, false, false, subject, task)
+    state = createState(true, false, false, layer, task)
   }
   if(isViewOnly!=null && isViewOnly==true){
     state.mode.isStatic = true
@@ -67,9 +67,9 @@ const isTaskValid = function(task){
   return task!=null && task.title!=null && task.title!=''
 }
 
-const okHandler = function(subject, task){
+const okHandler = function(layer, task){
   if(task.id==null){
-    fireEvent(taskRep, 'add-task', [subject, task])
+    fireEvent(taskRep, 'add-task', [layer, task])
     task.id = 0
   }
   fireEvent('task-modal', 'close')
@@ -81,7 +81,7 @@ const modalContent = function(component){
   }
   return      <CommonCrudeTemplate editing = {component.state.mode}
                   changeEditHandler = {()=>component.setState({})}
-                  deleteHandler={()=>fireEvent(taskRep, 'delete-task', [component.state.subject, component.state.task])}>
+                  deleteHandler={()=>fireEvent(taskRep, 'delete-task', [component.state.layer, component.state.task])}>
                 <form>
                     {progressButton(component)}
                     <FormGroup controlId="formBasicText">

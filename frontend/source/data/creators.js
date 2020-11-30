@@ -32,3 +32,11 @@ export var CreateRealm =  function(id, title){
     'title': title
   }
 }
+
+export const CreateTask = function(id, title, layerid){
+  return {
+    id: id,
+    title: title,
+    layerid: layerid
+  }
+}

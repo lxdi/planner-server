@@ -1,6 +1,6 @@
 import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
 
-import {dataConstants} from './data-constants'
+import {DataConstants} from './data-constants'
 import {CreateMean, CreateLayer} from './creators'
 
 export const prepareMean = function(mean){
@@ -8,8 +8,9 @@ export const prepareMean = function(mean){
     return true
   }
 
-  if(mean.id == dataConstants.newId){
+  if(mean.id == DataConstants.newId){
     mean.layers = []
+    addNewLayerToMean(mean)
     return true
   }
 
@@ -21,14 +22,14 @@ export const prepareMean = function(mean){
 }
 
 const prepareLayers = function(mean){
-  const layersByMean = chkSt(dataConstants.layerRep, dataConstants.indexByMean)
+  const layersByMean = chkSt(DataConstants.layerRep, DataConstants.indexByMean)
 
   if(layersByMean==null){
-    fireEvent(dataConstants.layerRep, dataConstants.byMeanRequest, [mean.id])
+    fireEvent(DataConstants.layerRep, DataConstants.byMeanRequest, [mean.id])
     return false
   }
 
-  const layers = chkSt(dataConstants.layerRep, dataConstants.indexByMean)[mean.id]
+  const layers = chkSt(DataConstants.layerRep, DataConstants.indexByMean)[mean.id]
 
   if(layers==null){
     mean.layers = []
@@ -40,16 +41,16 @@ const prepareLayers = function(mean){
 }
 
 const prepareTasks = function(mean){
-  const allTasksByMean = chkSt(dataConstants.taskRep, dataConstants.indexByMean)
+  const allTasksByMean = chkSt(DataConstants.taskRep, DataConstants.indexByMean)
 
   if(allTasksByMean == null){
-    fireEvent(dataConstants.taskRep, dataConstants.byMeanRequest, [mean.id])
+    fireEvent(DataConstants.taskRep, DataConstants.byMeanRequest, [mean.id])
     return false
   }
 
   const layers = mean.layers
   layers.forEach(layer => layer.tasks = [])
-  const tasks = chkSt(dataConstants.taskRep, dataConstants.indexByMean)[mean.id]
+  const tasks = chkSt(DataConstants.taskRep, DataConstants.indexByMean)[mean.id]
 
   if(tasks == null){
     return true
@@ -79,5 +80,5 @@ export const addNewLayerToMean = function(mean){
     }
   }
   priority = priority + 1
-  mean.layers.push(CreateLayer(dataConstants.newId, priority, mean.id))
+  mean.layers.push(CreateLayer(DataConstants.newId, priority, mean.id))
 }

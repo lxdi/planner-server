@@ -4,7 +4,8 @@ import {Button, ButtonToolbar,  DropdownButton, MenuItem,  FormGroup, ControlLab
 import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
 import {iterateLLfull, iterateTree} from 'js-utils'
 
-import {CreateMean, CreateTarget, CreateLayer} from './../../../data/creators'
+import {LayersGroup} from './layers-group'
+import {CreateMean, CreateTarget, CreateLayer, CreateTask} from './../../../data/creators'
 import {meanModalHeaderTitle, targetsDropDownTitle} from './../../../titles'
 import {CommonModal} from './../../common-modal'
 import {CommonCrudeTemplate} from './../../common-crud-template'
@@ -70,7 +71,6 @@ export class MeanModal extends React.Component {
 
   okHandler(){
     if(this.state.currentMean.id==newId){
-      console.log(this.state.currentMean)
       fireEvent(meanRep, 'create', [this.state.currentMean])
     } else {
       this.state.currentMean.isFull=false
@@ -130,7 +130,8 @@ const modalBody = function(component){
                 </FormGroup>
               </form>
 
-              {layersBlock(component, component.state.currentMean, component.state.mode.isEdit)}
+              <LayersGroup mean={component.state.currentMean} isEdit = {component.state.mode.isEdit} />
+
           </CommonCrudeTemplate>
 }
 
@@ -174,10 +175,51 @@ const listLayersGroupContent = function(mean, isEdit){
       const layer = mean.layers[id]
       result.push(<ListGroupItem key={'layer_'+layer.priority}>
                               <div style={{fontWeight:'bold', fontSize:'12pt'}}>Layer {layer.priority}</div>
-                              <div>TODO; layer priority: {layer.priority}</div>
+                              <div>{tasksUI(layer, isEdit)}</div>
                             </ListGroupItem>)
     }
     return result
+}
+
+const taskCssStyle = {
+  display: 'table-cell',
+  padding: '5px',
+  border: '1px solid lightgrey',
+  'vertical-align':'top'}
+
+const tasksUI = function(layer, isEdit){
+  const tasksHTML = []
+  if(layer.tasks!=null){
+    for(var taskPos in layer.tasks){
+      const task = layer.tasks[taskPos]
+      tasksHTML.push(<div key={'layer_'+layer.priority+'_task_'+taskPos}
+                          style={taskCssStyle}
+                          draggable={isEdit?"true":"false"}
+                          onDragStart={()=>fireEvent(taskRep, 'add-task-to-drag', [subject, task])}
+                          onDragEnd={()=>fireEvent(taskRep, 'release-draggable-task')}
+                          onDragOver={(e)=>moveEvent(e, layer, task, 'task', isEdit)}>
+
+                          <a href='#' onClick={()=>fireEvent('task-modal', 'open', [layer, task])}>{task.title}</a>
+                      </div>)
+    }
+  }
+
+  tasksHTML.push(<div key={'layer_'+layer.priority+'_task_phantom'}
+                      style={taskCssStyle}
+                      draggable={isEdit?"true":"false"}
+                      onDragOver={(e)=>moveEvent(e, layer, null, 'task', isEdit)}>
+                      <span style={{width:'50px'}} />
+                  </div>)
+
+  if(isEdit){
+    tasksHTML.push(<div key={'layer_'+layer.priority+'_task_toAdd'} style={taskCssStyle}>
+                        <Button bsStyle="success" bsSize="xsmall"  onClick={()=>fireEvent('task-modal', 'open', [layer, CreateTask(newId, '', layer.id)])}>
+                            +Add task
+                        </Button>
+                      </div>)
+  }
+
+  return tasksHTML
 }
 
 const showAlerts = function(alerts){

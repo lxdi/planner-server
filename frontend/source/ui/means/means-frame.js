@@ -27,11 +27,6 @@ export class MeansFrame extends React.Component{
     registerReaction('means-frame', realmRepName, ['all-response', 'change-current-realm'], ()=>{this.setState({})})
     registerReaction('means-frame', targetRepName, ['highlight', 'highlight-clean'], ()=>this.setState({}))
 
-    // registerReaction('means-frame', targetRepName, 'deleted', (state, target)=>{
-    //   fireEvent(meanRepName, 'delete-depended-means', [target])
-    //   this.setState({})
-    // })
-
     registerReaction('means-frame', meanRepName,
             ['all-response', 'created', 'deleted', 'updated',
               'replace-mean', 'means-list-modified',

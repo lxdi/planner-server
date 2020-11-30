@@ -1,5 +1,5 @@
 
-export const dataConstants = {
+export const DataConstants = {
   newId: 'new',
   layerRep: 'layer-rep',
   taskRep:'task-rep',
