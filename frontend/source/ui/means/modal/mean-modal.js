@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {Button, ButtonToolbar,  DropdownButton, MenuItem,  FormGroup, ControlLabel, FormControl,  ListGroup, ListGroupItem, Alert} from 'react-bootstrap'
-import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
+import {registerEvent, registerReaction, fireEvent, chkSt, registerReactionCombo} from 'absevents'
 import {iterateLLfull, iterateTree} from 'js-utils'
 
 import {DataConstants} from '../../../data/data-constants'
@@ -64,12 +64,15 @@ export class MeanModal extends React.Component {
       this.setState({})
     }.bind(this))
 
-    registerReaction('mean-modal', meanRep, 'got-full', ()=>this.setState({}))
-    registerReaction('mean-modal', layerRep, ['by-mean-response'], ()=>this.setState({}))
-    registerReaction('mean-modal', taskRep, ['by-mean-response', 'move-task'], ()=>this.setState({}))
-    registerReaction('mean-modal', DataConstants.topicRep, ['by-mean-response'], ()=>this.setState({}))
-    registerReaction('mean-modal', DataConstants.tasktestingRep, ['by-mean-response'], ()=>this.setState({}))
     registerReaction('mean-modal', 'task-modal', 'close', ()=>this.setState({}))
+
+    const events = {}
+    events[DataConstants.layerRep] = 'by-mean-response'
+    events[DataConstants.taskRep] = 'by-mean-response'
+    events[DataConstants.topicRep] = 'by-mean-response'
+    events[DataConstants.tasktestingRep] = 'by-mean-response'
+
+    registerReactionCombo('mean-modal', events, ()=>this.setState({}))
 
   }
 
@@ -120,10 +123,13 @@ const modalBody = function(component){
 
               <form>
                 <FormGroup controlId="formBasicText">
+
                   <div style={{display:'inline-block', paddingRight:'3px'}}>
                     <ControlLabel>Title:</ControlLabel>
                   </div>
+
                   <div style={{display:'inline-block'}}>
+
                     {component.state.mode.isEdit? <FormControl
                                       type="text"
                                       value={component.state.currentMean.title}

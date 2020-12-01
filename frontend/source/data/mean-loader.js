@@ -15,6 +15,10 @@ export const prepareMean = function(mean){
     return true
   }
 
+  if(!checkReps(mean)){
+    return false
+  }
+
   if(!prepareLayers(mean)){
     return false
   }
@@ -36,13 +40,32 @@ export const prepareMean = function(mean){
   return true
 }
 
-const prepareLayers = function(mean){
-  const layersByMean = chkSt(DataConstants.layerRep, DataConstants.indexByMean)
-
-  if(layersByMean==null){
+const checkReps = function(mean){
+  var result = true
+  if(chkSt(DataConstants.layerRep, DataConstants.indexByMean)==null){
     fireEvent(DataConstants.layerRep, DataConstants.byMeanRequest, [mean.id])
-    return false
+    result = false
   }
+
+  if(chkSt(DataConstants.taskRep, DataConstants.indexByMean)==null){
+    fireEvent(DataConstants.taskRep, DataConstants.byMeanRequest, [mean.id])
+    result = false
+  }
+
+  if(chkSt(DataConstants.topicRep, DataConstants.indexByMean)==null){
+    fireEvent(DataConstants.topicRep, DataConstants.byMeanRequest, [mean.id])
+    result = false
+  }
+
+  if(chkSt(DataConstants.tasktestingRep, DataConstants.indexByMean)==null){
+    fireEvent(DataConstants.tasktestingRep, DataConstants.byMeanRequest, [mean.id])
+    result = false
+  }
+
+  return result
+}
+
+const prepareLayers = function(mean){
 
   const layers = chkSt(DataConstants.layerRep, DataConstants.indexByMean)[mean.id]
 
@@ -56,12 +79,6 @@ const prepareLayers = function(mean){
 }
 
 const prepareTasks = function(mean){
-  const allTasksByMean = chkSt(DataConstants.taskRep, DataConstants.indexByMean)
-
-  if(allTasksByMean == null){
-    fireEvent(DataConstants.taskRep, DataConstants.byMeanRequest, [mean.id])
-    return false
-  }
 
   const layers = mean.layers
   layers.forEach(layer => layer.tasks = [])
@@ -88,12 +105,6 @@ const prepareTasks = function(mean){
 }
 
 const prepareWhateverInTask = function(mean, repName, fieldName){
-  const allByMean = chkSt(repName, DataConstants.indexByMean)
-
-  if(allByMean == null){
-    fireEvent(repName, DataConstants.byMeanRequest, [mean.id])
-    return false
-  }
 
   const objMap = chkSt(repName, DataConstants.indexByMean)[mean.id]
 
