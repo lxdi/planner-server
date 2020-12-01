@@ -113,6 +113,7 @@ const prepareWhateverInTask = function(mean, repName, fieldName){
     const taskid = objMap[id].taskid
     const task = tasksMap[taskid]
     task[fieldName].push(objMap[id])
+    console.log(objMap[id])
   }
 
   return true

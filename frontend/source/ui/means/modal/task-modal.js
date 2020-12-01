@@ -96,7 +96,7 @@ const modalContent = function(component){
                         <StatefulTextField obj={component.state.task} valName={'title'} isEdit={component.state.mode.isEdit} onInput={()=>component.setState({})}/>
                       </div>
 
-                      <TopicsList topics={component.state.task.topics} isEdit={component.state.mode.isEdit} />
+                      <TopicsList task={component.state.task} isEdit={component.state.mode.isEdit} />
                       {getTestingsUI(component)}
                     </FormGroup>
                   </form>
