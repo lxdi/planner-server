@@ -1,5 +1,6 @@
 package com.sogoodlabs.planner.model.entities;
 
+import com.sogoodlabs.common_mapper.annotations.IncludeInDto;
 import com.sogoodlabs.common_mapper.annotations.MapToClass;
 import com.sogoodlabs.planner.model.IEntity;
 
@@ -41,6 +42,7 @@ public class Layer implements IEntity {
         this.mean = mean;
     }
 
+    @IncludeInDto
     public List<Task> getTasks() {
         return tasks;
     }

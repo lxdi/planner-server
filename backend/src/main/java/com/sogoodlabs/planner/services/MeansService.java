@@ -29,16 +29,16 @@ public class MeansService {
     private ITaskTestingDAO taskTestingDAO;
 
     public Mean createMean(Mean mean){
-        return modifyMean(mean, true);
+        return modifyMean(mean);
     }
 
     public Mean updateMean(Mean mean){
-        return modifyMean(mean, false);
+        return modifyMean(mean);
     }
 
-    private Mean modifyMean(Mean mean, boolean isCreate){
+    private Mean modifyMean(Mean mean){
 
-        if(isCreate) {
+        if(!isUUID(mean.getId())) {
             mean.setId(UUID.randomUUID().toString());
 
             Mean lastMean = mean.getParent()==null? meansDAO.getLastOfChildrenRoot(mean.getRealm()):
@@ -56,25 +56,15 @@ public class MeansService {
 
         if(mean.getLayers()!=null && !mean.getLayers().isEmpty()){
             for(Layer layer : mean.getLayers()){
-
-                if(isCreate){
-                    modifyLayer(layer, mean, isCreate);
-                    continue;
-                }
-
-                if(layer.getId()!=null && layer.getId().matches(UUID_PATTERN)){
-                    modifyLayer(layer, mean, false);
-                } else {
-                    modifyLayer(layer, mean, true);
-                }
+                modifyLayer(layer, mean);
             }
         }
 
         return mean;
     }
 
-    private Layer modifyLayer(Layer layer, Mean mean, boolean isCreate){
-        if(isCreate){
+    private Layer modifyLayer(Layer layer, Mean mean){
+        if(!isUUID(layer.getId())){
             layer.setId(UUID.randomUUID().toString());
         }
 
@@ -82,27 +72,14 @@ public class MeansService {
         layerDAO.save(layer);
 
         if(layer.getTasks()!=null && !layer.getTasks().isEmpty()){
-            for(Task task : layer.getTasks()){
-
-                if(isCreate){
-                    modifyTask(task, layer, isCreate);
-                    continue;
-                }
-
-                if(layer.getId()!=null && layer.getId().matches(UUID_PATTERN)){
-                    modifyTask(task, layer, false);
-                } else {
-                    modifyTask(task, layer, true);
-                }
-
-            }
+            layer.getTasks().forEach(task -> modifyTask(task, layer));
         }
 
         return layer;
     }
 
-    private Task modifyTask(Task task, Layer layer, boolean isCreate){
-        if(isCreate){
+    private Task modifyTask(Task task, Layer layer){
+        if(!isUUID(task.getId())){
             task.setId(UUID.randomUUID().toString());
         }
 
@@ -110,45 +87,18 @@ public class MeansService {
         tasksDAO.save(task);
 
         if(task.getTopics()!=null && !task.getTopics().isEmpty()){
-            for(Topic topic : task.getTopics()){
-
-                if(isCreate){
-                    modifyTopic(topic, task, isCreate);
-                    continue;
-                }
-
-                if(topic.getId()!=null && topic.getId().matches(UUID_PATTERN)){
-                    modifyTopic(topic, task, false);
-                } else {
-                    modifyTopic(topic, task, true);
-                }
-
-            }
+            task.getTopics().forEach(topic -> modifyTopic(topic, task));
         }
 
         if(task.getTaskTestings()!=null && !task.getTaskTestings().isEmpty()){
-            for(TaskTesting testing : task.getTaskTestings()){
-
-                if(isCreate){
-                    modifyTesting(testing, task, isCreate);
-                    continue;
-                }
-
-                if(testing.getId()!=null && testing.getId().matches(UUID_PATTERN)){
-                    modifyTesting(testing, task, false);
-                } else {
-                    modifyTesting(testing, task, true);
-                }
-
-            }
+            task.getTaskTestings().forEach(testing -> modifyTesting(testing, task));
         }
-
 
         return task;
     }
 
-    private Topic modifyTopic(Topic topic, Task task, boolean isCreate){
-        if(isCreate){
+    private Topic modifyTopic(Topic topic, Task task){
+        if(!isUUID(topic.getId())){
             topic.setId(UUID.randomUUID().toString());
         }
 
@@ -157,8 +107,8 @@ public class MeansService {
         return topic;
     }
 
-    private TaskTesting modifyTesting(TaskTesting testing, Task task, boolean isCreate){
-        if(isCreate){
+    private TaskTesting modifyTesting(TaskTesting testing, Task task){
+        if(!isUUID(testing.getId())){
             testing.setId(UUID.randomUUID().toString());
         }
 
@@ -167,23 +117,8 @@ public class MeansService {
         return testing;
     }
 
-    interface TripleConsumer {
-        void accept(Object obj1, Object obj2, Boolean mod);
-    }
-
-    //TODO
-    private void genericModification(IEntity obj, IEntity parent, boolean isCreate, TripleConsumer modFunction){
-
-        if(isCreate){
-            modFunction.accept(obj, parent, isCreate);
-            return;
-        }
-
-        if(obj.getId()!=null && obj.getId().matches(UUID_PATTERN)){
-            modFunction.accept(obj, parent, false);
-        } else {
-            modFunction.accept(obj, parent, true);
-        }
+    private boolean isUUID(String id){
+        return id!=null && id.matches(UUID_PATTERN);
     }
 
 }

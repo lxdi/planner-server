@@ -1,5 +1,6 @@
 package com.sogoodlabs.planner.model.entities;
 
+import com.sogoodlabs.common_mapper.annotations.IncludeInDto;
 import com.sogoodlabs.common_mapper.annotations.MapToClass;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -102,6 +103,7 @@ public class Mean {
         this.targets = targets;
     }
 
+    @IncludeInDto
     public List<Layer> getLayers() {
         return layers;
     }

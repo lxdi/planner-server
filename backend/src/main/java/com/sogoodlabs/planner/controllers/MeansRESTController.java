@@ -4,6 +4,7 @@ import com.sogoodlabs.common_mapper.CommonMapper;
 import com.sogoodlabs.planner.model.dao.IMeansDAO;
 import com.sogoodlabs.planner.model.entities.Mean;
 import com.sogoodlabs.planner.services.GracefulDeleteService;
+import com.sogoodlabs.planner.services.MeanFillerService;
 import com.sogoodlabs.planner.services.MeansService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -32,11 +33,21 @@ public class MeansRESTController {
     @Autowired
     private MeansService meansService;
 
+    @Autowired
+    private MeanFillerService meanFillerService;
+
     @GetMapping("/get/all")
     public List<Map<String, Object>> getAllTargets(){
         return meansDAO.findAll().stream()
                 .map(commonMapper::mapToDto)
                 .collect(Collectors.toList());
+    }
+
+    @GetMapping("/get/full/{meanid}")
+    public Map<String, Object> getAllTargets(@PathVariable("meanid") String meanid){
+        Mean mean =  meansDAO.findById(meanid).orElseThrow(() -> new RuntimeException("Mean not found by " + meanid));
+        meanFillerService.fill(mean);
+        return commonMapper.mapToDto(mean);
     }
 
     @PutMapping("/create")

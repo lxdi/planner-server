@@ -70,7 +70,7 @@ const isTaskValid = function(task){
 }
 
 const okHandler = function(layer, task){
-  if(task.id==DataConstants.newId && (layer.tasks == null || !layer.tasks.includes(task))){
+  if(task.id == DataConstants.newId){
     if(layer.tasks == null){
       layer.tasks = []
     }

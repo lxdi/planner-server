@@ -11,7 +11,7 @@ import {meanModalHeaderTitle, targetsDropDownTitle} from './../../../titles'
 import {CommonModal} from './../../common-modal'
 import {CommonCrudeTemplate} from './../../common-crud-template'
 import {isValidMean} from '../../../utils/mean-validator'
-import {prepareMean, addNewLayerToMean} from '../../../data/mean-loader'
+import {addNewLayerToMean} from '../../../data/mean-loader'
 
 const realmRep = 'realm-rep'
 const targetRep = 'target-rep'
@@ -58,21 +58,9 @@ export class MeanModal extends React.Component {
     }.bind(this))
 
     registerEvent('mean-modal', 'remove-target')
-
-    registerReaction('means-modal', meanRep, ['deleted', 'updated', 'created'], function(){
-      fireEvent('mean-modal', 'close')
-      this.setState({})
-    }.bind(this))
-
+    registerReaction('means-modal', meanRep, ['deleted', 'updated', 'created'], ()=>this.setState(defaultState()))
+    registerReaction('means-modal', meanRep, ['got-full'], ()=>this.setState({}))
     registerReaction('mean-modal', 'task-modal', 'close', ()=>this.setState({}))
-
-    const events = {}
-    events[DataConstants.layerRep] = 'by-mean-response'
-    events[DataConstants.taskRep] = 'by-mean-response'
-    events[DataConstants.topicRep] = 'by-mean-response'
-    events[DataConstants.tasktestingRep] = 'by-mean-response'
-
-    registerReactionCombo('mean-modal', events, ()=>this.setState({}))
 
   }
 
@@ -80,9 +68,9 @@ export class MeanModal extends React.Component {
     if(this.state.currentMean.id==DataConstants.newId){
       fireEvent(meanRep, 'create', [this.state.currentMean])
     } else {
-      this.state.currentMean.isFull=false
       fireEvent(meanRep, 'update', [this.state.currentMean])
     }
+    this.state.currentMean.isFull=false
   }
 
   handleNameVal(e){
@@ -143,6 +131,18 @@ const modalBody = function(component){
               <LayersGroup mean={component.state.currentMean} isEdit = {component.state.mode.isEdit} />
 
           </CommonCrudeTemplate>
+}
+
+const prepareMean = function(mean){
+  if(mean.id==DataConstants.newId){
+    return true
+  }
+
+  if(mean.isFull == null || !mean.isFull){
+    fireEvent(meanRep, 'get-full', [mean])
+    return false
+  }
+  return true
 }
 
 const rememberButton = function(component){

@@ -25,6 +25,12 @@ const updateEventName = 'update'
 const updateCompleteEventName = 'updated'
 const updateUrlOffset = '/update'
 
+const getFullName = 'getFullSpan'
+const getFullEventName = 'get-full'
+const getFullCompleteEventName = 'got-full'
+const getFullUrlOffset = '/get/full'
+const fullFieldIndicator = 'isFull'
+
 const cleanName = 'cleanSpan'
 const cleanEventName = 'clean'
 
@@ -33,6 +39,7 @@ export const createRep = function(name, callback){
   createCreation(name, callback)
   createDeletion(name, callback)
   updateCreation(name, callback)
+  createGetFull(name, callback)
   cleaning(name, callback)
 }
 
@@ -111,6 +118,33 @@ const updateCreation = function(name, callback){
   })
   registerEvent(repName, updateCompleteEventName, (stateSetter, obj) => obj)
 }
+
+const createGetFull = function(name, callback){
+  const repName = name + repOffset
+  registerEvent(repName, getFullEventName, function(stateSetter, obj){
+    sendGet('/' + name + getFullUrlOffset + '/' + obj.id, function(data) {
+      var receivedData = typeof data == 'string'? JSON.parse(data): data
+      chkSt(repName, objMapName)[""+receivedData.id] = receivedData
+
+      if(receivedData.id != obj.id){
+        console.log(repName, obj, receivedData)
+        throw "Get full: objects ids are not the same"
+      }
+
+      //const lazyObj = chkSt(repName, objMapName)[""+obj.id]
+      Object.assign(obj, receivedData)
+      obj[fullFieldIndicator] = true
+
+      if(callback!=null){
+        callback(stateSetter, getFullName, obj)
+      }
+
+      fireEvent(repName, getFullCompleteEventName, [obj])
+    })
+  })
+  registerEvent(repName, getFullCompleteEventName, (stateSetter, obj) => obj)
+}
+
 
 const cleaning = function(name, callback){
   const repName = name + repOffset

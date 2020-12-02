@@ -1,5 +1,6 @@
 package com.sogoodlabs.planner.model.entities;
 
+import com.sogoodlabs.common_mapper.annotations.IncludeInDto;
 import com.sogoodlabs.common_mapper.annotations.MapToClass;
 import com.sogoodlabs.planner.model.IEntity;
 
@@ -60,6 +61,7 @@ public class Task implements IEntity {
         this.position = position;
     }
 
+    @IncludeInDto
     public List<Topic> getTopics() {
         return topics;
     }
@@ -69,6 +71,7 @@ public class Task implements IEntity {
         this.topics = topics;
     }
 
+    @IncludeInDto
     public List<TaskTesting> getTaskTestings() {
         return taskTestings;
     }
