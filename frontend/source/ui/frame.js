@@ -10,9 +10,7 @@ export class Frame extends React.Component {
     if(this.props.name=="Targets")
       frameContent = <TargetsFrame />;
     if(this.props.name=="Schedule")
-      frameContent = <div style={{height:'85vh', borderTop:'1px solid lightgrey', borderBottom:'1px solid lightgrey', marginTop:'3px'}}>
-                TODO
-              </div>
+      frameContent = <ScheduleFrame />
     if(this.props.name=="Means")
       frameContent = <MeansFrame />
 

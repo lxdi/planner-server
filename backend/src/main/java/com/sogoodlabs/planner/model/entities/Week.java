@@ -1,7 +1,10 @@
 package com.sogoodlabs.planner.model.entities;
 
 
+import com.sogoodlabs.common_mapper.annotations.IncludeInDto;
+
 import javax.persistence.*;
+import java.util.List;
 
 /**
  * Created by Alexander on 05.03.2018.
@@ -15,6 +18,15 @@ public class Week {
 
     private int year;
     private int num;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Week prev;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Week next;
+
+    @Transient
+    private List<Day> days;
 
     public String getId() {
         return id;
@@ -35,5 +47,30 @@ public class Week {
     }
     public void setNum(int num) {
         this.num = num;
+    }
+
+    public Week getPrev() {
+        return prev;
+    }
+
+    public void setPrev(Week prev) {
+        this.prev = prev;
+    }
+
+    public Week getNext() {
+        return next;
+    }
+
+    public void setNext(Week next) {
+        this.next = next;
+    }
+
+    @IncludeInDto
+    public List<Day> getDays() {
+        return days;
+    }
+
+    public void setDays(List<Day> days) {
+        this.days = days;
     }
 }

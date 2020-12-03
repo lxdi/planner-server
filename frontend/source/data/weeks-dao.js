@@ -1,41 +1,19 @@
-//import $ from 'jquery'
+import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
+import {sendGet, sendPut, sendPost} from './postoffice'
 
-//HashMap year -> array of weeks
-var weeks = {}
-var weeksList = {}
-var weeksLoaded = false
+import {DataConstants} from './data-constants'
 
-export var CreateWeek = function(id, title, task){
-  return {
-    'id': id,
-    'title': title,
-    'task': task
-  }
-};
+const repName = 'week'
 
-var saveTasksInList = function(){
-  for(var i in weeks){
-    for(var j in weeks[weeks[i]]){
-      weeksList[""+weeks[weeks[i]][j].id] = weeks[weeks[i]][j]
-    }
-  }
-}
+const getCurrentEvent = 'get-current-list'
+const gotCurrentEvent = 'got-current-list'
+const getCurrentUrlOffest = '/get/all/current/year'
 
-export var AllWeeks = function(callback){
-  if(!weeksLoaded){
-      $.ajax({url: "/week/all"}).then(function(data) {
-                var receivedData = typeof data == 'string'? JSON.parse(data): data
-                weeks = receivedData
-                saveTasksInList()
-                if(callback != null){
-                  callback()
-                }
-                weeksLoaded = true
-              });
-  }
-  return weeks
-}
-
-export var WeekById = function(id){
-  return weeksList[id]
-}
+registerEvent(DataConstants.weekRep, getCurrentEvent, (stSetter)=>{
+  sendGet('/' + repName + getCurrentUrlOffest, (data)=>{
+      var list = typeof data == 'string'? JSON.parse(data): data
+      stSetter(DataConstants.objList, list)
+      fireEvent(DataConstants.weekRep, gotCurrentEvent, [list])
+  })
+})
+registerEvent(DataConstants.weekRep, gotCurrentEvent, (stSetter, list)=>list)

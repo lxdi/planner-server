@@ -19,6 +19,7 @@ import {createTaskRep} from './data/tasks-topics-testings-dao'
 //import './data/subjects-dao'
 //import './data/tasks-dao'
 import './data/rep-plans-dao'
+import './data/weeks-dao'
 
 createRealmRep()
 createTargetRep()

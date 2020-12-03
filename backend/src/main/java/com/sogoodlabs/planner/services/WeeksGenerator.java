@@ -15,6 +15,8 @@ import java.sql.Date;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.UUID;
 
 import static com.sogoodlabs.planner.util.DateUtils.toDate;
@@ -45,8 +47,10 @@ public class WeeksGenerator {
         YearWeek yw = YearWeek.of(year,1);
         int numberOfWeeks = yw.is53WeekYear()? 53: 54;
         int dayCount = 1;
+        Map<Integer, Week> weeksMap = new TreeMap<>();
         for(int i = 1; i < numberOfWeeks; i++){
             Week week = getOrCreateWeek(year, i);
+            weeksMap.put(i, week);
             getOrCreateDay(getDate(yw, DayOfWeek.MONDAY), week, dayCount++, DaysOfWeek.of(DayOfWeek.MONDAY));
             getOrCreateDay(getDate(yw, DayOfWeek.TUESDAY), week, dayCount++, DaysOfWeek.of(DayOfWeek.TUESDAY));
             getOrCreateDay(getDate(yw, DayOfWeek.WEDNESDAY), week, dayCount++, DaysOfWeek.of(DayOfWeek.WEDNESDAY));
@@ -59,6 +63,23 @@ public class WeeksGenerator {
             // Prepare for next loop.
             yw = yw.plusWeeks( 1 ) ;
         }
+
+        weeksMap.values().forEach(week -> {
+            if(week.getNum()>1){
+                week.setPrev(weeksMap.get(week.getNum()-1));
+            } else {
+                week.setPrev(weekDAO.findLastInYear(year-1));
+            }
+
+            if(week.getNum()<numberOfWeeks-1){
+                week.setNext(weeksMap.get(week.getNum()+1));
+            } else {
+                week.setNext(weekDAO.findFirsInYear(year+1));
+            }
+
+            weekDAO.save(week);
+        });
+
     }
 
     private Week getOrCreateWeek(int year, int number){
