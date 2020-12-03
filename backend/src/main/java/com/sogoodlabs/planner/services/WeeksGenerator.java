@@ -74,7 +74,7 @@ public class WeeksGenerator {
             if(week.getNum()<numberOfWeeks-1){
                 week.setNext(weeksMap.get(week.getNum()+1));
             } else {
-                week.setNext(weekDAO.findFirsInYear(year+1));
+                week.setNext(weekDAO.findFirstInYear(year+1));
             }
 
             weekDAO.save(week);

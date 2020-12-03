@@ -23,6 +23,9 @@ public interface IWeekDAO extends JpaRepository<Week, String> {
     Week findLastInYear(@Param("year") int year);
 
     @Query(value = "select * from Week where year = :year order by num asc limit 1", nativeQuery = true)
-    Week findFirsInYear(@Param("year") int year);
+    Week findFirstInYear(@Param("year") int year);
+
+    @Query("from Week where num >= :from and num <= :to and year = :year")
+    List<Week> findInDiapason(@Param("from") int from, @Param("to") int to, @Param("year") int year);
 
 }
