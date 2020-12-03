@@ -11,8 +11,14 @@ const getCurrentUrlOffest = '/get/all/current/year'
 
 registerEvent(DataConstants.weekRep, getCurrentEvent, (stSetter)=>{
   sendGet('/' + repName + getCurrentUrlOffest, (data)=>{
-      var list = typeof data == 'string'? JSON.parse(data): data
+      const list = typeof data == 'string'? JSON.parse(data): data
       stSetter(DataConstants.objList, list)
+
+      const objMap = {}
+      list.forEach(week => {
+        objMap[week.id] = week
+      })
+      stSetter(DataConstants.objMap, objMap)
       fireEvent(DataConstants.weekRep, gotCurrentEvent, [list])
   })
 })

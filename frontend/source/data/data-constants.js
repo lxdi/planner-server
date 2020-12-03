@@ -8,5 +8,6 @@ export const DataConstants = {
   tasktestingRep:'tasktesting-rep',
   indexByMean: 'index-by-mean',
   byMeanRequest: 'by-mean-request',
-  objList: 'objects'
+  objMap: 'objects',
+  objList: 'objects-list'
 }

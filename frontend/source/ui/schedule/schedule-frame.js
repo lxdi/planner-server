@@ -4,6 +4,7 @@ import {Button, Table, ButtonGroup} from 'react-bootstrap'
 import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
 
 import {DataConstants} from '../../data/data-constants'
+import {BidirectList} from '../components/bidirect-list'
 import {WeekElement} from './week-frame-element'
 
 export class ScheduleFrame extends React.Component{
@@ -30,9 +31,30 @@ const getContent = function(component){
     return 'Loading...'
   }
 
-  const result = []
-  component.state.weeks.forEach(week => {
-    result.push(<WeekElement week = {week}/>)
-  })
-  return result
+  // const result = []
+  // component.state.weeks.forEach(week => {
+  //   result.push(<WeekElement week = {week}/>)
+  // })
+  // return result
+
+  return <BidirectList firstNode={chkSt(DataConstants.weekRep, DataConstants.objList)[0]}
+                        getNext = {(week, isExtend)=>getNextHandler(week)}
+                        getPrev = {(week)=>getPrevHandler(week)}
+                        nodeView = {(week)=><WeekElement week = {week}/>}
+                        loadPrev={true}
+                        />
+}
+
+const getNextHandler = function(week){
+  if(week == null){
+    return null
+  }
+  return chkSt(DataConstants.weekRep, DataConstants.objMap)[week.nextid]
+}
+
+const getPrevHandler = function(week){
+  if(week == null){
+    return null
+  }
+  return chkSt(DataConstants.weekRep, DataConstants.objMap)[week.previd]
 }
