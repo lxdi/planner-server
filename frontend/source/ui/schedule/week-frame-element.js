@@ -5,6 +5,9 @@ import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
 
 import {currentDateString} from '../../utils/date-utils'
 
+const weekStyle = {marginBottom:'3px'}
+const weekCurrentStyle = {marginBottom:'3px', border: '1px solid blue'}
+
 const dayCellStyle = {border: '1px solid lightgrey', padding: '2px', borderRadius:'5px'}
 const todayCellStyle = {border: '1px solid grey', padding: '2px', borderRadius:'5px'}
 
@@ -25,7 +28,8 @@ export class WeekElement extends React.Component {
       days.push(<td>{getDayCellUI(day)}</td>)
     })
 
-    return <div style={{marginBottom:'3px'}}>
+    return <div style={isCurrentWeek(this.props.week)?weekCurrentStyle: weekStyle}>
+            {yearLabel(this.props.week)}
             <table style={{borderCollapse:'collapse', width:'100%'}}>
                   <tr>
                     {days}
@@ -36,11 +40,19 @@ export class WeekElement extends React.Component {
 
 }
 
+const yearLabel = function(week){
+  if(week.num!=1){
+    return null
+  }
+
+  return <div style = {{borderBottom: '1px solid grey'}}> {week.year}</div>
+}
+
 
 const getDayCellUI = function(day){
   var style = null
 
-  if(currentDateString('-') == day.date){
+  if(isCurrentDay(day)){
     style = todayCellStyle
   } else {
     style = dayCellStyle
@@ -49,4 +61,14 @@ const getDayCellUI = function(day){
   return <div style={style}>
             {day.weekDay}: 0/0
         </div>
+}
+
+const isCurrentWeek = function(week){
+  var result = false
+  week.days.filter(day => isCurrentDay(day)).forEach(day => result = true)
+  return result
+}
+
+const isCurrentDay = function(day){
+  return currentDateString('-') == day.date
 }
