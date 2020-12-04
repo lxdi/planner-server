@@ -1,6 +1,7 @@
 package com.sogoodlabs.planner.model.entities;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.sogoodlabs.common_mapper.annotations.IncludeInDto;
 
 import javax.persistence.*;
 import java.sql.Date;
@@ -13,6 +14,9 @@ public class Repetition {
 
     @ManyToOne(fetch = FetchType.LAZY)
     RepetitionPlan repetitionPlan;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    Task task;
 
     @OneToOne(fetch = FetchType.LAZY)
     Day planDay;
@@ -36,6 +40,7 @@ public class Repetition {
         this.repetitionPlan = repetitionPlan;
     }
 
+    @IncludeInDto
     public Day getPlanDay() {
         return planDay;
     }
@@ -43,6 +48,7 @@ public class Repetition {
         this.planDay = planDay;
     }
 
+    @IncludeInDto
     public Day getFactDay() {
         return factDay;
     }
@@ -55,5 +61,13 @@ public class Repetition {
     }
     public void setIsRepetitionOnly(boolean repetitionOnly) {
         isRepetitionOnly = repetitionOnly;
+    }
+
+    public Task getTask() {
+        return task;
+    }
+
+    public void setTask(Task task) {
+        this.task = task;
     }
 }

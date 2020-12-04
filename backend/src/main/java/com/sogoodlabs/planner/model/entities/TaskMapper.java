@@ -1,6 +1,7 @@
 package com.sogoodlabs.planner.model.entities;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.sogoodlabs.common_mapper.annotations.IncludeInDto;
 
 import javax.persistence.*;
 import java.sql.Date;
@@ -34,6 +35,7 @@ public class TaskMapper {
         this.task = task;
     }
 
+    @IncludeInDto
     public Day getPlanDay() {
         return planDay;
     }
@@ -42,6 +44,7 @@ public class TaskMapper {
         this.planDay = planDay;
     }
 
+    @IncludeInDto
     public Day getFinishDay() {
         return finishDay;
     }

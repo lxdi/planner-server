@@ -13,13 +13,9 @@ import {createMeanRep} from './data/means-dao'
 import {createLayerRep} from './data/layers-dao'
 import {createTaskRep} from './data/tasks-topics-testings-dao'
 
-//import './data/means-dao'
-//import './data/hquarters-dao'
-//import './data/layers-dao'
-//import './data/subjects-dao'
-//import './data/tasks-dao'
 import './data/rep-plans-dao'
 import './data/weeks-dao'
+import './data/progress-dao'
 
 createRealmRep()
 createTargetRep()

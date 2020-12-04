@@ -1,6 +1,7 @@
 package com.sogoodlabs.planner.model.dao;
 
 import com.sogoodlabs.planner.model.entities.Repetition;
+import com.sogoodlabs.planner.model.entities.Task;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -11,6 +12,8 @@ import java.util.List;
 
 @Transactional
 public interface IRepDAO extends JpaRepository<Repetition, String> {
+
+    List<Repetition> findByTask(Task task);
 
 //    @Query("from Repetition where spacedRepetitions.id = :srId")
 //    List<Repetition> getRepsbySpacedRepId(@Param("srId") long srId);
