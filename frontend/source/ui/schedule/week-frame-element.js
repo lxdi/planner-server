@@ -15,8 +15,12 @@ export class WeekElement extends React.Component {
   }
 
   render(){
-    const days = []
 
+    if(this.props.week==null){
+      return 'Loading...'
+    }
+
+    const days = []
     this.props.week.days.forEach(day => {
       days.push(<td>{getDayCellUI(day)}</td>)
     })

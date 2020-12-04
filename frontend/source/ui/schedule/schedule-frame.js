@@ -11,8 +11,8 @@ export class ScheduleFrame extends React.Component{
   constructor(props){
     super(props)
     this.state = {}
-    registerReaction('shedule-frame', DataConstants.weekRep, 'got-current-list', (stSetter, list)=>{
-      this.setState({weeks: list})
+    registerReaction('shedule-frame', DataConstants.weekRep, ['got-current-list', 'got-next', 'got-prev'], (stSetter)=>{
+      this.setState({weeks: chkSt(DataConstants.weekRep, DataConstants.objList)})
     })
 
   }
@@ -31,30 +31,38 @@ const getContent = function(component){
     return 'Loading...'
   }
 
-  // const result = []
-  // component.state.weeks.forEach(week => {
-  //   result.push(<WeekElement week = {week}/>)
-  // })
-  // return result
-
   return <BidirectList firstNode={chkSt(DataConstants.weekRep, DataConstants.objList)[0]}
-                        getNext = {(week, isExtend)=>getNextHandler(week)}
+                        getNext = {(week, isExtend)=>getNextHandler(week, isExtend)}
                         getPrev = {(week)=>getPrevHandler(week)}
                         nodeView = {(week)=><WeekElement week = {week}/>}
                         loadPrev={true}
                         />
 }
 
-const getNextHandler = function(week){
+const getNextHandler = function(week, isExtend){
   if(week == null){
     return null
   }
-  return chkSt(DataConstants.weekRep, DataConstants.objMap)[week.nextid]
+
+  const nextWeek = chkSt(DataConstants.weekRep, DataConstants.objMap)[week.nextid]
+  if(nextWeek == null && isExtend){
+    fireEvent(DataConstants.weekRep, 'get-next', [week])
+    return null
+  }
+
+  return nextWeek
 }
 
 const getPrevHandler = function(week){
   if(week == null){
     return null
   }
-  return chkSt(DataConstants.weekRep, DataConstants.objMap)[week.previd]
+
+  const prevWeek = chkSt(DataConstants.weekRep, DataConstants.objMap)[week.previd]
+  if(prevWeek == null){
+    fireEvent(DataConstants.weekRep, 'get-prev', [week])
+    return null
+  }
+
+  return prevWeek
 }

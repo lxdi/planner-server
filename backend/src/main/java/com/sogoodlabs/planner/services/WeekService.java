@@ -5,6 +5,8 @@ import com.sogoodlabs.planner.model.dao.IWeekDAO;
 import com.sogoodlabs.planner.model.entities.Day;
 import com.sogoodlabs.planner.model.entities.Week;
 import com.sogoodlabs.planner.util.DateUtils;
+import org.hibernate.Hibernate;
+import org.hibernate.proxy.HibernateProxy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,9 +28,11 @@ public class WeekService {
     @Autowired
     private WeeksGenerator weeksGenerator;
 
-    public void fill(Week week){
+    public Week fill(Week weekProxy){
+        Week week = initializeAndUnproxy(weekProxy);
         week.setDays(new ArrayList<>());
         dayDao.findByWeek(week).forEach(week.getDays()::add);
+        return week;
     }
 
 
@@ -88,6 +92,41 @@ public class WeekService {
         }
 
         return weeks;
+    }
+
+    public Week getPrev(String currentId){
+        Week currentWeek = weekDAO.findById(currentId).orElseThrow(() -> new RuntimeException("No week found by "+currentId));
+
+        if(currentWeek.getPrev()==null){
+            weeksGenerator.generateYear(DateUtils.getYear(DateUtils.currentDate())-1);
+            currentWeek = weekDAO.findById(currentId).orElseThrow(() -> new RuntimeException("No week found by "+currentId));
+        }
+
+        return currentWeek.getPrev();
+    }
+
+    public Week getNext(String currentId){
+        Week currentWeek = weekDAO.findById(currentId).orElseThrow(() -> new RuntimeException("No week found by "+currentId));
+
+        if(currentWeek.getNext()==null){
+            weeksGenerator.generateYear(DateUtils.getYear(DateUtils.currentDate())+1);
+            currentWeek = weekDAO.findById(currentId).orElseThrow(() -> new RuntimeException("No week found by "+currentId));
+        }
+
+        return currentWeek.getNext();
+    }
+
+    public static <T> T initializeAndUnproxy(T entity) {
+        if (entity == null) {
+            throw new
+                    NullPointerException("Entity passed for initialization is null");
+        }
+
+        Hibernate.initialize(entity);
+        if (entity instanceof HibernateProxy) {
+            entity = (T) ((HibernateProxy) entity).getHibernateLazyInitializer().getImplementation();
+        }
+        return entity;
     }
 
 }
