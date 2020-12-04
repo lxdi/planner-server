@@ -68,13 +68,23 @@ public class WeeksGenerator {
             if(week.getNum()>1){
                 week.setPrev(weeksMap.get(week.getNum()-1));
             } else {
-                week.setPrev(weekDAO.findLastInYear(year-1));
+                Week lastInPrevYear = weekDAO.findLastInYear(year-1);
+                if(lastInPrevYear!=null){
+                    week.setPrev(lastInPrevYear);
+                    lastInPrevYear.setNext(week);
+                    weekDAO.save(lastInPrevYear);
+                }
             }
 
             if(week.getNum()<numberOfWeeks-1){
                 week.setNext(weeksMap.get(week.getNum()+1));
             } else {
-                week.setNext(weekDAO.findFirstInYear(year+1));
+                Week firstInNextYear = weekDAO.findFirstInYear(year+1);
+                if(firstInNextYear!=null){
+                    week.setNext(weekDAO.findFirstInYear(year+1));
+                    firstInNextYear.setPrev(week);
+                    weekDAO.save(firstInNextYear);
+                }
             }
 
             weekDAO.save(week);

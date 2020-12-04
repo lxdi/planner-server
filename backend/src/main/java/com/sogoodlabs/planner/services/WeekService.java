@@ -72,20 +72,20 @@ public class WeekService {
         if(lastWeekCurrentYear.getNum()<currentWeek.getNum()+CURRENT_UP_TO_NEXT_WEEKS){
             weeks.addAll(weekDAO.findInDiapason(currentWeek.getNum()+1, lastWeekCurrentYear.getNum(), year));
 
-
-
             List<Week> nextYearWeeks = weekDAO.findInDiapason(
                     0, currentWeek.getNum()+CURRENT_UP_TO_NEXT_WEEKS-lastWeekCurrentYear.getNum(), year+1);
 
             if(nextYearWeeks == null || nextYearWeeks.size()==0){
-                //TODO
+                weeksGenerator.generateYear(year+1);
+
+                nextYearWeeks = weekDAO.findInDiapason(
+                        0, currentWeek.getNum()+CURRENT_UP_TO_NEXT_WEEKS-lastWeekCurrentYear.getNum(), year+1);
             }
+
+            weeks.addAll(nextYearWeeks);
         } else {
             weeks.addAll(weekDAO.findInDiapason(currentWeek.getNum()+1, currentWeek.getNum()+CURRENT_UP_TO_NEXT_WEEKS, year));
         }
-
-
-
 
         return weeks;
     }
