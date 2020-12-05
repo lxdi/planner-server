@@ -24,6 +24,12 @@ public class Day {
 
     private int num;
 
+    @Transient
+    private int mappersNum;
+
+    @Transient
+    private int repsNum;
+
 
     public String getId() {
         return id;
@@ -62,5 +68,21 @@ public class Day {
 
     public void setNum(int num) {
         this.num = num;
+    }
+
+    public int getMappersNum() {
+        return mappersNum;
+    }
+
+    public void setMappersNum(int mappersNum) {
+        this.mappersNum = mappersNum;
+    }
+
+    public int getRepsNum() {
+        return repsNum;
+    }
+
+    public void setRepsNum(int repsNum) {
+        this.repsNum = repsNum;
     }
 }

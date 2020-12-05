@@ -1,5 +1,6 @@
 package com.sogoodlabs.planner.model.dao;
 
+import com.sogoodlabs.planner.model.entities.Day;
 import com.sogoodlabs.planner.model.entities.Repetition;
 import com.sogoodlabs.planner.model.entities.Task;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,6 +15,9 @@ import java.util.List;
 public interface IRepDAO extends JpaRepository<Repetition, String> {
 
     List<Repetition> findByTask(Task task);
+
+    @Query("select count(*) from Repetition where planDay = :day")
+    int findTotalByPlanDay(@Param("day") Day day);
 
 //    @Query("from Repetition where spacedRepetitions.id = :srId")
 //    List<Repetition> getRepsbySpacedRepId(@Param("srId") long srId);

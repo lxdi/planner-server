@@ -11,6 +11,10 @@ const weekCurrentStyle = {marginBottom:'3px', border: '1px solid blue'}
 const dayCellStyle = {border: '1px solid lightgrey', padding: '2px', borderRadius:'5px'}
 const todayCellStyle = {border: '1px solid grey', padding: '2px', borderRadius:'5px'}
 
+const greenDayStyle = {backgroundColor: 'palegreen'}
+const yellowDayStyle = {backgroundColor: 'lemonchiffon'}
+const redDayStyle = {backgroundColor: 'peachpuff'}
+
 // props: week
 export class WeekElement extends React.Component {
   constructor(props){
@@ -59,8 +63,23 @@ const getDayCellUI = function(day){
   }
 
   return <div style={style}>
-            {day.weekDay}: 0/0
+          <div style = {getFillmentStyle(day)}>
+            {day.weekDay}: {day.mappersNum}/{day.repsNum}
+          </div>
         </div>
+}
+
+const getFillmentStyle = function(day){
+  if(day.mappersNum*2 + day.repsNum >= 4){
+    return redDayStyle
+  }
+  if(day.mappersNum*2 != 0 && day.repsNum != 0){
+    return yellowDayStyle
+  }
+  if(day.mappersNum*2 != 0 || day.repsNum != 0) {
+    return greenDayStyle
+  }
+  return null
 }
 
 const isCurrentWeek = function(week){

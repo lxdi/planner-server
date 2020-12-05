@@ -1,6 +1,8 @@
 package com.sogoodlabs.planner.services;
 
 import com.sogoodlabs.planner.model.dao.IDayDao;
+import com.sogoodlabs.planner.model.dao.IRepDAO;
+import com.sogoodlabs.planner.model.dao.ITaskMappersDAO;
 import com.sogoodlabs.planner.model.dao.IWeekDAO;
 import com.sogoodlabs.planner.model.entities.Day;
 import com.sogoodlabs.planner.model.entities.Week;
@@ -28,11 +30,26 @@ public class WeekService {
     @Autowired
     private WeeksGenerator weeksGenerator;
 
+    @Autowired
+    private ITaskMappersDAO taskMappersDAO;
+
+    @Autowired
+    private IRepDAO repDAO;
+
     public Week fill(Week weekProxy){
         Week week = initializeAndUnproxy(weekProxy);
         week.setDays(new ArrayList<>());
-        dayDao.findByWeek(week).forEach(week.getDays()::add);
+
+        dayDao.findByWeek(week).stream()
+                .peek(this::fillDay)
+                .forEach(week.getDays()::add);
+
         return week;
+    }
+
+    public void fillDay(Day day){
+        day.setMappersNum(taskMappersDAO.findTotalByPlanDay(day));
+        day.setRepsNum(repDAO.findTotalByPlanDay(day));
     }
 
 
