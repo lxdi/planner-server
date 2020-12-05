@@ -7,6 +7,10 @@ import {DataConstants} from '../../data/data-constants'
 import {BidirectList} from '../components/bidirect-list'
 import {WeekElement} from './week-frame-element'
 
+const fakeWeek = {
+  days: [{weekDay:'mon'}, {weekDay:'tue'}, {weekDay:'wed'}, {weekDay:'thu'}, {weekDay:'fri'}, {weekDay:'sat'}, {weekDay:'sun'}]
+}
+
 export class ScheduleFrame extends React.Component{
   constructor(props){
     super(props)
@@ -19,6 +23,7 @@ export class ScheduleFrame extends React.Component{
 
   render(){
     return <div style={{height:'85vh', borderTop:'1px solid lightgrey', borderBottom:'1px solid lightgrey', marginTop:'3px'}}>
+              <div style={{paddingRight: '14px'}}> <WeekElement week = {fakeWeek} full = {false} /> </div>
               {getContent(this)}
             </div>
   }
