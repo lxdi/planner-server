@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom';
 import {Main} from './ui/main'
 import {LeftSideBarContent} from './ui/left-side-bar-content'
 import {TaskProgressModal} from './ui/means/modal/task-progress-modal'
+import {TaskFinishModal} from './ui/means/modal/task-finish-modal'
 import {ActualTasksModal} from './ui/means/actual-tasks-modal'
 import {OverlayInfo} from './ui/overlay'
 
@@ -30,6 +31,7 @@ function rerender(){
 	ReactDOM.render(
 		<div style={{margin:'3px'}}>
 				<TaskProgressModal/>
+				<TaskFinishModal/>
 				<ActualTasksModal/>
 				<OverlayInfo />
 				<table style={{width:'100%'}}>

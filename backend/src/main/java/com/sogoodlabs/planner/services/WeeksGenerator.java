@@ -48,7 +48,7 @@ public class WeeksGenerator {
         int numberOfWeeks = yw.is53WeekYear()? 53: 54;
         int dayCount = 1;
         Map<Integer, Week> weeksMap = new TreeMap<>();
-        for(int i = 1; i < numberOfWeeks; i++){
+        for(int i = 1; i <= numberOfWeeks; i++){
             Week week = getOrCreateWeek(year, i);
             weeksMap.put(i, week);
             getOrCreateDay(getDate(yw, DayOfWeek.MONDAY), week, dayCount++, DaysOfWeek.of(DayOfWeek.MONDAY));
@@ -76,7 +76,7 @@ public class WeeksGenerator {
                 }
             }
 
-            if(week.getNum()<numberOfWeeks-1){
+            if(week.getNum()<numberOfWeeks){
                 week.setNext(weeksMap.get(week.getNum()+1));
             } else {
                 Week firstInNextYear = weekDAO.findFirstInYear(year+1);

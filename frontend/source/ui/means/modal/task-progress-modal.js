@@ -54,5 +54,41 @@ const getContent = function(component){
 
   const progress = progressByTask[task.id]
 
-  return '' + progress.taskMappers.length + '/' + progress.repetitions.length
+  return <div>
+            {getMappers(progress, task)}
+            <div style = {{borderBottom: '1px solid grey', padding: '3px'}}  />
+            {getRepetitions(progress)}
+          </div>
+}
+
+
+const getMappers = function(progress, task){
+  var content = []
+  progress.taskMappers.forEach(taskMapper => content.push(mapperUI(taskMapper)))
+  return <div>
+            <div>Finishes</div>
+            {content}
+            <Button bsStyle="default" onClick={() => fireEvent('task-finish-modal', 'open', [task, progress.plans])}>Finish</Button>
+          </div>
+}
+
+const mapperUI = function(taskMapper){
+  return <div>
+            {taskMapper.planDay!=null?taskMapper.planDay.date:'-'}/{taskMapper.finishDay!=null?taskMapper.finishDay.date:'-'}
+          </div>
+}
+
+const getRepetitions = function(progress){
+  var content = []
+  progress.repetitions.forEach(repetition => content.push(repetitionUI(repetition)))
+  return <div>
+            <div>Repetitions</div>
+            {content}
+          </div>
+}
+
+const repetitionUI = function(repetition){
+  return <div>
+            {repetition.planDay!=null?repetition.planDay.date:'-'}/{repetition.factDay!=null?repetition.factDay.date:'-'}
+        </div>
 }
