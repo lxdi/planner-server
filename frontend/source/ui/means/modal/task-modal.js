@@ -86,7 +86,7 @@ const modalContent = function(component){
   }
   return      <CommonCrudeTemplate editing = {component.state.mode}
                   changeEditHandler = {()=>component.setState({})}
-                  deleteHandler={()=>fireEvent(DataConstants.taskRep, 'delete-task', [component.state.layer, component.state.task])}>
+                  deleteHandler={()=>removeTask(component)}>
                 <form>
                     {progressButton(component)}
                     <FormGroup controlId="formBasicText">
@@ -101,6 +101,12 @@ const modalContent = function(component){
                     </FormGroup>
                   </form>
                 </CommonCrudeTemplate>
+}
+
+const removeTask = function(component){
+  const index = component.state.layer.tasks.indexOf(component.state.task)
+  component.state.layer.tasks.splice(index, 1)
+  fireEvent('task-modal', 'close')
 }
 
 const getTestingsUI = function(component){

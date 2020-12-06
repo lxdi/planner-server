@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 
@@ -105,8 +107,15 @@ public class GracefulDeleteService {
         topicDAO.findByTask(task).forEach(topicDAO::delete);
         taskTestingDAO.findByTask(task).forEach(teting -> taskTestingDAO.delete(teting));
         taskMappersDAO.findByTask(task).forEach(taskMapper -> taskMappersDAO.delete(taskMapper));
+        repDAO.findByTask(task).forEach(repDAO::delete);
 
         tasksDAO.delete(task);
+    }
+
+    public void deleteTasksForLayerExcept(Layer layer, Set<String> tasks){
+        tasksDAO.findByLayer(layer).stream()
+                .filter(task -> !tasks.contains(task.getId()))
+                .forEach(this::deleteTask);
     }
 
 }

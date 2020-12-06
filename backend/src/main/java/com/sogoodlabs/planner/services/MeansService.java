@@ -6,7 +6,9 @@ import com.sogoodlabs.planner.model.entities.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class MeansService {
@@ -27,6 +29,9 @@ public class MeansService {
 
     @Autowired
     private ITaskTestingDAO taskTestingDAO;
+
+    @Autowired
+    private GracefulDeleteService gracefulDeleteService;
 
     public Mean createMean(Mean mean){
         return modifyMean(mean);
@@ -72,7 +77,12 @@ public class MeansService {
         layerDAO.save(layer);
 
         if(layer.getTasks()!=null && !layer.getTasks().isEmpty()){
-            layer.getTasks().forEach(task -> modifyTask(task, layer));
+            Set<String> ids = layer.getTasks().stream()
+                    .map(task -> modifyTask(task, layer))
+                    .map(Task::getId)
+                    .collect(Collectors.toSet());
+
+            gracefulDeleteService.deleteTasksForLayerExcept(layer, ids);
         }
 
         return layer;
