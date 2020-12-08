@@ -52,4 +52,10 @@ public class TaskMapper {
     public void setFinishDay(Day finishDay) {
         this.finishDay = finishDay;
     }
+
+
+    @IncludeInDto
+    public Task getTaskSelf(){
+        return this.task;
+    }
 }

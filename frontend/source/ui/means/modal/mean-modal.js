@@ -90,11 +90,18 @@ const renderUI = function(component){
             isOpen = {component.state.isOpen}
             okHandler = {isValidMean(component.state.alerts, component.state.currentMean)?component.okHandler:null}
             cancelHandler = {()=>fireEvent('mean-modal', 'close', [])}
-            title={meanModalHeaderTitle}
+            title={getTitle(component.state)}
             styleClass='mean-modal-style'>
 
             {modalBody(component)}
     </CommonModal>
+}
+
+const getTitle = function(state){
+  if(state.currentMean!=null && state.currentMean.id != DataConstants.newId){
+    return state.currentMean.title
+  }
+  return 'Create new Mean'
 }
 
 const modalBody = function(component){

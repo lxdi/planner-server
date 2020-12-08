@@ -6,6 +6,7 @@ import {LeftSideBarContent} from './ui/left-side-bar-content'
 import {TaskProgressModal} from './ui/means/modal/task-progress-modal'
 import {TaskFinishModal} from './ui/means/modal/task-finish-modal'
 import {ActualTasksModal} from './ui/means/actual-tasks-modal'
+import {DayModal} from './ui/schedule/day-modal'
 import {OverlayInfo} from './ui/overlay'
 
 import {createRealmRep} from './data/realms-dao'
@@ -16,6 +17,7 @@ import {createTaskRep} from './data/tasks-topics-testings-dao'
 
 import './data/rep-plans-dao'
 import './data/weeks-dao'
+import './data/days-dao'
 import './data/progress-dao'
 
 createRealmRep()
@@ -33,6 +35,7 @@ function rerender(){
 				<TaskProgressModal/>
 				<TaskFinishModal/>
 				<ActualTasksModal/>
+				<DayModal/>
 				<OverlayInfo />
 				<table style={{width:'100%'}}>
 					<tr>

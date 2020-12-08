@@ -5,6 +5,7 @@ export const DataConstants = {
   taskRep:'task-rep',
   topicRep:'topic-rep',
   weekRep: 'week-rep',
+  dayRep: 'day-rep',
   progressRep: 'progress-rep',
   tasktestingRep:'tasktesting-rep',
   indexByMean: 'index-by-mean',

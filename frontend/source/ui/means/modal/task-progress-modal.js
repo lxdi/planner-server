@@ -7,7 +7,6 @@ import {CommonModal} from './../../common-modal'
 import {formatDate} from '../../../utils/date-utils'
 import {DataConstants} from '../../../data/data-constants'
 
-//props: task
 export class TaskProgressModal extends React.Component {
   constructor(props){
     super(props)
@@ -34,7 +33,7 @@ export class TaskProgressModal extends React.Component {
 const getTitle = function(component){
   const task = component.state.task
   if(task!=null){
-    return task.title
+    return 'Progress for ' + task.title
   }
   return null
 }
@@ -47,48 +46,79 @@ const getContent = function(component){
   }
 
   var progressByTask = chkSt(DataConstants.progressRep, DataConstants.objMap)
-  if(progressByTask == null){
+  if(progressByTask == null || progressByTask[task.id] == null){
     fireEvent(DataConstants.progressRep, 'get-by-task', [task])
-    return 'Lading...'
+    return 'Loading...'
   }
 
   const progress = progressByTask[task.id]
 
   return <div>
-            {getMappers(progress, task)}
+            <div>
+              <div>Finishes</div>
+              {mappersTableUI(progress.taskMappers)}
+              <Button bsStyle="default" onClick={() => fireEvent('task-finish-modal', 'open', [task, progress.plans])}>Finish</Button>
+            </div>
             <div style = {{borderBottom: '1px solid grey', padding: '3px'}}  />
-            {getRepetitions(progress)}
+            <div>
+              <div>Repetitions</div>
+              {repetitionsTableUI(progress.repetitions, task)}
+            </div>
           </div>
 }
 
+//-------------------------Mappers--------------------------------
 
-const getMappers = function(progress, task){
-  var content = []
-  progress.taskMappers.forEach(taskMapper => content.push(mapperUI(taskMapper)))
-  return <div>
-            <div>Finishes</div>
-            {content}
-            <Button bsStyle="default" onClick={() => fireEvent('task-finish-modal', 'open', [task, progress.plans])}>Finish</Button>
-          </div>
+const mappersTableUI = function(mappers){
+  var count = 1
+  const result = []
+  mappers.forEach(mapper => {
+    const style = {} // task.repetition != null && task.repetition.id == rep.id? {fontWeight:'bold'}:{}
+    result.push( <tr id={mapper.id} style={style}>
+                    <td>{count++}</td>
+                    <td>{mapper.planDay!=null? formatDate(mapper.planDay.date):''}</td>
+                    <td>{mapper.finishDay!=null? formatDate(mapper.finishDay.date):''}</td>
+                  </tr>)
+  })
+
+  return <Table striped bordered condensed hover >
+          <tbody>
+            <tr>
+              <td>#</td>
+              <td>Plan date</td>
+              <td>Finish date</td>
+            </tr>
+            {result}
+          </tbody>
+          </Table>
 }
 
-const mapperUI = function(taskMapper){
-  return <div>
-            {taskMapper.planDay!=null?taskMapper.planDay.date:'-'}/{taskMapper.finishDay!=null?taskMapper.finishDay.date:'-'}
-          </div>
-}
+//-----------------------Repetitions------------------------------------
 
-const getRepetitions = function(progress){
-  var content = []
-  progress.repetitions.forEach(repetition => content.push(repetitionUI(repetition)))
-  return <div>
-            <div>Repetitions</div>
-            {content}
-          </div>
-}
+const repetitionsTableUI = function(repetitions, task){
+  var count = 1
+  const result = []
+  repetitions.forEach(rep => {
+    const style = {} // task.repetition != null && task.repetition.id == rep.id? {fontWeight:'bold'}:{}
+    result.push( <tr id={rep.id} style={style}>
+                    <td>{count++}</td>
+                    <td>{rep.planDay!=null? formatDate(rep.planDay.date):''}</td>
+                    <td>{rep.factDay!=null? formatDate(rep.factDay.date):''}</td>
+                    <td>
+                      {rep.factDay==null? <Button bsStyle="success" bsSize='xsmall' onClick={() => fireEvent(DataConstants.progressRep, 'finish-rep', [rep, task])}>Complete</Button>: null}
+                    </td>
+                  </tr>)
+  })
 
-const repetitionUI = function(repetition){
-  return <div>
-            {repetition.planDay!=null?repetition.planDay.date:'-'}/{repetition.factDay!=null?repetition.factDay.date:'-'}
-        </div>
+  return <Table striped bordered condensed hover >
+          <tbody>
+            <tr>
+              <td>#</td>
+              <td>Plan date</td>
+              <td>Fact date</td>
+              <td></td>
+            </tr>
+            {result}
+          </tbody>
+          </Table>
 }

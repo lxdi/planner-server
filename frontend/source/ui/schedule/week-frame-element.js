@@ -82,13 +82,15 @@ const getDayContentFull = function(day){
     Object.assign(style, {fontWeight: 'bold'})
   }
 
-  return <div style = {style}>
-    <div style = {{verticalAlign: 'top', fontSize:'9px', display:'inline-block'}}>
-      <div style = {{color: 'grey'}}>{dayCal}</div>
-      <div style = {{color: 'red'}}>{dayCal=='01'? month: null}</div>
-    </div>
-    <div style = {{display:'inline-block', marginLeft: '3px'}}> {day.mappersNum}/{day.repsNum}</div>
-  </div>
+  return <a href='#' onClick = {()=>fireEvent('day-modal', 'open', [day])}>
+      <div style = {style}>
+        <div style = {{verticalAlign: 'top', fontSize:'9px', display:'inline-block'}}>
+          <div style = {{color: 'grey'}}>{dayCal}</div>
+          <div style = {{color: 'red'}}>{dayCal=='01'? month: null}</div>
+        </div>
+        <div style = {{display:'inline-block', marginLeft: '3px'}}> {day.mappersNum}/{day.repsNum}</div>
+      </div>
+  </a>
 }
 
 const getFillmentStyle = function(day){

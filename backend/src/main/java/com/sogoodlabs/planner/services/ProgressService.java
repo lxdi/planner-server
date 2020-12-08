@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -34,7 +35,11 @@ public class ProgressService {
         TaskProgressDto taskProgressDto = new TaskProgressDto();
 
         taskProgressDto.setTaskMappers(taskMappersDAO.findByTask(task));
-        taskProgressDto.setRepetitions(repDAO.findByTask(task));
+
+        List<Repetition> reps = repDAO.findByTask(task);
+        reps.sort(Comparator.comparing(r -> r.getPlanDay().getDate()));
+        taskProgressDto.setRepetitions(reps);
+
         taskProgressDto.setPlans(repPlanDAO.findAll());
 
         return taskProgressDto;
@@ -66,6 +71,15 @@ public class ProgressService {
             }
             repDAO.saveAll(repetitions);
         }
+    }
+
+    public void finishRepetition(Repetition repetition){
+        if(repetition.getFactDay()!=null){
+            throw new RuntimeException("Repetition is already completed " + repetition.getId());
+        }
+
+        repetition.setFactDay(dayDao.findByDate(DateUtils.currentDate()));
+        repDAO.save(repetition);
     }
 
 }

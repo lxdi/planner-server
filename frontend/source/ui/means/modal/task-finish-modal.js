@@ -25,7 +25,7 @@ export class TaskFinishModal extends React.Component {
     return  <CommonModal
                     isOpen = {this.state.isOpen}
                     okHandler = {isValid(this)? ()=>okHandler(this):null}
-                    cancelHandler = {()=>fireEvent('task-progress-modal', 'close')}
+                    cancelHandler = {()=>fireEvent('task-finish-modal', 'close')}
                     title='Finish task'>
                     {getContent(this)}
               </CommonModal>

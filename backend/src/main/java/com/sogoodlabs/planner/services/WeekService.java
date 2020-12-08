@@ -1,5 +1,6 @@
 package com.sogoodlabs.planner.services;
 
+import com.sogoodlabs.planner.controllers.dto.ScheduledDayDto;
 import com.sogoodlabs.planner.model.dao.IDayDao;
 import com.sogoodlabs.planner.model.dao.IRepDAO;
 import com.sogoodlabs.planner.model.dao.ITaskMappersDAO;
@@ -48,8 +49,8 @@ public class WeekService {
     }
 
     public void fillDay(Day day){
-        day.setMappersNum(taskMappersDAO.findTotalByPlanDay(day));
-        day.setRepsNum(repDAO.findTotalByPlanDay(day));
+        day.setMappersNum(taskMappersDAO.findTotalByPlanDayUnfinished(day));
+        day.setRepsNum(repDAO.findTotalByPlanDayUnfinished(day));
     }
 
 
@@ -131,6 +132,13 @@ public class WeekService {
         }
 
         return currentWeek.getNext();
+    }
+
+    public ScheduledDayDto getScheduledDayDto(Day day){
+        ScheduledDayDto dto = new ScheduledDayDto();
+        dto.setTaskMappers(taskMappersDAO.findByPlanDay(day));
+        dto.setRepetitions(repDAO.findByPlanDay(day));
+        return dto;
     }
 
     public static <T> T initializeAndUnproxy(T entity) {

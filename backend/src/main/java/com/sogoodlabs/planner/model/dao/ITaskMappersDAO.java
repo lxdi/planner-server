@@ -11,8 +11,12 @@ import java.util.List;
 public interface ITaskMappersDAO extends JpaRepository<TaskMapper, String> {
 
     List<TaskMapper> findByTask(Task task);
+    List<TaskMapper> findByPlanDay(Day planDay);
 
     @Query("select count(*) from TaskMapper where planDay = :day")
     int findTotalByPlanDay(@Param("day") Day day);
+
+    @Query("select count(*) from TaskMapper where planDay = :day and finishDay is null")
+    int findTotalByPlanDayUnfinished(@Param("day") Day day);
 
 }

@@ -70,4 +70,9 @@ public class Repetition {
     public void setTask(Task task) {
         this.task = task;
     }
+
+    @IncludeInDto
+    public Task getTaskSelf(){
+        return this.task;
+    }
 }

@@ -2,6 +2,8 @@ package com.sogoodlabs.planner.controllers;
 
 
 import com.sogoodlabs.common_mapper.CommonMapper;
+import com.sogoodlabs.planner.model.dao.IDayDao;
+import com.sogoodlabs.planner.model.entities.Day;
 import com.sogoodlabs.planner.model.entities.Week;
 import com.sogoodlabs.planner.services.WeekService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,9 @@ public class WeekController {
     @Autowired
     private WeekService weekService;
 
+    @Autowired
+    private IDayDao dayDao;
+
 
     @GetMapping("/get/all/current/year")
     public List<Map<String, Object>> current(){
@@ -43,5 +48,11 @@ public class WeekController {
     public Map<String, Object> getNext(@PathVariable("currentId") String currentId){
         Week week = weekService.fill(weekService.getNext(currentId));
         return commonMapper.mapToDto(week);
+    }
+
+    @GetMapping("/get/day/{dayId}")
+    public Map<String, Object> getDay(@PathVariable("dayId") String dayId){
+        Day day = dayDao.findById(dayId).orElseThrow(() -> new RuntimeException("Day not found by id " + dayId));
+        return commonMapper.mapToDto(weekService.getScheduledDayDto(day));
     }
 }
