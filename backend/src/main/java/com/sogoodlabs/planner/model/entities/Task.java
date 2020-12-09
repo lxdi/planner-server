@@ -5,10 +5,8 @@ import com.sogoodlabs.common_mapper.annotations.MapToClass;
 import com.sogoodlabs.planner.model.IEntity;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by Alexander on 05.03.2018.
@@ -79,5 +77,20 @@ public class Task implements IEntity {
     @MapToClass(value = TaskTesting.class)
     public void setTaskTestings(List<TaskTesting> taskTestings) {
         this.taskTestings = taskTestings;
+    }
+
+    @IncludeInDto
+    public String getFullPath(){
+
+        List<String> result = new ArrayList<>();
+        try {
+            result.add(this.title);
+            result.add(""+this.layer.getPriority());
+            result.add(this.layer.getMean().getTitle());
+            result.add(this.layer.getMean().getRealm().getTitle());
+        } catch (NullPointerException npe){}
+
+        Collections.reverse(result);
+        return String.join("/", result);
     }
 }

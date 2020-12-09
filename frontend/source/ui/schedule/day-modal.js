@@ -42,5 +42,34 @@ const getContent = function(comp){
     return 'Loading...'
   }
 
-  return 'TODO'
+  return repetitionsTableUI(comp.state.day.repetitions)
+}
+
+const repetitionsTableUI = function(repetitions){
+  const result = []
+  repetitions.forEach(rep => {
+    const style = {} // task.repetition != null && task.repetition.id == rep.id? {fontWeight:'bold'}:{}
+    result.push( <tr id={rep.id} style={style}>
+                    <td>
+                      <a href='#' onClick={()=>fireEvent("task-modal", 'open', [null, rep.taskSelf, true, false])}>{rep.taskSelf.fullPath}</a>
+                    </td>
+                    <td>{rep.planDay!=null? formatDate(rep.planDay.date):''}</td>
+                    <td>{rep.factDay!=null? formatDate(rep.factDay.date):''}</td>
+                    <td>
+                      {rep.factDay==null? <Button bsStyle="success" bsSize='xsmall' onClick={() => fireEvent(DataConstants.progressRep, 'finish-rep', [rep, rep.taskSelf])}>Complete</Button>: null}
+                    </td>
+                  </tr>)
+  })
+
+  return <Table striped bordered condensed hover >
+          <tbody>
+            <tr>
+              <td>Task</td>
+              <td>Plan date</td>
+              <td>Fact date</td>
+              <td></td>
+            </tr>
+            {result}
+          </tbody>
+          </Table>
 }
