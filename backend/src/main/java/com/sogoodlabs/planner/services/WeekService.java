@@ -13,6 +13,7 @@ import org.hibernate.proxy.HibernateProxy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +22,11 @@ public class WeekService {
 
     private static final int CURRENT_UP_TO_PREV_WEEKS = 4;
     private static final int CURRENT_UP_TO_NEXT_WEEKS = 30;
+
+    private static final String URGENCY_UPCOMING = "upcoming";
+    private static final String URGENCY_ABOUT_WEEK = "about week";
+    private static final String URGENCY_WEEK_LATE = "1 week late";
+    private static final String URGENCY_2_WEEKS_LATE = "2 weeks late";
 
     @Autowired
     private IDayDao dayDao;
@@ -49,8 +55,47 @@ public class WeekService {
     }
 
     public void fillDay(Day day){
-        day.setMappersNum(taskMappersDAO.findTotalByPlanDayUnfinished(day));
-        day.setRepsNum(repDAO.findTotalByPlanDayUnfinished(day));
+        day.setMappersNum(taskMappersDAO.findTotalByDay(day));
+        day.setMappersNumUnfinished(taskMappersDAO.findTotalByPlanDayUnfinished(day));
+
+        day.setRepsNum(repDAO.findTotalByPlanDay(day));
+        day.setRepsNumUnfinished(repDAO.findTotalByPlanDayUnfinished(day));
+
+        day.setUrgency(getUrgencyForDay(day));
+
+    }
+
+    private String getUrgencyForDay(Day day){
+        Date currentDate = DateUtils.currentDate();
+
+        if(currentDate.compareTo(day.getDate())==0){
+            return URGENCY_ABOUT_WEEK;
+        }
+
+        int diff = DateUtils.differenceInDays(currentDate, day.getDate());
+
+        if(diff<0){
+            diff = diff*(-1);
+        }
+
+        if(diff <= 3){
+            return URGENCY_ABOUT_WEEK;
+        }
+
+        if(currentDate.before(day.getDate()) && diff <= 10){
+            return URGENCY_UPCOMING;
+        }
+
+        if(currentDate.after(day.getDate())){
+            if(diff <= 10){
+                return URGENCY_WEEK_LATE;
+            }
+            if(diff <= 17){
+                return URGENCY_2_WEEKS_LATE;
+            }
+        }
+
+        return null;
     }
 
 
@@ -136,7 +181,7 @@ public class WeekService {
 
     public ScheduledDayDto getScheduledDayDto(Day day){
         ScheduledDayDto dto = new ScheduledDayDto();
-        dto.setTaskMappers(taskMappersDAO.findByPlanDay(day));
+        dto.setTaskMappers(taskMappersDAO.findByPlanDayOrFinishDay(day, day));
         dto.setRepetitions(repDAO.findByPlanDay(day));
         return dto;
     }

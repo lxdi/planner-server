@@ -11,9 +11,14 @@ const weekCurrentStyle = {marginBottom:'3px', border: '2px solid lightblue', bor
 const dayCellStyle = {border: '1px solid lightgrey', padding: '2px', borderRadius:'5px'}
 const todayCellStyle = {border: '2px solid LightSalmon', padding: '2px', borderRadius:'5px'}
 
-const greenDayStyle = {backgroundColor: 'palegreen'}
+const greenDayStyle = {backgroundColor: 'HoneyDew'}
 const yellowDayStyle = {backgroundColor: 'lemonchiffon'}
 const redDayStyle = {backgroundColor: 'peachpuff'}
+
+const urgencyUpcomingStyle = {border: '2px solid lightgrey'}
+const urgencyAboutStyle = {border: '2px solid palegreen'}
+const urgency1WeekLateStyle = {border: '2px solid lemonchiffon'}
+const urgency2WeeksLateStyle = {border: '2px solid peachpuff'}
 
 // props: week, full
 export class WeekElement extends React.Component {
@@ -36,11 +41,11 @@ export class WeekElement extends React.Component {
     })
 
     var weekStyleVar = weekStyle
-    if(this.state.full){
-      weekStyleVar = isCurrentWeek(this.props.week)?weekCurrentStyle: weekStyle
-    }
+    // if(this.state.full){
+    //   weekStyleVar = isCurrentWeek(this.props.week)?weekCurrentStyle: weekStyle
+    // }
 
-    return <div style={weekStyleVar}>
+    return <div key = {this.props.week.id} style={weekStyleVar}>
             {yearLabel(this.props.week)}
             <table style={{borderCollapse:'collapse', width:'100%', tableLayout: 'fixed'}}>
                   <tr>
@@ -76,34 +81,64 @@ const getDayCellUI = function(day, isFull){
 const getDayContentFull = function(day){
   const dayCal = formatDate(day.date, 'day')
   const month = formatDate(day.date, 'month')
-  const style = getFillmentStyle(day)
+  const style = JSON.parse(JSON.stringify(getFillmentStyle(day)))
 
   if(dayCal == '01'){
     Object.assign(style, {fontWeight: 'bold'})
   }
 
-  return <a href='#' onClick = {()=>fireEvent('day-modal', 'open', [day])}>
+  return <a key = {day.id} href='#' onClick = {()=>fireEvent('day-modal', 'open', [day])}>
       <div style = {style}>
-        <div style = {{verticalAlign: 'top', fontSize:'9px', display:'inline-block'}}>
-          <div style = {{color: 'grey'}}>{dayCal}</div>
-          <div style = {{color: 'red'}}>{dayCal=='01'? month: null}</div>
+        <div style = {getUrgencyStyle(day)}>
+          <div style = {{verticalAlign: 'top', fontSize:'9px', display:'inline-block'}}>
+            <div style = {{color: 'grey'}}>{dayCal}</div>
+            <div style = {{color: 'red'}}>{dayCal=='01'? month: null}</div>
+          </div>
+          <div style = {{display:'inline-block', marginLeft: '3px'}}>{getTotalMappersAndRepsUI(day)}</div>
         </div>
-        <div style = {{display:'inline-block', marginLeft: '3px'}}> {day.mappersNum}/{day.repsNum}</div>
       </div>
   </a>
 }
 
+const getUrgencyStyle = function(day){
+  if(day.urgency == 'upcoming'){
+    return urgencyUpcomingStyle
+  }
+  if(day.urgency == 'about week'){
+    return urgencyAboutStyle
+  }
+  if(day.urgency == '1 week late'){
+    return urgency1WeekLateStyle
+  }
+  if(day.urgency == '2 weeks late'){
+    return urgency2WeeksLateStyle
+  }
+  return {}
+}
+
 const getFillmentStyle = function(day){
-  if(day.mappersNum*2 + day.repsNum >= 4){
+  const hours = day.mappersNumUnfinished*2 + day.repsNumUnfinished
+  if(hours > 4){
     return redDayStyle
   }
-  if(day.mappersNum*2 != 0 && day.repsNum != 0){
+  if(hours > 2){
     return yellowDayStyle
   }
-  if(day.mappersNum*2 != 0 || day.repsNum != 0) {
+  if(hours != 0) {
     return greenDayStyle
   }
   return {}
+}
+
+const getTotalMappersAndRepsUI = function(day){
+
+  if(day.mappersNum == 0 && day.repsNum == 0){
+    return null
+  }
+
+  return <div>
+            {day.mappersNum}|{day.repsNum}
+        </div>
 }
 
 const isCurrentWeek = function(week){

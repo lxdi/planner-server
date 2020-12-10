@@ -12,24 +12,25 @@ import {DataConstants} from '../../../data/data-constants'
 import {TopicsList} from './topics-list'
 import {TestingsList} from './testings-list'
 
-const createState = function(isOpen, isStatic, isEdit, layer, task, progress){
+const createState = function(isOpen, isStatic, isEdit, layer, task, progress, highlightId){
   return {
     isOpen: isOpen,
     mode: {isStatic: isStatic, isEdit: isEdit, progress:progress},
     layer: layer,
-    task: task
+    task: task,
+    highlightId: highlightId
   }
 }
 
 export class TaskModal extends React.Component {
   constructor(props){
     super(props)
-    this.state = createState(false, false, false, null, null)
+    this.state = createState(false, false, false, null, null, null)
 
     registerEvent('task-modal', 'open',
-                (stateSetter, layer, task, isViewOnly, withprogress)=>this.setState(getState(layer, task, isViewOnly, withprogress)))
+                (stateSetter, layer, task, isViewOnly, withprogress, highlightId)=>this.setState(getState(layer, task, isViewOnly, withprogress, highlightId)))
 
-    registerEvent('task-modal', 'close', ()=>this.setState(createState(false, false, false, null, null, null)))
+    registerEvent('task-modal', 'close', ()=>this.setState(createState(false, false, false, null, null, null, null)))
 
     registerReaction('task-modal', DataConstants.taskRep, ['task-deleted', 'repetition-finished'], (stateSetter)=>fireEvent('task-modal', 'close'))
     registerReaction('task-modal', DataConstants.taskRep, 'task-finished', (stateSetter)=>this.setState({}))
@@ -47,7 +48,7 @@ export class TaskModal extends React.Component {
   }
 }
 
-const getState = function(layer, task, isViewOnly, withprogress){
+const getState = function(layer, task, isViewOnly, withprogress, highlightId){
   var state = null
   if(task.id == null || task.id == DataConstants.newId){
     state = createState(true, true, true, layer, task)
@@ -62,6 +63,7 @@ const getState = function(layer, task, isViewOnly, withprogress){
     state.mode.progress = true
   }
   state.showTestings = false
+  state.highlightId = highlightId
   return state
 }
 
@@ -121,7 +123,7 @@ const getTestingsUI = function(component){
 }
 
 const progressButton = function(component){
-  return <Button disabled={isProgressButtonDisabled(component)} onClick={()=>fireEvent('task-progress-modal', 'open', [component.state.task])}>Progress</Button>
+  return <Button disabled={isProgressButtonDisabled(component)} onClick={()=>fireEvent('task-progress-modal', 'open', [component.state.task, component.state.highlightId])}>Progress</Button>
 }
 
 const isProgressButtonDisabled = function(component){

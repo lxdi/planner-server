@@ -31,6 +31,7 @@ export class DayModal extends React.Component{
 }
 
 const getContent = function(comp){
+
   if(comp.state.day == null){
     return null
   }
@@ -42,8 +43,56 @@ const getContent = function(comp){
     return 'Loading...'
   }
 
-  return repetitionsTableUI(comp.state.day.repetitions)
+  return <div>
+            <div>
+              Tasks
+            </div>
+            <div>
+              {mappersTableUI(comp.state.day.taskMappers)}
+            </div>
+            <div style = {{borderBottom: '1px solid grey', padding: '3px'}}  />
+            <div>
+              Repetitions
+            </div>
+            <div>
+              {repetitionsTableUI(comp.state.day.repetitions)}
+            </div>
+          </div>
 }
+
+//--------------------------Mappers--------------------------------
+
+const mappersTableUI = function(mappers){
+  const result = []
+  mappers.forEach(mapper => {
+    const style = {} // task.repetition != null && task.repetition.id == rep.id? {fontWeight:'bold'}:{}
+    result.push( <tr id={mapper.id} style={style}>
+                    <td>
+                      <a href='#' onClick={()=>fireEvent("task-modal", 'open', [null, mapper.taskSelf, true, false, mapper.id])}>{mapper.taskSelf.fullPath}</a>
+                    </td>
+                    <td>{mapper.planDay!=null? formatDate(mapper.planDay.date):''}</td>
+                    <td>{mapper.finishDay!=null? formatDate(mapper.finishDay.date):''}</td>
+                    <td>
+                      {mapper.finishDay==null? <Button bsStyle="success" bsSize='xsmall' onClick={() => fireEvent(DataConstants.progressRep, 'finish-rep', [mapper, mapper.taskSelf])}>Complete</Button>: null}
+                    </td>
+                  </tr>)
+  })
+
+  return <Table striped bordered condensed hover >
+          <tbody>
+            <tr>
+              <td>Task</td>
+              <td>Plan date</td>
+              <td>Finish date</td>
+              <td></td>
+            </tr>
+            {result}
+          </tbody>
+          </Table>
+}
+
+
+//--------------------------Repetitions--------------------------------
 
 const repetitionsTableUI = function(repetitions){
   const result = []
@@ -51,7 +100,7 @@ const repetitionsTableUI = function(repetitions){
     const style = {} // task.repetition != null && task.repetition.id == rep.id? {fontWeight:'bold'}:{}
     result.push( <tr id={rep.id} style={style}>
                     <td>
-                      <a href='#' onClick={()=>fireEvent("task-modal", 'open', [null, rep.taskSelf, true, false])}>{rep.taskSelf.fullPath}</a>
+                      <a href='#' onClick={()=>fireEvent("task-modal", 'open', [null, rep.taskSelf, true, false, rep.id])}>{rep.taskSelf.fullPath}</a>
                     </td>
                     <td>{rep.planDay!=null? formatDate(rep.planDay.date):''}</td>
                     <td>{rep.factDay!=null? formatDate(rep.factDay.date):''}</td>

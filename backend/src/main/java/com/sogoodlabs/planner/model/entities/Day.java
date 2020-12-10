@@ -30,6 +30,15 @@ public class Day {
     @Transient
     private int repsNum;
 
+    @Transient
+    private int mappersNumUnfinished;
+
+    @Transient
+    private int repsNumUnfinished;
+
+    @Transient
+    private String urgency;
+
 
     public String getId() {
         return id;
@@ -84,5 +93,29 @@ public class Day {
 
     public void setRepsNum(int repsNum) {
         this.repsNum = repsNum;
+    }
+
+    public int getMappersNumUnfinished() {
+        return mappersNumUnfinished;
+    }
+
+    public void setMappersNumUnfinished(int mappersNumUnfinished) {
+        this.mappersNumUnfinished = mappersNumUnfinished;
+    }
+
+    public int getRepsNumUnfinished() {
+        return repsNumUnfinished;
+    }
+
+    public void setRepsNumUnfinished(int repsNumUnfinished) {
+        this.repsNumUnfinished = repsNumUnfinished;
+    }
+
+    public String getUrgency() {
+        return urgency;
+    }
+
+    public void setUrgency(String urgency) {
+        this.urgency = urgency;
     }
 }
