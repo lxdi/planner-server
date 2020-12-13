@@ -23,11 +23,6 @@ public class WeekService {
     private static final int CURRENT_UP_TO_PREV_WEEKS = 4;
     private static final int CURRENT_UP_TO_NEXT_WEEKS = 30;
 
-    private static final String URGENCY_UPCOMING = "upcoming";
-    private static final String URGENCY_ABOUT_WEEK = "about week";
-    private static final String URGENCY_WEEK_LATE = "1 week late";
-    private static final String URGENCY_2_WEEKS_LATE = "2 weeks late";
-
     @Autowired
     private IDayDao dayDao;
 
@@ -42,6 +37,9 @@ public class WeekService {
 
     @Autowired
     private IRepDAO repDAO;
+
+    @Autowired
+    private ActualActivityService actualActivityService;
 
     public Week fill(Week weekProxy){
         Week week = initializeAndUnproxy(weekProxy);
@@ -61,42 +59,11 @@ public class WeekService {
         day.setRepsNum(repDAO.findTotalByPlanDay(day));
         day.setRepsNumUnfinished(repDAO.findTotalByPlanDayUnfinished(day));
 
-        day.setUrgency(getUrgencyForDay(day));
+        day.setUrgency(actualActivityService.getUrgencyForDay(day));
 
     }
 
-    private String getUrgencyForDay(Day day){
-        Date currentDate = DateUtils.currentDate();
 
-        if(currentDate.compareTo(day.getDate())==0){
-            return URGENCY_ABOUT_WEEK;
-        }
-
-        int diff = DateUtils.differenceInDays(currentDate, day.getDate());
-
-        if(diff<0){
-            diff = diff*(-1);
-        }
-
-        if(diff <= 3){
-            return URGENCY_ABOUT_WEEK;
-        }
-
-        if(currentDate.before(day.getDate()) && diff <= 10){
-            return URGENCY_UPCOMING;
-        }
-
-        if(currentDate.after(day.getDate())){
-            if(diff <= 10){
-                return URGENCY_WEEK_LATE;
-            }
-            if(diff <= 17){
-                return URGENCY_2_WEEKS_LATE;
-            }
-        }
-
-        return null;
-    }
 
 
     public List<Week> getCurrent(){
