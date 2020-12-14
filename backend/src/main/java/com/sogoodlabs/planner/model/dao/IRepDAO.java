@@ -15,15 +15,20 @@ import java.util.List;
 public interface IRepDAO extends JpaRepository<Repetition, String> {
 
     List<Repetition> findByTask(Task task);
-    List<Repetition> findByPlanDay(Day planDay);
 
-    @Query("from Repetition where planDay in :days and factDay is null")
+    @Query("from Repetition where planDay = :planDay and repetitionPlan.dayStep is false")
+    List<Repetition> findByPlanDay(@Param("planDay") Day planDay);
+
+    @Query("from Repetition where planDay in :days and factDay is null and repetitionPlan.dayStep is false")
     List<Repetition> findByPlanDaysUnfinished(@Param("days") List<Day> planDays);
 
-    @Query("select count(*) from Repetition where planDay = :day")
+    @Query("from Repetition where planDay in :days and factDay is null and repetitionPlan.dayStep is true")
+    List<Repetition> findByPlanDaysUnfinishedMemo(@Param("days") List<Day> planDays);
+
+    @Query("select count(*) from Repetition where planDay = :day and repetitionPlan.dayStep is false")
     int findTotalByPlanDay(@Param("day") Day day);
 
-    @Query("select count(*) from Repetition where planDay = :day and factDay is null")
+    @Query("select count(*) from Repetition where planDay = :day and factDay is null and repetitionPlan.dayStep is false")
     int findTotalByPlanDayUnfinished(@Param("day") Day day);
 
 //    @Query("from Repetition where spacedRepetitions.id = :srId")

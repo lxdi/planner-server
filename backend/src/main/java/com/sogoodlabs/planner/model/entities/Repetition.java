@@ -75,4 +75,13 @@ public class Repetition {
     public Task getTaskSelf(){
         return this.task;
     }
+
+    @IncludeInDto
+    public boolean getIsMemo(){
+        if(this.repetitionPlan==null){
+            return false;
+        }
+
+        return this.repetitionPlan.getDayStep();
+    }
 }

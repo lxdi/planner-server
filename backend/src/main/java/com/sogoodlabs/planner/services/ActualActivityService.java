@@ -55,6 +55,8 @@ public class ActualActivityService {
         actualActivityDto.setOneWeekLate(reps.getOrDefault(URGENCY_WEEK_LATE, new ArrayList<>()));
         actualActivityDto.setTwoWeeksLate(reps.getOrDefault(URGENCY_2_WEEKS_LATE, new ArrayList<>()));
 
+        actualActivityDto.setMemoReps(repDAO.findByPlanDaysUnfinishedMemo(days));
+
         return actualActivityDto;
     }
 

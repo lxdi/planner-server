@@ -99,7 +99,12 @@ const repetitionsTableUI = function(repetitions, task, highlightId){
   var count = 1
   const result = []
   repetitions.forEach(rep => {
-    const style = rep.id==highlightId? {fontWeight: 'bold'}: {} // task.repetition != null && task.repetition.id == rep.id? {fontWeight:'bold'}:{}
+    var style = rep.id==highlightId? {fontWeight: 'bold'}: {} // task.repetition != null && task.repetition.id == rep.id? {fontWeight:'bold'}:{}
+
+    if(rep.isMemo){
+      Object.assign(style, {color: 'grey'})
+    }
+
     result.push( <tr id={rep.id} style={style}>
                     <td>{count++}</td>
                     <td>{rep.planDay!=null? formatDate(rep.planDay.date):''}</td>

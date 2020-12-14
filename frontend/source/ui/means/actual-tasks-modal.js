@@ -74,7 +74,7 @@ const spacedRepetitionsUI = function(reactcomp, actual){
               </tr>
               <tr>
                 <td>
-                  TODO
+                  {tasksMemoListUI(actual.memoReps)}
                 </td>
               </tr>
             </table>
@@ -96,15 +96,16 @@ const spacedRepetitionsUI = function(reactcomp, actual){
         </div>
 }
 
-// {tasksMemoListUI(getOnlyMemoOnDateTasks(chkSt('tasks-dao', 'actual-tasks')[-0], yesterdayDateString('-')), 'yesterday')}
-// {tasksMemoListUI(getOnlyMemoOnDateTasks(chkSt('tasks-dao', 'actual-tasks')[-0], currentDateString('-')), 'today')}
-// {tasksMemoListUI(getOnlyMemoOnDateTasks(chkSt('tasks-dao', 'actual-tasks')[-0], tomorrowDateString('-')), 'tomorrow')}
-const tasksMemoListUI = function(tasks, tag){
-  if(tasks.length<1){
+const tasksMemoListUI = function(reps){
+  if(reps.length<1){
     return null
   }
   const result = []
-  tasks.forEach((task)=>result.push(taskLink(task, false)))
+
+  reps
+    .filter(rep => filterMemoRepToShow(rep))
+    .forEach(rep => result.push(taskLink(rep.taskSelf, rep)))
+
   return <div>{result}</div>
 }
 
@@ -125,17 +126,28 @@ const taskLink = function(task, rep){
 }
 
 const getIncomingTag = function(rep){
-  if(rep == null || rep.planDate == null){
+  if(rep == null || rep.planDay == null){
     return null
   }
-  if(rep.planDate == yesterdayDateString('-')){
+  if(rep.planDay.date == yesterdayDateString('-')){
     return 'yesterday'
   }
-  if(rep.planDate == currentDateString('-')){
+  if(rep.planDay.date == currentDateString('-')){
     return 'today'
   }
-  if(rep.planDate == tomorrowDateString('-')){
+  if(rep.planDay.date == tomorrowDateString('-')){
     return 'tomorrow'
   }
-  return formatDate(rep.planDate)
+  return formatDate(rep.planDay.date)
+}
+
+const filterMemoRepToShow = function(rep){
+  const tag = getIncomingTag(rep)
+
+  console.log(tag, rep)
+  if(tag == 'yesterday' || tag == 'today' || tag == 'tomorrow'){
+    return true
+  }
+
+  return false
 }
