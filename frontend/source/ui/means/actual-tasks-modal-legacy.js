@@ -1,12 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {CommonModal} from './../common-modal'
-import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
 
-import {DataConstants} from '../../data/data-constants'
 import {formatDate, currentDateString, tomorrowDateString, yesterdayDateString} from '../../utils/date-utils'
 import {filterOutMemoTask, getOnlyMemoOnDateTasks} from '../../utils/task-utils'
 
+import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
 
 export class ActualTasksModal extends React.Component{
   constructor(props){
@@ -31,7 +30,6 @@ export class ActualTasksModal extends React.Component{
 }
 
 const content = function(reactcomp){
-  const actual = chkSt(DataConstants.progressRep, 'actual')
   return <div>
             <div style={{border:'1px solid blue', borderRadius:'10px', padding:'5px', marginTop:'5px'}}>
               {currentTasks()}
@@ -40,17 +38,17 @@ const content = function(reactcomp){
               {outdatedCurrenttasks()}
             </div>
             <div style={{border:'1px solid lightgrey', borderRadius:'10px', padding:'5px', marginTop:'5px'}}>
-              {spacedRepetitionsUI(reactcomp, actual)}
+              {spacedRepetitionsUI(reactcomp)}
             </div>
           </div>
 }
 
 const currentTasks = function(){
-  return 'TODO' //tasksUI(chkSt('tasks-dao', 'actual-tasks')[100], 'Current tasks')
+  return tasksUI(chkSt('tasks-dao', 'actual-tasks')[100], 'Current tasks')
 }
 
 const outdatedCurrenttasks = function(){
-  return 'TODO' //tasksUI(chkSt('tasks-dao', 'actual-tasks')[99], 'Outdated tasks')
+  return tasksUI(chkSt('tasks-dao', 'actual-tasks')[99], 'Outdated tasks')
 }
 
 const tasksUI = function(tasks, title){
@@ -64,7 +62,7 @@ const tasksUI = function(tasks, title){
           </div>
 }
 
-const spacedRepetitionsUI = function(reactcomp, actual){
+const spacedRepetitionsUI = function(reactcomp){
   const tdStyle = {padding:'5px'}
   return <div>
             Spaced repetitions
@@ -74,7 +72,9 @@ const spacedRepetitionsUI = function(reactcomp, actual){
               </tr>
               <tr>
                 <td>
-                  TODO
+                  {tasksMemoListUI(getOnlyMemoOnDateTasks(chkSt('tasks-dao', 'actual-tasks')[-0], yesterdayDateString('-')), 'yesterday')}
+                  {tasksMemoListUI(getOnlyMemoOnDateTasks(chkSt('tasks-dao', 'actual-tasks')[-0], currentDateString('-')), 'today')}
+                  {tasksMemoListUI(getOnlyMemoOnDateTasks(chkSt('tasks-dao', 'actual-tasks')[-0], tomorrowDateString('-')), 'tomorrow')}
                 </td>
               </tr>
             </table>
@@ -87,18 +87,15 @@ const spacedRepetitionsUI = function(reactcomp, actual){
                 <td style={Object.assign({border:'1px solid grey'}, tdStyle)}>Upcoming</td>
               </tr>
               <tr>
-                <td>{tasksListUI(actual.twoWeeksLate)}</td>
-                <td>{tasksListUI(actual.oneWeekLate)}</td>
-                <td>{tasksListUI(actual.aboutWeekReps)}</td>
-                <td>{tasksListUI(actual.upcomingReps)}</td>
+                <td>{tasksListUI(filterOutMemoTask(chkSt('tasks-dao', 'actual-tasks')[-2]))}</td>
+                <td>{tasksListUI(filterOutMemoTask(chkSt('tasks-dao', 'actual-tasks')[-1]))}</td>
+                <td>{tasksListUI(filterOutMemoTask(chkSt('tasks-dao', 'actual-tasks')[-0]))}</td>
+                <td>{tasksListUI(filterOutMemoTask(chkSt('tasks-dao', 'actual-tasks')[1]))}</td>
               </tr>
             </table>
         </div>
 }
 
-// {tasksMemoListUI(getOnlyMemoOnDateTasks(chkSt('tasks-dao', 'actual-tasks')[-0], yesterdayDateString('-')), 'yesterday')}
-// {tasksMemoListUI(getOnlyMemoOnDateTasks(chkSt('tasks-dao', 'actual-tasks')[-0], currentDateString('-')), 'today')}
-// {tasksMemoListUI(getOnlyMemoOnDateTasks(chkSt('tasks-dao', 'actual-tasks')[-0], tomorrowDateString('-')), 'tomorrow')}
 const tasksMemoListUI = function(tasks, tag){
   if(tasks.length<1){
     return null
@@ -108,34 +105,35 @@ const tasksMemoListUI = function(tasks, tag){
   return <div>{result}</div>
 }
 
-const tasksListUI = function(reps){
+const tasksListUI = function(tasks){
   const result = []
-  reps.forEach(rep => result.push(taskLink(rep.taskSelf, rep)))
+  tasks.forEach((task)=>result.push(taskLink(task, false)))
   return <div> {result}</div>
 }
 
-const taskLink = function(task, rep){
-  return <div key={task.id} style={{border:'1px solid lightgrey', borderRadius:'3px', padding:'3px'}}
-                      onMouseEnter={()=>fireEvent('overlay-info', 'show', [task.fullPath])}
+const taskLink = function(task, highlight){
+  const backgroundColor = highlight && task.finished?'lightgreen':null
+  return     <div key={task.id} style={{border:'1px solid lightgrey', borderRadius:'3px', padding:'3px', backgroundColor:backgroundColor}}
+                      onMouseEnter={()=>fireEvent('overlay-info', 'show', [task.fullname])}
   										onMouseOver={(e)=>fireEvent('overlay-info', 'update-pos', [e.nativeEvent.clientX+15, e.nativeEvent.clientY-10])}
   										onMouseLeave={()=>fireEvent('overlay-info', 'hide')}>
-            <a href='#' onClick={()=>fireEvent('task-modal', 'open', [null, task, true, false, rep.id])}>{task.title}</a>
-            <div style={{fontSize:'9px', fontColor:'lightGrey', marginLeft: '5px', display: 'inline-block'}}>{getIncomingTag(rep)}</div>
+            <a href='#' onClick={()=>fireEvent('task-modal', 'open', [null, task, true, true])}>{task.title}</a>
+            <div style={{fontSize:'9px', fontColor:'lightGrey', marginLeft: '5px', display: 'inline-block'}}>{getIncomingTag(task)}</div>
       </div>
 }
 
-const getIncomingTag = function(rep){
-  if(rep == null || rep.planDate == null){
+const getIncomingTag = function(task){
+  if(task.repetition == null || task.repetition.planDate == null){
     return null
   }
-  if(rep.planDate == yesterdayDateString('-')){
+  if(task.repetition.planDate == yesterdayDateString('-')){
     return 'yesterday'
   }
-  if(rep.planDate == currentDateString('-')){
+  if(task.repetition.planDate == currentDateString('-')){
     return 'today'
   }
-  if(rep.planDate == tomorrowDateString('-')){
+  if(task.repetition.planDate == tomorrowDateString('-')){
     return 'tomorrow'
   }
-  return formatDate(rep.planDate)
+  return formatDate(task.repetition.planDate)
 }

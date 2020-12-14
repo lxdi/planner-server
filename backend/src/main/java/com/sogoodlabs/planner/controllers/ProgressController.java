@@ -8,6 +8,7 @@ import com.sogoodlabs.planner.model.dao.ITasksDAO;
 import com.sogoodlabs.planner.model.entities.Repetition;
 import com.sogoodlabs.planner.model.entities.RepetitionPlan;
 import com.sogoodlabs.planner.model.entities.Task;
+import com.sogoodlabs.planner.services.ActualActivityService;
 import com.sogoodlabs.planner.services.ProgressService;
 import com.sogoodlabs.planner.util.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,9 @@ public class ProgressController {
 
     @Autowired
     private IRepDAO repDAO;
+
+    @Autowired
+    private ActualActivityService actualActivityService;
 
     @GetMapping("/get/for/task/{taskid}")
     public Map<String, Object> getForTask(@PathVariable("taskid") String taskId){
@@ -60,6 +64,11 @@ public class ProgressController {
         Repetition repetition = repDAO.findById(repId).orElseThrow(() -> new RuntimeException("Repetition not found "+ repId));
         progressService.finishRepetition(repetition);
         return commonMapper.mapToDto(progressService.getByTask(repetition.getTask()));
+    }
+
+    @GetMapping("/get/actual")
+    public Map<String, Object> getActual(){
+        return commonMapper.mapToDto(actualActivityService.getActualActivity());
     }
 
 }

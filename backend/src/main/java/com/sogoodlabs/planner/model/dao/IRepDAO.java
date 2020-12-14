@@ -17,8 +17,8 @@ public interface IRepDAO extends JpaRepository<Repetition, String> {
     List<Repetition> findByTask(Task task);
     List<Repetition> findByPlanDay(Day planDay);
 
-    @Query("from Repetition where planDay in :days")
-    List<Repetition> findByPlanDays(@Param("days") List<Day> planDay);
+    @Query("from Repetition where planDay in :days and factDay is null")
+    List<Repetition> findByPlanDaysUnfinished(@Param("days") List<Day> planDays);
 
     @Query("select count(*) from Repetition where planDay = :day")
     int findTotalByPlanDay(@Param("day") Day day);

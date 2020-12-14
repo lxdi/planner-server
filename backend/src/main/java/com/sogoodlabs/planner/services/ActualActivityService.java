@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -45,14 +46,14 @@ public class ActualActivityService {
                 .peek(day -> day.setUrgency(getUrgencyForDay(day)))
                 .collect(Collectors.toList());
 
-        Map<String, List<Repetition>> reps = repDAO.findByPlanDays(days).stream()
+        Map<String, List<Repetition>> reps = repDAO.findByPlanDaysUnfinished(days).stream()
                 .peek(rep -> rep.getPlanDay().setUrgency(getUrgencyForDay(rep.getPlanDay())))
                 .collect(Collectors.groupingBy(rep -> rep.getPlanDay().getUrgency()));
 
-        actualActivityDto.setUpcomingReps(reps.get(URGENCY_UPCOMING));
-        actualActivityDto.setAboutWeekReps(reps.get(URGENCY_ABOUT_WEEK));
-        actualActivityDto.setOneWeekLate(reps.get(URGENCY_WEEK_LATE));
-        actualActivityDto.setTwoWeeksLate(reps.get(URGENCY_2_WEEKS_LATE));
+        actualActivityDto.setUpcomingReps(reps.getOrDefault(URGENCY_UPCOMING, new ArrayList<>()));
+        actualActivityDto.setAboutWeekReps(reps.getOrDefault(URGENCY_ABOUT_WEEK, new ArrayList<>()));
+        actualActivityDto.setOneWeekLate(reps.getOrDefault(URGENCY_WEEK_LATE, new ArrayList<>()));
+        actualActivityDto.setTwoWeeksLate(reps.getOrDefault(URGENCY_2_WEEKS_LATE, new ArrayList<>()));
 
         return actualActivityDto;
     }

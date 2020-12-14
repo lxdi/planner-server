@@ -19,6 +19,10 @@ const finishTaskUrlOffestSP2 = '/with/sp'
 const finishRepetitionEvent = 'finish-rep'
 const finishRepetitionUrlOffest = '/finish/repetition'
 
+const getActualEvent = 'get-actual'
+const gotActualEvent = 'got-actual'
+const getActualUrlOffest = '/get/actual'
+
 registerEvent(DataConstants.progressRep, getByTaskEvent, (stSetter, task)=>{
   sendGet('/' + repName + getByTaskUrlOffest + '/' + task.id, (data)=>{
       const progress = typeof data == 'string'? JSON.parse(data): data
@@ -51,6 +55,15 @@ registerEvent(DataConstants.progressRep, finishRepetitionEvent, (stSetter, rep, 
       fireEvent(DataConstants.progressRep, gotByTaskEvent, [progress])
   })
 })
+
+registerEvent(DataConstants.progressRep, getActualEvent, (stSetter)=>{
+  sendGet('/' + repName + getActualUrlOffest, (data)=>{
+      const actual = typeof data == 'string'? JSON.parse(data): data
+      stSetter('actual', actual)
+      fireEvent(DataConstants.progressRep, gotActualEvent, [actual])
+  })
+})
+registerEvent(DataConstants.progressRep, gotActualEvent, (stSetter, actual)=>actual)
 
 const updateProgress = function(progress, task, stSetter){
   var objMap = chkSt(DataConstants.progressRep, DataConstants.objMap)

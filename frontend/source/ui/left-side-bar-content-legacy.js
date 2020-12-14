@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom';
 import {Button} from 'react-bootstrap'
 import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
 
-import {DataConstants} from '../data/data-constants'
 import {filterOutMemoTask} from '../utils/task-utils'
 
 const taskRep = 'task-rep'
@@ -15,28 +14,31 @@ export class LeftSideBarContent extends React.Component {
     registerReaction('actual-tasks-ui', taskRep, ['actual-tasks-rs'], ()=>this.setState({}))
     registerReaction('actual-tasks-ui', 'main-ui', ['switch-mode'], ()=>this.setState({}))
 
-    registerReaction('actual-tasks-ui', DataConstants.progressRep, ['got-actual'], (stateSetter)=>this.setState({}))
+    registerReaction('actual-tasks-ui', taskRep, ['repetition-finished'], (stateSetter)=>this.setState({}))
   }
 
   render(){
-    //return 'TODO'
-    return content(this)
+    return 'TODO'
+    //return content(this)
   }
 }
 
 const content = function(reactcomp){
-  const actuals = chkSt(DataConstants.progressRep, 'actual');
-  if(actuals==null){
-    fireEvent(DataConstants.progressRep, 'get-actual')
+  const actualTasksMap = chkSt(taskRep, 'actual-tasks');
+  if(actualTasksMap==null){
+    fireEvent(taskRep, 'actual-tasks-rq')
     return 'Loading...'
   }
   return <div>
               <a href="#" style={{textDecoration:'none'}}>
                 <div onClick={()=>fireEvent('actual-tasks-modal', 'open')} class="actual-tasks-indicators-group">
-                  {getSquare(actuals.twoWeeksLate.length, 'red')}
-                  {getSquare(actuals.oneWeekLate.length, 'orange')}
-                  {getSquare(actuals.aboutWeekReps.length, 'green')}
-                  {getSquare(actuals.upcomingReps.length, 'grey')}
+                  {getSquare(actualTasksMap['100'].length, 'blue')}
+                  {getSquare(actualTasksMap['99'].length, 'red')}
+                  {divisor()}
+                  {getSquare(filterOutMemoTask(actualTasksMap['-2']).length, 'red')}
+                  {getSquare(filterOutMemoTask(actualTasksMap['-1']).length, 'orange')}
+                  {getSquare(filterOutMemoTask(actualTasksMap['0']).length, 'green')}
+                  {getSquare(filterOutMemoTask(actualTasksMap['1']).length, 'grey')}
                 </div>
               </a>
               {divisor()}
