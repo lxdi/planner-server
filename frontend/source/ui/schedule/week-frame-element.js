@@ -88,7 +88,12 @@ const getDayContentFull = function(day){
   }
 
   return <a key = {day.id} href='#' onClick = {()=>fireEvent('day-modal', 'open', [day])}>
-      <div style = {style}>
+      <div style = {style}
+      draggable='true'
+      onDragStart={e => onDragStart(e, day)}
+      onDragOver={e => e.preventDefault()}
+      onDrop={e => onDrop(e, day)}>
+
         <div style = {getUrgencyStyle(day)}>
           <div style = {{verticalAlign: 'top', fontSize:'9px', display:'inline-block'}}>
             <div style = {{color: 'grey'}}>{dayCal}</div>
@@ -160,4 +165,14 @@ const formatDate = function(date, part){
     return splited[1]
   }
   return ''
+}
+
+const onDragStart = function(e, dayFrom){
+  console.log('onDragStart', dayFrom)
+  e.draggableDay = dayFrom
+}
+
+const onDrop = function(e, dayTo){
+  console.log('onDrop', dayTo)
+  fireEvent('shift-plans-modal', 'open', [e.draggableDay, dayTo])
 }
