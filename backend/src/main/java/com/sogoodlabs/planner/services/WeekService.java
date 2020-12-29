@@ -1,17 +1,23 @@
 package com.sogoodlabs.planner.services;
 
+import com.sogoodlabs.planner.controllers.dto.MovingPlansDto;
 import com.sogoodlabs.planner.controllers.dto.ScheduledDayDto;
 import com.sogoodlabs.planner.model.dao.IDayDao;
 import com.sogoodlabs.planner.model.dao.IRepDAO;
 import com.sogoodlabs.planner.model.dao.ITaskMappersDAO;
 import com.sogoodlabs.planner.model.dao.IWeekDAO;
 import com.sogoodlabs.planner.model.entities.Day;
+import com.sogoodlabs.planner.model.entities.Repetition;
+import com.sogoodlabs.planner.model.entities.TaskMapper;
 import com.sogoodlabs.planner.model.entities.Week;
 import com.sogoodlabs.planner.util.DateUtils;
 import org.hibernate.Hibernate;
 import org.hibernate.proxy.HibernateProxy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.sql.Date;
 import java.util.ArrayList;
@@ -19,6 +25,8 @@ import java.util.List;
 
 @Service
 public class WeekService {
+
+    Logger log = LoggerFactory.getLogger(WeekService.class);
 
     private static final int CURRENT_UP_TO_PREV_WEEKS = 4;
     private static final int CURRENT_UP_TO_NEXT_WEEKS = 30;
@@ -151,6 +159,29 @@ public class WeekService {
         dto.setTaskMappers(taskMappersDAO.findByPlanDayOrFinishDay(day, day));
         dto.setRepetitions(repDAO.findByPlanDay(day));
         return dto;
+    }
+
+    public void movePlans(MovingPlansDto movingPlansDto){
+        Day day = dayDao.findById(movingPlansDto.getTargetDayId())
+                .orElseThrow(() -> new RuntimeException("Day no found " + movingPlansDto.getTargetDayId()));
+
+        if(movingPlansDto.getTaskMappersIds()!=null){
+            movingPlansDto.getTaskMappersIds().forEach(taskMapperId -> {
+                TaskMapper taskMapper = taskMappersDAO.findById(taskMapperId).orElseThrow(() -> new RuntimeException("TaskMapper not found " + taskMapperId));
+                taskMapper.setPlanDay(day);
+                taskMappersDAO.save(taskMapper);
+                log.info("Moving task {} to {}", taskMapper.getTask().getTitle(), DateUtils.fromDate(day.getDate()));
+            });
+        }
+
+        if(movingPlansDto.getRepetitionIds()!=null){
+            movingPlansDto.getRepetitionIds().forEach(repid -> {
+                Repetition repetition = repDAO.findById(repid).orElseThrow(() -> new RuntimeException("Repetition not found " + repid));
+                repetition.setPlanDay(day);
+                repDAO.save(repetition);
+                log.info("Moving repetition {} to {}", repetition.getTask().getTitle(), DateUtils.fromDate(day.getDate()));
+            });
+        }
     }
 
     public static <T> T initializeAndUnproxy(T entity) {

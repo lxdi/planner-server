@@ -7,22 +7,31 @@ import {CommonModal} from './../common-modal'
 import {formatDate} from '../../utils/date-utils'
 import {DataConstants} from '../../data/data-constants'
 
+const getMovingDto = function(day){
+  return {
+    targetDayId: day!=null? day.id: null,
+    taskMappersIds: [],
+    repetitionIds: []
+  }
+}
 
 export class ShiftPlansModal extends React.Component{
   constructor(props){
     super(props)
-    const defaultState = {isOpen:false, dayFrom: null, dayTo:null}
+    const defaultState = {isOpen:false, dayFrom: null, dayTo:null, movingDto: getMovingDto()}
     this.state = defaultState
 
-    registerEvent('shift-plans-modal', 'open', (stateSetter, dayFrom, dayTo)=>this.setState({isOpen:true, dayFrom:dayFrom, dayTo:dayTo}))
+    registerEvent('shift-plans-modal', 'open', (stateSetter, dayFrom, dayTo)=>this.setState({isOpen:true, dayFrom:dayFrom, dayTo:dayTo, movingDto: getMovingDto(dayTo)}))
     registerEvent('shift-plans-modal', 'close', (stateSetter)=>this.setState(defaultState))
 
     registerReaction('shift-plans-modal', DataConstants.dayRep, ['got-one'], ()=>this.setState({}))
+    registerReaction('shift-plans-modal', DataConstants.weekRep, ['moved-plans'], ()=>this.setState(defaultState))
   }
 
   render(){
     return <CommonModal
                     isOpen = {this.state.isOpen}
+                    okHandler={()=>fireEvent(DataConstants.weekRep, 'move-plans', [this.state.movingDto])}
                     cancelHandler = {()=>fireEvent('shift-plans-modal', 'close')}
                     title={getTitle(this)}>
                     {getContent(this)}
@@ -56,21 +65,21 @@ const getContent = function(comp){
               Tasks
             </div>
             <div>
-              {mappersTableUI(comp.state.dayFrom.taskMappers)}
+              {mappersTableUI(comp, comp.state.dayFrom.taskMappers, comp.state.movingDto)}
             </div>
             <div style = {{borderBottom: '1px solid grey', padding: '3px'}}  />
             <div>
               Repetitions
             </div>
             <div>
-              {repetitionsTableUI(comp.state.dayFrom.repetitions)}
+              {repetitionsTableUI(comp, comp.state.dayFrom.repetitions, comp.state.movingDto)}
             </div>
           </div>
 }
 
 //--------------------------Mappers--------------------------------
 
-const mappersTableUI = function(mappers){
+const mappersTableUI = function(comp, mappers, movingDto){
   const result = []
   mappers.forEach(mapper => {
     const style = {} // task.repetition != null && task.repetition.id == rep.id? {fontWeight:'bold'}:{}
@@ -81,7 +90,7 @@ const mappersTableUI = function(mappers){
                     <td>{mapper.planDay!=null? formatDate(mapper.planDay.date):''}</td>
                     <td>{mapper.finishDay!=null? formatDate(mapper.finishDay.date):''}</td>
                     <td>
-                      {mapper.finishDay==null? <Button bsStyle="success" bsSize='xsmall' onClick={() => fireEvent(DataConstants.progressRep, 'finish-rep', [mapper, mapper.taskSelf])}>Complete</Button>: null}
+                      <input type="checkbox" checked={movingDto.taskMappersIds.includes(mapper.id)?'checked': null} onClick={()=>onClickCheckBox(comp, movingDto, mapper.id, true)}/>
                     </td>
                   </tr>)
   })
@@ -102,7 +111,7 @@ const mappersTableUI = function(mappers){
 
 //--------------------------Repetitions--------------------------------
 
-const repetitionsTableUI = function(repetitions){
+const repetitionsTableUI = function(comp, repetitions, movingDto){
   const result = []
   repetitions.forEach(rep => {
     const style = {} // task.repetition != null && task.repetition.id == rep.id? {fontWeight:'bold'}:{}
@@ -113,7 +122,7 @@ const repetitionsTableUI = function(repetitions){
                     <td>{rep.planDay!=null? formatDate(rep.planDay.date):''}</td>
                     <td>{rep.factDay!=null? formatDate(rep.factDay.date):''}</td>
                     <td>
-                      {rep.factDay==null? <Button bsStyle="success" bsSize='xsmall' onClick={() => fireEvent(DataConstants.progressRep, 'finish-rep', [rep, rep.taskSelf])}>Complete</Button>: null}
+                      <input type="checkbox" checked={movingDto.repetitionIds.includes(rep.id)?'checked': null} onClick={()=>onClickCheckBox(comp, movingDto, rep.id, false)}/>
                     </td>
                   </tr>)
   })
@@ -129,4 +138,29 @@ const repetitionsTableUI = function(repetitions){
             {result}
           </tbody>
           </Table>
+}
+
+const onClickCheckBox = function(comp, movingDto, id, isTaskMappers){
+  if(isTaskMappers){
+    if(movingDto.taskMappersIds.includes(id)){
+      removeByValue(movingDto.taskMappersIds, id)
+    } else {
+      movingDto.taskMappersIds.push(id)
+    }
+  } else {
+    if(movingDto.repetitionIds.includes(id)){
+      removeByValue(movingDto.repetitionIds, id)
+    } else {
+      movingDto.repetitionIds.push(id)
+    }
+  }
+
+  comp.setState({})
+}
+
+const removeByValue = function(array, item){
+  var index = array.indexOf(item);
+  if (index !== -1) {
+    array.splice(index, 1);
+  }
 }

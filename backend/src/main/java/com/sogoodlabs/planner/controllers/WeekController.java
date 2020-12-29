@@ -2,15 +2,13 @@ package com.sogoodlabs.planner.controllers;
 
 
 import com.sogoodlabs.common_mapper.CommonMapper;
+import com.sogoodlabs.planner.controllers.dto.MovingPlansDto;
 import com.sogoodlabs.planner.model.dao.IDayDao;
 import com.sogoodlabs.planner.model.entities.Day;
 import com.sogoodlabs.planner.model.entities.Week;
 import com.sogoodlabs.planner.services.WeekService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
@@ -54,5 +52,10 @@ public class WeekController {
     public Map<String, Object> getDay(@PathVariable("dayId") String dayId){
         Day day = dayDao.findById(dayId).orElseThrow(() -> new RuntimeException("Day not found by id " + dayId));
         return commonMapper.mapToDto(weekService.getScheduledDayDto(day));
+    }
+
+    @PostMapping("/move/plans")
+    public void movePlans(@RequestBody MovingPlansDto movingPlansDto){
+        weekService.movePlans(movingPlansDto);
     }
 }

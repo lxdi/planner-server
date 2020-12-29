@@ -168,11 +168,9 @@ const formatDate = function(date, part){
 }
 
 const onDragStart = function(e, dayFrom){
-  console.log('onDragStart', dayFrom)
   e.draggableDay = dayFrom
 }
 
 const onDrop = function(e, dayTo){
-  console.log('onDrop', dayTo)
   fireEvent('shift-plans-modal', 'open', [e.draggableDay, dayTo])
 }
