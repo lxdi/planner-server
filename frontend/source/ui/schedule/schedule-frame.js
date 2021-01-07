@@ -15,7 +15,8 @@ export class ScheduleFrame extends React.Component{
   constructor(props){
     super(props)
     this.state = {}
-    registerReaction('shedule-frame', DataConstants.weekRep, ['got-current-list', 'got-next', 'got-prev'], (stSetter)=>{
+
+    registerReaction('shedule-frame', DataConstants.weekRep, ['got-current-list', 'got-next', 'got-prev', 'moved-plans'], (stSetter)=>{
       this.setState({weeks: chkSt(DataConstants.weekRep, DataConstants.objList)})
     })
 
@@ -36,20 +37,22 @@ const getContent = function(component){
     return 'Loading...'
   }
 
+  const weeksMap = chkSt(DataConstants.weekRep, DataConstants.objMap)
+
   return <BidirectList firstNode={chkSt(DataConstants.weekRep, DataConstants.objList)[0]}
-                        getNext = {(week, isExtend)=>getNextHandler(week, isExtend)}
-                        getPrev = {(week)=>getPrevHandler(week)}
+                        getNext = {(week, isExtend)=>getNextHandler(weeksMap, week, isExtend)}
+                        getPrev = {(week)=>getPrevHandler(weeksMap, week)}
                         nodeView = {(week)=><WeekElement week = {week}/>}
                         loadPrev={true}
                         />
 }
 
-const getNextHandler = function(week, isExtend){
+const getNextHandler = function(weeksMap, week, isExtend){
   if(week == null){
     return null
   }
 
-  const nextWeek = chkSt(DataConstants.weekRep, DataConstants.objMap)[week.nextid]
+  const nextWeek = weeksMap[week.nextid]
   if(nextWeek == null && isExtend){
     fireEvent(DataConstants.weekRep, 'get-next', [week])
     return null
@@ -58,12 +61,12 @@ const getNextHandler = function(week, isExtend){
   return nextWeek
 }
 
-const getPrevHandler = function(week){
+const getPrevHandler = function(weeksMap, week){
   if(week == null){
     return null
   }
 
-  const prevWeek = chkSt(DataConstants.weekRep, DataConstants.objMap)[week.previd]
+  const prevWeek = weeksMap[week.previd]
   if(prevWeek == null){
     fireEvent(DataConstants.weekRep, 'get-prev', [week])
     return null

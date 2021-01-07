@@ -58,6 +58,8 @@ registerEvent(DataConstants.weekRep, gotNextEvent, (stSetter, week)=>week)
 
 registerEvent(DataConstants.weekRep, movePlansEvent, (stSetter, movingDto)=>{
   sendPost('/' + repName + movingPlansUrlOffest, movingDto, ()=>{
+      stSetter(DataConstants.objMap, null)
+      stSetter(DataConstants.objList, null)
       fireEvent(DataConstants.weekRep, movedPlansEvent)
   })
 })

@@ -96,7 +96,7 @@ public class WeekService {
                 lastWeekPrevYear = weekDAO.findLastInYear(year-1);
             }
 
-            int difference = currentWeek.getNum()-CURRENT_UP_TO_PREV_WEEKS;
+            int difference = Math.abs(currentWeek.getNum()-CURRENT_UP_TO_PREV_WEEKS);
             if(difference-1 > 0){
                 weeks.addAll(weekDAO.findInDiapason(
                         lastWeekPrevYear.getNum()-difference, lastWeekPrevYear.getNum()-1, year-1));
