@@ -19,6 +19,9 @@ public interface IRepDAO extends JpaRepository<Repetition, String> {
     @Query("from Repetition where planDay = :planDay and repetitionPlan.dayStep is false")
     List<Repetition> findByPlanDay(@Param("planDay") Day planDay);
 
+    @Query("from Repetition where (planDay = :day or factDay = :day) and repetitionPlan.dayStep is false")
+    List<Repetition> findByPlanDayOrFactDay(@Param("day") Day day);
+
     @Query("from Repetition where planDay in :days and factDay is null and repetitionPlan.dayStep is false")
     List<Repetition> findByPlanDaysUnfinished(@Param("days") List<Day> planDays);
 
@@ -27,6 +30,9 @@ public interface IRepDAO extends JpaRepository<Repetition, String> {
 
     @Query("select count(*) from Repetition where planDay = :day and repetitionPlan.dayStep is false")
     int findTotalByPlanDay(@Param("day") Day day);
+
+    @Query("select count(*) from Repetition where factDay = :day and repetitionPlan.dayStep is false")
+    int findTotalByFactDay(@Param("day") Day day);
 
     @Query("select count(*) from Repetition where planDay = :day and factDay is null and repetitionPlan.dayStep is false")
     int findTotalByPlanDayUnfinished(@Param("day") Day day);

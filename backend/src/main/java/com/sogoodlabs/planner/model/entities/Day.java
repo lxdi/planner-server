@@ -28,10 +28,10 @@ public class Day {
     private int mappersNum;
 
     @Transient
-    private int repsNum;
+    private int mappersNumUnfinished;
 
     @Transient
-    private int mappersNumUnfinished;
+    private int repsNum;
 
     @Transient
     private int repsNumUnfinished;

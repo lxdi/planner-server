@@ -64,7 +64,7 @@ public class WeekService {
         day.setMappersNum(taskMappersDAO.findTotalByDay(day));
         day.setMappersNumUnfinished(taskMappersDAO.findTotalByPlanDayUnfinished(day));
 
-        day.setRepsNum(repDAO.findTotalByPlanDay(day));
+        day.setRepsNum(repDAO.findTotalByFactDay(day));
         day.setRepsNumUnfinished(repDAO.findTotalByPlanDayUnfinished(day));
 
         day.setUrgency(actualActivityService.getUrgencyForDay(day));
@@ -157,7 +157,7 @@ public class WeekService {
     public ScheduledDayDto getScheduledDayDto(Day day){
         ScheduledDayDto dto = new ScheduledDayDto();
         dto.setTaskMappers(taskMappersDAO.findByPlanDayOrFinishDay(day, day));
-        dto.setRepetitions(repDAO.findByPlanDay(day));
+        dto.setRepetitions(repDAO.findByPlanDayOrFactDay(day));
         return dto;
     }
 
