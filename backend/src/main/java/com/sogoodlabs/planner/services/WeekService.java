@@ -92,7 +92,7 @@ public class WeekService {
             Week lastWeekPrevYear = weekDAO.findLastInYear(year-1);
 
             if(lastWeekPrevYear==null){
-                weeksGenerator.generateYear(year);
+                weeksGenerator.generateYear(year-1);
                 lastWeekPrevYear = weekDAO.findLastInYear(year-1);
             }
 
