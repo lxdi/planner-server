@@ -1,7 +1,7 @@
 package com.sogoodlabs.planner.util;
 
 import com.sogoodlabs.planner.model.entities.DaysOfWeek;
-import com.sogoodlabs.planner.model.entities.Subject;
+import com.sogoodlabs.planner.model.entities.Layer;
 import com.sogoodlabs.planner.model.entities.Task;
 import com.sogoodlabs.planner.util.StringUtils;
 import org.junit.Test;
@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class StringUtilsTests {
@@ -21,8 +22,8 @@ public class StringUtilsTests {
         task.setTitle("task");
 
         String fullName = StringUtils.getFullName(task, new String[]{
-                "subject?.layer?.mean?.realm?.title", "subject?.layer?.mean?.title",
-                "subject?.layer?.priority", "subject?.title", "title"
+                "layer?.mean?.realm?.title", "layer?.mean?.title",
+                "layer?.priority", "title"
         });
 
         assertTrue(fullName.equals("task"));
@@ -39,18 +40,18 @@ public class StringUtilsTests {
         Map<String, Object> dtowrapper = new HashMap<>();
         dtowrapper.put("listofsomething", list);
 
-        assertTrue((long)StringUtils.getValue(dtowrapper, "get('listofsomething').get(0).get('id')")==6564);
+        assertEquals(6564, (long) StringUtils.getValue(dtowrapper, "get('listofsomething').get(0).get('id')"));
 
-        Subject subject = new Subject();
-        subject.setTitle("subj1");
-        subject.setId(543543);
+        Layer layer = new Layer();
+        layer.setPriority(1);
+        layer.setId("543543");
 
         Task task = new Task();
         task.setTitle("task1");
-        task.setId(23);
-        task.setSubject(subject);
+        task.setId("23");
+        task.setLayer(layer);
 
-        assertTrue((long)StringUtils.getValue(task, "subject.id")==543543);
+        assertEquals("543543", StringUtils.getValue(task, "layer.id"));
     }
 
     @Test

@@ -61,7 +61,7 @@ abstract public class SpringTestConfig {
 //        session.close();
     }
 
-    protected boolean isExists(long id, Class clazz){
+    protected boolean isExists(String id, Class clazz){
         try {
             return entityManager.unwrap(Session.class).get(clazz, id) != null;
         } catch (EntityNotFoundException ex){

@@ -1,7 +1,6 @@
 package com.sogoodlabs.planner.services;
 
 import com.sogoodlabs.planner.model.dao.IRepDAO;
-import com.sogoodlabs.planner.model.dao.ISpacedRepDAO;
 import com.sogoodlabs.planner.model.entities.*;
 import com.sogoodlabs.planner.SpringTestConfig;
 import com.sogoodlabs.planner.util.DateUtils;
@@ -15,6 +14,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import java.util.List;
+import java.util.UUID;
 
 import static junit.framework.TestCase.*;
 
@@ -30,22 +30,15 @@ public class GracefulDeleteServiceTest extends SpringTestConfig {
     @Autowired
     private IRepDAO repDAO;
 
-    @Autowired
-    private ISpacedRepDAO spacedRepDAO;
-
     private Mean mean;
     private Layer layer;
-    private Subject subject;
     private Task task;
     private Topic topic;
     private TaskTesting taskTesting;
     private TaskMapper taskMapper;
-    private SpacedRepetitions spacedRepetitions;
     private Repetition finishedRep;
     private Repetition finishedRep2;
     private Repetition unfinishedRep;
-    private Slot slot;
-    private SlotPosition slotPosition;
 
 
     @Before
@@ -57,70 +50,54 @@ public class GracefulDeleteServiceTest extends SpringTestConfig {
         Session session = entityManager.unwrap(Session.class);
 
         mean = new Mean();
+        mean.setId(UUID.randomUUID().toString());
         session.save(mean);
 
         layer = new Layer();
+        layer.setId(UUID.randomUUID().toString());
         layer.setMean(mean);
         session.saveOrUpdate(layer);
 
-        subject = new Subject();
-        subject.setLayer(layer);
-        session.saveOrUpdate(subject);
-
         task = new Task();
-        task.setSubject(subject);
+        task.setId(UUID.randomUUID().toString());
+        task.setLayer(layer);
         session.saveOrUpdate(task);
 
         topic = new Topic();
+        topic.setId(UUID.randomUUID().toString());
         topic.setTask(task);
         session.saveOrUpdate(topic);
 
         taskTesting = new TaskTesting();
+        taskTesting.setId(UUID.randomUUID().toString());
         taskTesting.setTask(task);
         session.saveOrUpdate(taskTesting);
 
         if(withTaskMappers) {
 
             taskMapper = new TaskMapper();
+            taskMapper.setId(UUID.randomUUID().toString());
             taskMapper.setTask(task);
             session.saveOrUpdate(taskMapper);
 
             if(withSP) {
-                spacedRepetitions = new SpacedRepetitions();
-                spacedRepetitions.setTaskMapper(taskMapper);
-                session.saveOrUpdate(spacedRepetitions);
 
                 finishedRep = new Repetition();
-                finishedRep.setSpacedRepetitions(spacedRepetitions);
-                finishedRep.setPlanDate(DateUtils.currentDate());
-                finishedRep.setFactDate(DateUtils.currentDate());
+                finishedRep.setId(UUID.randomUUID().toString());
+                finishedRep.setTask(task);
                 session.save(finishedRep);
 
                 finishedRep2 = new Repetition();
-                finishedRep2.setSpacedRepetitions(spacedRepetitions);
-                finishedRep2.setPlanDate(DateUtils.currentDate());
-                finishedRep2.setFactDate(DateUtils.currentDate());
+                finishedRep2.setId(UUID.randomUUID().toString());
+                finishedRep2.setTask(task);
                 session.save(finishedRep2);
 
                 unfinishedRep = new Repetition();
-                unfinishedRep.setSpacedRepetitions(spacedRepetitions);
-                unfinishedRep.setPlanDate(DateUtils.currentDate());
+                unfinishedRep.setId(UUID.randomUUID().toString());
+                unfinishedRep.setTask(task);
                 session.save(unfinishedRep);
             }
 
-            if (withSlot) {
-                slot = new Slot();
-                slot.setMean(mean);
-                slot.setLayer(layer);
-                session.saveOrUpdate(slot);
-
-                slotPosition = new SlotPosition();
-                slotPosition.setSlot(slot);
-                session.saveOrUpdate(slotPosition);
-
-                taskMapper.setSlotPosition(slotPosition);
-                session.saveOrUpdate(taskMapper);
-            }
         }
 
         session.flush();
@@ -138,16 +115,11 @@ public class GracefulDeleteServiceTest extends SpringTestConfig {
 
         assertFalse(isExists(mean.getId(), Mean.class));
         assertFalse(isExists(layer.getId(), Layer.class));
-        assertFalse(isExists(subject.getId(), Subject.class));
         assertFalse(isExists(task.getId(), Task.class));
         assertFalse(isExists(topic.getId(), Topic.class));
         assertFalse(isExists(taskTesting.getId(), TaskTesting.class));
         assertFalse(isExists(taskMapper.getId(), TaskMapper.class));
-        assertFalse(isExists(spacedRepetitions.getId(), SpacedRepetitions.class));
         assertFalse(isExists(finishedRep.getId(), Repetition.class));
-
-        assertTrue(isExists(slot.getId(), Slot.class));
-        assertTrue(isExists(slotPosition.getId(), SlotPosition.class));
 
     }
 
@@ -164,7 +136,6 @@ public class GracefulDeleteServiceTest extends SpringTestConfig {
         assertFalse(isExists(topic.getId(), Topic.class));
         assertFalse(isExists(taskTesting.getId(), TaskTesting.class));
         assertFalse(isExists(taskMapper.getId(), TaskMapper.class));
-        assertFalse(isExists(spacedRepetitions.getId(), SpacedRepetitions.class));
         assertFalse(isExists(finishedRep.getId(), Repetition.class));
 
     }
@@ -197,22 +168,6 @@ public class GracefulDeleteServiceTest extends SpringTestConfig {
         assertFalse(isExists(task.getId(), Task.class));
         assertFalse(isExists(topic.getId(), Topic.class));
         assertFalse(isExists(taskTesting.getId(), TaskTesting.class));
-
-    }
-
-    @Test
-    public void removeRepetitionsLeftForTaskTest(){
-        initEntities(true, true, true);
-
-        gracefulDeleteService.removeRepetitionsLeftForTask(task.getId());
-
-        entityManager.unwrap(Session.class).flush();
-        entityManager.unwrap(Session.class).clear();
-
-        List<Repetition> repetitions = repDAO.getRepsbySpacedRepId(spacedRepDAO.getSRforTask(task.getId()).getId());
-        assertEquals(2, repetitions.size());
-        assertEquals(finishedRep.getId(), repetitions.get(0).getId());
-        assertEquals(finishedRep2.getId(), repetitions.get(1).getId());
 
     }
 
