@@ -50,12 +50,24 @@ const getContent = function(comp){
             <div>
               {mappersTableUI(comp.state.day.taskMappers)}
             </div>
+
             <div style = {{borderBottom: '1px solid grey', padding: '3px'}}  />
             <div>
               Repetitions
             </div>
             <div>
               {repetitionsTableUI(comp.state.day.repetitions)}
+            </div>
+
+            <div style = {{borderBottom: '1px solid grey', padding: '3px'}}  />
+            <div>
+              External Tasks
+            </div>
+            <div>
+              <Button bsStyle="default" bsSize='xsmall' onClick={() => fireEvent('external-task-modal', 'open', [{dayid: comp.state.day.id}])}>Add +</Button>
+            </div>
+            <div>
+              {externalTasksTableUI(comp.state.day.externalTasks)}
             </div>
           </div>
 }
@@ -117,6 +129,31 @@ const repetitionsTableUI = function(repetitions){
               <td>Plan date</td>
               <td>Fact date</td>
               <td></td>
+            </tr>
+            {result}
+          </tbody>
+          </Table>
+}
+
+//--------------------------------------ExternalTasks--------------------------------
+
+const externalTasksTableUI = function(extTasks){
+  const result = []
+  extTasks.forEach(extTask => {
+    const style = {} // task.repetition != null && task.repetition.id == rep.id? {fontWeight:'bold'}:{}
+    result.push( <tr id={extTask.id} style={style}>
+                    <td>
+                      <a href='#' onClick={()=>fireEvent("external-task-modal", 'open', [null, extTask, true, false, extTask.id])}>{extTask.description}</a>
+                    </td>
+                    <td>{extTask.hours}</td>
+                  </tr>)
+  })
+
+  return <Table striped bordered condensed hover >
+          <tbody>
+            <tr>
+              <td>Description</td>
+              <td>Hours</td>
             </tr>
             {result}
           </tbody>

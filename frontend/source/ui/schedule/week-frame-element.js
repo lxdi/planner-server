@@ -137,12 +137,12 @@ const getFillmentStyle = function(day){
 
 const getTotalMappersAndRepsUI = function(day){
 
-  if(day.mappersNum == 0 && day.repsNum == 0 && day.repsNumUnfinished == 0){
+  if(day.mappersNum == 0 && day.mappersNumUnfinished == 0 && day.repsNum == 0 && day.repsNumUnfinished == 0 && day.externalTasksNum == 0){
     return null
   }
 
   return <div>
-            {day.mappersNum}|{day.repsNum + day.repsNumUnfinished}
+            {day.mappersNum + day.mappersNumUnfinished}|{day.repsNum + day.repsNumUnfinished}|{day.externalTasksNum}
         </div>
 }
 

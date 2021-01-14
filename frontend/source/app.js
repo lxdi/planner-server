@@ -8,6 +8,7 @@ import {TaskFinishModal} from './ui/means/modal/task-finish-modal'
 import {ActualTasksModal} from './ui/means/actual-tasks-modal'
 import {DayModal} from './ui/schedule/day-modal'
 import {ShiftPlansModal} from './ui/schedule/shift-plans-modal'
+import {ExternalTaskModal} from './ui/schedule/external-task-modal'
 import {OverlayInfo} from './ui/overlay'
 
 import {createRealmRep} from './data/realms-dao'
@@ -38,6 +39,7 @@ function rerender(){
 				<ActualTasksModal/>
 				<DayModal/>
 				<ShiftPlansModal/>
+				<ExternalTaskModal/>
 				<OverlayInfo />
 				<table style={{width:'100%'}}>
 					<tr>
