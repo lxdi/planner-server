@@ -37,6 +37,9 @@ public class Day {
     private int repsNumUnfinished;
 
     @Transient
+    private int externalTasksNum;
+
+    @Transient
     private String urgency;
 
 
@@ -117,5 +120,13 @@ public class Day {
 
     public void setUrgency(String urgency) {
         this.urgency = urgency;
+    }
+
+    public int getExternalTasksNum() {
+        return externalTasksNum;
+    }
+
+    public void setExternalTasksNum(int externalTasksNum) {
+        this.externalTasksNum = externalTasksNum;
     }
 }

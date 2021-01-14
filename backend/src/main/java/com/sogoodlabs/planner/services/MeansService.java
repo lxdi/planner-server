@@ -3,6 +3,7 @@ package com.sogoodlabs.planner.services;
 import com.sogoodlabs.planner.model.IEntity;
 import com.sogoodlabs.planner.model.dao.*;
 import com.sogoodlabs.planner.model.entities.*;
+import com.sogoodlabs.planner.util.IdUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,8 +13,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class MeansService {
-
-    private static final String UUID_PATTERN = "[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}";
 
     @Autowired
     private IMeansDAO meansDAO;
@@ -43,7 +42,7 @@ public class MeansService {
 
     private Mean modifyMean(Mean mean){
 
-        if(!isUUID(mean.getId())) {
+        if(!IdUtils.isUUID(mean.getId())) {
             mean.setId(UUID.randomUUID().toString());
 
             Mean lastMean = mean.getParent()==null? meansDAO.getLastOfChildrenRoot(mean.getRealm()):
@@ -69,7 +68,7 @@ public class MeansService {
     }
 
     private Layer modifyLayer(Layer layer, Mean mean){
-        if(!isUUID(layer.getId())){
+        if(!IdUtils.isUUID(layer.getId())){
             layer.setId(UUID.randomUUID().toString());
         }
 
@@ -89,7 +88,7 @@ public class MeansService {
     }
 
     private Task modifyTask(Task task, Layer layer){
-        if(!isUUID(task.getId())){
+        if(!IdUtils.isUUID(task.getId())){
             task.setId(UUID.randomUUID().toString());
         }
 
@@ -108,7 +107,7 @@ public class MeansService {
     }
 
     private Topic modifyTopic(Topic topic, Task task){
-        if(!isUUID(topic.getId())){
+        if(!IdUtils.isUUID(topic.getId())){
             topic.setId(UUID.randomUUID().toString());
         }
 
@@ -118,17 +117,13 @@ public class MeansService {
     }
 
     private TaskTesting modifyTesting(TaskTesting testing, Task task){
-        if(!isUUID(testing.getId())){
+        if(!IdUtils.isUUID(testing.getId())){
             testing.setId(UUID.randomUUID().toString());
         }
 
         testing.setTask(task);
         taskTestingDAO.save(testing);
         return testing;
-    }
-
-    private boolean isUUID(String id){
-        return id!=null && id.matches(UUID_PATTERN);
     }
 
 }

@@ -2,6 +2,7 @@ package com.sogoodlabs.planner.controllers.dto;
 
 import com.sogoodlabs.common_mapper.annotations.IncludeInDto;
 import com.sogoodlabs.planner.model.entities.Day;
+import com.sogoodlabs.planner.model.entities.ExternalTask;
 import com.sogoodlabs.planner.model.entities.Repetition;
 import com.sogoodlabs.planner.model.entities.TaskMapper;
 
@@ -12,6 +13,7 @@ public class ScheduledDayDto {
     private Day day;
     private List<TaskMapper> taskMappers;
     private List<Repetition> repetitions;
+    private List<ExternalTask> externalTasks;
 
     @IncludeInDto
     public List<TaskMapper> getTaskMappers() {
@@ -25,7 +27,6 @@ public class ScheduledDayDto {
     public List<Repetition> getRepetitions() {
         return repetitions;
     }
-
     public void setRepetitions(List<Repetition> repetitions) {
         this.repetitions = repetitions;
     }
@@ -34,8 +35,15 @@ public class ScheduledDayDto {
     public Day getDay() {
         return day;
     }
-
     public void setDay(Day day) {
         this.day = day;
+    }
+
+    @IncludeInDto
+    public List<ExternalTask> getExternalTasks() {
+        return externalTasks;
+    }
+    public void setExternalTasks(List<ExternalTask> externalTasks) {
+        this.externalTasks = externalTasks;
     }
 }

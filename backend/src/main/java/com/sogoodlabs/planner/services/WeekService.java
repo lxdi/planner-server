@@ -2,10 +2,7 @@ package com.sogoodlabs.planner.services;
 
 import com.sogoodlabs.planner.controllers.dto.MovingPlansDto;
 import com.sogoodlabs.planner.controllers.dto.ScheduledDayDto;
-import com.sogoodlabs.planner.model.dao.IDayDao;
-import com.sogoodlabs.planner.model.dao.IRepDAO;
-import com.sogoodlabs.planner.model.dao.ITaskMappersDAO;
-import com.sogoodlabs.planner.model.dao.IWeekDAO;
+import com.sogoodlabs.planner.model.dao.*;
 import com.sogoodlabs.planner.model.entities.Day;
 import com.sogoodlabs.planner.model.entities.Repetition;
 import com.sogoodlabs.planner.model.entities.TaskMapper;
@@ -49,6 +46,9 @@ public class WeekService {
     @Autowired
     private ActualActivityService actualActivityService;
 
+    @Autowired
+    private IExternalTaskDao externalTaskDao;
+
     public Week fill(Week weekProxy){
         Week week = initializeAndUnproxy(weekProxy);
         week.setDays(new ArrayList<>());
@@ -68,6 +68,8 @@ public class WeekService {
         day.setRepsNumUnfinished(repDAO.findTotalByPlanDayUnfinished(day));
 
         day.setUrgency(actualActivityService.getUrgencyForDay(day));
+
+        day.setExternalTasksNum(externalTaskDao.findTotalByPlanDayUnfinished(day));
 
     }
 
@@ -158,6 +160,7 @@ public class WeekService {
         ScheduledDayDto dto = new ScheduledDayDto();
         dto.setTaskMappers(taskMappersDAO.findByPlanDayOrFinishDay(day, day));
         dto.setRepetitions(repDAO.findByPlanDayOrFactDay(day));
+        dto.setExternalTasks(externalTaskDao.findByDay(day));
         return dto;
     }
 
