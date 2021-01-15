@@ -26,7 +26,7 @@ export class DayModal extends React.Component{
   }
 
   render(){
-    return <CommonModal
+    return <CommonModal styleClass={'day-modal-style'}
                     isOpen = {this.state.isOpen}
                     cancelHandler = {()=>fireEvent('day-modal', 'close')}
                     title='Day'>

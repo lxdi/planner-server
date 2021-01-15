@@ -11,6 +11,11 @@
   margin: 5px;
 } */
 
+.textfields-table-style {
+    width: 100%;
+    white-space: nowrap;
+}
+
 .switch-button-div {
   display: inline-block;
   padding: 5px;
@@ -58,8 +63,8 @@
   width:70%
 }
 
-.big-map-style {
-  width:90%
+.day-modal-style {
+  width:70%
 }
 
 .hquarter-modal-style {

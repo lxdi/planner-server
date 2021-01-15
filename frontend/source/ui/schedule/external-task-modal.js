@@ -7,6 +7,8 @@ import {CommonModal} from './../common-modal'
 import {CommonCrudeTemplate} from './../common-crud-template'
 import {CreateRealm} from './../../data/creators'
 import {DataConstants} from '../../data/data-constants'
+import {StatefulTextField} from '../common/stateful-text-field'
+import {TextFields} from '../common/text-fields'
 
 const newObjId = "new"
 const hoursDefault = 1
@@ -36,19 +38,7 @@ export class ExternalTaskModal extends React.Component {
 
     if(this.state.isOpen){
       content = <CommonCrudeTemplate editing = {this.state.mode} changeEditHandler = {this.forceUpdate.bind(this)} deleteHandler={()=>console.log('TODO deleting externalTask')}>
-                <form>
-                  <FormGroup controlId="formBasicText">
-                    <ControlLabel>Description</ControlLabel>
-
-                    {this.state.mode.isEdit? <FormControl
-                      type="text"
-                      value={this.state.externalTask.description}
-                      placeholder="Enter title"
-                      onChange={(e) => handleNameVal(e, this)}/>
-                    : <FormControl.Static>{this.state.externalTask.description}</FormControl.Static>}
-
-                  </FormGroup>
-                </form>
+                  <TextFields content={[descriptionField(this.state.externalTask, this.state.mode.isEdit)]}/>
               </CommonCrudeTemplate>
     }
 
@@ -71,7 +61,10 @@ const okHandler = function(externalTask){
   }
 }
 
-const handleNameVal = function(e, comp){
-  comp.state.externalTask.description = e.target.value;
-  comp.setState({})
+const descriptionField = function(extTask, isEdit){
+  return {
+    key: 'extTaskDesc',
+    label: <ControlLabel>Description:</ControlLabel>,
+    field: <StatefulTextField obj={extTask} valName={'description'} isEdit={isEdit}/>
+  }
 }
