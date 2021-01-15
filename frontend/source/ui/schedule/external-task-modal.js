@@ -1,13 +1,15 @@
 import {targetModalHeaderTitle, deleteButton, editButton, viewButtonTitle} from './../../titles'
 import React from 'react';
 import ReactDOM from 'react-dom';
+import {Button, ButtonToolbar,  DropdownButton, MenuItem,  FormGroup, ControlLabel, FormControl, Alert} from 'react-bootstrap'
+import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
 import {CommonModal} from './../common-modal'
 import {CommonCrudeTemplate} from './../common-crud-template'
-import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
 import {CreateRealm} from './../../data/creators'
-import {Button, ButtonToolbar,  DropdownButton, MenuItem,  FormGroup, ControlLabel, FormControl, Alert} from 'react-bootstrap'
+import {DataConstants} from '../../data/data-constants'
 
 const newObjId = "new"
+const hoursDefault = 1
 
 const createState = function(isOpen, isStatic, isEdit, externalTask){
   return {
@@ -25,6 +27,8 @@ export class ExternalTaskModal extends React.Component {
     registerEvent('external-task-modal', 'open', (stateSetter, externalTask) => this.setState(createState(true, true, true, externalTask)))
     registerEvent('external-task-modal', 'close', (stateSetter, externalTask) => this.setState(createState(false, true, false, null)))
 
+    registerReaction('external-task-modal', DataConstants.externalTasksRep, ['created', 'updated'], ()=>this.setState(createState(false, true, false, null)))
+
   }
 
   render(){
@@ -40,7 +44,7 @@ export class ExternalTaskModal extends React.Component {
                       type="text"
                       value={this.state.externalTask.description}
                       placeholder="Enter title"
-                      onChange={(e) => handleNameVal(e)}/>
+                      onChange={(e) => handleNameVal(e, this)}/>
                     : <FormControl.Static>{this.state.externalTask.description}</FormControl.Static>}
 
                   </FormGroup>
@@ -48,17 +52,26 @@ export class ExternalTaskModal extends React.Component {
               </CommonCrudeTemplate>
     }
 
-    return <CommonModal isOpen = {this.state.isOpen} okHandler = {()=>okHanlder()} cancelHandler={()=>fireEvent('external-task-modal', 'close')} title={"External task"} >
+    return <CommonModal isOpen = {this.state.isOpen} okHandler = {()=>okHandler(this.state.externalTask)} cancelHandler={()=>fireEvent('external-task-modal', 'close')} title={"External task"} >
           {content}
       </CommonModal>
   }
 }
 
-const okHandler = function(){
-  console.log("TODO okHandler for externalTask modal")
+const okHandler = function(externalTask){
+
+  if(externalTask.hours==null){
+    externalTask.hours = hoursDefault
+  }
+
+  if(externalTask.id==null){
+    fireEvent(DataConstants.externalTasksRep, 'create', [externalTask])
+  } else {
+    fireEvent(DataConstants.externalTasksRep, 'update', [externalTask])
+  }
 }
 
-const handleNameVal = function(e){
-  this.state.currentRealm.title = e.target.value;
-  this.setState({})
+const handleNameVal = function(e, comp){
+  comp.state.externalTask.description = e.target.value;
+  comp.setState({})
 }

@@ -8,6 +8,7 @@ const repName = 'day'
 const getOneDayEvent = 'get-one'
 const gotOneDayEvent = 'got-one'
 const getCurrentUrlOffest = '/week/get/day'
+const cleanAll = 'clean-all'
 
 registerEvent(DataConstants.dayRep, getOneDayEvent, (stSetter, day)=>{
   sendGet(getCurrentUrlOffest + '/' + day.id, (data)=>{
@@ -25,3 +26,7 @@ registerEvent(DataConstants.dayRep, getOneDayEvent, (stSetter, day)=>{
   })
 })
 registerEvent(DataConstants.dayRep, gotOneDayEvent, (stSetter, day)=>day)
+
+registerEvent(DataConstants.dayRep, cleanAll, (stSetter)=>{
+  stSetter(DataConstants.objMap, null)
+})

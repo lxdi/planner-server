@@ -8,6 +8,7 @@ export const DataConstants = {
   dayRep: 'day-rep',
   progressRep: 'progress-rep',
   tasktestingRep:'tasktesting-rep',
+  externalTasksRep: 'external-tasks-rep',
   indexByMean: 'index-by-mean',
   byMeanRequest: 'by-mean-request',
   objMap: 'objects',

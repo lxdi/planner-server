@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequestMapping(path = "/external/task")
@@ -38,6 +39,7 @@ public class ExternalTasksController {
             throw new RuntimeException("ExternalTask with id: " + externalTask.getId() + " is already exist");
         }
 
+        externalTask.setId(UUID.randomUUID().toString());
         externalTaskDao.save(externalTask);
     }
 

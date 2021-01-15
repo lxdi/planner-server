@@ -18,6 +18,11 @@ export class DayModal extends React.Component{
     registerEvent('day-modal', 'close', (stateSetter)=>this.setState(defaultState))
 
     registerReaction('day-modal', DataConstants.dayRep, ['got-one'], ()=>this.setState({}))
+
+    registerReaction('day-modal', DataConstants.externalTasksRep, ['created', 'updated'], ()=>{
+      fireEvent(DataConstants.dayRep, 'clean-all')
+      this.setState({})
+    })
   }
 
   render(){
@@ -143,7 +148,7 @@ const externalTasksTableUI = function(extTasks){
     const style = {} // task.repetition != null && task.repetition.id == rep.id? {fontWeight:'bold'}:{}
     result.push( <tr id={extTask.id} style={style}>
                     <td>
-                      <a href='#' onClick={()=>fireEvent("external-task-modal", 'open', [null, extTask, true, false, extTask.id])}>{extTask.description}</a>
+                      <a href='#' onClick={()=>fireEvent("external-task-modal", 'open', [extTask])}>{extTask.description}</a>
                     </td>
                     <td>{extTask.hours}</td>
                   </tr>)
