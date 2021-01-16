@@ -23,6 +23,11 @@ export class DayModal extends React.Component{
       fireEvent(DataConstants.dayRep, 'clean-all')
       this.setState({})
     })
+
+    registerReaction('day-modal', DataConstants.progressRep, ['got-by-task'], ()=>{
+      fireEvent(DataConstants.dayRep, 'clean-all')
+      this.setState({})
+    })
   }
 
   render(){

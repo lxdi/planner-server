@@ -21,6 +21,8 @@ const movePlansEvent = 'move-plans'
 const movedPlansEvent = 'moved-plans'
 const movingPlansUrlOffest = '/move/plans'
 
+const cleanAll = 'clean-all'
+
 registerEvent(DataConstants.weekRep, getCurrentEvent, (stSetter)=>{
   sendGet('/' + repName + getCurrentUrlOffest, (data)=>{
       const list = typeof data == 'string'? JSON.parse(data): data
@@ -58,9 +60,15 @@ registerEvent(DataConstants.weekRep, gotNextEvent, (stSetter, week)=>week)
 
 registerEvent(DataConstants.weekRep, movePlansEvent, (stSetter, movingDto)=>{
   sendPost('/' + repName + movingPlansUrlOffest, movingDto, ()=>{
-      stSetter(DataConstants.objMap, null)
-      stSetter(DataConstants.objList, null)
+      cleanRep(stSetter)
       fireEvent(DataConstants.weekRep, movedPlansEvent)
   })
 })
 registerEvent(DataConstants.weekRep, movedPlansEvent, (stSetter)=>{})
+
+registerEvent(DataConstants.weekRep, cleanAll, (stSetter)=>cleanRep(stSetter))
+
+const cleanRep = function(stSetter){
+  stSetter(DataConstants.objMap, null)
+  stSetter(DataConstants.objList, null)
+}

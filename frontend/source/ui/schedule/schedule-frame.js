@@ -20,6 +20,10 @@ export class ScheduleFrame extends React.Component{
       this.setState({weeks: chkSt(DataConstants.weekRep, DataConstants.objList)})
     })
 
+    registerReaction('shedule-frame', DataConstants.progressRep, ['got-by-task'], ()=>{
+      fireEvent(DataConstants.weekRep, 'clean-all')
+      this.setState({weeks: null})
+    })
   }
 
   render(){
