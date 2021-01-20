@@ -37,6 +37,9 @@ public interface IRepDAO extends JpaRepository<Repetition, String> {
     @Query("select count(*) from Repetition where planDay = :day and factDay is null and repetitionPlan.dayStep is false")
     int findTotalByPlanDayUnfinished(@Param("day") Day day);
 
+    @Query("select count(*) from Repetition where factDay.date >= :date")
+    int findTotalFinishedAfter(@Param("date") Date date);
+
 //    @Query("from Repetition where spacedRepetitions.id = :srId")
 //    List<Repetition> getRepsbySpacedRepId(@Param("srId") long srId);
 //

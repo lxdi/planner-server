@@ -29,10 +29,13 @@ public class ActualActivityService {
     private static final int URGENCY_2_WEEKS_LATE_IN_DAYS = 17;
 
     @Autowired
-    public IRepDAO repDAO;
+    private IRepDAO repDAO;
 
     @Autowired
-    public IDayDao dayDao;
+    private IDayDao dayDao;
+
+    @Autowired
+    private StatService statService;
 
 
     public ActualActivityDto getActualActivity(){
@@ -56,6 +59,11 @@ public class ActualActivityService {
         actualActivityDto.setTwoWeeksLate(reps.getOrDefault(URGENCY_2_WEEKS_LATE, new ArrayList<>()));
 
         actualActivityDto.setMemoReps(repDAO.findByPlanDaysUnfinishedMemo(days));
+
+        actualActivityDto.setWeekProgress(statService.getWeekProgress());
+        actualActivityDto.setMonthProgress(statService.getMonthProgress());
+        actualActivityDto.setHalfYearProgress(statService.getHalfYearProgress());
+        actualActivityDto.setYearProgress(statService.getYearProgress());
 
         return actualActivityDto;
     }

@@ -5,6 +5,7 @@ import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
 
 import {DataConstants} from '../data/data-constants'
 import {filterOutMemoTask} from '../utils/task-utils'
+import {getColorForProgressStat} from './statService'
 
 const taskRep = 'task-rep'
 
@@ -33,6 +34,11 @@ const content = function(reactcomp){
   return <div>
               <a href="#" style={{textDecoration:'none'}}>
                 <div onClick={()=>fireEvent('actual-tasks-modal', 'open')} class="actual-tasks-indicators-group">
+                  {getSquare(actuals.weekProgress, getColorForProgressStat(actuals.weekProgress, 'week'))}
+                  {getSquare(actuals.monthProgress, getColorForProgressStat(actuals.monthProgress, 'month'))}
+                  {getSquare(actuals.halfYearProgress, getColorForProgressStat(actuals.halfYearProgress, 'halfYear'))}
+                  {getSquare(actuals.yearProgress, getColorForProgressStat(actuals.yearProgress, 'year'))}
+                  {divisor()}
                   {getSquare(actuals.twoWeeksLate.length, 'red')}
                   {getSquare(actuals.oneWeekLate.length, 'orange')}
                   {getSquare(actuals.aboutWeekReps.length, 'green')}

@@ -33,7 +33,7 @@ registerEvent(DataConstants.progressRep, getByTaskEvent, (stSetter, task)=>{
 registerEvent(DataConstants.progressRep, gotByTaskEvent, (stSetter, progress)=>progress)
 
 registerEvent(DataConstants.progressRep, finishTaskEvent, (stSetter, task)=>{
-  sendPost('/' + repName + finishTaskEvent + '/' + task.id, null, (data)=>{
+  sendPost('/' + repName + finishTaskUrlOffest + '/' + task.id, null, (data)=>{
       const progress = typeof data == 'string'? JSON.parse(data): data
       updateProgress(progress, task, stSetter)
       fireEvent(DataConstants.progressRep, gotByTaskEvent, [progress])

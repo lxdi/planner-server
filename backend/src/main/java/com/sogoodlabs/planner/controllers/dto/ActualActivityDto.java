@@ -7,11 +7,48 @@ import java.util.List;
 
 public class ActualActivityDto {
 
+    private int weekProgress;
+    private int monthProgress;
+    private int halfYearProgress;
+    private int yearProgress;
+
     private List<Repetition> upcomingReps;
     private List<Repetition> aboutWeekReps;
     private List<Repetition> oneWeekLate;
     private List<Repetition> twoWeeksLate;
     private List<Repetition> memoReps;
+
+    public int getWeekProgress() {
+        return weekProgress;
+    }
+
+    public void setWeekProgress(int weekProgress) {
+        this.weekProgress = weekProgress;
+    }
+
+    public int getMonthProgress() {
+        return monthProgress;
+    }
+
+    public void setMonthProgress(int monthProgress) {
+        this.monthProgress = monthProgress;
+    }
+
+    public int getHalfYearProgress() {
+        return halfYearProgress;
+    }
+
+    public void setHalfYearProgress(int halfYearProgress) {
+        this.halfYearProgress = halfYearProgress;
+    }
+
+    public int getYearProgress() {
+        return yearProgress;
+    }
+
+    public void setYearProgress(int yearProgress) {
+        this.yearProgress = yearProgress;
+    }
 
     @IncludeInDto
     public List<Repetition> getUpcomingReps() {

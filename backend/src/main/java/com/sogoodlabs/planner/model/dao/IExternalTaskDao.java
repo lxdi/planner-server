@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.sql.Date;
 import java.util.List;
 
 public interface IExternalTaskDao extends JpaRepository<ExternalTask, String> {
@@ -14,5 +15,8 @@ public interface IExternalTaskDao extends JpaRepository<ExternalTask, String> {
 
     @Query("select count(*) from ExternalTask where day = :day")
     int findTotalByPlanDayUnfinished(@Param("day") Day day);
+
+    @Query("select sum(hours) from ExternalTask where day.date >= :date")
+    int findHoursFinishedAfter(@Param("date") Date date);
 
 }

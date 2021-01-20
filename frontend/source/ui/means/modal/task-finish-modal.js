@@ -33,7 +33,7 @@ export class TaskFinishModal extends React.Component {
 }
 
 const okHandler = function(comp){
-  if(comp.state.plans == null){
+  if(comp.state.chosenPlan == null){
     fireEvent(DataConstants.progressRep, 'finish-task', [comp.state.task])
   } else {
     fireEvent(DataConstants.progressRep, 'finish-task-sp', [comp.state.task, comp.state.chosenPlan])
