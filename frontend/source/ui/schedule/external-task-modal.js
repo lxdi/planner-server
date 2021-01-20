@@ -38,7 +38,9 @@ export class ExternalTaskModal extends React.Component {
 
     if(this.state.isOpen){
       content = <CommonCrudeTemplate editing = {this.state.mode} changeEditHandler = {this.forceUpdate.bind(this)} deleteHandler={()=>console.log('TODO deleting externalTask')}>
-                  <TextFields content={[descriptionField(this.state.externalTask, this.state.mode.isEdit)]}/>
+                  <TextFields content={[
+                      descriptionField(this.state.externalTask, this.state.mode.isEdit),
+                      hoursField(this.state.externalTask, this.state.mode.isEdit)]}/>
               </CommonCrudeTemplate>
     }
 
@@ -66,5 +68,13 @@ const descriptionField = function(extTask, isEdit){
     key: 'extTaskDesc',
     label: <ControlLabel>Description:</ControlLabel>,
     field: <StatefulTextField obj={extTask} valName={'description'} isEdit={isEdit}/>
+  }
+}
+
+const hoursField = function(extTask, isEdit){
+  return {
+    key: 'hours',
+    label: <ControlLabel>Hours:</ControlLabel>,
+    field: <StatefulTextField obj={extTask} valName={'hours'} isEdit={isEdit}/>
   }
 }
