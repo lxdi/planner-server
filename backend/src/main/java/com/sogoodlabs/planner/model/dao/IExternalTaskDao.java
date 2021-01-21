@@ -17,6 +17,6 @@ public interface IExternalTaskDao extends JpaRepository<ExternalTask, String> {
     int findTotalByPlanDayUnfinished(@Param("day") Day day);
 
     @Query("select sum(hours) from ExternalTask where day.date >= :date")
-    int findHoursFinishedAfter(@Param("date") Date date);
+    Integer findHoursFinishedAfter(@Param("date") Date date);
 
 }

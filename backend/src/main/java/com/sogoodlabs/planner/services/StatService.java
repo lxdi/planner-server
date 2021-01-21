@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
+import java.util.Optional;
 
 @Service
 public class StatService {
@@ -45,7 +46,7 @@ public class StatService {
     private int getProgress(Date sinceDate){
         int result = repDAO.findTotalFinishedAfter(sinceDate);
         result = result + taskMappersDAO.findTotalFinishedAfter(sinceDate)*2;
-        result = result + externalTaskDao.findHoursFinishedAfter(sinceDate);
+        result = result + Optional.ofNullable(externalTaskDao.findHoursFinishedAfter(sinceDate)).orElse(0);
         return result;
     }
 
