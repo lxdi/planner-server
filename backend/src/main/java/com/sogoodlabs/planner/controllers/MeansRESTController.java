@@ -6,6 +6,7 @@ import com.sogoodlabs.planner.model.entities.Mean;
 import com.sogoodlabs.planner.services.GracefulDeleteService;
 import com.sogoodlabs.planner.services.MeanFillerService;
 import com.sogoodlabs.planner.services.MeansService;
+import com.sogoodlabs.planner.services.RepositionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,6 +36,9 @@ public class MeansRESTController {
 
     @Autowired
     private MeanFillerService meanFillerService;
+
+    @Autowired
+    private RepositionService repositionService;
 
     @GetMapping("/get/all")
     public List<Map<String, Object>> getAllTargets(){
@@ -73,6 +77,13 @@ public class MeansRESTController {
         return meanDtoList.stream()
                 .map(mean -> commonMapper.mapToDto(meansService.updateMean(commonMapper.mapToEntity(mean, new Mean()))))
                 .collect(Collectors.toList());
+    }
+
+    @PostMapping("/reposition/list")
+    public void reposition(@RequestBody List<Map<String, Object>> meanDtoList){
+        repositionService.repositionMeans(meanDtoList.stream()
+                .map(mean -> commonMapper.mapToEntity(mean, new Mean()))
+                .collect(Collectors.toList()));
     }
 
 }

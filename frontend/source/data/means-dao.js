@@ -12,6 +12,8 @@ const indexByRealmid = 'index-by-realmid'
 const objMapName = 'objects'
 const realmIdFieldName = 'realmid'
 
+const repositionUrl = '/mean/reposition/list'
+
 export const createMeanRep = function(){
   createRep(name, callback)
 }
@@ -42,3 +44,10 @@ const addNextIdToLast = function(parentId, idOfNext, realmid){
     }
   }
 }
+
+registerEvent(repName, 'reposition', (stSetter, meansArr) => {
+  sendPost(repositionUrl, meansArr, () => {
+    fireEvent(repName, 'repositioned')
+  })
+})
+registerEvent(repName, 'repositioned', ()=>{})

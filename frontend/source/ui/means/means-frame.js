@@ -29,7 +29,7 @@ export class MeansFrame extends React.Component{
 
     registerReaction('means-frame', meanRepName,
             ['all-response', 'created', 'deleted', 'updated',
-              'replace-mean', 'means-list-modified',
+              'replace-mean', 'repositioned',
             'draggable-add-as-child', 'hide-children-changed'], ()=>this.setState({}))
   }
 
@@ -69,7 +69,7 @@ const meansUIlist = function(component){
         return <TreeComponent isEdit={component.state.isEdit}
                   nodes={chkSt(meanRepName, indexByRealmid)[curRealm.id]}
                   viewCallback = {(mean)=>meanUI(component, mean)}
-                  onDropCallback = {(alteredList)=>{fireEvent(meanRepName, 'modify-list', [alteredList]); fireEvent(meanRepName, 'remove-draggable')}}
+                  onDropCallback = {(alteredList)=>{fireEvent(meanRepName, 'reposition', [alteredList]); fireEvent(meanRepName, 'remove-draggable')}}
                   onDragStartCallback = {(mean)=>fireEvent(meanRepName, 'add-draggable', [mean])}
                   rootStyle={{border:'1px solid lightgrey', borderRadius:'5px', marginBottom:'5px', padding:'3px'}}
                   shiftpx={15}
