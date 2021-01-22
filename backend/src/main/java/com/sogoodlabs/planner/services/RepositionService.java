@@ -27,6 +27,7 @@ public class RepositionService {
             meanFull.setParent(meanLight.getParent());
             meanFull.setNext(meanLight.getNext());
             meansDAO.save(meanFull);
+
             log.info("Mean {} was repositioned: parent id: {}, next id {}", meanFull.getId(),
                     meanFull.getParent()!=null? meanFull.getParent().getId(): "<null>",
                     meanFull.getNext()!=null? meanFull.getNext().getId(): "<null>");

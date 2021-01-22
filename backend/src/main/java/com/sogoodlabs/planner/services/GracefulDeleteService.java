@@ -2,6 +2,8 @@ package com.sogoodlabs.planner.services;
 
 import com.sogoodlabs.planner.model.dao.*;
 import com.sogoodlabs.planner.model.entities.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +17,8 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 public class GracefulDeleteService {
+
+    Logger log = LoggerFactory.getLogger(GracefulDeleteService.class);
 
     @Autowired
     private ITargetsDAO targetsDAO;
@@ -46,6 +50,9 @@ public class GracefulDeleteService {
     }
 
     public void deleteTarget(Target targetToDelete) {
+
+        log.info("deleting target {}", targetToDelete.getId());
+
         unassignMeans(targetToDelete);
         handlePrevForDeleting(targetToDelete);
 
@@ -57,6 +64,7 @@ public class GracefulDeleteService {
 
     private void unassignMeans(Target target) {
         meansDAO.meansAssignedToTarget(target).forEach(mean -> {
+            log.info("unassign mean {} from target {}", mean.getId(), target.getId());
             mean.getTargets().removeIf(curTarget -> curTarget.getId().equals(target.getId()));
             meansDAO.save(mean);
         });

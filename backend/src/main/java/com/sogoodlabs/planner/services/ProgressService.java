@@ -7,6 +7,8 @@ import com.sogoodlabs.planner.model.dao.IRepPlanDAO;
 import com.sogoodlabs.planner.model.dao.ITaskMappersDAO;
 import com.sogoodlabs.planner.model.entities.*;
 import com.sogoodlabs.planner.util.DateUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +20,8 @@ import java.util.UUID;
 
 @Service
 public class ProgressService {
+
+    Logger log = LoggerFactory.getLogger(ProgressService.class);
 
     @Autowired
     private ITaskMappersDAO taskMappersDAO;
@@ -47,6 +51,8 @@ public class ProgressService {
 
     public void finishTask(Task task, RepetitionPlan plan, Date finishDate){
 
+        log.info("Finishing task {}", task.getId());
+
         TaskMapper taskMapper = new TaskMapper();
         taskMapper.setId(UUID.randomUUID().toString());
         taskMapper.setTask(task);
@@ -64,12 +70,14 @@ public class ProgressService {
                 Date planDate = plan.getDayStep() ? DateUtils.addDays(finishDate, step) : DateUtils.addWeeks(finishDate, step);
                 Day planDay = dayDao.findByDate(planDate);
                 if(planDay==null){
+                    //TODO generate days and try again
                     throw new RuntimeException("Day not found " + DateUtils.fromDate(planDate));
                 }
 
-                repetition.setPlanDay(planDay); // TODO what if day hasn't been created yet?
+                repetition.setPlanDay(planDay);
                 repetitions.add(repetition);
             }
+            log.info("Setting repetitions for task {}, repetition plan {}", task.getId(), plan.getId());
             repDAO.saveAll(repetitions);
         }
     }
@@ -81,6 +89,7 @@ public class ProgressService {
 
         repetition.setFactDay(dayDao.findByDate(DateUtils.currentDate()));
         repDAO.save(repetition);
+        log.info("Repetition {} completed", repetition.getId());
     }
 
 }
