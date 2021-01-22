@@ -5,7 +5,7 @@ import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
 
 import {DataConstants} from '../data/data-constants'
 import {filterOutMemoTask} from '../utils/task-utils'
-import {getColorForProgressStat} from './statService'
+import {getColorForProgressStat, getPercents} from './statService'
 
 const taskRep = 'task-rep'
 
@@ -34,15 +34,15 @@ const content = function(reactcomp){
   return <div>
               <a href="#" style={{textDecoration:'none'}}>
                 <div onClick={()=>fireEvent('actual-tasks-modal', 'open')} class="actual-tasks-indicators-group">
-                  {getSquare(actuals.weekProgress, getColorForProgressStat(actuals.weekProgress, 'week'))}
-                  {getSquare(actuals.monthProgress, getColorForProgressStat(actuals.monthProgress, 'month'))}
-                  {getSquare(actuals.halfYearProgress, getColorForProgressStat(actuals.halfYearProgress, 'halfYear'))}
-                  {getSquare(actuals.yearProgress, getColorForProgressStat(actuals.yearProgress, 'year'))}
-                  {divisor()}
                   {getSquare(actuals.twoWeeksLate.length, 'red')}
                   {getSquare(actuals.oneWeekLate.length, 'orange')}
                   {getSquare(actuals.aboutWeekReps.length, 'green')}
                   {getSquare(actuals.upcomingReps.length, 'grey')}
+                  {divisor()}
+                  {getStatSquare(actuals.weekProgress, getPercents(actuals.weekProgress, 'week'), getColorForProgressStat(actuals.weekProgress, 'week'), 'Week')}
+                  {getStatSquare(actuals.monthProgress, getPercents(actuals.monthProgress, 'month'), getColorForProgressStat(actuals.monthProgress, 'month'), 'Month')}
+                  {getStatSquare(actuals.halfYearProgress, getPercents(actuals.halfYearProgress, 'halfYear'), getColorForProgressStat(actuals.halfYearProgress, 'halfYear'), 'Year/2')}
+                  {getStatSquare(actuals.yearProgress, getPercents(actuals.yearProgress, 'year'), getColorForProgressStat(actuals.yearProgress, 'year'), 'Year')}
                 </div>
               </a>
               {divisor()}
@@ -61,6 +61,14 @@ const getSquare = function(num, color){
 
 const divisor = function(){
   return <div style={{backgroundColor:'lightgrey', width:'100%', height:'1px', marginLeft:'2px', marginRight:'2px', marginTop:'5px', marginBottom:'5px'}}></div>
+}
+
+const getStatSquare = function(num, percents, color, span){
+  return <div style={{border:'1px solid '+color, margin:'2px', width:'45px', borderRadius:'8px', textAlign:'center', color:color, fontSize:'10pt'}}>
+                  <div>{span}</div>
+                  <div style = {{fontSize:'8pt'}}>{num}</div>
+                  <div style = {{fontSize:'8pt'}}>{percents}%</div>
+            </div>
 }
 
 const getSwitchButton = function(){

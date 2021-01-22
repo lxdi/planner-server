@@ -38,6 +38,26 @@ export const getColorForProgressStat = function(num, timeBound){
   }
 }
 
+export const getPercents = function(num, timeBound){
+  const max = getMax(timeBound)
+  return Math.round((num/max)*100)
+}
+
+const getMax = function(timeBound){
+  if(timeBound == 'week'){
+    return weekConstants.max
+  }
+  if(timeBound == 'month'){
+    return monthConstants.max
+  }
+  if(timeBound == 'halfYear'){
+    return halfYearConstants.max
+  }
+  if(timeBound == 'year'){
+    return yearConstants.max
+  }
+}
+
 const getColor = function(num, bounds){
   if(num < bounds.min){
     return 'red'
