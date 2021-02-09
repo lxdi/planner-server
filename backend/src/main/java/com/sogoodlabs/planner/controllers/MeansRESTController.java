@@ -63,7 +63,7 @@ public class MeansRESTController {
     @DeleteMapping("/delete/{targetId}")
     public void delete(@PathVariable("targetId") String id) {
         Mean mean = meansDAO.findById(id).orElseThrow(() -> new RuntimeException("Mean not found by " + id));
-        gracefulDeleteService.deleteMean(mean);
+        gracefulDeleteService.delete(mean);
     }
 
     @PostMapping("/update")

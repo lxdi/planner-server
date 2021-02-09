@@ -8,10 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -80,10 +77,10 @@ public class GracefulDeleteService {
     }
 
     public void deleteMean(String id) {
-        deleteMean(meansDAO.findById(id).orElseThrow(() -> new RuntimeException("Mean not found by " + id)));
+        delete(meansDAO.findById(id).orElseThrow(() -> new RuntimeException("Mean not found by " + id)));
     }
 
-    public void deleteMean(Mean mean){
+    public void delete(Mean mean){
         Mean prevMean = meansDAO.getPrevMean(mean);
         if(prevMean!=null){
             if(mean.getNext()!=null){
@@ -93,16 +90,16 @@ public class GracefulDeleteService {
             }
             meansDAO.save(prevMean);
         }
-        meansDAO.getChildren(mean).forEach(this::deleteMean);
-        layerDAO.findByMean(mean).forEach(this::deleteLayer);
+        meansDAO.getChildren(mean).forEach(this::delete);
+        layerDAO.findByMean(mean).forEach(this::delete);
         meansDAO.delete(mean);
     }
 
     public void deleteLayer(String id) {
-        deleteLayer(layerDAO.findById(id).orElseThrow(() -> new RuntimeException("No Layer found by " + id)));
+        delete(layerDAO.findById(id).orElseThrow(() -> new RuntimeException("No Layer found by " + id)));
     }
 
-    public void deleteLayer(Layer layer){
+    public void delete(Layer layer){
         tasksDAO.findByLayer(layer).forEach(this::deleteTask);
         layerDAO.delete(layer);
     }

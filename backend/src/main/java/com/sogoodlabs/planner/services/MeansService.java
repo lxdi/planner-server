@@ -1,6 +1,5 @@
 package com.sogoodlabs.planner.services;
 
-import com.sogoodlabs.planner.model.IEntity;
 import com.sogoodlabs.planner.model.dao.*;
 import com.sogoodlabs.planner.model.entities.*;
 import com.sogoodlabs.planner.util.IdUtils;
@@ -33,41 +32,49 @@ public class MeansService {
     private GracefulDeleteService gracefulDeleteService;
 
     public Mean createMean(Mean mean){
-        return modifyMean(mean);
+        return modify(mean);
     }
 
     public Mean updateMean(Mean mean){
-        return modifyMean(mean);
+        return modify(mean);
     }
 
-    private Mean modifyMean(Mean mean){
-
-        if(!IdUtils.isUUID(mean.getId())) {
-            mean.setId(UUID.randomUUID().toString());
-
-            Mean lastMean = mean.getParent()==null? meansDAO.getLastOfChildrenRoot(mean.getRealm()):
-                    meansDAO.getLastOfChildren(mean.getParent(), mean.getRealm());
-
-            meansDAO.save(mean);
-
-            if(lastMean!=null){
-                lastMean.setNext(mean);
-                meansDAO.save(lastMean);
-            }
-        } else {
-            meansDAO.save(mean);
-        }
+    public Mean modify(Mean mean){
+        save(mean);
 
         if(mean.getLayers()!=null && !mean.getLayers().isEmpty()){
-            for(Layer layer : mean.getLayers()){
-                modifyLayer(layer, mean);
-            }
+            Set<String> ids = mean.getLayers().stream()
+                    .peek(layer -> modify(layer, mean))
+                    .map(Layer::getId)
+                    .collect(Collectors.toSet());
+
+            layerDAO.findByMean(mean).stream()
+                    .filter(layer -> !ids.contains(layer.getId()))
+                    .forEach(gracefulDeleteService::delete);
         }
 
         return mean;
     }
 
-    private Layer modifyLayer(Layer layer, Mean mean){
+    private void save(Mean mean){
+        if(IdUtils.isUUID(mean.getId())) {
+            meansDAO.save(mean);
+            return;
+        }
+        mean.setId(UUID.randomUUID().toString());
+
+        Mean lastMean = mean.getParent() == null ? meansDAO.getLastOfChildrenRoot(mean.getRealm()) :
+                meansDAO.getLastOfChildren(mean.getParent(), mean.getRealm());
+
+        meansDAO.save(mean);
+
+        if (lastMean != null) {
+            lastMean.setNext(mean);
+            meansDAO.save(lastMean);
+        }
+    }
+
+    private Layer modify(Layer layer, Mean mean){
         if(!IdUtils.isUUID(layer.getId())){
             layer.setId(UUID.randomUUID().toString());
         }
@@ -77,7 +84,7 @@ public class MeansService {
 
         if(layer.getTasks()!=null && !layer.getTasks().isEmpty()){
             Set<String> ids = layer.getTasks().stream()
-                    .map(task -> modifyTask(task, layer))
+                    .map(task -> modify(task, layer))
                     .map(Task::getId)
                     .collect(Collectors.toSet());
 
@@ -87,7 +94,7 @@ public class MeansService {
         return layer;
     }
 
-    private Task modifyTask(Task task, Layer layer){
+    private Task modify(Task task, Layer layer){
         if(!IdUtils.isUUID(task.getId())){
             task.setId(UUID.randomUUID().toString());
         }
@@ -96,17 +103,33 @@ public class MeansService {
         tasksDAO.save(task);
 
         if(task.getTopics()!=null && !task.getTopics().isEmpty()){
-            task.getTopics().forEach(topic -> modifyTopic(topic, task));
+
+            Set<String> ids = task.getTopics().stream()
+                    .peek(topic -> modify(topic, task))
+                    .map(Topic::getId)
+                    .collect(Collectors.toSet());
+
+            topicDAO.findByTask(task).stream()
+                    .filter(topic -> !ids.contains(topic.getId()))
+                    .forEach(topicDAO::delete);
         }
 
         if(task.getTaskTestings()!=null && !task.getTaskTestings().isEmpty()){
-            task.getTaskTestings().forEach(testing -> modifyTesting(testing, task));
+
+            Set<String> ids = task.getTaskTestings().stream()
+                    .peek(taskTesting -> modify(taskTesting, task))
+                    .map(TaskTesting::getId)
+                    .collect(Collectors.toSet());
+
+            taskTestingDAO.findByTask(task).stream()
+                    .filter(topic -> !ids.contains(topic.getId()))
+                    .forEach(taskTestingDAO::delete);
         }
 
         return task;
     }
 
-    private Topic modifyTopic(Topic topic, Task task){
+    private Topic modify(Topic topic, Task task){
         if(!IdUtils.isUUID(topic.getId())){
             topic.setId(UUID.randomUUID().toString());
         }
@@ -116,7 +139,7 @@ public class MeansService {
         return topic;
     }
 
-    private TaskTesting modifyTesting(TaskTesting testing, Task task){
+    private TaskTesting modify(TaskTesting testing, Task task){
         if(!IdUtils.isUUID(testing.getId())){
             testing.setId(UUID.randomUUID().toString());
         }
