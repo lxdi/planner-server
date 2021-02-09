@@ -25,8 +25,8 @@ public class WeekService {
 
     Logger log = LoggerFactory.getLogger(WeekService.class);
 
-    private static final int CURRENT_UP_TO_PREV_WEEKS = 4;
-    private static final int CURRENT_UP_TO_NEXT_WEEKS = 30;
+    protected static final int CURRENT_UP_TO_PREV_WEEKS = 4;
+    protected static final int CURRENT_UP_TO_NEXT_WEEKS = 30;
 
     @Autowired
     private IDayDao dayDao;
@@ -73,17 +73,18 @@ public class WeekService {
 
     }
 
-
-
-
     public List<Week> getCurrent(){
-        int year = DateUtils.getYear(DateUtils.currentDate());
+        return getWeeksOnDate(DateUtils.currentDate());
+    }
 
-        Day today = dayDao.findByDate(DateUtils.currentDate());
+    public List<Week> getWeeksOnDate(Date date){
+        int year = DateUtils.getYear(date);
+
+        Day today = dayDao.findByDate(date);
 
         if(today==null){
             weeksGenerator.generateYear(year);
-            today = dayDao.findByDate(DateUtils.currentDate());
+            today = dayDao.findByDate(date);
         }
 
         Week currentWeek = today.getWeek();

@@ -31,34 +31,6 @@ abstract public class SpringTestConfig {
 
     @Before
     public void init(){
-//        SessionFactory sessionFactory = etf.unwrap(SessionFactory.class);
-//        Session session = sessionFactory.openSession();
-//        session.beginTransaction();
-//        session.createQuery("delete from Repetition").executeUpdate();
-//        session.createQuery("delete from SpacedRepetitions").executeUpdate();
-//        session.createQuery("delete from RepetitionPlan").executeUpdate();
-//        session.createQuery("delete from MapperExclusion").executeUpdate();
-//        session.createQuery("delete from TaskMapper").executeUpdate();
-//        session.createQuery("delete from SlotPosition").executeUpdate();
-//        session.createQuery("delete from Slot").executeUpdate();
-//        session.createQuery("delete from HQuarter").executeUpdate();
-//
-//        session.createQuery("delete from Topic").executeUpdate();
-//        session.createQuery("delete from TaskTesting").executeUpdate();
-//        session.createQuery("delete from Task").executeUpdate();
-//        session.createQuery("delete from Subject").executeUpdate();
-//        session.createQuery("delete from Layer").executeUpdate();
-//        session.createQuery("delete from Mean").executeUpdate();
-//        session.createQuery("delete from Target").executeUpdate();
-//        session.createQuery("delete from Realm").executeUpdate();
-//
-//        session.createQuery("delete from Week").executeUpdate();
-//
-//        session.createQuery("DBCC CHECKIDENT ('Target', RESEED, 0)").executeUpdate();
-//
-//        session.flush();
-//        session.getTransaction().commit();
-//        session.close();
     }
 
     protected boolean isExists(String id, Class clazz){
