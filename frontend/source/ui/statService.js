@@ -1,26 +1,26 @@
 
 const weekConstants = {
-  max: 18,
-  mid: 14,
-  min: 10
+  max: 21,
+  mid: 17,
+  min: 13
 }
 
 const monthConstants = {
-  max: 72,
-  mid: 56,
-  min: 40
+  max: weekConstants.max*4,
+  mid: weekConstants.mid*4,
+  min: weekConstants.min*4
 }
 
 const halfYearConstants = {
-  max: 450,
-  mid: 350,
-  min: 250
+  max: weekConstants.max*25,
+  mid: weekConstants.mid*25,
+  min: weekConstants.min*25
 }
 
 const yearConstants = {
-  max: 900,
-  mid: 700,
-  min: 500
+  max: weekConstants.max*50,
+  mid: weekConstants.mid*50,
+  min: weekConstants.min*50
 }
 
 export const getColorForProgressStat = function(num, timeBound){
