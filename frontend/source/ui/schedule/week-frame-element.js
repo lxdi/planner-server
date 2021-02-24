@@ -142,8 +142,15 @@ const getTotalMappersAndRepsUI = function(day){
   }
 
   return <div>
-            {day.mappersNum + day.mappersNumUnfinished}|{day.repsNum + day.repsNumUnfinished}|{day.externalTasksNum}
+            {zeroToDash(day.mappersNum + day.mappersNumUnfinished)}|{zeroToDash(day.repsNum + day.repsNumUnfinished)}|{zeroToDash(day.externalTasksNum)}
         </div>
+}
+
+const zeroToDash = function(num){
+  if(num==0){
+    return '-'
+  }
+  return num
 }
 
 const isCurrentWeek = function(week){
