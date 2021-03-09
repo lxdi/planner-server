@@ -1,0 +1,14 @@
+version: '3.4'
+services:
+  postgres:
+    image: postgres:9.4
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      PGDATA: /data/postgres
+    volumes:
+      - ${tempPath}/postgres:/data/postgres
+      - ./init-db-scripts/:/docker-entrypoint-initdb.d/
+
