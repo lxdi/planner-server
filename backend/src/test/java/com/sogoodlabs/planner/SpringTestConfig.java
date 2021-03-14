@@ -41,4 +41,10 @@ abstract public class SpringTestConfig {
         }
     }
 
+    protected void cleanContext(){
+        Session session = entityManager.unwrap(Session.class);
+        session.flush();
+        session.clear();
+    }
+
 }

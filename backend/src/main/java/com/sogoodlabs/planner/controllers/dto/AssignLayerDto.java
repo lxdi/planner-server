@@ -1,11 +1,12 @@
 package com.sogoodlabs.planner.controllers.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class AssignLayerDto {
 
     private String layerId;
-    private List<String> taskIds;
+    private List<String> taskIds = new ArrayList<>();
 
     public String getLayerId() {
         return layerId;

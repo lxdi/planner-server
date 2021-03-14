@@ -1,10 +1,11 @@
 package com.sogoodlabs.planner.controllers.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class AssignMeanDto {
 
-    private List<AssignLayerDto> layers;
+    private List<AssignLayerDto> layers = new ArrayList<>();
     private String startDayId;
     private int tasksPerWeek;
 
