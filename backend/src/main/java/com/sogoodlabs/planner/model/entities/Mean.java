@@ -1,6 +1,7 @@
 package com.sogoodlabs.planner.model.entities;
 
-import com.sogoodlabs.common_mapper.annotations.MapForLazy;
+import com.sogoodlabs.common_mapper.annotations.IncludeInDto;
+import com.sogoodlabs.common_mapper.annotations.MapToClass;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
@@ -16,8 +17,7 @@ import java.util.List;
 public class Mean {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    long id;
+    String id;
     String title;
     String criteria;
 
@@ -41,24 +41,16 @@ public class Mean {
     @ManyToOne(fetch = FetchType.LAZY)
     Realm realm;
 
-    @OneToMany(mappedBy = "mean", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
-    List<Layer> layers = new ArrayList();
-
     @Column(name = "hidechildren")
     boolean hideChildren = false;
 
-    public Mean(){}
+    @Transient
+    List<Layer> layers = new ArrayList();
 
-    public Mean(String title, Realm realm){
-        assert title!=null && !title.trim().equals("") && realm!=null;
-        this.realm = realm;
-        this.title = title;
-    }
-
-    public long getId() {
+    public String getId() {
         return id;
     }
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -111,9 +103,12 @@ public class Mean {
         this.targets = targets;
     }
 
+    @IncludeInDto
     public List<Layer> getLayers() {
         return layers;
     }
+
+    @MapToClass(value = Layer.class)
     public void setLayers(List<Layer> layers) {
         this.layers = layers;
     }

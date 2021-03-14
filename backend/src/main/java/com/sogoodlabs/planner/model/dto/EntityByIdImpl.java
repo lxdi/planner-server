@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class EntityByIdImpl implements IEntityById {
+public class EntityByIdImpl implements IEntityById<String> {
 
     @Autowired
     IRepPlanDAO repPlanDAO;
@@ -34,67 +34,58 @@ public class EntityByIdImpl implements IEntityById {
     ITopicDAO topicDAO;
 
     @Autowired
-    ISubjectDAO subjectDAO;
-
-    @Autowired
     IRepDAO repDAO;
 
     @Autowired
     IWeekDAO weekDAO;
 
     @Autowired
-    IHQuarterDAO hquarterDao;
+    private IDayDao dayDao;
 
     @Autowired
-    ISlotDAO slotDAO;
+    private IExternalTaskDao externalTaskDao;
 
     @Override
-    public Object get(long id, Class aClass) {
-        if(id==0){
+    public Object get(String id, Class aClass) {
+        if(id==null || aClass == null){
             return null;
         }
         Object result = null;
         if(aClass == Realm.class){
-            result = realmDAO.realmById(id);
+            result = realmDAO.findById(id).orElseThrow(()-> new RuntimeException(aClass.getName() + " not found by " + id));
         }
         if(aClass == Target.class){
-            result = targetsDAO.getOne(id);
+            result = targetsDAO.findById(id).orElseThrow(()-> new RuntimeException(aClass.getName() + " not found by " + id));
         }
         if(aClass == Mean.class){
-            result = meansDAO.getOne(id);
+            result = meansDAO.findById(id).orElseThrow(()-> new RuntimeException(aClass.getName() + " not found by " + id));
         }
         if(aClass == Layer.class){
-            result = layerDAO.layerById(id);
-        }
-        if(aClass == Subject.class){
-            result = subjectDAO.getOne(id);
+            result = layerDAO.findById(id).orElseThrow(()-> new RuntimeException(aClass.getName() + " not found by " + id));
         }
         if(aClass == Task.class){
-            result = tasksDAO.getOne(id);
+            result = tasksDAO.findById(id).orElseThrow(()-> new RuntimeException(aClass.getName() + " not found by " + id));
         }
         if(aClass == Topic.class){
-            result = topicDAO.getOne(id);
+            result = topicDAO.findById(id).orElseThrow(()-> new RuntimeException(aClass.getName() + " not found by " + id));
         }
         if(aClass == RepetitionPlan.class){
-            result = repPlanDAO.getOne(id);
+            result = repPlanDAO.findById(id).orElseThrow(()-> new RuntimeException(aClass.getName() + " not found by " + id));
         }
         if(aClass == TaskTesting.class){
-            result = testingDAO.getOne(id);
+            result = testingDAO.findById(id).orElseThrow(()-> new RuntimeException(aClass.getName() + " not found by " + id));
         }
         if(aClass == Repetition.class){
-            result = repDAO.getOne(id);
+            result = repDAO.findById(id).orElseThrow(()-> new RuntimeException(aClass.getName() + " not found by " + id));
         }
         if(aClass == Week.class){
-            result = weekDAO.getById(id);
+            result = weekDAO.findById(id).orElseThrow(()-> new RuntimeException(aClass.getName() + " not found by " + id));
         }
-        if(aClass == HQuarter.class){
-            result = hquarterDao.getById(id);
+        if(aClass == Day.class){
+            result = dayDao.findById(id).orElseThrow(()-> new RuntimeException(aClass.getName() + " not found by " + id));
         }
-        if(aClass == Slot.class){
-            result = slotDAO.getOne(id);
-        }
-        if(aClass == SlotPosition.class){
-            result = slotDAO.getOne(id);
+        if(aClass == ExternalTask.class){
+            result = externalTaskDao.findById(id).orElseThrow(()-> new RuntimeException(aClass.getName() + " not found by " + id));
         }
 
         if(result ==null){

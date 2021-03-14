@@ -1,37 +1,30 @@
 package com.sogoodlabs.planner.model.entities;
 
+import com.sogoodlabs.common_mapper.annotations.IncludeInDto;
+import com.sogoodlabs.common_mapper.annotations.MapToClass;
+import com.sogoodlabs.planner.model.IEntity;
+
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-public class Layer {
+public class Layer implements IEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    long id;
+    private String id;
 
     int priority;
-    boolean done;
 
     @ManyToOne(fetch = FetchType.LAZY)
     Mean mean;
 
-    @OneToMany(mappedBy = "layer", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
-    private List<Subject> subjects = new ArrayList();
+    @Transient
+    private List<Task> tasks;
 
-    public Layer(){}
-
-    public Layer(Mean mean, int priority){
-        assert mean!=null && priority>0;
-        this.mean = mean;
-        this.priority = priority;
-    }
-
-    public long getId() {
+    public String getId() {
         return id;
     }
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -49,17 +42,13 @@ public class Layer {
         this.mean = mean;
     }
 
-    public boolean isDone() {
-        return done;
-    }
-    public void setDone(boolean done) {
-        this.done = done;
+    @IncludeInDto
+    public List<Task> getTasks() {
+        return tasks;
     }
 
-    public List<Subject> getSubjects() {
-        return subjects;
-    }
-    public void setSubjects(List<Subject> subjects) {
-        this.subjects = subjects;
+    @MapToClass(value = Task.class)
+    public void setTasks(List<Task> tasks) {
+        this.tasks = tasks;
     }
 }

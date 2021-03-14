@@ -1,60 +1,83 @@
 package com.sogoodlabs.planner.controllers;
 
-import com.sogoodlabs.planner.controllers.delegates.TargetsDelegate;
+import com.sogoodlabs.common_mapper.CommonMapper;
+import com.sogoodlabs.planner.model.dao.ITargetsDAO;
+import com.sogoodlabs.planner.model.entities.Target;
+import com.sogoodlabs.planner.services.GracefulDeleteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * Created by Alexander on 23.02.2018.
  */
 
-@Controller
+@RestController
+@RequestMapping(path = "/target")
 public class TargetsRESTController {
 
     @Autowired
-    TargetsDelegate targetsDelegate;
+    private CommonMapper commonMapper;
 
-    public TargetsRESTController(){}
+    @Autowired
+    private ITargetsDAO targetsDAO;
 
-    public TargetsRESTController(TargetsDelegate delegate){
-        this.targetsDelegate = delegate;
+    @Autowired
+    private GracefulDeleteService gracefulDeleteService;
+
+    @GetMapping("/get/all")
+    public List<Map<String, Object>> getAllTargets(){
+        return targetsDAO.findAll().stream()
+                .map(commonMapper::mapToDto)
+                .collect(Collectors.toList());
     }
 
-    @RequestMapping(path = "/target/all/lazy")
-    public ResponseEntity<List<Map<String, Object>>> getAllTargets(){
-        return new ResponseEntity<>(targetsDelegate.getAllTargets(), HttpStatus.OK);
-    }
+    @PutMapping("/create")
+    public Map<String, Object> createTarget(@RequestBody Map<String, Object> targetDto) {
+        Target target = commonMapper.mapToEntity(targetDto, new Target());
+        target.setId(UUID.randomUUID().toString());
 
-    @RequestMapping(path = "/target/create" , method = RequestMethod.PUT)
-    public ResponseEntity<Map<String, Object>> createTarget(@RequestBody Map<String, Object> targetDto) {
-        return new ResponseEntity<Map<String, Object>>(targetsDelegate.createTarget(targetDto), HttpStatus.OK);
-    }
+        Target lastTarget = target.getParent()==null? targetsDAO.getLastOfChildrenRoot(target.getRealm()):
+                targetsDAO.getLastOfChildren(target.getParent(), target.getRealm());
 
-    @RequestMapping(path = "/target/delete/{targetId}" , method = RequestMethod.DELETE)
-    public ResponseEntity delete(@PathVariable("targetId") long id){
-        try {
-            targetsDelegate.delete(id);
-            return new ResponseEntity(HttpStatus.OK);
-        } catch (Exception e){
-            e.printStackTrace();
-            return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+        targetsDAO.save(target);
+
+        if(lastTarget!=null){
+            lastTarget.setNext(target);
+            targetsDAO.save(lastTarget);
         }
+
+        return commonMapper.mapToDto(target);
     }
 
-    @RequestMapping(path = "/target/update" , method = RequestMethod.POST)
-    public ResponseEntity<Map<String, Object>> update(@RequestBody Map<String, Object> targetDto) {
-        return new ResponseEntity<>(targetsDelegate.update(targetDto), HttpStatus.OK);
+    @DeleteMapping("/delete/{targetId}")
+    public void delete(@PathVariable("targetId") String id) {
+        Target target = targetsDAO.findById(id).orElseThrow(() -> new RuntimeException("Target not found by " + id));
+        gracefulDeleteService.deleteTarget(target);
     }
 
-    @RequestMapping(path = "/target/update/list" , method = RequestMethod.POST)
-    public ResponseEntity<List<Map<String, Object>>> updateList(@RequestBody List<Map<String, Object>> targetDtoLazies){
-        return new ResponseEntity<>(targetsDelegate.updateList(targetDtoLazies), HttpStatus.OK);
+    @PostMapping("/update")
+    public Map<String, Object> update(@RequestBody Map<String, Object> targetDto) {
+       return updateOneTarget(targetDto);
+    }
+
+    @PostMapping("/update/list")
+    public List<Map<String, Object>> updateList(@RequestBody List<Map<String, Object>> targetDtoList){
+        return targetDtoList.stream()
+                .map(this::updateOneTarget)
+                .collect(Collectors.toList());
+    }
+
+    private Map<String, Object> updateOneTarget(Map<String, Object> targetDto){
+        Target target = commonMapper.mapToEntity(targetDto, new Target());
+        targetsDAO.save(target);
+        return commonMapper.mapToDto(target);
     }
 
 }

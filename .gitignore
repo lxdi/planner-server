@@ -32,3 +32,4 @@ api-gateway/out/
 api-gateway/build/
 
 localconf/
+**/temp

@@ -2,6 +2,7 @@ package com.sogoodlabs.planner.model.entities;
 
 import com.sogoodlabs.common_mapper.IEnumForCommonMapper;
 
+import java.time.DayOfWeek;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -49,6 +50,17 @@ public enum DaysOfWeek implements IEnumForCommonMapper {
             }
         });
         return result;
+    }
+
+    public static DaysOfWeek of(DayOfWeek dayOfWeek){
+        if(dayOfWeek == DayOfWeek.MONDAY) return mon;
+        if(dayOfWeek == DayOfWeek.TUESDAY) return tue;
+        if(dayOfWeek == DayOfWeek.WEDNESDAY) return wed;
+        if(dayOfWeek == DayOfWeek.THURSDAY) return thu;
+        if(dayOfWeek == DayOfWeek.FRIDAY) return fri;
+        if(dayOfWeek == DayOfWeek.SATURDAY) return sat;
+        if(dayOfWeek == DayOfWeek.SUNDAY) return sun;
+        throw new RuntimeException("Failed to convert: "+dayOfWeek);
     }
 
     @Override

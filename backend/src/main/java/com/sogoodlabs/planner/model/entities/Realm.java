@@ -6,23 +6,16 @@ import javax.persistence.*;
 @Entity
 public class Realm {
 
-    public Realm(){}
-
-    public Realm(String title){
-        this.setTitle(title);
-    }
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    long id;
+    String id;
     String title;
 
     boolean current = false;
 
-    public long getId() {
+    public String getId() {
         return id;
     }
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -33,7 +26,7 @@ public class Realm {
         this.title = title;
     }
 
-    public boolean isCurrent() {
+    public boolean getCurrent() {
         return current;
     }
     public void setCurrent(boolean current) {

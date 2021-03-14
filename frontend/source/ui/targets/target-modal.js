@@ -7,20 +7,21 @@ import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
 import {CreateTarget} from './../../data/creators'
 import {Button, ButtonToolbar,  DropdownButton, MenuItem,  FormGroup, ControlLabel, FormControl, Alert} from 'react-bootstrap'
 
-const dumbTarget = CreateTarget(0, '')
+const newObjId = "new"
+const targetRep = 'target-rep'
+const targetModalId = 'target-modal'
 
-const createState = function(isOpen, isStatic, isEdit, currentTarget, parent){
+const createState = function(isOpen, isStatic, isEdit, currentTarget){
   return {
     isOpen: isOpen,
     mode: {isStatic: isStatic, isEdit: isEdit},
     currentTarget: currentTarget,
-    parent: parent,
     fieldsValidation:{}
   }
 }
 
 const defaultState = function(){
-  return createState(false, true, false, dumbTarget, null)
+  return createState(false, true, false, null)
 }
 
 export class TargetModal extends React.Component {
@@ -30,26 +31,26 @@ export class TargetModal extends React.Component {
     this.okHandler = this.okHandler.bind(this);
     this.handleNameVal = this.handleNameVal.bind(this);
 
-    registerEvent('target-modal', 'open', function(state, currentTarget, parent){
-      this.setState(createState(true, currentTarget.id==0, currentTarget.id==0, currentTarget, parent))
+    registerEvent(targetModalId, 'open', function(state, currentTarget){
+      this.setState(createState(true, currentTarget.id==newObjId, currentTarget.id==newObjId, currentTarget))
     }.bind(this))
 
-    registerEvent('target-modal', 'close', function(){
+    registerEvent(targetModalId, 'close', function(){
       this.setState(defaultState())
     }.bind(this))
 
-    registerReaction('target-modal', 'targets-dao', ['target-created', 'target-modified', 'target-deleted'], ()=>{
-      fireEvent('target-modal', 'close')
+    registerReaction(targetModalId, targetRep, ['updated', 'created', 'deleted'], ()=>{
+      fireEvent(targetModalId, 'close')
     })
 
   }
 
   okHandler(){
     if(this.state.currentTarget.title != ''){
-      if(this.state.currentTarget.id==0){
-        fireEvent('targets-dao', 'create', [this.state.currentTarget, this.state.parent])
+      if(this.state.currentTarget.id==newObjId){
+        fireEvent(targetRep, 'create', [this.state.currentTarget])
       } else {
-        fireEvent('targets-dao', 'modify', [this.state.currentTarget])
+        fireEvent(targetRep, 'update', [this.state.currentTarget])
       }
     } else {
       this.state.fieldsValidation['title'] = false
@@ -66,8 +67,12 @@ export class TargetModal extends React.Component {
   }
 
   render(){
-    return <CommonModal isOpen = {this.state.isOpen} okHandler = {this.okHandler} cancelHandler={()=>fireEvent('target-modal', 'close', [])} title={targetModalHeaderTitle} >
-        <CommonCrudeTemplate editing = {this.state.mode} changeEditHandler = {this.forceUpdate.bind(this)} deleteHandler={()=>fireEvent('targets-dao', 'delete', [this.state.currentTarget])}>
+    if(this.state.currentTarget == null){
+      return null
+    }
+
+    return <CommonModal isOpen = {this.state.isOpen} okHandler = {this.okHandler} cancelHandler={()=>fireEvent(targetModalId, 'close', [])} title={targetModalHeaderTitle} >
+        <CommonCrudeTemplate editing = {this.state.mode} changeEditHandler = {this.forceUpdate.bind(this)} deleteHandler={()=>fireEvent(targetRep, 'delete', [this.state.currentTarget])}>
           <form>
             {getTextField(this, 'title', 'Title')}
             {getTextField(this, 'definitionOfDone', 'Definition of done')}

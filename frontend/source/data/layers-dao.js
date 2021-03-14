@@ -1,75 +1,38 @@
 //import $ from 'jquery'
-import {sendGet} from './postoffice'
+import {sendGet, sendPut, sendPost} from './postoffice'
 import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
 
-registerEvent('layers-dao', 'layers-request', (stateSetter, mean)=>{
-  if(mean.id!=null && mean.id>0){
-    sendGet("layer/get/bymean/"+mean.id, function(data) {
-              var receivedData = typeof data == 'string'? JSON.parse(data): data
-              //importLayers(stateSetter, mean, data)
-              mean.layers = []
-              if(data.length>0){
-                for(var layerindx in data){
-                  layerAlign(data[layerindx])
-                  mean.layers[data[layerindx].priority] = data[layerindx]
-                }
-              }
-              errorCatcherForAsync(()=>fireEvent('layers-dao', 'layers-received', [mean, data]))
-            })
-  } else {
-    mean.layers = []
-    fireEvent('layers-dao', 'layers-received', [mean])
-  }
-})
+import {createRep, basicListReceiving} from './common/repFactory'
+import {createIndex, updateIndex} from './common/index-factory'
 
-registerEvent('layers-dao', 'layers-received', (stateSetter, mean, layers)=>[mean, layers])
+const name = 'layer'
+const repName = name + '-rep'
+const objMapName = 'objects'
+const meanIdFieldName = 'meanid'
 
-registerEvent('layers-dao', 'add-layer', (stateSetter, mean)=>{
-  if(mean.layers==null){
-    mean.layers = []
-  }
-  const layer = {
-    priority: getMaxLayerPriorityOfLayers(mean.layers)+1
-  }
-  mean.layers[layer.priority] = layer
-})
+const indexByMean = 'index-by-mean'
+const getByMeanSpanName = 'getByMean'
+const byMeanRequest = 'by-mean-request'
+const byMeanResponse = 'by-mean-response'
+const byMeanUrl = '/get/by/mean'
 
-//registerReaction('layers-dao', 'mean-modal', 'open', (stateSetter, mean)=>fireEvent('layers-dao', 'layers-request', [mean]))
-
-
-const getMaxLayerPriorityOfLayers = function(layers){
-    var result = 0
-    if(layers!=null){
-      for(var layerid in layers){
-        if(layers[layerid].priority>result){
-          result = layers[layerid].priority
-        }
-      }
-    }
-    return result
+export const createLayerRep = function(){
+  createRep(name, callback)
+  basicListReceiving(name, byMeanRequest, byMeanResponse, byMeanUrl, getByMeanSpanName, callback)
 }
 
-const layerAlign = function(layer){
-  const subjectsAligned = []
-  for(var subjId in layer.subjects){
-    subjectAlign(layer.subjects[subjId])
-    subjectsAligned[layer.subjects[subjId].position] = layer.subjects[subjId]
+const callback = function(stSetter, spanName, arg){
+  if(spanName == 'getAllSpan'){
+    throw 'Do not request all layers'
   }
-  layer.subjects = subjectsAligned
-}
-
-const subjectAlign = function(subject){
-  const tasksAligned = []
-  for(var taskId in subject.tasks){
-    tasksAligned[subject.tasks[taskId].position] = subject.tasks[taskId]
+  if(spanName == 'deleteSpan'){
+    stSetter(objMapName, null)
+    stSetter(indexByMean, null)
   }
-  subject.tasks = tasksAligned
-}
-
-const errorCatcherForAsync = function(callback){
-  try{
-    callback()
-  } catch (e){
-    console.error(e)
+  if(spanName == getByMeanSpanName){
+    stSetter(indexByMean, createIndex(arg, meanIdFieldName))
+  }
+  if(spanName == 'cleanSpan'){
+    stSetter(indexByMean, null)
   }
 }

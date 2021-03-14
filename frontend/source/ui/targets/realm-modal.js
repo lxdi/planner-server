@@ -7,7 +7,9 @@ import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
 import {CreateRealm} from './../../data/creators'
 import {Button, ButtonToolbar,  DropdownButton, MenuItem,  FormGroup, ControlLabel, FormControl, Alert} from 'react-bootstrap'
 
-const dumbRealm = CreateRealm(0, '')
+const newObjId = "new"
+
+const dumbRealm = CreateRealm(newObjId, '')
 
 const createState = function(isOpen, isStatic, isEdit, currentRealm){
   return {
@@ -29,14 +31,14 @@ export class RealmModal extends React.Component {
     this.handleNameVal = this.handleNameVal.bind(this);
 
     registerEvent('realm-modal', 'open', function(state, currentRealm){
-      this.setState(createState(true, currentRealm.id==0, currentRealm.id==0, currentRealm))
+      this.setState(createState(true, currentRealm.id==newObjId, currentRealm.id==newObjId, currentRealm))
     }.bind(this))
 
     registerEvent('realm-modal', 'close', function(){
       this.setState(defaultState())
     }.bind(this))
 
-    registerReaction('realm-modal', 'realms-dao', 'realm-created', ()=>{
+    registerReaction('realm-modal', 'realm-rep', 'created', ()=>{
       fireEvent('realm-modal', 'close')
     })
 
@@ -44,10 +46,11 @@ export class RealmModal extends React.Component {
 
   okHandler(){
     if(this.state.currentRealm.title != ''){
-      if(this.state.currentRealm.id==0){
-        fireEvent('realms-dao', 'create', [this.state.currentRealm])
+      if(this.state.currentRealm.id==newObjId){
+        fireEvent('realm-rep', 'create', [this.state.currentRealm])
       } else {
-        fireEvent('realms-dao', 'modify', [this.state.currentRealm])
+        console.log('realm modify called')
+        fireEvent('realm-rep', 'modify', [this.state.currentRealm])
       }
     } else {
       this.props.isTitleValid = false
@@ -62,7 +65,7 @@ export class RealmModal extends React.Component {
 
   render(){
     return <CommonModal isOpen = {this.state.isOpen} okHandler = {this.okHandler} cancelHandler={()=>fireEvent('realm-modal', 'close', [])} title={"Realm"} >
-        <CommonCrudeTemplate editing = {this.state.mode} changeEditHandler = {this.forceUpdate.bind(this)} deleteHandler={()=>fireEvent('realms-dao', 'delete', [this.state.currentRealm.id])}>
+        <CommonCrudeTemplate editing = {this.state.mode} changeEditHandler = {this.forceUpdate.bind(this)} deleteHandler={()=>fireEvent('realm-rep', 'delete', [this.state.currentRealm.id])}>
           <form>
             <FormGroup controlId="formBasicText">
               <ControlLabel>Title</ControlLabel>

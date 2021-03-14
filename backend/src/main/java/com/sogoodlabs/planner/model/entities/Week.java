@@ -1,9 +1,10 @@
 package com.sogoodlabs.planner.model.entities;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+
+import com.sogoodlabs.common_mapper.annotations.IncludeInDto;
 
 import javax.persistence.*;
-import java.sql.Date;
+import java.util.List;
 
 /**
  * Created by Alexander on 05.03.2018.
@@ -13,57 +14,63 @@ import java.sql.Date;
 public class Week {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    long id;
+    private String id;
 
-    @Column(name = "startday")
-    @Basic
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    Date startDay;
+    private int year;
+    private int num;
 
-    @Column(name = "endday")
-    @Basic
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    Date endDay;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Week prev;
 
-    int number;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Week next;
 
-    public Week(){}
+    @Transient
+    private List<Day> days;
 
-    public Week(Date startDay, Date endDay, int number){
-        this.startDay = startDay;
-        this.endDay = endDay;
-        this.number = number;
-    }
-
-    public long getId() {
+    public String getId() {
         return id;
     }
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public Date getStartDay() {
-        return startDay;
+    public int getYear() {
+        return year;
+    }
+    public void setYear(int year) {
+        this.year = year;
     }
 
-    public void setStartDay(Date startDay) {
-        this.startDay = startDay;
+    public int getNum() {
+        return num;
+    }
+    public void setNum(int num) {
+        this.num = num;
     }
 
-    public Date getEndDay() {
-        return endDay;
+    public Week getPrev() {
+        return prev;
     }
 
-    public void setEndDay(Date endDay) {
-        this.endDay = endDay;
+    public void setPrev(Week prev) {
+        this.prev = prev;
     }
 
-    public int getNumber() {
-        return number;
+    public Week getNext() {
+        return next;
     }
 
-    public void setNumber(int number) {
-        this.number = number;
+    public void setNext(Week next) {
+        this.next = next;
+    }
+
+    @IncludeInDto
+    public List<Day> getDays() {
+        return days;
+    }
+
+    public void setDays(List<Day> days) {
+        this.days = days;
     }
 }

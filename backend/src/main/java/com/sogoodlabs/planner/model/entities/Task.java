@@ -1,48 +1,40 @@
 package com.sogoodlabs.planner.model.entities;
 
+import com.sogoodlabs.common_mapper.annotations.IncludeInDto;
+import com.sogoodlabs.common_mapper.annotations.MapToClass;
+import com.sogoodlabs.planner.model.IEntity;
+
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by Alexander on 05.03.2018.
  */
 
 @Entity
-public class Task{
+public class Task implements IEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    long id;
+    String id;
     String title;
 
-
     @ManyToOne(fetch = FetchType.LAZY)
-    Subject subject;
+    Layer layer;
+
     int position;
 
-    //@Cascade(org.hibernate.annotations.CascadeType.ALL)
-//    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-//    Set<Topic> topics = new HashSet<>();
-//
-//    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-//    Set<TaskTesting> testings = new HashSet<>();
+    @Transient
+    private List<Topic> topics;
 
-    public Task(){}
+    @Transient
+    private List<TaskTesting> taskTestings;
 
-    public Task(String title, Subject subject, int position){
-        assert subject!=null && position>0 && title!=null && !title.isEmpty();
-        this.title = title;
-        this.subject = subject;
-        this.position = position;
-    }
-
-    public long getId() {
+    @Override
+    public String getId() {
         return id;
     }
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -53,11 +45,11 @@ public class Task{
         this.title = title;
     }
 
-    public Subject getSubject() {
-        return subject;
+    public Layer getLayer() {
+        return layer;
     }
-    public void setSubject(Subject subject) {
-        this.subject = subject;
+    public void setLayer(Layer layer) {
+        this.layer = layer;
     }
 
     public int getPosition() {
@@ -67,4 +59,38 @@ public class Task{
         this.position = position;
     }
 
+    @IncludeInDto
+    public List<Topic> getTopics() {
+        return topics;
+    }
+
+    @MapToClass(value = Topic.class)
+    public void setTopics(List<Topic> topics) {
+        this.topics = topics;
+    }
+
+    @IncludeInDto
+    public List<TaskTesting> getTaskTestings() {
+        return taskTestings;
+    }
+
+    @MapToClass(value = TaskTesting.class)
+    public void setTaskTestings(List<TaskTesting> taskTestings) {
+        this.taskTestings = taskTestings;
+    }
+
+    @IncludeInDto
+    public String getFullPath(){
+
+        List<String> result = new ArrayList<>();
+        try {
+            result.add(this.title);
+            result.add(""+this.layer.getPriority());
+            result.add(this.layer.getMean().getTitle());
+            result.add(this.layer.getMean().getRealm().getTitle());
+        } catch (NullPointerException npe){}
+
+        Collections.reverse(result);
+        return String.join("/", result);
+    }
 }

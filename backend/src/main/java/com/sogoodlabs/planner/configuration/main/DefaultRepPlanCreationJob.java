@@ -7,6 +7,8 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 public class DefaultRepPlanCreationJob implements ApplicationListener<ContextRefreshedEvent> {
 
@@ -30,6 +32,7 @@ public class DefaultRepPlanCreationJob implements ApplicationListener<ContextRef
         RepetitionPlan repetitionPlan = repPlanDAO.findByTitle(title);
         if(repetitionPlan==null){
             RepetitionPlan defaultRepPlan = new RepetitionPlan();
+            defaultRepPlan.setId(UUID.randomUUID().toString());
             defaultRepPlan.setTitle(title);
             defaultRepPlan.setPlan(plan);
             defaultRepPlan.setDayStep(dayStep);

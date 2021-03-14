@@ -2,17 +2,20 @@ package com.sogoodlabs.planner.services;
 
 import com.sogoodlabs.planner.model.dao.*;
 import com.sogoodlabs.planner.model.entities.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Set;
 
 
 @Service
 @Transactional
 public class GracefulDeleteService {
+
+    Logger log = LoggerFactory.getLogger(GracefulDeleteService.class);
 
     @Autowired
     private ITargetsDAO targetsDAO;
@@ -24,16 +27,10 @@ public class GracefulDeleteService {
     private ILayerDAO layerDAO;
 
     @Autowired
-    private ISubjectDAO subjectDAO;
-
-    @Autowired
     private ITasksDAO tasksDAO;
 
     @Autowired
     private ITopicDAO topicDAO;
-
-    @Autowired
-    private ISpacedRepDAO spacedRepDAO;
 
     @Autowired
     private ITaskTestingDAO taskTestingDAO;
@@ -44,14 +41,15 @@ public class GracefulDeleteService {
     @Autowired
     private ITaskMappersDAO taskMappersDAO;
 
-    @Autowired
-    private ISlotDAO slotDAO;
 
-    public void deleteTarget(long id){
+    public void deleteTarget(String id){
         deleteTarget(targetsDAO.getOne(id));
     }
 
     public void deleteTarget(Target targetToDelete) {
+
+        log.info("deleting target {}", targetToDelete.getId());
+
         unassignMeans(targetToDelete);
         handlePrevForDeleting(targetToDelete);
 
@@ -63,28 +61,26 @@ public class GracefulDeleteService {
 
     private void unassignMeans(Target target) {
         meansDAO.meansAssignedToTarget(target).forEach(mean -> {
-            mean.getTargets().removeIf(curTarget -> curTarget.getId() == target.getId());
+            log.info("unassign mean {} from target {}", mean.getId(), target.getId());
+            mean.getTargets().removeIf(curTarget -> curTarget.getId().equals(target.getId()));
             meansDAO.save(mean);
         });
     }
 
     private void handlePrevForDeleting(Target target){
         Target prevTarget = targetsDAO.getPrevTarget(target);
+
         if(prevTarget!=null ){
-            if(target.getNext()!=null){
-                prevTarget.setNext(target.getNext());
-            } else {
-                prevTarget.setNext(null);
-            }
+            prevTarget.setNext(target.getNext());
             targetsDAO.save(prevTarget);
         }
     }
 
-    public void deleteMean(long id) {
-        deleteMean(meansDAO.getOne(id));
+    public void deleteMean(String id) {
+        delete(meansDAO.findById(id).orElseThrow(() -> new RuntimeException("Mean not found by " + id)));
     }
 
-    public void deleteMean(Mean mean){
+    public void delete(Mean mean){
         Mean prevMean = meansDAO.getPrevMean(mean);
         if(prevMean!=null){
             if(mean.getNext()!=null){
@@ -94,72 +90,37 @@ public class GracefulDeleteService {
             }
             meansDAO.save(prevMean);
         }
-        meansDAO.getChildren(mean).forEach(this::deleteMean);
-        layerDAO.getLyersOfMean(mean).forEach(this::deleteLayer);
-        slotDAO.saveAll(slotDAO.findByMean(mean).stream()
-                .peek(slot -> slot.setMean(null))
-                .collect(Collectors.toList()));
+        meansDAO.getChildren(mean).forEach(this::delete);
+        layerDAO.findByMean(mean).forEach(this::delete);
         meansDAO.delete(mean);
     }
 
-    public void deleteLayer(long id) {
-        deleteLayer(layerDAO.layerById(id));
+    public void deleteLayer(String id) {
+        delete(layerDAO.findById(id).orElseThrow(() -> new RuntimeException("No Layer found by " + id)));
     }
 
-    public void deleteLayer(Layer layer){
-        slotDAO.saveAll(slotDAO.findByLayer(layer).stream()
-                .peek(slot -> slot.setLayer(null))
-                .collect(Collectors.toList()));
-
-        subjectDAO.subjectsByLayer(layer).forEach(this::deleteSubject);
+    public void delete(Layer layer){
+        tasksDAO.findByLayer(layer).forEach(this::deleteTask);
         layerDAO.delete(layer);
     }
 
-    public void deleteSubject(long id) {
-        deleteSubject(subjectDAO.getOne(id));
-    }
-
-    public void deleteSubject(Subject subject){
-        tasksDAO.findBySubject(subject).forEach(this::deleteTask);
-        subjectDAO.delete(subject);
-    }
-
-    public void deleteTask(long id) {
-        deleteTask(tasksDAO.getOne(id));
+    public void deleteTask(String id) {
+        deleteTask(tasksDAO.findById(id).orElseThrow(() -> new RuntimeException("Target not found by "+ id)));
     }
 
     public void deleteTask(Task task){
-        long id = task.getId();
-
-        topicDAO.getByTaskId(id).forEach(topicDAO::delete);
-        taskTestingDAO.getByTaskId(id).forEach(teting -> taskTestingDAO.delete(teting));
-
-        SpacedRepetitions spacedRepetitions = spacedRepDAO.getSRforTask(id);
-        if(spacedRepetitions!=null){
-            repDAO.getRepsbySpacedRepId(spacedRepetitions.getId()).forEach(repDAO::delete);
-            spacedRepDAO.delete(spacedRepetitions);
-        }
-
-        TaskMapper taskMapper = taskMappersDAO.taskMapperForTask(task);
-        if(taskMapper!=null){
-            taskMappersDAO.delete(taskMapper);
-        }
+        topicDAO.findByTask(task).forEach(topicDAO::delete);
+        taskTestingDAO.findByTask(task).forEach(teting -> taskTestingDAO.delete(teting));
+        taskMappersDAO.findByTask(task).forEach(taskMapper -> taskMappersDAO.delete(taskMapper));
+        repDAO.findByTask(task).forEach(repDAO::delete);
 
         tasksDAO.delete(task);
     }
 
-    /**
-     *  Removes all the unfinished repetitions related to the task
-     *
-     */
-    public void removeRepetitionsLeftForTask(long taskid){
-        SpacedRepetitions spacedRepetitions = spacedRepDAO.getSRforTask(taskid);
-        List<Repetition> repetitions = repDAO.getRepsbySpacedRepId(spacedRepetitions.getId());
-        repetitions.forEach(rep -> {
-            if(rep.getFactDate()==null){
-                repDAO.delete(rep);
-            }
-        });
+    public void deleteTasksForLayerExcept(Layer layer, Set<String> tasks){
+        tasksDAO.findByLayer(layer).stream()
+                .filter(task -> !tasks.contains(task.getId()))
+                .forEach(this::deleteTask);
     }
 
 }
