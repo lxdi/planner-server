@@ -9,7 +9,13 @@ import java.util.List;
 
 public enum DaysOfWeek implements IEnumForCommonMapper {
 
-    mon(0, "Monday"), tue(1, "Tuesday"), wed(2, "Wednesday"), thu(3, "Thursday"), fri(4, "Friday"), sat(5, "Saturday"), sun(6, "Sunday");
+    mon(0, "Monday"),
+    tue(1, "Tuesday"),
+    wed(2, "Wednesday"),
+    thu(3, "Thursday"),
+    fri(4, "Friday"),
+    sat(5, "Saturday"),
+    sun(6, "Sunday");
 
     int id;
     String fullname;
@@ -31,6 +37,20 @@ public enum DaysOfWeek implements IEnumForCommonMapper {
     }
     public void setFullname(String fullname) {
         this.fullname = fullname;
+    }
+
+    public DaysOfWeek getNext(){
+        if(this.id == 6){
+            return this;
+        }
+        return findById(this.id+1);
+    }
+
+    public DaysOfWeek getPrev(){
+        if(this.id == 0){
+            return this;
+        }
+        return findById(this.id-1);
     }
 
     public static DaysOfWeek findById(int id){

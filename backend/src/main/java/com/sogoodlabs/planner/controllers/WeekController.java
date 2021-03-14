@@ -2,10 +2,12 @@ package com.sogoodlabs.planner.controllers;
 
 
 import com.sogoodlabs.common_mapper.CommonMapper;
+import com.sogoodlabs.planner.controllers.dto.AssignMeanDto;
 import com.sogoodlabs.planner.controllers.dto.MovingPlansDto;
 import com.sogoodlabs.planner.model.dao.IDayDao;
 import com.sogoodlabs.planner.model.entities.Day;
 import com.sogoodlabs.planner.model.entities.Week;
+import com.sogoodlabs.planner.services.ScheduleMeanService;
 import com.sogoodlabs.planner.services.WeekService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +28,9 @@ public class WeekController {
 
     @Autowired
     private IDayDao dayDao;
+
+    @Autowired
+    private ScheduleMeanService scheduleMeanService;
 
 
     @GetMapping("/get/all/current/year")
@@ -57,5 +62,10 @@ public class WeekController {
     @PostMapping("/move/plans")
     public void movePlans(@RequestBody MovingPlansDto movingPlansDto){
         weekService.movePlans(movingPlansDto);
+    }
+
+    @PostMapping("/schedule/mean")
+    public void scheduleMean(@RequestBody AssignMeanDto assignMeanDto){
+        scheduleMeanService.schedule(assignMeanDto);
     }
 }
