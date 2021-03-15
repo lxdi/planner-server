@@ -2,10 +2,7 @@ package com.sogoodlabs.planner.services;
 
 import com.sogoodlabs.planner.controllers.dto.AssignLayerDto;
 import com.sogoodlabs.planner.controllers.dto.AssignMeanDto;
-import com.sogoodlabs.planner.model.dao.IDayDao;
-import com.sogoodlabs.planner.model.dao.IRepDAO;
-import com.sogoodlabs.planner.model.dao.ITaskMappersDAO;
-import com.sogoodlabs.planner.model.dao.ITasksDAO;
+import com.sogoodlabs.planner.model.dao.*;
 import com.sogoodlabs.planner.model.entities.*;
 import com.sogoodlabs.planner.util.IdUtils;
 import com.sogoodlabs.planner.util.SortUtils;
@@ -24,6 +21,8 @@ public class ScheduleMeanService {
 
     Logger log = LoggerFactory.getLogger(ScheduleMeanService.class);
 
+    private static final String PLACEHOLDER_TITLE = "Placeholder";
+
     @Autowired
     private ITasksDAO tasksDAO;
 
@@ -35,6 +34,9 @@ public class ScheduleMeanService {
 
     @Autowired
     private IRepDAO repDAO;
+
+    @Autowired
+    private ILayerDAO layerDAO;
 
     public void schedule(AssignMeanDto assignMeanDto){
         if (assignMeanDto.getLayers() == null || assignMeanDto.getLayers().isEmpty()) {
@@ -53,14 +55,32 @@ public class ScheduleMeanService {
     }
 
     private Stream<Task> getTasks(AssignLayerDto assignLayerDto){
-        return assignLayerDto.getTaskIds().stream()
-            .map(taskId -> tasksDAO.findById(taskId).orElseThrow(()-> new RuntimeException("No Task by id " + taskId)));
+        List<Task> result = assignLayerDto.getTaskIds().stream()
+                .map(taskId -> tasksDAO.findById(taskId).orElseThrow(()-> new RuntimeException("No Task by id " + taskId)))
+                .collect(Collectors.toList());
+
+        if(assignLayerDto.getPlaceholders()>0) {
+            Layer layer = layerDAO.findById(assignLayerDto.getLayerId())
+                    .orElseThrow(()->new RuntimeException("Layer not found by id " + assignLayerDto.getLayerId()));
+
+            for (int i = 0; i < assignLayerDto.getPlaceholders(); i++) {
+                Task task = new Task();
+                task.setId(UUID.randomUUID().toString());
+                task.setLayer(layer);
+                task.setTitle(PLACEHOLDER_TITLE + " " + (i+1));
+                tasksDAO.save(task);
+                result.add(task);
+            }
+        }
+
+        return result.stream();
     }
 
     private void schedule(List<Task> tasks, Day startOn, int daysPerWeek){
         LinkedList<Task> taskStack = new LinkedList<>(tasks);
         Week currentWeek = startOn.getWeek();
         schedule(taskStack, currentWeek, daysPerWeek, startOn.getWeekDay());
+        currentWeek = currentWeek.getNext();
         while(!taskStack.isEmpty()){
             schedule(taskStack, currentWeek, daysPerWeek);
             currentWeek = currentWeek.getNext();

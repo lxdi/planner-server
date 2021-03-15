@@ -7,6 +7,7 @@ public class AssignLayerDto {
 
     private String layerId;
     private List<String> taskIds = new ArrayList<>();
+    private int placeholders;
 
     public String getLayerId() {
         return layerId;
@@ -22,5 +23,13 @@ public class AssignLayerDto {
 
     public void setTaskIds(List<String> taskIds) {
         this.taskIds = taskIds;
+    }
+
+    public int getPlaceholders() {
+        return placeholders;
+    }
+
+    public void setPlaceholders(int placeholders) {
+        this.placeholders = placeholders;
     }
 }

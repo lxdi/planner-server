@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
@@ -72,6 +73,41 @@ public class ScheduleMeanServiceTest extends SpringTestConfig {
         task1 = tasksDAO.findById(task1.getId()).get();
         TaskMapper taskMapper = taskMappersDAO.findByTask(task1).get(0);
         assertEquals(dateString, DateUtils.fromDate(taskMapper.getPlanDay().getDate()));
+
+    }
+
+    @Test
+    public void scheduleWithPlaceholdersTest(){
+        String dateString = "2021-03-11";
+
+        Layer layer = createLayer();
+        Task task1 = createTask(layer);
+
+        AssignMeanDto assignMeanDto = new AssignMeanDto();
+        assignMeanDto.setTasksPerWeek(3);
+        assignMeanDto.setStartDayId(dayDao.findByDate(DateUtils.toDate(dateString)).getId());
+
+        AssignLayerDto assignLayerDto = new AssignLayerDto();
+        assignLayerDto.getTaskIds().add(task1.getId());
+        assignLayerDto.setPlaceholders(2);
+        assignLayerDto.setLayerId(layer.getId());
+        assignMeanDto.getLayers().add(assignLayerDto);
+
+        scheduleMeanService.schedule(assignMeanDto);
+
+        super.cleanContext();
+
+        task1 = tasksDAO.findById(task1.getId()).get();
+        TaskMapper taskMapper = taskMappersDAO.findByTask(task1).get(0);
+
+        List<Task> tasks = tasksDAO.findByLayer(layer);
+        Task taskPlaceholder1 = tasks.get(1);
+        Task taskPlaceholder2 = tasks.get(2);
+
+        assertEquals(dateString, DateUtils.fromDate(taskMapper.getPlanDay().getDate()));
+        assertEquals(3, tasksDAO.findByLayer(layer).size());
+        assertEquals("2021-03-13", DateUtils.fromDate(taskMappersDAO.findByTask(taskPlaceholder1).get(0).getPlanDay().getDate()));
+        assertEquals("2021-03-15", DateUtils.fromDate(taskMappersDAO.findByTask(taskPlaceholder2).get(0).getPlanDay().getDate()));
 
     }
 
