@@ -176,8 +176,15 @@ const formatDate = function(date, part){
 
 const onDragStart = function(e, dayFrom){
   e.draggableDay = dayFrom
+  e.eventType = 'moving'
 }
 
 const onDrop = function(e, dayTo){
-  fireEvent('shift-plans-modal', 'open', [e.draggableDay, dayTo])
+  if(e.eventType == 'moving'){
+    fireEvent('shift-plans-modal', 'open', [e.draggableDay, dayTo])
+  }
+  if(e.eventType == 'assign mean'){
+    fireEvent('assign-mean-modal', 'open', [dayTo, e.mean])
+    e.mean = null
+  }
 }

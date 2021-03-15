@@ -69,8 +69,8 @@ const meansUIlist = function(component){
         return <TreeComponent isEdit={component.state.isEdit}
                   nodes={chkSt(meanRepName, indexByRealmid)[curRealm.id]}
                   viewCallback = {(mean)=>meanUI(component, mean)}
-                  onDropCallback = {(alteredList)=>{fireEvent(meanRepName, 'reposition', [alteredList]); fireEvent(meanRepName, 'remove-draggable')}}
-                  onDragStartCallback = {(mean)=>fireEvent(meanRepName, 'add-draggable', [mean])}
+                  onDropCallback = {(alteredList)=>{fireEvent(meanRepName, 'reposition', [alteredList])}}
+                  onDragStartCallback = {(mean, e)=> {e.mean = mean; e.eventType = 'assign mean';}}
                   rootStyle={{border:'1px solid lightgrey', borderRadius:'5px', marginBottom:'5px', padding:'3px'}}
                   shiftpx={15}
                   />

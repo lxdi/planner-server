@@ -80,7 +80,7 @@ const nodeUI = function(component, node, level){
 const draggableWrapper = function(component, node, content){
     return <div style={{display:'inline-block'}}
                     draggable='true'
-                    onDragStart={(e)=>{e.draggableNode = node; if(component.props.onDragStartCallback!=null) component.props.onDragStartCallback(node)}}
+                    onDragStart={(e)=>{e.draggableNode = node; if(component.props.onDragStartCallback!=null) component.props.onDragStartCallback(node, e)}}
                     onDragOver={(e)=>{e.preventDefault(); component.onDragOver(e, node, 'replace')}}>
                 {content}
               </div>
