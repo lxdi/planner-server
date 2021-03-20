@@ -112,7 +112,7 @@ const modalBody = function(component){
                   deleteHandler={()=>fireEvent(meanRep, 'delete', [component.state.currentMean])}>
 
               {rememberButton(component)}
-              <Button bsStyle="default" bsSize="xsmall" onClick={()=>fireEvent('week-rep', 'unschedule-mean', [component.state.currentMean.id])}>Unschedule</Button>
+              {unscheduleButton(component)}
               {showAlerts(component.state.alerts)}
 
               <form>
@@ -157,6 +157,14 @@ const rememberButton = function(component){
   } else {
     return <Button bsStyle="default" bsSize="xsmall" onClick={()=>rememberReleaseHandler(component, 'release')}>Release</Button>
   }
+}
+
+const unscheduleButton = function(comp){
+  const action = ()=>fireEvent('week-rep', 'unschedule-mean', [comp.state.currentMean.id])
+  const message = 'Are sure you want to unschedule this Mean?'
+  return <Button bsStyle="default" bsSize="xsmall" onClick={()=> fireEvent('confirm-modal', 'open', [message, action])}>
+          Unschedule
+        </Button>
 }
 
 const rememberReleaseHandler = function(component, type){

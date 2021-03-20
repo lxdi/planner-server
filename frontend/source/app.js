@@ -10,6 +10,7 @@ import {DayModal} from './ui/schedule/day-modal'
 import {ShiftPlansModal} from './ui/schedule/shift-plans-modal'
 import {ExternalTaskModal} from './ui/schedule/external-task-modal'
 import {AssignMeanModal} from './ui/schedule/assign-mean-modal'
+import {ConfirmModal} from './ui/common/confirm-modal'
 import {OverlayInfo} from './ui/overlay'
 
 import {createRealmRep} from './data/realms-dao'
@@ -43,6 +44,7 @@ function rerender(){
 				<ShiftPlansModal/>
 				<ExternalTaskModal/>
 				<AssignMeanModal/>
+				<ConfirmModal/>
 				<OverlayInfo />
 				<table style={{width:'100%'}}>
 					<tr>
