@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import {Button, Table} from 'react-bootstrap'
 import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
 
-import {CommonModal} from './../common-modal'
+import {CommonModal} from './../common/common-modal'
 import {formatDate} from '../../utils/date-utils'
 import {DataConstants} from '../../data/data-constants'
 import {isCheckedTask, checkTask, isLayerChecked, checkLayer} from '../../service/assign-mean-check-service'

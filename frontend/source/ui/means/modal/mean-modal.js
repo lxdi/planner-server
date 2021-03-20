@@ -8,13 +8,11 @@ import {DataConstants} from '../../../data/data-constants'
 import {LayersGroup} from './layers-group'
 import {CreateMean, CreateTarget, CreateLayer, CreateTask} from './../../../data/creators'
 import {meanModalHeaderTitle, targetsDropDownTitle} from './../../../titles'
-import {CommonModal} from './../../common-modal'
-import {CommonCrudeTemplate} from './../../common-crud-template'
+import {CommonModal} from './../../common/common-modal'
+import {CommonCrudeTemplate} from './../../common/common-crud-template'
 import {isValidMean} from '../../../utils/mean-validator'
 import {addNewLayerToMean} from '../../../data/mean-loader'
 
-const realmRep = 'realm-rep'
-const targetRep = 'target-rep'
 const meanRep = 'mean-rep'
 const layerRep = 'layer-rep'
 const taskRep = 'task-rep'
@@ -114,6 +112,7 @@ const modalBody = function(component){
                   deleteHandler={()=>fireEvent(meanRep, 'delete', [component.state.currentMean])}>
 
               {rememberButton(component)}
+              <Button bsStyle="default" bsSize="xsmall" onClick={()=>fireEvent('week-rep', 'unschedule-mean', [component.state.currentMean.id])}>Unschedule</Button>
               {showAlerts(component.state.alerts)}
 
               <form>

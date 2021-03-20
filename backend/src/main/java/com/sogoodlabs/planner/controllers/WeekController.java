@@ -8,6 +8,7 @@ import com.sogoodlabs.planner.model.dao.IDayDao;
 import com.sogoodlabs.planner.model.entities.Day;
 import com.sogoodlabs.planner.model.entities.Week;
 import com.sogoodlabs.planner.services.ScheduleMeanService;
+import com.sogoodlabs.planner.services.UnscheduleService;
 import com.sogoodlabs.planner.services.WeekService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -31,6 +32,9 @@ public class WeekController {
 
     @Autowired
     private ScheduleMeanService scheduleMeanService;
+
+    @Autowired
+    private UnscheduleService unscheduleService;
 
 
     @GetMapping("/get/all/current/year")
@@ -67,5 +71,15 @@ public class WeekController {
     @PostMapping("/schedule/mean")
     public void scheduleMean(@RequestBody AssignMeanDto assignMeanDto){
         scheduleMeanService.schedule(assignMeanDto);
+    }
+
+    @PostMapping("/unschedule/mean/{id}")
+    public void unscheduleMean(@PathVariable("id") String meanid){
+        unscheduleService.unscheduleMean(meanid);
+    }
+
+    @PostMapping("/unschedule/layer")
+    public void unscheduleLayer(@PathVariable("id") String layerid){
+        unscheduleService.unscheduleLayer(layerid);
     }
 }

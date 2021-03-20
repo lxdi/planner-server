@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import {ButtonToolbar, DropdownButton, MenuItem, Button} from 'react-bootstrap'
 import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
 
-import {CommonModal} from './../../common-modal'
+import {CommonModal} from './../../common/common-modal'
 import {formatDate} from '../../../utils/date-utils'
 import {DataConstants} from '../../../data/data-constants'
 

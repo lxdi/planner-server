@@ -1,4 +1,3 @@
-import {modalOkTitle, modalCancelTitle} from './../titles'
 import React from 'react';
 import ReactDOM from 'react-dom';
 // import Modal from 'react-modal';
@@ -16,8 +15,8 @@ export class CommonModal extends React.Component{
               {this.props.children}
             </div>
             <Modal.Footer>
-              {this.props.cancelHandler!=null?<Button onClick={this.props.cancelHandler}>{modalCancelTitle}</Button>:null}
-              {this.props.okHandler!=null?<Button bsStyle="primary" onClick={this.props.okHandler} >{modalOkTitle}</Button>:null}
+              {this.props.cancelHandler!=null?<Button onClick={this.props.cancelHandler}>Cancel</Button>:null}
+              {this.props.okHandler!=null?<Button bsStyle="primary" onClick={this.props.okHandler} >Ok</Button>:null}
             </Modal.Footer>
       </Modal>
     )

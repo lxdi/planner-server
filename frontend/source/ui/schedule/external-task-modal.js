@@ -3,8 +3,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {Button, ButtonToolbar,  DropdownButton, MenuItem,  FormGroup, ControlLabel, FormControl, Alert} from 'react-bootstrap'
 import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
-import {CommonModal} from './../common-modal'
-import {CommonCrudeTemplate} from './../common-crud-template'
+import {CommonModal} from './../common/common-modal'
+import {CommonCrudeTemplate} from './../common/common-crud-template'
 import {CreateRealm} from './../../data/creators'
 import {DataConstants} from '../../data/data-constants'
 import {StatefulTextField} from '../common/stateful-text-field'

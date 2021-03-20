@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {CommonModal} from './../common-modal'
+import {CommonModal} from './../common/common-modal'
 import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
 
 import {DataConstants} from '../../data/data-constants'
