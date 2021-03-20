@@ -24,6 +24,10 @@ export class ScheduleFrame extends React.Component{
       fireEvent(DataConstants.weekRep, 'clean-all')
       this.setState({weeks: null})
     })
+
+    registerReaction('shedule-frame', 'week-rep', ['clean-all'], ()=>{
+      this.setState({weeks: null})
+    })
   }
 
   render(){

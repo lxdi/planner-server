@@ -71,14 +71,16 @@ registerEvent(DataConstants.weekRep, cleanAll, (stSetter)=>cleanRep(stSetter))
 
 registerEvent(DataConstants.weekRep, 'assign-mean', (stSetter, dto)=>{
   sendPost('/week/schedule/mean', dto, ()=>{
-      fireEvent(DataConstants.weekRep, 'assign-mean-done', [dto])
+    fireEvent(DataConstants.weekRep, 'clean-all')
+    fireEvent(DataConstants.weekRep, 'assign-mean-done', [dto])
   })
 })
 registerEvent(DataConstants.weekRep, 'assign-mean-done', (stSetter, dto)=>dto)
 
 registerEvent(DataConstants.weekRep, 'unschedule-mean', (stSetter, meanId)=>{
   sendPost('/week/unschedule/mean/'+meanId, null, ()=>{
-      fireEvent(DataConstants.weekRep, 'unschedule-mean-done', [meanId])
+    fireEvent(DataConstants.weekRep, 'clean-all')
+    fireEvent(DataConstants.weekRep, 'unschedule-mean-done', [meanId])
   })
 })
 registerEvent(DataConstants.weekRep, 'unschedule-mean-done', (stSetter, meanId)=>meanId)

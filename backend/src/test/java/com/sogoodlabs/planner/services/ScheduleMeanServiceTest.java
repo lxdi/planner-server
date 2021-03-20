@@ -111,6 +111,38 @@ public class ScheduleMeanServiceTest extends SpringTestConfig {
 
     }
 
+    @Test
+    public void scheduleOnWeekendTest(){
+        String dateString = "2021-03-11";
+
+        Task existingTask = createTask(null);
+        TaskMapper existingTaskTM = new TaskMapper();
+        existingTaskTM.setId(UUID.randomUUID().toString());
+        existingTaskTM.setTask(existingTask);
+        existingTaskTM.setPlanDay(dayDao.findByDate(DateUtils.toDate("2021-03-13")));
+        taskMappersDAO.save(existingTaskTM);
+
+        Layer layer = createLayer();
+        Task task1 = createTask(layer);
+
+        AssignMeanDto assignMeanDto = new AssignMeanDto();
+        assignMeanDto.setTasksPerWeek(3);
+        assignMeanDto.setStartDayId(dayDao.findByDate(DateUtils.toDate(dateString)).getId());
+
+        AssignLayerDto assignLayerDto = new AssignLayerDto();
+        assignLayerDto.getTaskIds().add(task1.getId());
+        assignLayerDto.setPlaceholders(2);
+        assignLayerDto.setLayerId(layer.getId());
+        assignMeanDto.getLayers().add(assignLayerDto);
+
+        scheduleMeanService.schedule(assignMeanDto);
+
+        super.cleanContext();
+
+        assertEquals(2, taskMappersDAO.findByPlanDay(dayDao.findByDate(DateUtils.toDate("2021-03-13"))).size());
+
+    }
+
     private Layer createLayer(){
         Layer layer = new Layer();
         layer.setId(UUID.randomUUID().toString());
