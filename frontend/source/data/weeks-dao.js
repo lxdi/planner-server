@@ -68,6 +68,15 @@ registerEvent(DataConstants.weekRep, movedPlansEvent, (stSetter)=>{})
 
 registerEvent(DataConstants.weekRep, cleanAll, (stSetter)=>cleanRep(stSetter))
 
+
+registerEvent(DataConstants.weekRep, 'assign-mean', (stSetter, dto)=>{
+  sendPost('/week/schedule/mean', dto, ()=>{
+      fireEvent(DataConstants.weekRep, 'assign-mean-done', [dto])
+  })
+})
+registerEvent(DataConstants.weekRep, 'assign-mean-done', (stSetter, dto)=>dto)
+
+
 const cleanRep = function(stSetter){
   stSetter(DataConstants.objMap, null)
   stSetter(DataConstants.objList, null)

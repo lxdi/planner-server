@@ -6,24 +6,25 @@ import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
 import {CommonModal} from './../common-modal'
 import {formatDate} from '../../utils/date-utils'
 import {DataConstants} from '../../data/data-constants'
+import {isCheckedTask, checkTask, isLayerChecked, checkLayer} from '../../service/assign-mean-check-service'
 
 export class AssignMeanModal extends React.Component{
   constructor(props){
     super(props)
-    const defaultState = {isOpen:false, dayTo:null, mean: null}
+    const defaultState = {isOpen:false, dayTo:null, mean: null, dto: null}
     this.state = defaultState
 
-    registerEvent('assign-mean-modal', 'open', (stateSetter, dayTo, mean)=>this.setState({isOpen:true, dayTo:dayTo, mean: mean}))
+    registerEvent('assign-mean-modal', 'open', (stateSetter, dayTo, mean)=>this.setState({isOpen:true, dayTo:dayTo, mean: mean, dto:{startDayId: dayTo.id, tasksPerWeek: 1}}))
     registerEvent('assign-mean-modal', 'close', (stateSetter)=>this.setState(defaultState))
 
-    // registerReaction('assign-mean-modal', DataConstants.dayRep, ['got-one'], ()=>this.setState({}))
-    // registerReaction('assign-mean-modal', DataConstants.weekRep, ['moved-plans'], ()=>this.setState(defaultState))
+    registerReaction('assign-mean-modal', 'mean-rep', ['got-full'], ()=>this.setState({}))
+    registerReaction('assign-mean-modal', 'week-rep', ['assign-mean-done'], ()=>this.setState(defaultState))
   }
 
   render(){
     return <CommonModal
                     isOpen = {this.state.isOpen}
-                    okHandler={()=>console.log("TODO")}
+                    okHandler={()=>okHandler(this)}
                     cancelHandler = {()=>fireEvent('assign-mean-modal', 'close')}
                     title={getTitle(this)}>
                     {getContent(this)}
@@ -39,20 +40,76 @@ const getTitle = function(comp){
   return 'Assign mean ' + comp.state.mean.title +' to '+comp.state.dayTo.date
 }
 
+const okHandler = function(comp){
+  const dto = comp.state.dto
+  fireEvent('week-rep', 'assign-mean', [dto])
+}
+
 const getContent = function(comp){
 
   if(comp.state.dayTo == null){
     return null
   }
 
-  // if(chkSt(DataConstants.dayRep, DataConstants.objMap) == null || chkSt(DataConstants.dayRep, DataConstants.objMap)[comp.state.dayFrom.id]==null
-  //     || !comp.state.dayFrom.isFull){
-  //
-  //   fireEvent(DataConstants.dayRep, 'get-one', [comp.state.dayFrom])
-  //   return 'Loading...'
-  // }
+  const mean = comp.state.mean
+
+  if(mean.isFull == null || !mean.isFull){
+    fireEvent('mean-rep', 'get-full', [mean])
+    return 'Loading...'
+  }
 
   return <div>
-            TODO
+            {layersUI(comp, mean)}
           </div>
+}
+
+const layersUI = function(comp, mean){
+  const result = []
+
+  if(mean.layers!=null){
+    mean.layers.forEach(layer => {
+      result.push(
+        <div>
+          {checkBoxUI('Layer ' + layer.priority, isLayerChecked(comp.state.dto, layer), ()=>checkLayer(comp, comp.state.dto, layer))}
+          <div style={{marginLeft:'10px'}}>{tasksUI(comp, layer)}</div>
+        </div>)
+    })
+  }
+
+  return <div>{result}</div>
+
+}
+
+const tasksUI = function(comp, layer){
+  const result = []
+
+  if(layer.tasks!=null){
+    layer.tasks.forEach(t => {
+      const task = t
+      result.push(<div id={task.id}>
+        {checkBoxUI(task.title, isCheckedTask(comp.state.dto, task), ()=>checkTask(comp, comp.state.dto, layer, task))}
+        </div>)
+    })
+  }
+
+  return <dev>{result}</dev>
+}
+
+const checkBoxUI = function(title, isChecked, checkCallback){
+    return     <div id={title}>
+                <div style={{display:'inline-block'}}>
+                  <input type="checkbox" checked={isChecked? 'checked': null} onClick={(e)=>{e.target.checked = !checkCallback.call()}}/>
+                </div>
+                <div style={{display:'inline-block', marginLeft:'3px'}}>
+                  {title}
+                </div>
+              </div>
+}
+
+const inputCheckbox = function(isChecked, checkCallback){
+  if(isChecked){
+    return <input type="checkbox" checked={'checked'} onClick={(e)=>{e.preventDefault(); checkCallback.call()}}/>
+  } else {
+    return <input type="checkbox" onClick={(e)=>{e.preventDefault(); checkCallback.call()}}/>
+  }
 }
