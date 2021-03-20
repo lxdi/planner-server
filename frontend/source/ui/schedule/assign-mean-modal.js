@@ -14,7 +14,7 @@ export class AssignMeanModal extends React.Component{
     const defaultState = {isOpen:false, dayTo:null, mean: null, dto: null}
     this.state = defaultState
 
-    registerEvent('assign-mean-modal', 'open', (stateSetter, dayTo, mean)=>this.setState({isOpen:true, dayTo:dayTo, mean: mean, dto:{startDayId: dayTo.id, tasksPerWeek: 1}}))
+    registerEvent('assign-mean-modal', 'open', (stateSetter, dayTo, mean)=>this.setState({isOpen:true, dayTo:dayTo, mean: mean, dto:{startDayId: dayTo.id, tasksPerWeek: 0}}))
     registerEvent('assign-mean-modal', 'close', (stateSetter)=>this.setState(defaultState))
 
     registerReaction('assign-mean-modal', 'mean-rep', ['got-full'], ()=>this.setState({}))
@@ -58,8 +58,16 @@ const getContent = function(comp){
     return 'Loading...'
   }
 
+  const style = {border:'1px solid lightgrey', margin: '3px', padding: '3px', borderRadius: '10px'}
   return <div>
-            {layersUI(comp, mean)}
+            <div id='choose per week' style={style}>
+              <div id='1 per week'>{radioUI('1 per week', comp.state.dto.tasksPerWeek==1, ()=>{comp.state.dto.tasksPerWeek=1; comp.setState({}); return true})}</div>
+              <div id='2 per week'>{radioUI('2 per week', comp.state.dto.tasksPerWeek==2, ()=>{comp.state.dto.tasksPerWeek=2; comp.setState({}); return true})}</div>
+              <div id='3 per week'>{radioUI('3 per week', comp.state.dto.tasksPerWeek==3, ()=>{comp.state.dto.tasksPerWeek=3; comp.setState({}); return true})}</div>
+            </div>
+            <div style={style}>
+              {layersUI(comp, mean)}
+            </div>
           </div>
 }
 
@@ -96,20 +104,20 @@ const tasksUI = function(comp, layer){
 }
 
 const checkBoxUI = function(title, isChecked, checkCallback){
+  return inputCheckUI(title, isChecked, checkCallback, 'checkbox')
+}
+
+const radioUI = function(title, isChecked, checkCallback){
+  return inputCheckUI(title, isChecked, checkCallback, 'radio')
+}
+
+const inputCheckUI = function(title, isChecked, checkCallback, type){
     return     <div id={title}>
                 <div style={{display:'inline-block'}}>
-                  <input type="checkbox" checked={isChecked? 'checked': null} onClick={(e)=>{e.target.checked = !checkCallback.call()}}/>
+                  <input type={type} checked={isChecked? 'checked': null} onClick={(e)=>{e.target.checked = checkCallback.call()}}/>
                 </div>
                 <div style={{display:'inline-block', marginLeft:'3px'}}>
                   {title}
                 </div>
               </div>
-}
-
-const inputCheckbox = function(isChecked, checkCallback){
-  if(isChecked){
-    return <input type="checkbox" checked={'checked'} onClick={(e)=>{e.preventDefault(); checkCallback.call()}}/>
-  } else {
-    return <input type="checkbox" onClick={(e)=>{e.preventDefault(); checkCallback.call()}}/>
-  }
 }
