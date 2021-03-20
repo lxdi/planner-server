@@ -37,7 +37,7 @@ public class UnscheduleService {
 
     public void unscheduleTask(String taskId){
         Task task = tasksDAO.findById(taskId).orElseThrow(()->new RuntimeException("Task not found " + taskId));
-        taskMappersDAO.findByTaskUnfinisihed(task).forEach(taskMappersDAO::delete);
+        taskMappersDAO.findByTaskUnfinished(task).forEach(taskMappersDAO::delete);
     }
 
 }

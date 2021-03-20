@@ -15,7 +15,10 @@ public interface ITaskMappersDAO extends JpaRepository<TaskMapper, String> {
     List<TaskMapper> findByPlanDayOrFinishDay(Day planDay, Day planDay2);
 
     @Query("from TaskMapper where task = :task and finishDay is null")
-    List<TaskMapper> findByTaskUnfinisihed(@Param("task") Task task);
+    List<TaskMapper> findByTaskUnfinished(@Param("task") Task task);
+
+    @Query("from TaskMapper where task = :task and finishDay is not null")
+    List<TaskMapper> findByTaskFinished(@Param("task") Task task);
 
     @Query("select count(*) from TaskMapper where finishDay = :day")
     int findTotalByDay(@Param("day") Day day);

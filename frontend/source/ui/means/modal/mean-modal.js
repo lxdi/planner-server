@@ -111,7 +111,6 @@ const modalBody = function(component){
                   changeEditHandler = {component.forceUpdate.bind(component)}
                   deleteHandler={()=>fireEvent(meanRep, 'delete', [component.state.currentMean])}>
 
-              {rememberButton(component)}
               {unscheduleButton(component)}
               {showAlerts(component.state.alerts)}
 
@@ -151,27 +150,12 @@ const prepareMean = function(mean){
   return true
 }
 
-const rememberButton = function(component){
-  if(chkSt(meanRep, 'draggableMean')!=component.state.currentMean){
-    return <Button bsStyle="default" bsSize="xsmall" onClick={()=>rememberReleaseHandler(component, 'remember')}>Remember</Button>
-  } else {
-    return <Button bsStyle="default" bsSize="xsmall" onClick={()=>rememberReleaseHandler(component, 'release')}>Release</Button>
-  }
-}
-
 const unscheduleButton = function(comp){
   const action = ()=>fireEvent('week-rep', 'unschedule-mean', [comp.state.currentMean.id])
   const message = 'Are sure you want to unschedule this Mean?'
   return <Button bsStyle="default" bsSize="xsmall" onClick={()=> fireEvent('confirm-modal', 'open', [message, action])}>
           Unschedule
         </Button>
-}
-
-const rememberReleaseHandler = function(component, type){
-  if(type == 'remember')
-    fireEvent(meanRep, 'add-draggable', [component.state.currentMean])
-  if(type == 'release')
-    fireEvent(meanRep, 'remove-draggable')
 }
 
 const showAlerts = function(alerts){

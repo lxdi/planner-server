@@ -24,7 +24,7 @@ export class AssignMeanModal extends React.Component{
   render(){
     return <CommonModal
                     isOpen = {this.state.isOpen}
-                    okHandler={()=>okHandler(this)}
+                    okHandler={this.state.dto!=null && this.state.dto.tasksPerWeek>0?()=>okHandler(this):null}
                     cancelHandler = {()=>fireEvent('assign-mean-modal', 'close')}
                     title={getTitle(this)}>
                     {getContent(this)}
@@ -92,15 +92,25 @@ const tasksUI = function(comp, layer){
   const result = []
 
   if(layer.tasks!=null){
-    layer.tasks.forEach(t => {
-      const task = t
+    layer.tasks.forEach(task => {
+      const progressStatusChecked = convertProgressStatusToBoolean(task)
       result.push(<div id={task.id}>
-        {checkBoxUI(task.title, isCheckedTask(comp.state.dto, task), ()=>checkTask(comp, comp.state.dto, layer, task))}
+          <div style={{display:'inline-block'}}>{checkBoxUI(task.title, isCheckedTask(comp.state.dto, task), ()=>checkTask(comp, comp.state.dto, layer, task))}</div>
+          <div style={{display:'inline-block', marginLeft:'3px'}}>
+            {progressStatusChecked!=null?<input type='checkbox' checked={progressStatusChecked} disabled='true'/>: null}
+          </div>
         </div>)
     })
   }
 
   return <dev>{result}</dev>
+}
+
+const convertProgressStatusToBoolean = function(task){
+  if(task.progressStatus==null){
+    return null
+  }
+  return task.progressStatus == 'completed'
 }
 
 const checkBoxUI = function(title, isChecked, checkCallback){

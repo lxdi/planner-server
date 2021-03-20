@@ -30,6 +30,9 @@ public class Task implements IEntity {
     @Transient
     private List<TaskTesting> taskTestings;
 
+    @Transient
+    private String progressStatus;
+
     @Override
     public String getId() {
         return id;
@@ -77,6 +80,13 @@ public class Task implements IEntity {
     @MapToClass(value = TaskTesting.class)
     public void setTaskTestings(List<TaskTesting> taskTestings) {
         this.taskTestings = taskTestings;
+    }
+
+    public String getProgressStatus() {
+        return progressStatus;
+    }
+    public void setProgressStatus(String progressStatus) {
+        this.progressStatus = progressStatus;
     }
 
     @IncludeInDto

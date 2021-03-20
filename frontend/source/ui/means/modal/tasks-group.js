@@ -19,6 +19,7 @@ export class TasksGroup extends React.Component {
 
 const taskCssStyle = {
   display: 'table-cell',
+  //display:'inline-block',
   padding: '5px',
   border: '1px solid lightgrey',
   'vertical-align':'top'}
@@ -29,6 +30,7 @@ const tasksUI = function(layer, isEdit){
 
     for(var taskPos in layer.tasks){
       const task = layer.tasks[taskPos]
+      const progressStatusChecked = convertProgressStatusToBoolean(task)
       tasksHTML.push(<div key={'layer_'+layer.priority+'_task_'+taskPos}
                           style={taskCssStyle}
                           draggable={isEdit?"true":"false"}
@@ -36,8 +38,12 @@ const tasksUI = function(layer, isEdit){
                           onDragEnd={()=>fireEvent(DataConstants.taskRep, 'release-draggable-task')}
                           onDragOver={(e)=>moveEvent(e, layer, task, 'task', isEdit)}>
 
-                          <a href='#' onClick={()=>fireEvent('task-modal', 'open', [layer, task])}>{task.title}</a>
-
+                            <div>
+                              <a href='#' onClick={()=>fireEvent('task-modal', 'open', [layer, task])}>{task.title}</a>
+                              <span style={{marginLeft:'3px'}}>
+                                {progressStatusChecked!=null?<input type='checkbox' checked={progressStatusChecked} disabled='true'/>: null}
+                              </span>
+                            </div>
                       </div>)
     }
   }
@@ -59,4 +65,11 @@ const tasksUI = function(layer, isEdit){
   }
 
   return tasksHTML
+}
+
+const convertProgressStatusToBoolean = function(task){
+  if(task.progressStatus==null){
+    return null
+  }
+  return task.progressStatus == 'completed'
 }
