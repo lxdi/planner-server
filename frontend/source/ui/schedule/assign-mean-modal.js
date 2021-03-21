@@ -80,6 +80,11 @@ const layersUI = function(comp, mean){
         <div>
           {checkBoxUI('Layer ' + layer.priority, isLayerChecked(comp.state.dto, layer), ()=>checkLayer(comp, comp.state.dto, layer))}
           <div style={{marginLeft:'10px'}}>{tasksUI(comp, layer)}</div>
+          <div style={{marginLeft:'10px'}}>
+            <a href='#' style={{marginRight: '2px'}} onClick={()=>getPlaceholdersCountForLayer(comp, comp.state.dto, layer, -1)}>-</a>
+            {getPlaceholdersCountForLayer(comp, comp.state.dto, layer)}
+            <a href='#' style={{marginLeft: '2px'}} onClick={()=>getPlaceholdersCountForLayer(comp, comp.state.dto, layer, 1)}>+</a>
+          </div>
         </div>)
     })
   }
@@ -130,4 +135,40 @@ const inputCheckUI = function(title, isChecked, checkCallback, type){
                   {title}
                 </div>
               </div>
+}
+
+const getPlaceholdersCountForLayer = function(comp, dto, layer, change){
+  if(change==null){
+    change = 0
+  }
+  if(dto.layers == null){
+    dto.layers = [{layerId:layer.id, placeholders: change}]
+  }else {
+    if(dto.layers.filter(l => l.layerId == layer.id).length==0){
+      dto.layers.push({layerId:layer.id, placeholders: change})
+    }
+  }
+
+  var result = 0
+  dto.layers.forEach(l => {
+    if(l.layerId == layer.id){
+
+      if(l.placeholders == null){
+        l.placeholders = change
+      } else {
+        l.placeholders = l.placeholders + change
+      }
+
+      if(l.placeholders<0){
+        l.placeholders = 0
+      }
+
+      result = l.placeholders
+    }
+  })
+
+  if(change!=0){
+    comp.setState({})
+  }
+  return result
 }
