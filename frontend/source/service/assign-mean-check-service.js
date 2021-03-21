@@ -20,6 +20,9 @@ export const checkTask = function(comp, dto, layer, task){
 
   const isAdded = dto.layers.filter(l => {
     if(l.layerId == layer.id){
+      if(l.taskIds==null){
+        l.taskIds = []
+      }
       if(l.taskIds.includes(task.id)){
         const idx = l.taskIds.indexOf(task.id)
         l.taskIds.splice(idx, 1)

@@ -48,6 +48,11 @@ public class ScheduleMeanService {
                 .flatMap(this::getTasks)
                 .collect(Collectors.toList());
 
+        if(tasks.isEmpty()){
+            log.warn("No tasks to assign");
+            return;
+        }
+
         Day day = dayDao.findById(assignMeanDto.getStartDayId())
                 .orElseThrow(()->new RuntimeException("Day not found by id " + assignMeanDto.getStartDayId()));
 
