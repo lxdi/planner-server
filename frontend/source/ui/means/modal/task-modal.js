@@ -12,25 +12,25 @@ import {DataConstants} from '../../../data/data-constants'
 import {TopicsList} from './topics-list'
 import {TestingsList} from './testings-list'
 
-const createState = function(isOpen, isStatic, isEdit, layer, task, progress, highlightId){
-  return {
-    isOpen: isOpen,
-    mode: {isStatic: isStatic, isEdit: isEdit, progress:progress},
-    layer: layer,
-    task: task,
-    highlightId: highlightId
-  }
-}
-
 export class TaskModal extends React.Component {
   constructor(props){
     super(props)
-    this.state = createState(false, false, false, null, null, null)
+    const defaultState = {isOpen:false, mode: {isStatic: false, isEdit: false, progress:null}, layer: null, task: null, highlightId: null, showTestings: null}
+    this.state = defaultState
 
     registerEvent('task-modal', 'open',
-                (stateSetter, layer, task, isViewOnly, withprogress, highlightId)=>this.setState(getState(layer, task, isViewOnly, withprogress, highlightId)))
+                (stateSetter, layer, task, highlightId)=>this.setState(getState(layer, task, highlightId)))
 
-    registerEvent('task-modal', 'close', ()=>this.setState(createState(false, false, false, null, null, null, null)))
+    registerEvent('task-modal', 'open-view-only',
+                (stateSetter, layer, task, highlightId)=>this.setState({isOpen:true, mode: {isStatic: true, isEdit: false}, layer: layer, task: task, highlightId: highlightId}))
+
+    registerEvent('task-modal', 'open-testings-hidden',(stateSetter, layer, task, highlightId)=>{
+              const state = getState(layer, task, highlightId)
+              state.showTestings = false
+              this.setState(state)
+            })
+
+    registerEvent('task-modal', 'close', ()=>this.setState(defaultState))
 
     registerReaction('task-modal', DataConstants.taskRep, ['task-deleted', 'repetition-finished'], (stateSetter)=>fireEvent('task-modal', 'close'))
     registerReaction('task-modal', DataConstants.taskRep, 'task-finished', (stateSetter)=>this.setState({}))
@@ -48,21 +48,13 @@ export class TaskModal extends React.Component {
   }
 }
 
-const getState = function(layer, task, isViewOnly, withprogress, highlightId){
+const getState = function(layer, task, highlightId){
   var state = null
   if(task.id == null || task.id == DataConstants.newId){
-    state = createState(true, true, true, layer, task)
+    state = {isOpen:true, mode: {isStatic: true, isEdit: true}, layer: layer, task: task}
   } else {
-    state = createState(true, false, false, layer, task)
+    state = {isOpen:true, mode: {isStatic: false, isEdit: false}, layer: layer, task: task}
   }
-  if(isViewOnly!=null && isViewOnly==true){
-    state.mode.isStatic = true
-    state.mode.isEdit = false
-  }
-  if(withprogress==true){
-    state.mode.progress = true
-  }
-  state.showTestings = false
   state.highlightId = highlightId
   return state
 }
@@ -112,14 +104,14 @@ const removeTask = function(component){
 }
 
 const getTestingsUI = function(component){
-  if(component.state.showTestings==true || !(component.state.mode.isEdit==false && component.state.mode.isStatic==true)){
-    return <TestingsList task={component.state.task} isEdit={component.state.mode.isEdit} testingsGuesses={component.state.testingObjectives} />
+  if(component.state.showTestings==false){
+    component.state.testingObjectives = ''
+    return <div>
+              <TextArea obj={component.state} valName={'testingObjectives'} valNameUI={'objectives'}/>
+              <Button onClick={()=>component.setState({showTestings:true})}>Show testings</Button>
+          </div>
   }
-  component.state.testingObjectives = ''
-  return <div>
-            <TextArea obj={component.state} valName={'testingObjectives'} valNameUI={'objectives'}/>
-            <Button onClick={()=>component.setState({showTestings:true})}>Show testings</Button>
-        </div>
+  return <TestingsList task={component.state.task} isEdit={component.state.mode.isEdit} testingsGuesses={component.state.testingObjectives} />
 }
 
 const progressButton = function(component){

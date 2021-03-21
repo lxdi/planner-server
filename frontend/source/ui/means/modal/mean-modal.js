@@ -22,42 +22,39 @@ const indexByMean = 'index-by-mean'
 const byMeanRequest = 'by-mean-request'
 const byMeanResponse = 'by-mean-response'
 
-const createState = function(isOpen, isStatic, isEdit, currentMean){
-  return {
-    isOpen: isOpen,
-    mode: {isStatic: isStatic, isEdit: isEdit},
-    currentMean: currentMean
-  }
-}
-
-const defaultState = function(){
-  return createState(false, true, false, CreateMean(DataConstants.newId, '', null, []))
-}
-
 export class MeanModal extends React.Component {
   constructor(props){
     super(props)
-    this.state = defaultState();
+    const defaultState = {isOpen:false, mode:{isStatic: true, isEdit: false}, currentMean: null, postactions: null}
+    this.state = defaultState
     this.okHandler = this.okHandler.bind(this);
     this.handleNameVal = this.handleNameVal.bind(this);
 
-    registerEvent('mean-modal', 'open', function(stateSetter, currentMean){
-      this.setState(createState(true, currentMean.id==DataConstants.newId, currentMean.id==DataConstants.newId, currentMean))
-      return currentMean
-    }.bind(this))
+    registerEvent('mean-modal', 'open', (stateSetter, currentMean) => {
+      this.setState({isOpen:true, mode:{isStatic: currentMean.id==DataConstants.newId, isEdit: currentMean.id==DataConstants.newId}, currentMean: currentMean})
+    })
 
-    registerEvent('mean-modal', 'close', function(){
+    registerEvent('mean-modal', 'open-with-task', (stateSetter, currentMean, taskId, highlightId) => {
+      this.setState({
+        isOpen:true,
+        mode:{isStatic: currentMean.id==DataConstants.newId, isEdit: currentMean.id==DataConstants.newId},
+        currentMean: currentMean,
+        postactions: {open:{task:{id: taskId, highlightId: highlightId}}}
+      })
+    })
+
+    registerEvent('mean-modal', 'close', ()=>{
       this.state.currentMean.isFull = false
       fireEvent(layerRep, 'clean')
       fireEvent(taskRep, 'clean')
       fireEvent(DataConstants.topicRep, 'clean')
       fireEvent(DataConstants.tasktestingRep, 'clean')
-      this.setState(defaultState())
-    }.bind(this))
+      this.setState(defaultState)
+    })
 
     registerEvent('mean-modal', 'remove-target')
-    registerReaction('means-modal', meanRep, ['deleted', 'updated', 'created'], ()=>this.setState(defaultState()))
-    registerReaction('means-modal', meanRep, ['got-full'], ()=>this.setState({}))
+    registerReaction('means-modal', meanRep, ['deleted', 'updated', 'created'], ()=>this.setState(defaultState))
+    registerReaction('means-modal', meanRep, ['got-full'], ()=>{postactionsHandle(this.state); this.setState({})})
     registerReaction('mean-modal', 'task-modal', 'close', ()=>this.setState({}))
 
   }
@@ -103,6 +100,10 @@ const getTitle = function(state){
 }
 
 const modalBody = function(component){
+    if(component.state.currentMean==null){
+      return null
+    }
+
     if(!prepareMean(component.state.currentMean)){
       return 'Loading...'
     }
@@ -166,4 +167,23 @@ const showAlerts = function(alerts){
     }
     return <Alert bsStyle="danger">{result}</Alert>
   }
+}
+
+const postactionsHandle = function(state){
+  if(state.postactions==null){
+    return
+  }
+  if(state.postactions.open.task!=null){
+    openTaskModal(state.currentMean, state.postactions.open.task)
+  }
+}
+
+const openTaskModal = function(mean, taskArgs){
+  mean.layers.forEach(layer => {
+    layer.tasks.forEach(task => {
+      if(task.id == taskArgs.id){
+        fireEvent('task-modal', 'open-testings-hidden', [layer, task, taskArgs.highlightId])
+      }
+    })
+  })
 }

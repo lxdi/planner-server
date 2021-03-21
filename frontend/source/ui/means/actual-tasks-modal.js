@@ -120,7 +120,7 @@ const taskLink = function(task, rep){
                       onMouseEnter={()=>fireEvent('overlay-info', 'show', [task.fullPath])}
   										onMouseOver={(e)=>fireEvent('overlay-info', 'update-pos', [e.nativeEvent.clientX+15, e.nativeEvent.clientY-10])}
   										onMouseLeave={()=>fireEvent('overlay-info', 'hide')}>
-            <a href='#' onClick={()=>fireEvent('task-modal', 'open', [null, task, true, false, rep.id])}>{task.title}</a>
+            <a href='#' onClick={()=>fireEvent('task-modal', 'open-view-only', [null, task, rep.id])}>{task.title}</a>
             <div style={{fontSize:'9px', fontColor:'lightGrey', marginLeft: '5px', display: 'inline-block'}}>{getIncomingTag(rep)}</div>
       </div>
 }

@@ -10,7 +10,6 @@ import java.util.List;
 
 public class ScheduledDayDto {
 
-    private Day day;
     private List<TaskMapper> taskMappers;
     private List<Repetition> repetitions;
     private List<ExternalTask> externalTasks;
@@ -29,14 +28,6 @@ public class ScheduledDayDto {
     }
     public void setRepetitions(List<Repetition> repetitions) {
         this.repetitions = repetitions;
-    }
-
-    @IncludeInDto
-    public Day getDay() {
-        return day;
-    }
-    public void setDay(Day day) {
-        this.day = day;
     }
 
     @IncludeInDto

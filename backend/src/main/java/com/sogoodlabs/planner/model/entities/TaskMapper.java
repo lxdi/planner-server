@@ -58,4 +58,15 @@ public class TaskMapper {
     public Task getTaskSelf(){
         return this.task;
     }
+
+    @IncludeInDto
+    public Mean getMean(){
+        if(this.task==null){
+            return null;
+        }
+        if(this.task.getLayer()==null){
+            return null;
+        }
+        return task.getLayer().getMean();
+    }
 }

@@ -4,13 +4,9 @@ import {sendGet, sendPut, sendPost} from './postoffice'
 import {DataConstants} from './data-constants'
 
 const repName = 'day'
-
-const getOneDayEvent = 'get-one'
-const gotOneDayEvent = 'got-one'
 const getCurrentUrlOffest = '/week/get/day'
-const cleanAll = 'clean-all'
 
-registerEvent(DataConstants.dayRep, getOneDayEvent, (stSetter, day)=>{
+registerEvent(DataConstants.dayRep, 'get-one', (stSetter, day)=>{
   sendGet(getCurrentUrlOffest + '/' + day.id, (data)=>{
       const dayMt = typeof data == 'string'? JSON.parse(data): data
       Object.assign(day, dayMt)
@@ -22,11 +18,11 @@ registerEvent(DataConstants.dayRep, getOneDayEvent, (stSetter, day)=>{
         stSetter(DataConstants.objMap, objmap)
       }
       objmap[day.id] = day
-      fireEvent(DataConstants.dayRep, gotOneDayEvent, [day])
+      fireEvent(DataConstants.dayRep, 'got-one', [day])
   })
 })
-registerEvent(DataConstants.dayRep, gotOneDayEvent, (stSetter, day)=>day)
+registerEvent(DataConstants.dayRep, 'got-one', (stSetter, day)=>day)
 
-registerEvent(DataConstants.dayRep, cleanAll, (stSetter)=>{
+registerEvent(DataConstants.dayRep, 'clean-all', (stSetter)=>{
   stSetter(DataConstants.objMap, null)
 })

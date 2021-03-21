@@ -1,5 +1,9 @@
 
 export const isValidMean = function(alerts, mean){
+  if(mean==null){
+    return false
+  }
+  
   var result = true
   if(mean.title == null || mean.title==''){
     alerts.push('Title is not valid')
