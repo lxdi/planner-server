@@ -11,6 +11,12 @@ public class TaskTesting {
     @ManyToOne(fetch = FetchType.LAZY)
     Task task;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    private TaskTesting parent;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private TaskTesting next;
+
     String question;
 
     public String getId() {
@@ -32,5 +38,21 @@ public class TaskTesting {
     }
     public void setQuestion(String question) {
         this.question = question;
+    }
+
+    public TaskTesting getParent() {
+        return parent;
+    }
+
+    public void setParent(TaskTesting parent) {
+        this.parent = parent;
+    }
+
+    public TaskTesting getNext() {
+        return next;
+    }
+
+    public void setNext(TaskTesting next) {
+        this.next = next;
     }
 }

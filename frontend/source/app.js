@@ -6,6 +6,7 @@ import {LeftSideBarContent} from './ui/left-side-bar-content'
 import {TaskProgressModal} from './ui/means/modal/task-progress-modal'
 import {TaskFinishModal} from './ui/means/modal/task-finish-modal'
 import {ActualTasksModal} from './ui/means/actual-tasks-modal'
+import {TestingModal} from './ui/means/modal/testing-modal'
 import {DayModal} from './ui/schedule/day-modal'
 import {ShiftPlansModal} from './ui/schedule/shift-plans-modal'
 import {ExternalTaskModal} from './ui/schedule/external-task-modal'
@@ -37,6 +38,7 @@ const app = document.getElementById("app");
 function rerender(){
 	ReactDOM.render(
 		<div style={{margin:'3px'}}>
+				<TestingModal/>
 				<TaskProgressModal/>
 				<TaskFinishModal/>
 				<ActualTasksModal/>

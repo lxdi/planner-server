@@ -34,6 +34,8 @@ export class TaskModal extends React.Component {
 
     registerReaction('task-modal', DataConstants.taskRep, ['task-deleted', 'repetition-finished'], (stateSetter)=>fireEvent('task-modal', 'close'))
     registerReaction('task-modal', DataConstants.taskRep, 'task-finished', (stateSetter)=>this.setState({}))
+
+    registerReaction('task-modal', 'testing-modal', ['close'], (stateSetter)=>this.setState({}))
   }
 
   render(){
