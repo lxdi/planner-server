@@ -7,7 +7,7 @@ import {CommonModal} from './../../common/common-modal'
 import {TextField} from '../../common/text-field'
 
 
-const newIdPrefix = 'new-'
+const newIdPrefix = 'new-' //duplicated on the backend
 
 // props: task, testing
 export class TestingModal extends React.Component {

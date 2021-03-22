@@ -26,10 +26,10 @@ public class MeansService {
     private ITopicDAO topicDAO;
 
     @Autowired
-    private ITaskTestingDAO taskTestingDAO;
+    private GracefulDeleteService gracefulDeleteService;
 
     @Autowired
-    private GracefulDeleteService gracefulDeleteService;
+    private TaskTestingsUpdateService taskTestingsUpdateService;
 
     public Mean createMean(Mean mean){
         return modify(mean);
@@ -114,17 +114,7 @@ public class MeansService {
                     .forEach(topicDAO::delete);
         }
 
-        if(task.getTaskTestings()!=null && !task.getTaskTestings().isEmpty()){
-
-            Set<String> ids = task.getTaskTestings().stream()
-                    .peek(taskTesting -> modify(taskTesting, task))
-                    .map(TaskTesting::getId)
-                    .collect(Collectors.toSet());
-
-            taskTestingDAO.findByTask(task).stream()
-                    .filter(topic -> !ids.contains(topic.getId()))
-                    .forEach(taskTestingDAO::delete);
-        }
+        taskTestingsUpdateService.update(task, task.getTaskTestings());
 
         return task;
     }
@@ -137,16 +127,6 @@ public class MeansService {
         topic.setTask(task);
         topicDAO.save(topic);
         return topic;
-    }
-
-    private TaskTesting modify(TaskTesting testing, Task task){
-        if(!IdUtils.isUUID(testing.getId())){
-            testing.setId(UUID.randomUUID().toString());
-        }
-
-        testing.setTask(task);
-        taskTestingDAO.save(testing);
-        return testing;
     }
 
 }

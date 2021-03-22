@@ -6,6 +6,7 @@ import com.sogoodlabs.planner.model.dao.ITaskTestingDAO;
 import com.sogoodlabs.planner.model.entities.Mean;
 import com.sogoodlabs.planner.model.entities.TaskTesting;
 import com.sogoodlabs.planner.services.RepositionService;
+import com.sogoodlabs.planner.services.TaskTestingsUpdateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,7 +28,7 @@ public class TestingsController {
     private CommonMapper commonMapper;
 
     @Autowired
-    private RepositionService repositionService;
+    private TaskTestingsUpdateService taskTestingsUpdateService;
 
     @GetMapping("/get/by/mean/{meanid}")
     public List<Map<String, Object>> layersOfMean(@PathVariable("meanid") String meanid){
@@ -38,10 +39,8 @@ public class TestingsController {
                 .collect(Collectors.toList());
     }
 
-    @PostMapping("/reposition/list")
-    public void reposition(@RequestBody List<Map<String, Object>> testingsDtoList){
-        repositionService.repositionTaskTestings(testingsDtoList.stream()
-                .map(mean -> commonMapper.mapToEntity(mean, new TaskTesting()))
-                .collect(Collectors.toList()));
+    @GetMapping("/flat/all")
+    public void flatTestings(){
+        taskTestingsUpdateService.flatAllTestings();
     }
 }

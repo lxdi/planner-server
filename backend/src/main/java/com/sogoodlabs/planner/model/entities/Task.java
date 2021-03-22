@@ -77,7 +77,7 @@ public class Task implements IEntity {
         return taskTestings;
     }
 
-    @MapToClass(value = TaskTesting.class)
+    @MapToClass(value = TaskTesting.class, mapEntities = true)
     public void setTaskTestings(List<TaskTesting> taskTestings) {
         this.taskTestings = taskTestings;
     }

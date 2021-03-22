@@ -3,6 +3,7 @@ package com.sogoodlabs.planner.model.dto;
 import com.sogoodlabs.common_mapper.IEntityById;
 import com.sogoodlabs.planner.model.dao.*;
 import com.sogoodlabs.planner.model.entities.*;
+import com.sogoodlabs.planner.services.TaskTestingsUpdateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -72,9 +73,18 @@ public class EntityByIdImpl implements IEntityById<String> {
         if(aClass == RepetitionPlan.class){
             result = repPlanDAO.findById(id).orElseThrow(()-> new RuntimeException(aClass.getName() + " not found by " + id));
         }
+
         if(aClass == TaskTesting.class){
-            result = testingDAO.findById(id).orElseThrow(()-> new RuntimeException(aClass.getName() + " not found by " + id));
+            result = testingDAO.findById(id).orElseGet(()-> {
+                if(id.contains(TaskTestingsUpdateService.NEW_ID_PREFIX)){
+                    TaskTesting taskTesting = new TaskTesting();
+                    taskTesting.setId(id);
+                    return taskTesting;
+                }
+                throw new RuntimeException(aClass.getName() + " not found by " + id);
+            });
         }
+
         if(aClass == Repetition.class){
             result = repDAO.findById(id).orElseThrow(()-> new RuntimeException(aClass.getName() + " not found by " + id));
         }
