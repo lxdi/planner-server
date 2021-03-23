@@ -38,16 +38,7 @@ const app = document.getElementById("app");
 function rerender(){
 	ReactDOM.render(
 		<div style={{margin:'3px'}}>
-				<TestingModal/>
-				<TaskProgressModal/>
-				<TaskFinishModal/>
-				<ActualTasksModal/>
-				<DayModal/>
-				<ShiftPlansModal/>
-				<ExternalTaskModal/>
-				<AssignMeanModal/>
-				<ConfirmModal/>
-				<OverlayInfo />
+				{getModals()}
 				<table style={{width:'100%'}}>
 					<tr>
 						<td style={{width:'50px', verticalAlign:'top'}}>
@@ -59,6 +50,21 @@ function rerender(){
 					</tr>
 				</table>
 		</div>, app);
+}
+
+const getModals = function(){
+	return <div>
+						<TestingModal/>
+						<TaskProgressModal/>
+						<TaskFinishModal/>
+						<ActualTasksModal/>
+						<DayModal/>
+						<ShiftPlansModal/>
+						<ExternalTaskModal/>
+						<AssignMeanModal/>
+						<ConfirmModal/>
+						<OverlayInfo />
+					</div>
 }
 
 rerender();

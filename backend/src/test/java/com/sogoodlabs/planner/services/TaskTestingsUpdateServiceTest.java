@@ -75,4 +75,39 @@ public class TaskTestingsUpdateServiceTest extends SpringTestConfig {
         assertEquals("question1", questionToTesting.get("question4").getParent().getQuestion());
     }
 
+    @Test
+    public void updateRepositionTest(){
+        Task task = new Task();
+        task.setId(UUID.randomUUID().toString());
+        tasksDAO.save(task);
+
+        TaskTesting root = createTaskTesting(null, null);
+        TaskTesting child2 = createTaskTesting(root, null);
+        TaskTesting child1 = createTaskTesting(root, child2);
+
+        super.cleanContext();
+
+        TaskTesting root2 = createTaskTesting(root.getId(), null, null);
+        TaskTesting child22 = createTaskTesting(root.getId(), root, null);
+        TaskTesting child21 = createTaskTesting(root.getId(), root, child22);
+
+        taskTestingsUpdateService.update(task, Arrays.asList(child21, child22, root2));
+
+        super.cleanContext();
+    }
+
+    private TaskTesting createTaskTesting(TaskTesting parent, TaskTesting next){
+        TaskTesting taskTesting = createTaskTesting(UUID.randomUUID().toString(), parent, next);
+        taskTestingDAO.save(taskTesting);
+        return taskTesting;
+    }
+
+    private TaskTesting createTaskTesting(String id, TaskTesting parent, TaskTesting next){
+        TaskTesting taskTesting = new TaskTesting();
+        taskTesting.setId(id);
+        taskTesting.setNext(next);
+        taskTesting.setParent(parent);
+        return taskTesting;
+    }
+
 }

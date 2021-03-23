@@ -51,7 +51,13 @@ const content = function(component){
 
 const testingUI = function(comp, testing){
   return <div>
-            <a href='#' onClick={()=>fireEvent('testing-modal', 'open', [comp.props.task, testing])}>{testing.question}</a>
-            <a href='#' onClick={()=>fireEvent('testing-modal', 'open', [comp.props.task, {parentid: testing.id}])}> + </a>
+            <div>
+              <a href='#' onClick={()=>fireEvent('testing-modal', 'open', [comp.props.task, testing])}>{testing.question}</a>
+              (<a href='#' onClick={()=>{testing.answer=''; comp.setState({})}}>answer</a>)
+              <a href='#' onClick={()=>fireEvent('testing-modal', 'open', [comp.props.task, {parentid: testing.id}])}> + </a>
+            </div>
+            <div>
+              {testing.answer!=null?<TextArea obj={testing} valName={'answer'}/>:null}
+            </div>
         </div>
 }
