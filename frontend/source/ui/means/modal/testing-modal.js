@@ -35,15 +35,22 @@ export class TestingModal extends React.Component {
 const okHandler = function(comp){
   const task = comp.state.task
   const testing = comp.state.testing
-  if(testing.id == null){
-    testing.id = newIdPrefix+makeId(10)
+
+  if(task.taskTestings==null){
+    task.taskTestings = []
   }
+
   if(!task.taskTestings.includes(testing)){
     task.taskTestings.push(testing)
   }
-  const prevTesting = findLast(task.taskTestings, testing.parentid)
-  if(prevTesting!=null && prevTesting!=testing){
-    prevTesting.nextid = testing.id
+
+  if(testing.id == null){
+    testing.id = newIdPrefix+makeId(10)
+    const prevTesting = findLast(task.taskTestings, testing.parentid)
+
+    if(prevTesting!=null && prevTesting!=testing){
+      prevTesting.nextid = testing.id
+    }
   }
   fireEvent('testing-modal', 'close')
 }

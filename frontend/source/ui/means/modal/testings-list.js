@@ -34,35 +34,11 @@ const content = function(component){
   Object.assign(styleRemoveLink, commonStyle)
   const testings = component.props.task.taskTestings
   const testingsMap = makeMap(testings, 'id')
-  // for(var indx in testings){
-  //   const testing = testings[indx]
-  //
-  //   result.push(<div key={testing.id} style={{borderBottom:'1px solid lightgrey', marginBottom:'3px'}}>
-  //               <div>
-  //                   <div style={styleFields}>
-  //                     <StatefulTextField obj={testing} valName={'question'} isEdit={component.props.isEdit}>
-  //                       {testing.question}<a href='#' onClick={()=>{testing.answer=''; component.setState({})}} >(answer)</a>
-  //                     </StatefulTextField>
-  //                   </div>
-  //                   <div style={styleRemoveLink}>{removeTestingLink(component, testings, testing)}</div>
-  //               </div>
-  //               <div>
-  //                 {testing.answer!=null?<TextArea obj={testing} valName={'answer'}/>:null}
-  //               </div>
-  //             </div>)
-  // }
-  //
-  // return <div style={{border:'1px solid lightgrey', padding:'5px', borderRadius:'10px'}}>
-  //         <div><strong>Testings:</strong></div>
-  //         {component.props.testingsGuesses!=null && component.props.testingsGuesses!=''?<TextArea obj={component.props} valName={'testingsGuesses'} valNameUI={'objectives'} readOnly={true}/>:null}
-  //         {result}
-  //         {addTestingButton(component)}
-  //       </div>
 
   return <div style={{border:'1px solid lightgrey', padding:'5px', borderRadius:'10px'}}>
             <div><strong>Testings:</strong></div>
             {component.props.testingsGuesses!=null && component.props.testingsGuesses!=''?<TextArea obj={component.props} valName={'testingsGuesses'} valNameUI={'objectives'} readOnly={true}/>:null}
-            <Button onClick={()=>fireEvent('testing-modal', 'open', [component.props.task, {parentid:null}])}>+ Add testing</Button>
+            {component.props.isEdit?<Button bsStyle="primary" bsSize="xsmall" onClick={()=>fireEvent('testing-modal', 'open', [component.props.task, {parentid:null}])}>+ Add testing</Button>:null}
 
             <TreeComponent isEdit={component.props.isEdit}
                               nodes={testingsMap}
@@ -75,35 +51,7 @@ const content = function(component){
 
 const testingUI = function(comp, testing){
   return <div>
-            {testing.question}
+            <a href='#' onClick={()=>fireEvent('testing-modal', 'open', [comp.props.task, testing])}>{testing.question}</a>
             <a href='#' onClick={()=>fireEvent('testing-modal', 'open', [comp.props.task, {parentid: testing.id}])}> + </a>
         </div>
 }
-
-// const addTestingButton = function(component){
-//   if(component.props.isEdit){
-//     return <Button onClick={()=>addTestingHandler(component)}>+ Add testing</Button>
-//   }
-// }
-//
-// const addTestingHandler = function(component){
-//   const task = component.props.task
-//
-//   if(task.taskTestings == null){
-//     task.taskTestings = []
-//   }
-//
-//   task.taskTestings.push({
-//     id: DataConstants.newId+newTestingId++,
-//     question: '',
-//     taskid: component.props.task.id
-//   })
-//
-//   component.setState({})
-// }
-
-// const removeTestingLink = function(component, testings, testing){
-//   if(component.props.isEdit){
-//     return <a href="#" onClick={()=>{testings.splice(testings.indexOf(testing), 1); component.setState({})}}>Remove</a>
-//   }
-// }
