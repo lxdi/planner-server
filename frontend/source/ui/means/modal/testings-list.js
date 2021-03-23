@@ -50,8 +50,15 @@ const content = function(component){
 }
 
 const testingUI = function(comp, testing){
+  if(testing.hideChildren == null){
+    testing.hideChildren = true
+  }
   return <div>
             <div>
+              {hasChildren(comp.props.task.taskTestings, testing)?
+                <a href='#' onClick={()=>{testing.hideChildren=!testing.hideChildren; comp.setState({})}}>{testing.hideChildren?'+ ':'- '}</a>
+                :null}
+
               <a href='#' onClick={()=>fireEvent('testing-modal', 'open', [comp.props.task, testing])}>{testing.question}</a>
               (<a href='#' onClick={()=>{testing.answer=''; comp.setState({})}}>answer</a>)
               <a href='#' onClick={()=>fireEvent('testing-modal', 'open', [comp.props.task, {parentid: testing.id}])}> + </a>
@@ -60,4 +67,13 @@ const testingUI = function(comp, testing){
               {testing.answer!=null?<TextArea obj={testing} valName={'answer'}/>:null}
             </div>
         </div>
+}
+
+const hasChildren = function(testings, testing){
+  for(var i in testings){
+    if(testings[i].parentid == testing.id){
+      return true
+    }
+  }
+  return false
 }
