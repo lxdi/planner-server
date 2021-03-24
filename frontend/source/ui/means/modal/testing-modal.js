@@ -55,6 +55,19 @@ const okHandler = function(comp){
   fireEvent('testing-modal', 'close')
 }
 
+const deleteHandler = function(task, testing){
+  if(task.taskTestings.includes(testing)){
+    const idx = task.taskTestings.indexOf(testing)
+    task.taskTestings.splice(idx, 1)
+    const prevTesting = findPrev(task.taskTestings, testing)
+
+    if(testing.nextid !=null && prevTesting!=null && prevTesting!=testing){
+      prevTesting.nextid = testing.nextid
+    }
+  }
+  fireEvent('testing-modal', 'close')
+}
+
 const getContent = function(comp){
   const testing = comp.state.testing
   if(testing == null){
@@ -64,12 +77,30 @@ const getContent = function(comp){
   if(testing.question == null){
     testing.question = ''
   }
-  return <TextField obj={testing} valName={'question'} />
+  return <div>
+          <div style={{marginBottom: '2px'}}>
+            {comp.state.testing.id!=null?
+            <Button bsStyle="danger" bsSize="xsmall"
+                onClick={()=>fireEvent('confirm-modal', 'open', ['Remove testing?', ()=>deleteHandler(comp.state.task, comp.state.testing)])}>
+              Delete
+            </Button>:null}
+          </div>
+          <TextField obj={testing} valName={'question'} />
+        </div>
 }
 
 const findLast = function(nodes, parentid){
   for(var i in nodes){
     if(nodes[i].parentid == parentid && nodes[i].nextid == null){
+      return nodes[i]
+    }
+  }
+  return null
+}
+
+const findPrev = function(nodes, node){
+  for(var i in nodes){
+    if(nodes[i].parentid == node.parentid && nodes[i].nextid == node.id){
       return nodes[i]
     }
   }
