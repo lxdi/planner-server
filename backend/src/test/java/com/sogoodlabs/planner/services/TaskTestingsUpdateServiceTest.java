@@ -96,8 +96,44 @@ public class TaskTestingsUpdateServiceTest extends SpringTestConfig {
         super.cleanContext();
     }
 
+    @Test
+    public void updateWithRemovingNestedTest(){
+        Task task = new Task();
+        task.setId(UUID.randomUUID().toString());
+        tasksDAO.save(task);
+
+        TaskTesting root2 = createTaskTesting(null, null, task);
+
+        TaskTesting root = createTaskTesting(null, root2, task);
+        TaskTesting childRoot2 = createTaskTesting(root, null, task);
+        TaskTesting childRoot = createTaskTesting(root, childRoot2, task);
+        TaskTesting child3 = createTaskTesting(childRoot, null, task);
+        TaskTesting child2 = createTaskTesting(childRoot, child3, task);
+        TaskTesting child1 = createTaskTesting(childRoot, child2, task);
+        TaskTesting childChild2 = createTaskTesting(child2, null, task);
+        TaskTesting childChild1 = createTaskTesting(child2, childChild2, task);
+
+        super.cleanContext();
+
+        taskTestingsUpdateService.update(task, Arrays.asList(
+                taskTestingDAO.findById(root2.getId()).get(),
+                taskTestingDAO.findById(root.getId()).get())
+        );
+
+        super.cleanContext();
+
+        assertEquals(2, taskTestingDAO.findByTask(task).size());
+    }
+
     private TaskTesting createTaskTesting(TaskTesting parent, TaskTesting next){
         TaskTesting taskTesting = createTaskTesting(UUID.randomUUID().toString(), parent, next);
+        taskTestingDAO.save(taskTesting);
+        return taskTesting;
+    }
+
+    private TaskTesting createTaskTesting(TaskTesting parent, TaskTesting next, Task task){
+        TaskTesting taskTesting = createTaskTesting(UUID.randomUUID().toString(), parent, next);
+        taskTesting.setTask(task);
         taskTestingDAO.save(taskTesting);
         return taskTesting;
     }

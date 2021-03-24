@@ -55,17 +55,26 @@ const okHandler = function(comp){
   fireEvent('testing-modal', 'close')
 }
 
-const deleteHandler = function(task, testing){
-  if(task.taskTestings.includes(testing)){
-    const idx = task.taskTestings.indexOf(testing)
-    task.taskTestings.splice(idx, 1)
-    const prevTesting = findPrev(task.taskTestings, testing)
+const deleteHandler = function(taskTestings, testing){
+  deleteTesting(taskTestings, testing)
+  fireEvent('testing-modal', 'close')
+}
+
+const deleteTesting = function(taskTestings, testing){
+  for(var i in taskTestings){
+    if(taskTestings[i].parentid==testing.id){
+      deleteTesting(taskTestings, taskTestings[i])
+    }
+  }
+  if(taskTestings.includes(testing)){
+    const idx = taskTestings.indexOf(testing)
+    taskTestings.splice(idx, 1)
+    const prevTesting = findPrev(taskTestings, testing)
 
     if(testing.nextid !=null && prevTesting!=null && prevTesting!=testing){
       prevTesting.nextid = testing.nextid
     }
   }
-  fireEvent('testing-modal', 'close')
 }
 
 const getContent = function(comp){
@@ -81,7 +90,7 @@ const getContent = function(comp){
           <div style={{marginBottom: '2px'}}>
             {comp.state.testing.id!=null?
             <Button bsStyle="danger" bsSize="xsmall"
-                onClick={()=>fireEvent('confirm-modal', 'open', ['Remove testing?', ()=>deleteHandler(comp.state.task, comp.state.testing)])}>
+                onClick={()=>fireEvent('confirm-modal', 'open', ['Remove testing?', ()=>deleteHandler(comp.state.task.taskTestings, comp.state.testing)])}>
               Delete
             </Button>:null}
           </div>

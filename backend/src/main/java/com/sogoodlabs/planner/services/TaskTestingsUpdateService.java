@@ -35,7 +35,7 @@ public class TaskTestingsUpdateService {
     }
 
     public void update(Task task, List<TaskTesting> testings){
-        if(testings!=null && !testings.isEmpty()){
+        if(testings!=null){
 
             Map<String, TestingMeta> testingMetaMap = resolve(testings);
 
@@ -54,8 +54,18 @@ public class TaskTestingsUpdateService {
                     .map(entry -> entry.getValue().testing.getId())
                     .collect(Collectors.toSet());
 
-            taskTestingDAO.findByTask(task).stream()
-                    .filter(topic -> !ids.contains(topic.getId()))
+            List<TaskTesting> testingsByTask = taskTestingDAO.findByTask(task);
+
+            testingsByTask.stream()
+                    .filter(testing -> !ids.contains(testing.getId()))
+                    .forEach(testing -> {
+                        testing.setNext(null);
+                        testing.setParent(null);
+                        taskTestingDAO.save(testing);
+                    });
+
+            testingsByTask.stream()
+                    .filter(testing -> !ids.contains(testing.getId()))
                     .forEach(taskTestingDAO::delete);
         }
 
