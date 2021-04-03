@@ -55,7 +55,7 @@ const testingUI = function(comp, testing){
   }
   return <div>
             <div>
-              {hasChildren(comp.props.task.taskTestings, testing)?
+              {comp.props.isEdit==true || hasChildren(comp.props.task.taskTestings, testing)?
                 <a href='#' onClick={()=>{testing.hideChildren=!testing.hideChildren; comp.setState({})}}>{testing.hideChildren?'+ ':'- '}</a>
                 :null}
 

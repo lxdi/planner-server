@@ -89,7 +89,7 @@ const draggableWrapper = function(component, node, content){
 const childrenNodeUI = function(component, node, level){
   const children = component.state.cache.children[node.id]
   const childrenUI = []
-  if(children!=null){
+  if(children!=null && Object.keys(children).length>0){
     iterateLLfull(children, (childNode)=>{childrenUI.push(nodeUI(component, childNode, level))})
   } else {
     if(component.props.isEdit==true){
