@@ -79,7 +79,6 @@ public class WeekService {
 
     public List<Week> getWeeksOnDate(Date date){
         int year = DateUtils.getYear(date);
-
         Day today = dayDao.findByDate(date);
 
         if(today==null){
@@ -88,51 +87,59 @@ public class WeekService {
         }
 
         Week currentWeek = today.getWeek();
-
         List<Week> weeks = new ArrayList<>();
 
         if(currentWeek.getNum()<=CURRENT_UP_TO_PREV_WEEKS){
-            Week lastWeekPrevYear = weekDAO.findLastInYear(year-1);
-
-            if(lastWeekPrevYear==null){
-                weeksGenerator.generateYear(year-1);
-                lastWeekPrevYear = weekDAO.findLastInYear(year-1);
-            }
-
-            int difference = Math.abs(currentWeek.getNum()-CURRENT_UP_TO_PREV_WEEKS);
-            if(difference-1 > 0){
-                weeks.addAll(weekDAO.findInDiapason(
-                        lastWeekPrevYear.getNum()-difference, lastWeekPrevYear.getNum()-1, year-1));
-            }
-            weeks.add(lastWeekPrevYear);
+            fillPrevYear(weeks, year, currentWeek);
         }
 
         weeks.addAll(weekDAO.findInDiapason(
                 currentWeek.getNum()-CURRENT_UP_TO_PREV_WEEKS, currentWeek.getNum()-1, year));
 
         weeks.add(currentWeek);
-
         Week lastWeekCurrentYear = weekDAO.findLastInYear(year);
 
         if(lastWeekCurrentYear.getNum()<currentWeek.getNum()+CURRENT_UP_TO_NEXT_WEEKS){
-            weeks.addAll(weekDAO.findInDiapason(currentWeek.getNum()+1, lastWeekCurrentYear.getNum(), year));
-
-            List<Week> nextYearWeeks = weekDAO.findInDiapason(
-                    0, currentWeek.getNum()+CURRENT_UP_TO_NEXT_WEEKS-lastWeekCurrentYear.getNum(), year+1);
-
-            if(nextYearWeeks == null || nextYearWeeks.size()==0){
-                weeksGenerator.generateYear(year+1);
-
-                nextYearWeeks = weekDAO.findInDiapason(
-                        0, currentWeek.getNum()+CURRENT_UP_TO_NEXT_WEEKS-lastWeekCurrentYear.getNum(), year+1);
-            }
-
-            weeks.addAll(nextYearWeeks);
+            fillNextYear(weeks, currentWeek, lastWeekCurrentYear, year);
         } else {
             weeks.addAll(weekDAO.findInDiapason(currentWeek.getNum()+1, currentWeek.getNum()+CURRENT_UP_TO_NEXT_WEEKS, year));
         }
 
         return weeks;
+    }
+
+    private void fillPrevYear(List<Week> weeks, int year, Week currentWeek){
+        Week lastWeekPrevYear = weekDAO.findLastInYear(year-1);
+
+        if(lastWeekPrevYear==null){
+            weeksGenerator.generateYear(year-1);
+            lastWeekPrevYear = weekDAO.findLastInYear(year-1);
+        }
+
+        int difference = Math.abs(currentWeek.getNum()-CURRENT_UP_TO_PREV_WEEKS);
+
+        if(difference-1 > 0){
+            weeks.addAll(weekDAO.findInDiapason(
+                    lastWeekPrevYear.getNum()-difference, lastWeekPrevYear.getNum()-1, year-1));
+        }
+
+        weeks.add(lastWeekPrevYear);
+    }
+
+    private void fillNextYear(List<Week> weeks, Week currentWeek, Week lastWeekCurrentYear, int year){
+        weeks.addAll(weekDAO.findInDiapason(currentWeek.getNum()+1, lastWeekCurrentYear.getNum(), year));
+
+        List<Week> nextYearWeeks = weekDAO.findInDiapason(
+                0, currentWeek.getNum()+CURRENT_UP_TO_NEXT_WEEKS-lastWeekCurrentYear.getNum(), year+1);
+
+        if(nextYearWeeks == null || nextYearWeeks.size()==0){
+            weeksGenerator.generateYear(year+1);
+
+            nextYearWeeks = weekDAO.findInDiapason(
+                    0, currentWeek.getNum()+CURRENT_UP_TO_NEXT_WEEKS-lastWeekCurrentYear.getNum(), year+1);
+        }
+
+        weeks.addAll(nextYearWeeks);
     }
 
     public Week getPrev(String currentId){
