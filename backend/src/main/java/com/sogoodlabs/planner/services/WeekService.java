@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class WeekService {
@@ -48,6 +49,9 @@ public class WeekService {
 
     @Autowired
     private IExternalTaskDao externalTaskDao;
+
+    @Autowired
+    private MoveRepetitionsService moveRepetitionsService;
 
     public Week fill(Week weekProxy){
         Week week = initializeAndUnproxy(weekProxy);
@@ -186,12 +190,9 @@ public class WeekService {
         }
 
         if(movingPlansDto.getRepetitionIds()!=null){
-            movingPlansDto.getRepetitionIds().forEach(repid -> {
-                Repetition repetition = repDAO.findById(repid).orElseThrow(() -> new RuntimeException("Repetition not found " + repid));
-                repetition.setPlanDay(day);
-                repDAO.save(repetition);
-                log.info("Moving repetition {} to {}", repetition.getTask().getTitle(), DateUtils.fromDate(day.getDate()));
-            });
+            moveRepetitionsService.move(movingPlansDto.getRepetitionIds().stream()
+                    .map(repId -> repDAO.findById(repId).orElseThrow(() -> new RuntimeException("Repetition not found " + repId)))
+                    .collect(Collectors.toList()), day);
         }
     }
 

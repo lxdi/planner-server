@@ -2,7 +2,7 @@ package com.sogoodlabs.planner.services;
 
 import com.sogoodlabs.planner.SpringTestConfig;
 import com.sogoodlabs.planner.model.dao.IDayDao;
-import com.sogoodlabs.planner.model.entities.Week;
+import com.sogoodlabs.planner.model.entities.*;
 import com.sogoodlabs.planner.util.DateUtils;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;

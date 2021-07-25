@@ -16,6 +16,9 @@ public interface IRepDAO extends JpaRepository<Repetition, String> {
 
     List<Repetition> findByTask(Task task);
 
+    @Query("from Repetition where task = :task and repetitionPlan.dayStep is false and factDay is null")
+    List<Repetition> findByTaskActive(@Param("task") Task task);
+
     @Query("from Repetition where planDay = :planDay and repetitionPlan.dayStep is false")
     List<Repetition> findByPlanDay(@Param("planDay") Day planDay);
 
