@@ -66,6 +66,11 @@ public class ProgressController {
         return commonMapper.mapToDto(progressService.getByTask(repetition.getTask()));
     }
 
+    @DeleteMapping("/repetitions/unfinished")
+    public void deleteUnfinished(@RequestParam String taskId){
+        progressService.removeUnfinishedReps(taskId);
+    }
+
     @GetMapping("/get/actual")
     public Map<String, Object> getActual(){
         return commonMapper.mapToDto(actualActivityService.getActualActivity());

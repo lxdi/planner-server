@@ -1,10 +1,7 @@
 package com.sogoodlabs.planner.services;
 
 import com.sogoodlabs.planner.controllers.dto.TaskProgressDto;
-import com.sogoodlabs.planner.model.dao.IDayDao;
-import com.sogoodlabs.planner.model.dao.IRepDAO;
-import com.sogoodlabs.planner.model.dao.IRepPlanDAO;
-import com.sogoodlabs.planner.model.dao.ITaskMappersDAO;
+import com.sogoodlabs.planner.model.dao.*;
 import com.sogoodlabs.planner.model.entities.*;
 import com.sogoodlabs.planner.util.DateUtils;
 import org.slf4j.Logger;
@@ -34,6 +31,9 @@ public class ProgressService {
 
     @Autowired
     private IRepPlanDAO repPlanDAO;
+
+    @Autowired
+    private ITasksDAO tasksDAO;
 
     public TaskProgressDto getByTask(Task task){
         TaskProgressDto taskProgressDto = new TaskProgressDto();
@@ -90,6 +90,11 @@ public class ProgressService {
         repetition.setFactDay(dayDao.findByDate(DateUtils.currentDate()));
         repDAO.save(repetition);
         log.info("Repetition {} completed", repetition.getId());
+    }
+
+    public void removeUnfinishedReps(String taskId){
+        var task = tasksDAO.findById(taskId).orElseThrow(() -> new RuntimeException("Task not found " + taskId));
+        repDAO.findAllActiveByTask(task).forEach(repetition -> repDAO.delete(repetition));
     }
 
 }

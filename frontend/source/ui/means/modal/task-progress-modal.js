@@ -16,7 +16,7 @@ export class TaskProgressModal extends React.Component {
     registerEvent('task-progress-modal', 'open', (stateSetter, task, highlightId)=>this.setState({isOpen:true, task:task, highlightId: highlightId}))
     registerEvent('task-progress-modal', 'close', (stateSetter)=>this.setState(defaultState))
 
-    registerReaction('task-progress-modal', DataConstants.progressRep, 'got-by-task', ()=>this.setState({}))
+    registerReaction('task-progress-modal', DataConstants.progressRep, ['got-by-task', 'deleted-unfinished-reps'], ()=>this.setState({}))
 
   }
 
@@ -46,6 +46,7 @@ const getContent = function(component){
   }
 
   var progressByTask = chkSt(DataConstants.progressRep, DataConstants.objMap)
+
   if(progressByTask == null || progressByTask[task.id] == null){
     fireEvent(DataConstants.progressRep, 'get-by-task', [task])
     return 'Loading...'
@@ -115,15 +116,28 @@ const repetitionsTableUI = function(repetitions, task, highlightId){
                   </tr>)
   })
 
-  return <Table striped bordered condensed hover >
-          <tbody>
-            <tr>
-              <td>#</td>
-              <td>Plan date</td>
-              <td>Fact date</td>
-              <td></td>
-            </tr>
-            {result}
-          </tbody>
-          </Table>
+  return <div>
+            <div>
+              <Table striped bordered condensed hover >
+              <tbody>
+                <tr>
+                  <td>#</td>
+                  <td>Plan date</td>
+                  <td>Fact date</td>
+                  <td></td>
+                </tr>
+                {result}
+              </tbody>
+              </Table>
+            </div>
+          <div>{removeUnfinishedRepsButton(task)}</div>
+          </div>
+}
+
+const removeUnfinishedRepsButton = function(task){
+  const action = ()=>fireEvent('progress-rep', 'delete-unfinished-reps', [task])
+  const message = 'Are sure you want to remove all unfinished repetitions for this Task?'
+  return <Button bsStyle="default" bsSize="xsmall" onClick={()=> fireEvent('confirm-modal', 'open', [message, action])}>
+          Remove unfinished
+        </Button>
 }

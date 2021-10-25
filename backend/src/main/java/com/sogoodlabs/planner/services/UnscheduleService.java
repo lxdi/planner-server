@@ -25,6 +25,10 @@ public class UnscheduleService {
     @Autowired
     private ITaskMappersDAO taskMappersDAO;
 
+
+    /***
+     * Remove all unfinished task mappers related to the mean
+     */
     public void unscheduleMean(String meanId){
         Mean mean = meansDAO.findById(meanId).orElseThrow(()-> new RuntimeException("Mean not found " + meanId));
         layerDAO.findByMean(mean).forEach(layer -> this.unscheduleLayer(layer.getId()));

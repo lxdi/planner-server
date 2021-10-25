@@ -78,6 +78,11 @@ public class WeekController {
         unscheduleService.unscheduleMean(meanid);
     }
 
+    @PostMapping("/unschedule/task/{id}")
+    public void unscheduleTask(@PathVariable("id") String taskId){
+        unscheduleService.unscheduleMean(taskId);
+    }
+
     @PostMapping("/unschedule/layer")
     public void unscheduleLayer(@PathVariable("id") String layerid){
         unscheduleService.unscheduleLayer(layerid);

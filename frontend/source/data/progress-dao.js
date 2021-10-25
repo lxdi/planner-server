@@ -1,5 +1,5 @@
 import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
-import {sendGet, sendPut, sendPost} from './postoffice'
+import {sendGet, sendPut, sendPost, sendDelete} from './postoffice'
 
 import {DataConstants} from './data-constants'
 
@@ -64,6 +64,14 @@ registerEvent(DataConstants.progressRep, getActualEvent, (stSetter)=>{
   })
 })
 registerEvent(DataConstants.progressRep, gotActualEvent, (stSetter, actual)=>actual)
+
+registerEvent(DataConstants.progressRep, 'delete-unfinished-reps', (stSetter, task)=>{
+  sendDelete('/' + repName + '/repetitions/unfinished?taskId='+task.id, ()=>{
+    updateProgress(null, task, stSetter)
+    fireEvent(DataConstants.progressRep, 'deleted-unfinished-reps')
+  })
+})
+registerEvent(DataConstants.progressRep, 'deleted-unfinished-reps', (stSetter)=>{})
 
 const updateProgress = function(progress, task, stSetter){
   var objMap = chkSt(DataConstants.progressRep, DataConstants.objMap)
