@@ -8,6 +8,7 @@ public class Realm {
 
     @Id
     String id;
+    int priority;
     String title;
 
     boolean current = false;
@@ -31,5 +32,13 @@ public class Realm {
     }
     public void setCurrent(boolean current) {
         this.current = current;
+    }
+
+    public int getPriority() {
+        return priority;
+    }
+
+    public void setPriority(int priority) {
+        this.priority = priority;
     }
 }

@@ -48,35 +48,40 @@ export class TargetsFrame extends React.Component{
 }
 
 const realmsUI = function(component){
-  const realms = chkSt(realmRep,repObjects)
-  if(realms!=null){
-    const targets = chkSt(targetRep, repObjects)
-    if(targets!=null){
-      const result = []
-      for(var realmId in realms){
-        const realmIdConst = realmId
-        const isCurrentRealm = realms[realmId]==chkSt(realmRep, currentRealm)
-        result.push(<ListGroupItem key={"realm_"+realmIdConst+(isCurrentRealm?"_current":"_notcurrent")}>
-            <div>
-              <h4 onClick={()=>fireEvent(realmRep, 'change-current-realm', [realms[realmIdConst]])}>
-                <input type="radio" autocomplete="off" checked={isCurrentRealm?"checked":null} style={{marginRight:'5px'}} />
-                {realms[realmIdConst].title}
-              </h4>
-            </div>
-            <div>
-              {isCurrentRealm?targetsUI(component):null}
-            </div>
-          </ListGroupItem>)
-      }
-      return result
-    } else {
-      fireEvent(targetRep, 'all-request', [])
-      return null
-    }
-  } else {
+  const realmsMap = chkSt(realmRep,repObjects)
+
+  if (realmsMap == null) {
     fireEvent(realmRep, 'all-request', [])
     return null
   }
+
+  const realms = Object.values(realmsMap)
+  realms.sort((r1, r2) => r1.priority - r2.priority)
+  const targets = chkSt(targetRep, repObjects)
+
+  if (targets == null) {
+    fireEvent(targetRep, 'all-request', [])
+    return null
+  }
+
+  const result = []
+
+  for(var i in realms){
+    const realm = realms[i]
+
+    result.push(<ListGroupItem key={"realm_"+realm.id+(realm.current?"_current":"_notcurrent")}>
+            <div>
+              <h4 onClick={()=>fireEvent(realmRep, 'change-current-realm', [realm])}>
+                <input type="radio" autocomplete="off" checked={realm.current?"checked":null} style={{marginRight:'5px'}} />
+                {realm.title}
+              </h4>
+            </div>
+            <div>
+              {realm.current?targetsUI(component):null}
+            </div>
+          </ListGroupItem>)
+  }
+  return result
 }
 
 const targetsUI = function(component){
