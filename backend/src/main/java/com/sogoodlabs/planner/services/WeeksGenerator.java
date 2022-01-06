@@ -45,7 +45,7 @@ public class WeeksGenerator {
     public void generateYear(int year){
         log.info("Generating weeks for {}", year);
         YearWeek yw = YearWeek.of(year,1);
-        int numberOfWeeks = yw.is53WeekYear()? 53: 54;
+        int numberOfWeeks = yw.is53WeekYear()? 53: 52;
         int dayCount = 1;
         Map<Integer, Week> weeksMap = new TreeMap<>();
         for(int i = 1; i <= numberOfWeeks; i++){
