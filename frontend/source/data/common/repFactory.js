@@ -2,6 +2,15 @@ import {sendGet, sendPost, sendPut, sendDelete} from '../postoffice'
 import {registerObject, registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
 
 
+//TODO should be
+// objects-rep -> state {objects: {id: object}}
+// GET /objects/all
+// GET /objects/{id}
+// GET /objects/{id}/full
+// PUT /objects
+// POST /objects
+// DELETE /objects
+
 const repOffset = '-rep'
 const objMapName = 'objects'
 

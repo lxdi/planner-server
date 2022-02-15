@@ -46,6 +46,12 @@ const content = function(reactcomp){
                 </div>
               </a>
               {divisor()}
+              <a href="#" style={{textDecoration:'none'}}>
+                <div onClick={()=>fireEvent('priorities-modal', 'open')} class="actual-tasks-indicators-group">
+                  {getSquare('P', 'blue')}
+                </div>
+              </a>
+              {divisor()}
               <div style={{margin:'2px', width:'45px', height:'45px', fontSize:'10pt'}}>
                 <button class="left-bar-button" onClick = {()=>fireEvent('main-ui', 'switch-mode')}>
                 {viewModeButtonLabel()}
