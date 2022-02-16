@@ -10,7 +10,7 @@ const REP_NAME = NAME + '-rep'
 const INDEX_BY_REALM = 'index-by-realmid'
 
 export const createMeanRep = function(){
-  createRep(NAME, callback)
+  createRep('mean-rep','/means', callback)
 }
 
 const callback = function(stSetter, spanName, arg){

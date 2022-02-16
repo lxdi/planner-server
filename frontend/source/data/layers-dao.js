@@ -9,7 +9,7 @@ const INDEX_BY_MEAN = 'index-by-mean'
 const GET_BY_MEAN_SPAN = 'getByMean'
 
 export const createLayerRep = function(){
-  createRep('layer', callback)
+  createRep('layer-rep', 'layers', callback)
   //basicListReceiving('layer', 'by-mean-request', 'by-mean-response', '/get/by/mean', GET_BY_MEAN_SPAN, callback)
 }
 

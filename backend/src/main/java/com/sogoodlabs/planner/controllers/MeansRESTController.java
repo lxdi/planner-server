@@ -86,4 +86,21 @@ public class MeansRESTController {
                 .collect(Collectors.toList()));
     }
 
+    @GetMapping("/aggregation/{id}")
+    public Map<String, Object> getAggregation(@PathVariable("id") String meanid){
+        Mean mean =  meansDAO.findById(meanid).orElseThrow(() -> new RuntimeException("Mean not found by " + meanid));
+        meanFillerService.fill(mean);
+        return commonMapper.mapToDto(mean);
+    }
+
+    @PutMapping("/aggregation")
+    public Map<String, Object> createAggregation(@RequestBody Map<String, Object> aggregationDto){
+        return null;
+    }
+
+    @PostMapping("/aggregation")
+    public Map<String, Object> updateAggregation(@RequestBody Map<String, Object> aggregationDto){
+        return null;
+    }
+
 }

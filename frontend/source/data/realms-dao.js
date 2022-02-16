@@ -9,7 +9,7 @@ const REP_NAME = NAME + '-rep'
 const CURRENT_REALM = 'currentRealm'
 
 export const createRealmRep = function(){
-  createRep(NAME, callback)
+  createRep('realm-rep', '/realms', callback)
 }
 
 const callback = function(stSetter, spanName, arg){

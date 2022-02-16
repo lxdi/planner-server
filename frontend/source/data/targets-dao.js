@@ -11,7 +11,7 @@ const INDEX_BY_REALM = 'index-by-realmid'
 const REALM_ID_FEILD_NAME = 'realmid'
 
 export const createTargetRep = function(){
-  createRep(NAME, callback)
+  createRep('target-rep', '/targets', callback)
 }
 
 const callback = function(stSetter, spanName, arg){

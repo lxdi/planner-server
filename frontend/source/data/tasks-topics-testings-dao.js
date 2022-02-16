@@ -2,7 +2,7 @@
 import {sendGet, sendPut, sendPost} from './postoffice'
 import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
 
-import {createRep, basicListReceiving} from './common/repFactory'
+import {createRep} from './common/repFactory'
 import {createIndex, updateIndex} from './common/index-factory'
 
 //const indexByMean = 'index-by-mean'
@@ -10,13 +10,13 @@ import {createIndex, updateIndex} from './common/index-factory'
 // const byMeanUrl = '/get/by/mean'
 
 export const createTaskRep = function(){
-  createRep('task', callback)
+  createRep('task-rep', '/tasks', callback)
   //basicListReceiving(taskName, 'by-mean-request', 'by-mean-response', byMeanUrl, getByMeanSpanName, callback)
 
-  createRep('topic', callback)
+  createRep('topic-rep', '/topics', callback)
   //basicListReceiving(topicName, 'by-mean-request', 'by-mean-response', byMeanUrl, getByMeanSpanName, callback)
 
-  createRep('task-testing', callback)
+  createRep('task-testing-rep', '/task-testings', callback)
   //basicListReceiving(tasktestingName, 'by-mean-request', 'by-mean-response', byMeanUrl, getByMeanSpanName, callback)
 }
 
