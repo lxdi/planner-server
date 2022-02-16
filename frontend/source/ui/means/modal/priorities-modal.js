@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-//import {Button, ButtonToolbar,  DropdownButton, MenuItem,  FormGroup, ControlLabel, FormControl, Alert} from 'react-bootstrap'
+import {Table} from 'react-bootstrap'
 import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
 import {CommonModal} from './../../common/common-modal'
 
@@ -27,4 +27,26 @@ export class PrioritiesModal extends React.Component {
           {content}
       </CommonModal>
   }
+}
+
+const getConent = function(comp){
+  const orders = chkSt('layer-order-rep', 'objects')
+
+  if(orders == null){
+    fireEvent('layer-order-rep', 'get-all')
+    return 'Loading...'
+  }
+
+  return  <Table striped bordered condensed hover >
+            <tbody>
+              <tr>
+                <td>Task</td>
+                <td>Plan date</td>
+                <td>Finish date</td>
+                <td></td>
+              </tr>
+              {result}
+            </tbody>
+            </Table>
+
 }

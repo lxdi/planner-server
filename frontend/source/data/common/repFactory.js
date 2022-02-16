@@ -9,6 +9,7 @@ import {registerObject, registerEvent, registerReaction, fireEvent, chkSt} from 
 // GET /entities/{id}/full
 // PUT /entities
 // POST /entities
+// POST /entities/list
 // DELETE /entities
 
 const REP_OFFSET = '-rep'
@@ -18,6 +19,7 @@ const GET_ALL_SPAN = 'getAllSpan'
 const PUT_SPAN = 'creationSpan'
 const DELETE_SPAN = 'deleteSpan'
 const POST_SPAN = 'updateSpan'
+const POST_LIST_SPAN = 'updateSpan'
 const GET_FULL_SPAN = 'getFullSpan'
 const CLEAN_SPAN = 'cleanSpan'
 
@@ -26,6 +28,7 @@ export const createRep = function(name, callback){
   createCreation(name, callback)
   createDeletion(name, callback)
   updateCreation(name, callback)
+  updateListCreation(name, callback)
   createGetFull(name, callback)
   cleaning(name, callback)
 }
@@ -150,6 +153,29 @@ const updateCreation = function(name, callback){
 
   registerEvent(repName, 'update', (stateSetter, obj) => eventCallback(stateSetter, obj))
   registerEvent(repName, 'updated', (stateSetter, obj) => obj)
+}
+
+const updateListCreation = function(name, callback){
+  const repName = name + REP_OFFSET
+  const url = '/'+name+'s/list'
+
+  registerEvent(repName, 'update-list', (stateSetter, objList) => {
+
+    sendPost(url, JSON.stringify(objList), (data) => {
+
+      var receivedData = typeof data == 'string'? JSON.parse(data): data
+      var objMap = chkSt(repName, OBJ_MAP_NAME)
+      receivedData.forEach(obj => chkSt(repName, OBJ_MAP_NAME)[obj.id] = obj)
+
+      if(callback!=null){
+        callback(stateSetter, POST_LIST_SPAN, receivedData)
+      }
+
+      fireEvent(repName, 'updated', [receivedData])
+    })
+  })
+
+  registerEvent(repName, 'updated-list', (stateSetter, obj) => obj)
 }
 
 
