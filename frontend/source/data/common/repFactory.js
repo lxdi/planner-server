@@ -20,7 +20,6 @@ const DELETE_SPAN = 'deleteSpan'
 const POST_SPAN = 'updateSpan'
 const GET_FULL_SPAN = 'getFullSpan'
 const CLEAN_SPAN = 'cleanSpan'
-const cleanEventName = 'clean'
 
 export const createRep = function(name, callback){
   createGetAll(name, callback)
@@ -134,7 +133,7 @@ const updateCreation = function(name, callback){
   const repName = name + REP_OFFSET
   const url = '/'+name+'s'
 
-  const afterResponseCallback = function(data) {
+  const afterResponseCallback = function(stateSetter, data) {
     var receivedData = typeof data == 'string'? JSON.parse(data): data
     chkSt(repName, OBJ_MAP_NAME)[""+receivedData.id] = receivedData
 
@@ -146,7 +145,7 @@ const updateCreation = function(name, callback){
   }
 
   const eventCallback = function(stateSetter, obj) {
-    sendPost(url, JSON.stringify(obj), (data) => afterResponseCallback(data))
+    sendPost(url, JSON.stringify(obj), (data) => afterResponseCallback(stateSetter, data))
   }
 
   registerEvent(repName, 'update', (stateSetter, obj) => eventCallback(stateSetter, obj))
@@ -156,7 +155,7 @@ const updateCreation = function(name, callback){
 
 const cleaning = function(name, callback){
   const repName = name + REP_OFFSET
-  registerEvent(repName, cleanEventName, function(stateSetter){
+  registerEvent(repName, 'clean', function(stateSetter){
       stateSetter(OBJ_MAP_NAME, null)
 
       if(callback!=null){

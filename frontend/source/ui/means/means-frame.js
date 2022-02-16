@@ -12,8 +12,6 @@ import {TaskModal} from './modal/task-modal'
 const newId = 'new'
 const realmRepName = 'realm-rep'
 const targetRepName = 'target-rep'
-const meanRepName = 'mean-rep'
-const repObjects = 'objects'
 const currentRealm = 'currentRealm'
 const indexByRealmid = 'index-by-realmid'
 
@@ -27,7 +25,7 @@ export class MeansFrame extends React.Component{
     registerReaction('means-frame', realmRepName, ['all-response', 'change-current-realm'], ()=>{this.setState({})})
     registerReaction('means-frame', targetRepName, ['highlight', 'highlight-clean'], ()=>this.setState({}))
 
-    registerReaction('means-frame', meanRepName,
+    registerReaction('means-frame', 'mean-rep',
             ['all-response', 'created', 'deleted', 'updated',
               'replace-mean', 'repositioned',
             'draggable-add-as-child', 'hide-children-changed'], ()=>this.setState({}))
@@ -63,23 +61,26 @@ const getControlButtons = function(component){
 }
 
 const meansUIlist = function(component){
-  if(chkSt(meanRepName, repObjects)!=null){
-      const curRealm = chkSt(realmRepName, currentRealm)
-      if(curRealm!=null){
-        return <TreeComponent isEdit={component.state.isEdit}
-                  nodes={chkSt(meanRepName, indexByRealmid)[curRealm.id]}
+
+  if (chkSt('mean-rep', 'objects')==null) {
+      fireEvent('mean-rep', 'all-request')
+      return 'Loading...'
+  }
+
+  const curRealm = chkSt(realmRepName, currentRealm)
+
+  if (curRealm==null){
+    return ''
+  }
+
+  return <TreeComponent isEdit={component.state.isEdit}
+                  nodes={chkSt('mean-rep', indexByRealmid)[curRealm.id]}
                   viewCallback = {(mean)=>meanUI(component, mean)}
-                  onDropCallback = {(alteredList)=>{fireEvent(meanRepName, 'reposition', [alteredList])}}
+                  onDropCallback = {(alteredList)=>{fireEvent('mean-rep', 'reposition', [alteredList])}}
                   onDragStartCallback = {(mean, e)=> fireEvent('drag-n-drop', 'put', ['assign-mean', mean])}
                   rootStyle={{border:'1px solid lightgrey', borderRadius:'5px', marginBottom:'5px', padding:'3px'}}
                   shiftpx={15}
                   />
-      }
-      return ''
-    } else {
-      fireEvent(meanRepName, 'all-request')
-    }
-  return 'Loading...'
 }
 
 const meanUI = function(component, mean){
@@ -106,7 +107,7 @@ const meanUI = function(component, mean){
 }
 
 const markDraggableMeanTitle = function(mean){
-  if(chkSt(meanRepName, 'draggableMean')==mean){
+  if(chkSt('mean-rep', 'draggableMean')==mean){
     return <strong>{mean.title}</strong>
   } else {
     return mean.title
@@ -116,7 +117,7 @@ const markDraggableMeanTitle = function(mean){
 const hideShowChildrenControlUI = function(component, mean){
   return <a href="#" style = {{marginRight:'3px'}} onClick={()=>{
       mean.hideChildren = !mean.hideChildren
-      fireEvent(meanRepName, 'hide-children', [mean])
+      fireEvent('mean-rep', 'hide-children', [mean])
     }}>
     {mean.hideChildren==null || (mean.hideChildren!=null && mean.hideChildren==false)?'-':'+'}
   </a>

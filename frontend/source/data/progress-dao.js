@@ -24,7 +24,7 @@ registerEvent(REP_NAME, 'finish-task', (stSetter, task)=>{
 })
 
 registerEvent(REP_NAME, 'finish-task-sp', (stSetter, task, repPlan)=>{
-  sendPost('/' + NAME + 'finished?task-id='+ task.id + '&plan-id='+repPlan.id, null, (data)=>{
+  sendPost('/' + NAME + '/finished?task-id='+ task.id + '&plan-id='+repPlan.id, null, (data)=>{
       const progress = typeof data == 'string'? JSON.parse(data): data
       updateProgress(progress, task, stSetter)
       fireEvent(REP_NAME, 'got-by-task', [progress])
@@ -32,7 +32,7 @@ registerEvent(REP_NAME, 'finish-task-sp', (stSetter, task, repPlan)=>{
 })
 
 registerEvent(REP_NAME, 'finish-rep', (stSetter, rep, task)=>{
-  sendPost('/' + NAME + 'finished?rep-id=' + rep.id, null, (data)=>{
+  sendPost('/' + NAME + '/finished?rep-id=' + rep.id, null, (data)=>{
       const progress = typeof data == 'string'? JSON.parse(data): data
       updateProgress(progress, task, stSetter)
       fireEvent(REP_NAME, 'got-by-task', [progress])

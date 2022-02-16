@@ -6,7 +6,7 @@ import {createRep} from './common/repFactory'
 import {createIndex, updateIndex} from './common/index-factory'
 
 const NAME = 'mean'
-const REP_NAME = name + '-rep'
+const REP_NAME = NAME + '-rep'
 const INDEX_BY_REALM = 'index-by-realmid'
 
 export const createMeanRep = function(){
