@@ -4,7 +4,7 @@ import {sendGet} from './postoffice'
 const repName = 'rep-plans-dao'
 
 registerEvent(repName, 'plans-request', (stateSetter)=>{
-  sendGet('/repetition/plan/all', (data)=>{
+  sendGet('/repetition/plans/all', (data)=>{
       const repPlans = []
       data.forEach((rp)=>{repPlans[rp.id]=rp})
       stateSetter('rep-plans', repPlans)

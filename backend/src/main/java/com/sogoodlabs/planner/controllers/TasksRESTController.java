@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
  */
 
 @RestController
-@RequestMapping(path = "/task")
+@RequestMapping(path = "/tasks")
 public class TasksRESTController {
 
     @Autowired
@@ -28,8 +28,8 @@ public class TasksRESTController {
     @Autowired
     private CommonMapper commonMapper;
 
-    @GetMapping("/get/by/mean/{meanid}")
-    public List<Map<String, Object>> layersOfMean(@PathVariable("meanid") String meanid){
+    @GetMapping
+    public List<Map<String, Object>> layersOfMean(@RequestParam("mean-id") String meanid){
         Mean mean = meansDAO.findById(meanid).orElseThrow(() -> new RuntimeException("Mean not found by " + meanid));
 
         return tasksDAO.findByMean(mean).stream()

@@ -1,83 +1,66 @@
 import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
 import {sendGet, sendPut, sendPost, sendDelete} from './postoffice'
 
-import {DataConstants} from './data-constants'
+const NAME = 'progress'
+const REP_NAME = NAME + '-rep'
 
-const repName = 'progress'
+registerEvent(REP_NAME, 'get-by-task', (stSetter, task)=>{
 
-const getByTaskEvent = 'get-by-task'
-const gotByTaskEvent = 'got-by-task'
-const getByTaskUrlOffest = '/get/for/task'
+  sendGet('/' + NAME + '?task-id=' + task.id, (data)=>{
 
-const finishTaskEvent = 'finish-task'
-const finishTaskUrlOffest = '/finish/task'
-
-const finishTaskEventSP = 'finish-task-sp'
-const finishTaskUrlOffestSP = '/finish/task'
-const finishTaskUrlOffestSP2 = '/with/sp'
-
-const finishRepetitionEvent = 'finish-rep'
-const finishRepetitionUrlOffest = '/finish/repetition'
-
-const getActualEvent = 'get-actual'
-const gotActualEvent = 'got-actual'
-const getActualUrlOffest = '/get/actual'
-
-registerEvent(DataConstants.progressRep, getByTaskEvent, (stSetter, task)=>{
-  sendGet('/' + repName + getByTaskUrlOffest + '/' + task.id, (data)=>{
       const progress = typeof data == 'string'? JSON.parse(data): data
       updateProgress(progress, task, stSetter)
-      fireEvent(DataConstants.progressRep, gotByTaskEvent, [progress])
+      fireEvent(REP_NAME, 'got-by-task', [progress])
   })
 })
-registerEvent(DataConstants.progressRep, gotByTaskEvent, (stSetter, progress)=>progress)
+registerEvent(REP_NAME, 'got-by-task', (stSetter, progress)=>progress)
 
-registerEvent(DataConstants.progressRep, finishTaskEvent, (stSetter, task)=>{
-  sendPost('/' + repName + finishTaskUrlOffest + '/' + task.id, null, (data)=>{
+registerEvent(REP_NAME, 'finish-task', (stSetter, task)=>{
+  sendPost('/' + NAME + '/finished?task-id=' + task.id, null, (data)=>{
       const progress = typeof data == 'string'? JSON.parse(data): data
       updateProgress(progress, task, stSetter)
-      fireEvent(DataConstants.progressRep, gotByTaskEvent, [progress])
+      fireEvent(REP_NAME, 'got-by-task', [progress])
   })
 })
 
-registerEvent(DataConstants.progressRep, finishTaskEventSP, (stSetter, task, repPlan)=>{
-  sendPost('/' + repName + finishTaskUrlOffestSP + '/' + task.id + finishTaskUrlOffestSP2 +'/'+repPlan.id, null, (data)=>{
+registerEvent(REP_NAME, 'finish-task-sp', (stSetter, task, repPlan)=>{
+  sendPost('/' + NAME + 'finished?task-id='+ task.id + '&plan-id='+repPlan.id, null, (data)=>{
       const progress = typeof data == 'string'? JSON.parse(data): data
       updateProgress(progress, task, stSetter)
-      fireEvent(DataConstants.progressRep, gotByTaskEvent, [progress])
+      fireEvent(REP_NAME, 'got-by-task', [progress])
   })
 })
 
-registerEvent(DataConstants.progressRep, finishRepetitionEvent, (stSetter, rep, task)=>{
-  sendPost('/' + repName + finishRepetitionUrlOffest + '/' + rep.id, null, (data)=>{
+registerEvent(REP_NAME, 'finish-rep', (stSetter, rep, task)=>{
+  sendPost('/' + NAME + 'finished?rep-id=' + rep.id, null, (data)=>{
       const progress = typeof data == 'string'? JSON.parse(data): data
       updateProgress(progress, task, stSetter)
-      fireEvent(DataConstants.progressRep, gotByTaskEvent, [progress])
+      fireEvent(REP_NAME, 'got-by-task', [progress])
   })
 })
 
-registerEvent(DataConstants.progressRep, getActualEvent, (stSetter)=>{
-  sendGet('/' + repName + getActualUrlOffest, (data)=>{
+registerEvent(REP_NAME, 'get-actual', (stSetter)=>{
+  sendGet('/' + NAME + '/actual', (data)=>{
       const actual = typeof data == 'string'? JSON.parse(data): data
       stSetter('actual', actual)
-      fireEvent(DataConstants.progressRep, gotActualEvent, [actual])
+      fireEvent(REP_NAME, 'got-actual', [actual])
   })
 })
-registerEvent(DataConstants.progressRep, gotActualEvent, (stSetter, actual)=>actual)
+registerEvent(REP_NAME, 'got-actual', (stSetter, actual)=>actual)
 
-registerEvent(DataConstants.progressRep, 'delete-unfinished-reps', (stSetter, task)=>{
-  sendDelete('/' + repName + '/repetitions/unfinished?taskId='+task.id, ()=>{
+registerEvent(REP_NAME, 'delete-unfinished-reps', (stSetter, task)=>{
+  sendDelete('/' + NAME + '/unfinished/repetitions?task-id='+task.id, ()=>{
     updateProgress(null, task, stSetter)
-    fireEvent(DataConstants.progressRep, 'deleted-unfinished-reps')
+    fireEvent(REP_NAME, 'deleted-unfinished-reps')
   })
 })
-registerEvent(DataConstants.progressRep, 'deleted-unfinished-reps', (stSetter)=>{})
+registerEvent(REP_NAME, 'deleted-unfinished-reps', (stSetter)=>{})
 
 const updateProgress = function(progress, task, stSetter){
-  var objMap = chkSt(DataConstants.progressRep, DataConstants.objMap)
+  var objMap = chkSt(REP_NAME, 'objects')
   if(objMap == null){
     objMap = {}
   }
   objMap[task.id] = progress
-  stSetter(DataConstants.objMap, objMap)
+  stSetter('objects', objMap)
 }

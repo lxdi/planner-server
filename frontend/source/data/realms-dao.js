@@ -4,13 +4,12 @@ import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
 
 import {createRep} from './common/repFactory'
 
-const name = 'realm'
-const repName = name + '-rep'
-const currentRealmObjName = 'currentRealm'
-const setCurrentRealmUrlOffset = '/setcurrent'
+const NAME = 'realm'
+const REP_NAME = NAME + '-rep'
+const CURRENT_REALM = 'currentRealm'
 
 export const createRealmRep = function(){
-  createRep(name, callback)
+  createRep(NAME, callback)
 }
 
 const callback = function(stSetter, spanName, arg){
@@ -22,19 +21,19 @@ const callback = function(stSetter, spanName, arg){
 const setCurrent = function(stSetter, objMap){
   for (const id in objMap) {
     if (objMap.hasOwnProperty(id) && objMap[id].current) {
-      stSetter(currentRealmObjName, objMap[id])
+      stSetter(CURRENT_REALM, objMap[id])
     }
   }
 }
 
-registerEvent(repName, 'change-current-realm', function(stateSetter, realm){
-  sendPost('/'+name + setCurrentRealmUrlOffset+'/'+realm.id, null, ()=>{})
-  const realmsMap = chkSt(repName, 'objects')
+registerEvent(REP_NAME, 'change-current-realm', function(stateSetter, realm){
+  sendPost('/realms/current/'+realm.id, null, ()=>{})
+  const realmsMap = chkSt(REP_NAME, 'objects')
 
   for(const realmId in realmsMap){
     realmsMap[realmId].current = false
   }
 
   realm.current = true
-  stateSetter(currentRealmObjName, realm)
+  stateSetter(CURRENT_REALM, realm)
 })

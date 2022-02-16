@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(path = "/week")
+@RequestMapping(path = "/weeks")
 public class WeekController {
 
     @Autowired
@@ -37,7 +37,7 @@ public class WeekController {
     private UnscheduleService unscheduleService;
 
 
-    @GetMapping("/get/all/current/year")
+    @GetMapping("/current-year")
     public List<Map<String, Object>> current(){
         return weekService.getCurrent().stream()
                 .map(weekService::fill)
@@ -45,19 +45,19 @@ public class WeekController {
                 .collect(Collectors.toList());
     }
 
-    @GetMapping("/get/prev/{currentId}")
+    @GetMapping("/{currentId}/prev")
     public Map<String, Object> getPrev(@PathVariable("currentId") String currentId){
         Week week = weekService.fill(weekService.getPrev(currentId));
         return commonMapper.mapToDto(week);
     }
 
-    @GetMapping("/get/next/{currentId}")
+    @GetMapping("/{currentId}/next")
     public Map<String, Object> getNext(@PathVariable("currentId") String currentId){
         Week week = weekService.fill(weekService.getNext(currentId));
         return commonMapper.mapToDto(week);
     }
 
-    @GetMapping("/get/day/{dayId}")
+    @GetMapping("/days/{dayId}")
     public Map<String, Object> getDay(@PathVariable("dayId") String dayId){
         Day day = dayDao.findById(dayId).orElseThrow(() -> new RuntimeException("Day not found by id " + dayId));
         return commonMapper.mapToDto(weekService.getScheduledDayDto(day));

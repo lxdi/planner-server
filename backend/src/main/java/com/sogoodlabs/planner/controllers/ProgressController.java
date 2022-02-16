@@ -38,40 +38,40 @@ public class ProgressController {
     @Autowired
     private ActualActivityService actualActivityService;
 
-    @GetMapping("/get/for/task/{taskid}")
-    public Map<String, Object> getForTask(@PathVariable("taskid") String taskId){
+    @GetMapping
+    public Map<String, Object> getForTask(@RequestParam("task-id") String taskId){
         Task task = tasksDAO.findById(taskId).orElseThrow(() -> new RuntimeException("Task not found " + taskId));
         return commonMapper.mapToDto(progressService.getByTask(task));
     }
 
-    @PostMapping("/finish/task/{taskId}")
-    public Map<String, Object> finishTask(@PathVariable("taskId") String taskId){
+    @PostMapping(value = "/finished", params = {"task-id"})
+    public Map<String, Object> finishTask(@RequestParam("task-id") String taskId){
         Task task = tasksDAO.findById(taskId).orElseThrow(() -> new RuntimeException("Task not found "+ taskId));
         progressService.finishTask(task, null, DateUtils.currentDate());
         return commonMapper.mapToDto(progressService.getByTask(task));
     }
 
-    @PostMapping("/finish/task/{taskId}/with/sp/{planId}")
-    public Map<String, Object> finishTaskWithSP(@PathVariable("taskId") String taskId, @PathVariable("planId") String planId){
+    @PostMapping(value = "/finished", params = {"task-id", "plan-id"})
+    public Map<String, Object> finishTaskWithSP(@RequestParam("task-id") String taskId, @RequestParam("plan-id") String planId){
         Task task = tasksDAO.findById(taskId).orElseThrow(() -> new RuntimeException("Task not found "+ taskId));
         RepetitionPlan plan = repPlanDAO.findById(planId).orElseThrow(() -> new RuntimeException("RepPlan not found "+ repPlanDAO));
         progressService.finishTask(task, plan, DateUtils.currentDate());
         return commonMapper.mapToDto(progressService.getByTask(task));
     }
 
-    @PostMapping("/finish/repetition/{repId}")
-    public Map<String, Object> finishRepetition(@PathVariable("repId") String repId){
+    @PostMapping(value = "/finished", params = "rep-id")
+    public Map<String, Object> finishRepetition(@RequestParam("rep-id") String repId){
         Repetition repetition = repDAO.findById(repId).orElseThrow(() -> new RuntimeException("Repetition not found "+ repId));
         progressService.finishRepetition(repetition);
         return commonMapper.mapToDto(progressService.getByTask(repetition.getTask()));
     }
 
-    @DeleteMapping("/repetitions/unfinished")
-    public void deleteUnfinished(@RequestParam String taskId){
+    @DeleteMapping("/unfinished/repetitions")
+    public void deleteUnfinished(@RequestParam("task-id") String taskId){
         progressService.removeUnfinishedReps(taskId);
     }
 
-    @GetMapping("/get/actual")
+    @GetMapping("/actual")
     public Map<String, Object> getActual(){
         return commonMapper.mapToDto(actualActivityService.getActualActivity());
     }

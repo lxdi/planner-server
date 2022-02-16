@@ -1,6 +1,4 @@
 import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
-
-import {DataConstants} from './data-constants'
 import {CreateMean, CreateLayer} from './creators'
 
 export const addNewLayerToMean = function(mean){
@@ -11,5 +9,5 @@ export const addNewLayerToMean = function(mean){
     }
   }
   priority = priority + 1
-  mean.layers.push(CreateLayer(DataConstants.newId, priority, mean.id))
+  mean.layers.push(CreateLayer('new', priority, mean.id))
 }

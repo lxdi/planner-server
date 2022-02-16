@@ -1,92 +1,74 @@
 import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
 import {sendGet, sendPut, sendPost} from './postoffice'
 
-import {DataConstants} from './data-constants'
+const NAME = 'week'
+const REP_NAME = NAME + '-rep'
+const OBJECTS_LIST = 'objects-list'
 
-const repName = 'week'
-
-const getCurrentEvent = 'get-current-list'
-const gotCurrentEvent = 'got-current-list'
-const getCurrentUrlOffest = '/get/all/current/year'
-
-const getPrevEvent = 'get-prev'
-const gotPrevEvent = 'got-prev'
-const getPrevUrlOffest = '/get/prev'
-
-const getNextEvent = 'get-next'
-const gotNextEvent = 'got-next'
-const getNextUrlOffest = '/get/next'
-
-const movePlansEvent = 'move-plans'
-const movedPlansEvent = 'moved-plans'
-const movingPlansUrlOffest = '/move/plans'
-
-const cleanAll = 'clean-all'
-
-registerEvent(DataConstants.weekRep, getCurrentEvent, (stSetter)=>{
-  sendGet('/' + repName + getCurrentUrlOffest, (data)=>{
+registerEvent(REP_NAME, 'get-current-list', (stSetter)=>{
+  sendGet('/weeks/current-year', (data)=>{
       const list = typeof data == 'string'? JSON.parse(data): data
-      stSetter(DataConstants.objList, list)
+      stSetter(OBJECTS_LIST, list)
 
       const objMap = {}
       list.forEach(week => {
         objMap[week.id] = week
       })
-      stSetter(DataConstants.objMap, objMap)
-      fireEvent(DataConstants.weekRep, gotCurrentEvent, [list])
+      stSetter('objects', objMap)
+      fireEvent(REP_NAME, 'got-current-list', [list])
   })
 })
-registerEvent(DataConstants.weekRep, gotCurrentEvent, (stSetter, list)=>list)
+registerEvent(REP_NAME, 'got-current-list', (stSetter, list)=>list)
 
-registerEvent(DataConstants.weekRep, getPrevEvent, (stSetter, current)=>{
-  sendGet('/' + repName + getPrevUrlOffest+'/'+current.id, (data)=>{
+registerEvent(REP_NAME, 'get-prev', (stSetter, current)=>{
+  sendGet('/weeks/' + current.id + '/prev', (data)=>{
       const week = typeof data == 'string'? JSON.parse(data): data
-      chkSt(DataConstants.weekRep, DataConstants.objMap)[week.id] = week
-      chkSt(DataConstants.weekRep, DataConstants.objList).unshift(week)
-      fireEvent(DataConstants.weekRep, gotPrevEvent, [week])
+      chkSt(REP_NAME, 'objects')[week.id] = week
+      chkSt(REP_NAME, OBJECTS_LIST).unshift(week)
+      fireEvent(REP_NAME, 'got-prev', [week])
   })
 })
-registerEvent(DataConstants.weekRep, gotPrevEvent, (stSetter, week)=>week)
+registerEvent(REP_NAME, 'got-prev', (stSetter, week)=>week)
 
-registerEvent(DataConstants.weekRep, getNextEvent, (stSetter, current)=>{
-  sendGet('/' + repName + getNextUrlOffest+'/'+current.id, (data)=>{
+registerEvent(REP_NAME, 'get-next', (stSetter, current)=>{
+  sendGet('/weeks/' + current.id + '/next', (data)=>{
       const week = typeof data == 'string'? JSON.parse(data): data
-      chkSt(DataConstants.weekRep, DataConstants.objMap)[week.id] = week
-      chkSt(DataConstants.weekRep, DataConstants.objList).push(week)
-      fireEvent(DataConstants.weekRep, gotNextEvent, [week])
+      chkSt(REP_NAME, 'objects')[week.id] = week
+      chkSt(REP_NAME, OBJECTS_LIST).push(week)
+      fireEvent(REP_NAME, 'got-next', [week])
   })
 })
-registerEvent(DataConstants.weekRep, gotNextEvent, (stSetter, week)=>week)
+registerEvent(REP_NAME, 'got-next', (stSetter, week)=>week)
 
-registerEvent(DataConstants.weekRep, movePlansEvent, (stSetter, movingDto)=>{
-  sendPost('/' + repName + movingPlansUrlOffest, movingDto, ()=>{
+registerEvent(REP_NAME, 'move-plans', (stSetter, movingDto)=>{
+  sendPost('/weeks/move/plans', movingDto, ()=>{
       cleanRep(stSetter)
-      fireEvent(DataConstants.weekRep, movedPlansEvent)
+      fireEvent(REP_NAME, 'moved-plans')
   })
 })
-registerEvent(DataConstants.weekRep, movedPlansEvent, (stSetter)=>{})
+registerEvent(REP_NAME, 'moved-plans', (stSetter)=>{})
 
-registerEvent(DataConstants.weekRep, cleanAll, (stSetter)=>cleanRep(stSetter))
+registerEvent(REP_NAME, 'clean-all', (stSetter)=>cleanRep(stSetter))
 
 
-registerEvent(DataConstants.weekRep, 'assign-mean', (stSetter, dto)=>{
-  sendPost('/week/schedule/mean', dto, ()=>{
-    fireEvent(DataConstants.weekRep, 'clean-all')
-    fireEvent(DataConstants.weekRep, 'assign-mean-done', [dto])
+registerEvent(REP_NAME, 'assign-mean', (stSetter, dto)=>{
+  sendPost('/weeks/schedule/mean', dto, ()=>{
+    fireEvent(REP_NAME, 'clean-all')
+    fireEvent(REP_NAME, 'assign-mean-done', [dto])
   })
 })
-registerEvent(DataConstants.weekRep, 'assign-mean-done', (stSetter, dto)=>dto)
+registerEvent(REP_NAME, 'assign-mean-done', (stSetter, dto)=>dto)
 
-registerEvent(DataConstants.weekRep, 'unschedule-mean', (stSetter, meanId)=>{
-  sendPost('/week/unschedule/mean/'+meanId, null, ()=>{
-    fireEvent(DataConstants.weekRep, 'clean-all')
-    fireEvent(DataConstants.weekRep, 'unschedule-mean-done', [meanId])
+registerEvent(REP_NAME, 'unschedule-mean', (stSetter, meanId)=>{
+  sendPost('/weeks/unschedule/mean/'+meanId, null, ()=>{
+    fireEvent(REP_NAME, 'clean-all')
+    fireEvent(REP_NAME, 'unschedule-mean-done', [meanId])
   })
 })
-registerEvent(DataConstants.weekRep, 'unschedule-mean-done', (stSetter, meanId)=>meanId)
+registerEvent(REP_NAME, 'unschedule-mean-done', (stSetter, meanId)=>meanId)
 
 
 const cleanRep = function(stSetter){
-  stSetter(DataConstants.objMap, null)
-  stSetter(DataConstants.objList, null)
+  stSetter('objects', null)
+  stSetter(OBJECTS_LIST, null)
 }

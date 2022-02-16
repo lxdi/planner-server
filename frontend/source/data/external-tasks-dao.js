@@ -2,11 +2,10 @@ import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
 import {sendGet, sendPut, sendPost} from './postoffice'
 import {DataConstants} from './data-constants'
 
-const createUrlOffset = '/external/task/create'
-const updateUrlOffset = '/external/task/update'
+const URL = '/external-tasks'
 
 registerEvent(DataConstants.externalTasksRep, 'create', (stateSetter, task)=>{
-  sendPut(createUrlOffset, task, (data)=>{
+  sendPut(URL, task, (data)=>{
       fireEvent(DataConstants.externalTasksRep, 'created')
   })
 })
@@ -14,7 +13,7 @@ registerEvent(DataConstants.externalTasksRep, 'create', (stateSetter, task)=>{
 registerEvent(DataConstants.externalTasksRep, 'created', ()=>{})
 
 registerEvent(DataConstants.externalTasksRep, 'update', (stateSetter, task)=>{
-  sendPost(updateUrlOffset, task, (data)=>{
+  sendPost(URL, task, (data)=>{
       fireEvent(DataConstants.externalTasksRep, 'updated')
   })
 })

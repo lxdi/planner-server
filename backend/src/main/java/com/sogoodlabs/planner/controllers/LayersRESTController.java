@@ -14,7 +14,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(path = "/layer")
+@RequestMapping(path = "/layers")
 public class LayersRESTController {
 
     @Autowired
@@ -26,8 +26,8 @@ public class LayersRESTController {
     @Autowired
     private IMeansDAO meansDAO;
 
-    @GetMapping("/get/by/mean/{meanid}")
-    public List<Map<String, Object>> layersOfMean(@PathVariable("meanid") String meanid){
+    @GetMapping
+    public List<Map<String, Object>> layersOfMean(@RequestParam("mean-id") String meanid){
         Mean mean = meansDAO.findById(meanid).orElseThrow(() -> new RuntimeException("Mean not found by " + meanid));
 
         return layerDAO.findByMean(mean).stream()
@@ -35,7 +35,7 @@ public class LayersRESTController {
                 .collect(Collectors.toList());
     }
 
-    @PutMapping("/create")
+    @PutMapping
     public Map<String, Object> create(@RequestBody  Map<String, Object> layerDto){
         Layer layer = commonMapper.mapToEntity(layerDto, new Layer());
         layer.setId(UUID.randomUUID().toString());

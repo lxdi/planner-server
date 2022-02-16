@@ -1,28 +1,23 @@
 import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
 import {sendGet, sendPut, sendPost} from './postoffice'
 
-import {DataConstants} from './data-constants'
-
-const repName = 'day'
-const getCurrentUrlOffest = '/week/get/day'
-
-registerEvent(DataConstants.dayRep, 'get-one', (stSetter, day)=>{
-  sendGet(getCurrentUrlOffest + '/' + day.id, (data)=>{
+registerEvent('day-rep', 'get-one', (stSetter, day)=>{
+  sendGet('/weeks/days/' + day.id, (data)=>{
       const dayMt = typeof data == 'string'? JSON.parse(data): data
       Object.assign(day, dayMt)
       day.isFull = true
 
-      var objmap = chkSt(DataConstants.dayRep, DataConstants.objMap)
+      var objmap = chkSt('day-rep', 'objects')
       if(objmap == null){
         objmap = {}
-        stSetter(DataConstants.objMap, objmap)
+        stSetter('objects', objmap)
       }
       objmap[day.id] = day
-      fireEvent(DataConstants.dayRep, 'got-one', [day])
+      fireEvent('day-rep', 'got-one', [day])
   })
 })
-registerEvent(DataConstants.dayRep, 'got-one', (stSetter, day)=>day)
+registerEvent('day-rep', 'got-one', (stSetter, day)=>day)
 
-registerEvent(DataConstants.dayRep, 'clean-all', (stSetter)=>{
-  stSetter(DataConstants.objMap, null)
+registerEvent('day-rep', 'clean-all', (stSetter)=>{
+  stSetter('objects', null)
 })
