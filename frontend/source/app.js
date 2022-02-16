@@ -26,7 +26,6 @@ import './data/weeks-dao'
 import './data/days-dao'
 import './data/progress-dao'
 import './data/external-tasks-dao'
-import './data/layer-order-dao'
 import './data/drag-n-drop'
 
 createRealmRep()
