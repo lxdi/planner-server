@@ -42,13 +42,17 @@ const getConent = function(comp){
   means.forEach(mean => {
 
     if(mean.layers == null){
-      return;
+      return
     }
 
-    mean.layers.forEach(layer => {
-      result.push( <tr id={layer.id}>
+    mean.layers
+      .filter(l => l.priority>0)
+      .sort((l1, l2) => l1.priority - l2.priority)
+      .forEach(layer => {
+        result.push( <tr id={layer.id}>
                       <td>{mean.title}</td>
                       <td>{layer.depth}</td>
+                      <td>{layer.priority}</td>
                     </tr>)
     })
   })
@@ -58,6 +62,7 @@ const getConent = function(comp){
               <tr>
                 <td>Mean</td>
                 <td>Layer</td>
+                <td></td>
               </tr>
               {result}
             </tbody>
