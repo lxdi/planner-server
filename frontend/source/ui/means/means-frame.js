@@ -70,7 +70,7 @@ const meansUIlist = function(component){
                   nodes={chkSt(meanRepName, indexByRealmid)[curRealm.id]}
                   viewCallback = {(mean)=>meanUI(component, mean)}
                   onDropCallback = {(alteredList)=>{fireEvent(meanRepName, 'reposition', [alteredList])}}
-                  onDragStartCallback = {(mean, e)=> {e.mean = mean; e.eventType = 'assign mean';}}
+                  onDragStartCallback = {(mean, e)=> fireEvent('drag-n-drop', 'put', ['assign-mean', mean])}
                   rootStyle={{border:'1px solid lightgrey', borderRadius:'5px', marginBottom:'5px', padding:'3px'}}
                   shiftpx={15}
                   />

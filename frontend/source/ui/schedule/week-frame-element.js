@@ -175,16 +175,22 @@ const formatDate = function(date, part){
 }
 
 const onDragStart = function(e, dayFrom){
-  e.draggableDay = dayFrom
-  e.eventType = 'moving'
+  fireEvent('drag-n-drop', 'put', ['moving', dayFrom])
 }
 
 const onDrop = function(e, dayTo){
-  if(e.eventType == 'moving'){
-    fireEvent('shift-plans-modal', 'open', [e.draggableDay, dayTo])
+  const type = chkSt('drag-n-drop','type')
+
+  if(type == 'moving'){
+    const dayFrom = chkSt('drag-n-drop','data')
+    fireEvent('shift-plans-modal', 'open', [dayFrom, dayTo])
   }
-  if(e.eventType == 'assign mean'){
-    fireEvent('assign-mean-modal', 'open', [dayTo, e.mean])
+
+  if(type == 'assign-mean'){
+    const mean = chkSt('drag-n-drop','data')
+    fireEvent('assign-mean-modal', 'open', [dayTo, mean])
     e.mean = null
   }
+
+  fireEvent('drag-n-drop', 'clean')
 }
