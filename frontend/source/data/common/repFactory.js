@@ -37,9 +37,9 @@ export const createRep = function(repName, baseUrl, callback){
 
 const basicListReceiving = function(repName, baseUrl, urlOffset, eventNameRequest, eventNameResponse, spanName, callback){
 
-  registerEvent(repName, eventNameRequest, function(stateSetter){
+  registerEvent(repName, eventNameRequest, function(stateSetter, paramsMap){
 
-      sendGet(baseUrl+urlOffset, function(data) {
+      sendGet(baseUrl+urlOffset+paramMapToUrl(paramsMap), function(data) {
                 var objectsArr = typeof data == 'string'? JSON.parse(data): data
                 const objMap = {}
                 objectsArr.forEach(obj => objMap[obj.id]=obj)
@@ -60,9 +60,9 @@ const getAllEvents = function(repName, baseUrl, callback){
 }
 
 const getEvents = function(repName, baseUrl, callback){
-  registerEvent(repName, 'get', function(stateSetter, id){
+  registerEvent(repName, 'get', function(stateSetter, id, paramsMap){
 
-    sendGet(baseUrl + '/' + id, function(data) {
+    sendGet(baseUrl + '/' + id+paramMapToUrl(paramsMap), function(data) {
       var receivedData = typeof data == 'string'? JSON.parse(data): data
       var objMap = chkSt(repName, OBJ_MAP_NAME)
 
@@ -85,9 +85,9 @@ const getEvents = function(repName, baseUrl, callback){
 }
 
 const getFullEvents = function(repName, baseUrl, callback){
-  registerEvent(repName, 'get-full', function(stateSetter, obj){
+  registerEvent(repName, 'get-full', function(stateSetter, obj, paramsMap){
 
-    sendGet(baseUrl + '/' + obj.id + '/full', function(data) {
+    sendGet(baseUrl + '/' + obj.id + '/full'+paramMapToUrl(paramsMap), function(data) {
 
       var receivedData = typeof data == 'string'? JSON.parse(data): data
       chkSt(repName, OBJ_MAP_NAME)[""+receivedData.id] = receivedData
@@ -113,9 +113,9 @@ const getFullEvents = function(repName, baseUrl, callback){
 }
 
 const putEvents = function(repName, baseUrl, callback){
-  registerEvent(repName, 'create', function(stateSetter, obj){
+  registerEvent(repName, 'create', function(stateSetter, obj, paramsMap){
 
-    sendPut(baseUrl, JSON.stringify(obj), function(data) {
+    sendPut(baseUrl+paramMapToUrl(paramsMap), JSON.stringify(obj), function(data) {
       var receivedData = typeof data == 'string'? JSON.parse(data): data
       chkSt(repName, OBJ_MAP_NAME)[""+receivedData.id] = receivedData
 
@@ -131,9 +131,9 @@ const putEvents = function(repName, baseUrl, callback){
 }
 
 const deleteEvents = function(repName, baseUrl, callback){
-  registerEvent(repName, 'delete', function(stateSetter, obj){
+  registerEvent(repName, 'delete', function(stateSetter, obj, paramsMap){
 
-    sendDelete(baseUrl + '/' + obj.id, function() {
+    sendDelete(baseUrl + '/' + obj.id + paramMapToUrl(paramsMap), function() {
       delete chkSt(repName, OBJ_MAP_NAME)[obj.id]
 
       if(callback!=null){
@@ -169,9 +169,9 @@ const updateEvents = function(repName, baseUrl, callback){
 }
 
 const updateListEvents = function(repName, baseUrl, callback){
-  registerEvent(repName, 'update-list', (stateSetter, objList) => {
+  registerEvent(repName, 'update-list', (stateSetter, objList, paramsMap) => {
 
-    sendPost(baseUrl+'/list', JSON.stringify(objList), (data) => {
+    sendPost(baseUrl+'/list'+ paramMapToUrl(paramsMap), JSON.stringify(objList), (data) => {
 
       var receivedData = typeof data == 'string'? JSON.parse(data): data
       var objMap = chkSt(repName, OBJ_MAP_NAME)
@@ -197,4 +197,12 @@ const cleaning = function(repName, callback){
         callback(stateSetter, CLEAN_SPAN)
       }
   })
+}
+
+const paramMapToUrl = function(paramsMap){
+  if(paramsMap == null){
+    return ''
+  }
+
+  return '?'+new URLSearchParams(paramsMap).toString()
 }
