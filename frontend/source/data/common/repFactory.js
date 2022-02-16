@@ -16,6 +16,7 @@ const REP_OFFSET = '-rep'
 const OBJ_MAP_NAME = 'objects'
 
 const GET_ALL_SPAN = 'getAllSpan'
+const GET_SPAN = 'getSpan'
 const PUT_SPAN = 'creationSpan'
 const DELETE_SPAN = 'deleteSpan'
 const POST_SPAN = 'updateSpan'
@@ -25,6 +26,7 @@ const CLEAN_SPAN = 'cleanSpan'
 
 export const createRep = function(repName, baseUrl, callback){
   getAllEvents(repName, baseUrl, callback)
+  getEvents(repName, baseUrl, callback)
   putEvents(repName, baseUrl, callback)
   deleteEvents(repName, baseUrl, callback)
   updateEvents(repName, baseUrl, callback)
@@ -55,6 +57,31 @@ const basicListReceiving = function(repName, baseUrl, urlOffset, eventNameReques
 
 const getAllEvents = function(repName, baseUrl, callback){
   basicListReceiving(repName, baseUrl, '/all', 'all-request', 'all-response', GET_ALL_SPAN, callback)
+}
+
+const getEvents = function(repName, baseUrl, callback){
+  registerEvent(repName, 'get', function(stateSetter, id){
+
+    sendGet(baseUrl + '/' + id, function(data) {
+      var receivedData = typeof data == 'string'? JSON.parse(data): data
+      var objMap = chkSt(repName, OBJ_MAP_NAME)
+
+      if(objMap==null){
+        objMap = {}
+        stSetter(OBJ_MAP_NAME, objMap)
+      }
+
+      objMap[receivedData.id] = receivedData
+
+      if(callback!=null){
+        callback(stateSetter, GET_SPAN, receivedData)
+      }
+
+      fireEvent(repName, 'got', [obj])
+    })
+  })
+
+  registerEvent(repName, 'got', (stateSetter, obj) => obj)
 }
 
 const getFullEvents = function(repName, baseUrl, callback){
