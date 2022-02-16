@@ -16,7 +16,8 @@ export const createTargetRep = function(){
 
 const callback = function(stSetter, spanName, arg){
   if(spanName == 'getAllSpan'){
-    stSetter(INDEX_BY_REALM, createIndex(arg, REALM_ID_FEILD_NAME))
+    var targetsMap = chkSt(REP_NAME, 'objects')
+    stSetter(INDEX_BY_REALM, createIndex(targetsMap, REALM_ID_FEILD_NAME))
   }
 
   if(spanName == 'creationSpan'){

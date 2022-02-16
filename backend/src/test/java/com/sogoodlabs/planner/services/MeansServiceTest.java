@@ -96,10 +96,10 @@ public class MeansServiceTest extends SpringTestConfig {
         return mean;
     }
 
-    private Layer createLayer(int priority, Mean mean){
+    private Layer createLayer(int depth, Mean mean){
         Layer layer = new Layer();
         layer.setId(UUID.randomUUID().toString());
-        layer.setPriority(priority);
+        layer.setDepth(depth);
         layer.setMean(mean);
         layerDAO.save(layer);
         return layer;

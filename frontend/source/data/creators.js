@@ -18,10 +18,10 @@ export var CreateMean = function(id, title, realmid, parentid){
   return newMean
 }
 
-export var CreateLayer =  function(id, priority, meanid){
+export var CreateLayer =  function(id, depth, meanid){
   return {
     id: id,
-    priority: priority,
+    depth: depth,
     meanid: meanid
   }
 }

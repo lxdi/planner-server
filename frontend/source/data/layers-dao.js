@@ -14,9 +14,6 @@ export const createLayerRep = function(){
 }
 
 const callback = function(stSetter, spanName, arg){
-  if(spanName == 'getAllSpan'){
-    throw 'Do not request all layers'
-  }
   if(spanName == 'deleteSpan'){
     stSetter('objects', null)
     stSetter(INDEX_BY_MEAN, null)

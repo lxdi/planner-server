@@ -95,7 +95,7 @@ public class Task implements IEntity {
         List<String> result = new ArrayList<>();
         try {
             result.add(this.title);
-            result.add(""+this.layer.getPriority());
+            result.add(""+this.layer.getDepth());
             result.add(this.layer.getMean().getTitle());
             result.add(this.layer.getMean().getRealm().getTitle());
         } catch (NullPointerException npe){}

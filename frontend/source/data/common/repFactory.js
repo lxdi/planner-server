@@ -35,18 +35,18 @@ export const createRep = function(repName, baseUrl, callback){
   cleaning(repName, callback)
 }
 
-const basicListReceiving = function(repName, baseUrl, urlOffset, eventNameRequest, eventNameResponse, spanName, callback){
+export const basicListReceiving = function(repName, baseUrl, urlOffset, eventNameRequest, eventNameResponse, spanName, defaultParams, callback){
 
   registerEvent(repName, eventNameRequest, function(stateSetter, paramsMap){
 
-      sendGet(baseUrl+urlOffset+paramMapToUrl(paramsMap), function(data) {
+      sendGet(baseUrl+urlOffset+paramMapToUrl(paramsMap, defaultParams), function(data) {
                 var objectsArr = typeof data == 'string'? JSON.parse(data): data
                 const objMap = {}
                 objectsArr.forEach(obj => objMap[obj.id]=obj)
                 stateSetter(OBJ_MAP_NAME, objMap)
 
                 if(callback!=null){
-                  callback(stateSetter, spanName, objMap)
+                  callback(stateSetter, spanName, objectsArr)
                 }
 
                 fireEvent(repName, eventNameResponse, [objMap])
@@ -56,7 +56,7 @@ const basicListReceiving = function(repName, baseUrl, urlOffset, eventNameReques
 }
 
 const getAllEvents = function(repName, baseUrl, callback){
-  basicListReceiving(repName, baseUrl, '/all', 'all-request', 'all-response', GET_ALL_SPAN, callback)
+  basicListReceiving(repName, baseUrl, '/all', 'all-request', 'all-response', GET_ALL_SPAN, null, callback)
 }
 
 const getEvents = function(repName, baseUrl, callback){
@@ -199,10 +199,18 @@ const cleaning = function(repName, callback){
   })
 }
 
-const paramMapToUrl = function(paramsMap){
-  if(paramsMap == null){
+const paramMapToUrl = function(paramsMap, defaultParams){
+  if(paramsMap == null && defaultParams == null){
     return ''
   }
 
-  return '?'+new URLSearchParams(paramsMap).toString()
+  if(defaultParams == null){
+    return '?'+new URLSearchParams(paramsMap).toString()
+  }
+
+  if(paramsMap == null){
+    return '?'+new URLSearchParams(defaultParams).toString()
+  }
+
+  return '?'+ new URLSearchParams(defaultParams).toString() + '&' + new URLSearchParams(paramsMap).toString()
 }

@@ -14,6 +14,7 @@ public class Layer implements IEntity {
     private String id;
 
     int priority;
+    int depth;
 
     @ManyToOne(fetch = FetchType.LAZY)
     Mean mean;
@@ -33,6 +34,13 @@ public class Layer implements IEntity {
     }
     public void setPriority(int priority) {
         this.priority = priority;
+    }
+
+    public int getDepth() {
+        return depth;
+    }
+    public void setDepth(int depth) {
+        this.depth = depth;
     }
 
     public Mean getMean() {

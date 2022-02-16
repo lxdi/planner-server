@@ -21,9 +21,6 @@ export const createTaskRep = function(){
 }
 
 const callback = function(stSetter, spanName, arg, pathVariable){
-  if(spanName == 'getAllSpan'){
-    throw 'Do not request all tasks'
-  }
   if(spanName == 'deleteSpan'){
     stSetter('objects', null)
     //stSetter(indexByMean, null)

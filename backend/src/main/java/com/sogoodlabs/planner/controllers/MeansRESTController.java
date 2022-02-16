@@ -54,6 +54,21 @@ public class MeansRESTController {
         return commonMapper.mapToDto(mean);
     }
 
+    @GetMapping("/list")
+    public List<Map<String, Object>> getList(@RequestParam("with-priorities") Boolean isPriorities){
+
+        if(isPriorities){
+            return meansService.getPrioritized().stream().map(this::fillAndMapToDto).collect(Collectors.toList());
+        }
+
+        return meansDAO.findAll().stream().map(commonMapper::mapToDto).collect(Collectors.toList());
+    }
+
+    private Map<String, Object> fillAndMapToDto(Mean mean){
+        meanFillerService.fill(mean);
+        return commonMapper.mapToDto(mean);
+    }
+
     @PutMapping
     public Map<String, Object> createTarget(@RequestBody Map<String, Object> meanDto) {
         Mean mean = meansService.createMean(commonMapper.mapToEntity(meanDto, new Mean()));

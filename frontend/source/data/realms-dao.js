@@ -14,7 +14,7 @@ export const createRealmRep = function(){
 
 const callback = function(stSetter, spanName, arg){
   if(spanName == 'getAllSpan'){
-    setCurrent(stSetter, arg)
+    setCurrent(stSetter, chkSt(REP_NAME, 'objects'))
   }
 }
 

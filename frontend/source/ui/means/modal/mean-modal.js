@@ -10,7 +10,6 @@ import {meanModalHeaderTitle, targetsDropDownTitle} from './../../../titles'
 import {CommonModal} from './../../common/common-modal'
 import {CommonCrudeTemplate} from './../../common/common-crud-template'
 import {isValidMean} from '../../../utils/mean-validator'
-import {addNewLayerToMean} from '../../../data/mean-loader'
 
 export class MeanModal extends React.Component {
   constructor(props){

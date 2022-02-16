@@ -2,12 +2,12 @@ package com.sogoodlabs.planner.services;
 
 import com.sogoodlabs.planner.model.dao.*;
 import com.sogoodlabs.planner.model.entities.*;
+import com.sogoodlabs.planner.util.HibernateUtils;
 import com.sogoodlabs.planner.util.IdUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -54,6 +54,22 @@ public class MeansService {
         }
 
         return mean;
+    }
+
+    public List<Mean> getPrioritized(){
+        var layers = layerDAO.findWithPriority();
+
+        if(layers.size()==0){
+            return new ArrayList<>();
+        }
+
+        Map<String, Mean> meanMap = new HashMap<>();
+
+        layers.stream().map(Layer::getMean)
+                .map(HibernateUtils::initializeAndUnproxy)
+                .forEach(mean -> meanMap.put(mean.getId(), mean));
+
+        return new ArrayList<>(meanMap.values());
     }
 
     private void save(Mean mean){

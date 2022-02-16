@@ -8,6 +8,7 @@ import com.sogoodlabs.planner.model.entities.Repetition;
 import com.sogoodlabs.planner.model.entities.TaskMapper;
 import com.sogoodlabs.planner.model.entities.Week;
 import com.sogoodlabs.planner.util.DateUtils;
+import com.sogoodlabs.planner.util.HibernateUtils;
 import org.hibernate.Hibernate;
 import org.hibernate.proxy.HibernateProxy;
 import org.slf4j.Logger;
@@ -54,7 +55,7 @@ public class WeekService {
     private MoveRepetitionsService moveRepetitionsService;
 
     public Week fill(Week weekProxy){
-        Week week = initializeAndUnproxy(weekProxy);
+        Week week = HibernateUtils.initializeAndUnproxy(weekProxy);
         week.setDays(new ArrayList<>());
 
         dayDao.findByWeek(week).stream()
@@ -194,19 +195,6 @@ public class WeekService {
                     .map(repId -> repDAO.findById(repId).orElseThrow(() -> new RuntimeException("Repetition not found " + repId)))
                     .collect(Collectors.toList()), day);
         }
-    }
-
-    public static <T> T initializeAndUnproxy(T entity) {
-        if (entity == null) {
-            throw new
-                    NullPointerException("Entity passed for initialization is null");
-        }
-
-        Hibernate.initialize(entity);
-        if (entity instanceof HibernateProxy) {
-            entity = (T) ((HibernateProxy) entity).getHibernateLazyInitializer().getImplementation();
-        }
-        return entity;
     }
 
 }

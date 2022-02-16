@@ -2,20 +2,26 @@
 import {sendGet, sendPut, sendPost} from './postoffice'
 import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
 
-import {createRep} from './common/repFactory'
+import {createRep, basicListReceiving} from './common/repFactory'
 import {createIndex, updateIndex} from './common/index-factory'
 
 const NAME = 'mean'
 const REP_NAME = NAME + '-rep'
 const INDEX_BY_REALM = 'index-by-realmid'
+const INDEX_WITH_PRIORITIES = 'index-with-priorites'
+const GET_LIST_WITH_PRIORITY_SPAN = 'getWithPrioritySpan'
 
 export const createMeanRep = function(){
   createRep('mean-rep','/means', callback)
+
+  basicListReceiving('mean-rep', '/means', '/list', 'get-with-priority', 'got-with-priority',
+    GET_LIST_WITH_PRIORITY_SPAN, {'with-priorities': true}, callback)
 }
 
 const callback = function(stSetter, spanName, arg){
   if(spanName == 'getAllSpan'){
-    stSetter(INDEX_BY_REALM, createIndex(arg, 'realmid'))
+    const meansObjMap = chkSt(REP_NAME, 'objects')
+    stSetter(INDEX_BY_REALM, createIndex(meansObjMap, 'realmid'))
   }
   if(spanName == 'creationSpan'){
     updateIndex(arg, chkSt(REP_NAME, INDEX_BY_REALM), 'realmid')
@@ -24,10 +30,14 @@ const callback = function(stSetter, spanName, arg){
   if(spanName == 'deleteSpan'){
     stSetter('objects', null)
     stSetter(INDEX_BY_REALM, null)
+    stSetter(INDEX_WITH_PRIORITIES, null)
   }
   if(spanName == 'updateSpan'){
     const meansObjMap = chkSt(REP_NAME, 'objects')
     stSetter(INDEX_BY_REALM, createIndex(meansObjMap, 'realmid'))
+  }
+  if(spanName == GET_LIST_WITH_PRIORITY_SPAN){
+    stSetter(INDEX_WITH_PRIORITIES, arg)
   }
 }
 

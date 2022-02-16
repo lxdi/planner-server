@@ -78,7 +78,7 @@ const layersUI = function(comp, mean){
     mean.layers.forEach(layer => {
       result.push(
         <div>
-          {checkBoxUI('Layer ' + layer.priority, isLayerChecked(comp.state.dto, layer), ()=>checkLayer(comp, comp.state.dto, layer))}
+          {checkBoxUI('Layer ' + layer.depth, isLayerChecked(comp.state.dto, layer), ()=>checkLayer(comp, comp.state.dto, layer))}
           <div style={{marginLeft:'10px'}}>{tasksUI(comp, layer)}</div>
           <div style={{marginLeft:'10px'}}>
             <a href='#' style={{marginRight: '2px'}} onClick={()=>getPlaceholdersCountForLayer(comp, comp.state.dto, layer, -1)}>-</a>

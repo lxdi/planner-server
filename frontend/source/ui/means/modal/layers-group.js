@@ -6,7 +6,6 @@ import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
 import {TasksGroup} from './tasks-group'
 import {DataConstants} from '../../../data/data-constants'
 import {CreateLayer, CreateTask} from '../../../data/creators'
-import {addNewLayerToMean} from '../../../data/mean-loader'
 
 // props: mean, isEdit
 export class LayersGroup extends React.Component {
@@ -43,12 +42,27 @@ const listLayersGroupContent = function(mean, isEdit){
 
     for(var id in mean.layers){
       const layer = mean.layers[id]
-      result.push(<ListGroupItem key={'layer_'+layer.priority}>
-                              <div style={{fontWeight:'bold', fontSize:'12pt'}}>Layer {layer.priority}</div>
+      result.push(<ListGroupItem key={'layer_'+layer.depth}>
+                              <div style={{fontWeight:'bold', fontSize:'12pt'}}>Layer {layer.depth}</div>
                               <div>
                                 <TasksGroup layer = {layer} isEdit = {isEdit} />
                               </div>
                             </ListGroupItem>)
     }
     return result
+}
+
+const addNewLayerToMean = function(mean){
+  if(mean.layers==null){
+    mean.layers = []
+  }
+
+  var depth = 0
+  for(const id in mean.layers){
+    if(mean.layers[id].depth>depth){
+      depth = mean.layers[id].depth
+    }
+  }
+  depth = depth + 1
+  mean.layers.push(CreateLayer('new', depth, mean.id))
 }

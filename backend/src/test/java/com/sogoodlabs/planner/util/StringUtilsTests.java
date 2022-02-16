@@ -43,7 +43,7 @@ public class StringUtilsTests {
         assertEquals(6564, (long) StringUtils.getValue(dtowrapper, "get('listofsomething').get(0).get('id')"));
 
         Layer layer = new Layer();
-        layer.setPriority(1);
+        layer.setDepth(1);
         layer.setId("543543");
 
         Task task = new Task();

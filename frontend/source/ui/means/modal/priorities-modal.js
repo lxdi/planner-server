@@ -12,7 +12,7 @@ export class PrioritiesModal extends React.Component {
     registerEvent('priorities-modal', 'open', (stateSetter) => this.setState({isOpen: true}))
     registerEvent('priorities-modal', 'close', (stateSetter) => this.setState({isOpen:false}))
 
-    //registerReaction('external-task-modal', DataConstants.externalTasksRep, ['created', 'updated'], ()=>this.setState(createState(false, true, false, null)))
+    registerReaction('priorities-modal', 'mean-rep', ['got-with-priority'], ()=>this.setState({}))
 
   }
 
@@ -20,7 +20,7 @@ export class PrioritiesModal extends React.Component {
     var content = null
 
     if(this.state.isOpen){
-      content = 'TEST'
+      content = getConent(this)
     }
 
     return <CommonModal isOpen = {this.state.isOpen} cancelHandler={()=>fireEvent('priorities-modal', 'close')} title={"Priorities"} >
@@ -30,20 +30,34 @@ export class PrioritiesModal extends React.Component {
 }
 
 const getConent = function(comp){
-  const orders = chkSt('layer-order-rep', 'objects')
+  const means = chkSt('mean-rep', 'index-with-priorites')
 
-  if(orders == null){
-    fireEvent('layer-order-rep', 'get-all')
+  if(means == null){
+    fireEvent('mean-rep', 'get-with-priority')
     return 'Loading...'
   }
+
+  const result = []
+
+  means.forEach(mean => {
+
+    if(mean.layers == null){
+      return;
+    }
+
+    mean.layers.forEach(layer => {
+      result.push( <tr id={layer.id}>
+                      <td>{mean.title}</td>
+                      <td>{layer.depth}</td>
+                    </tr>)
+    })
+  })
 
   return  <Table striped bordered condensed hover >
             <tbody>
               <tr>
-                <td>Task</td>
-                <td>Plan date</td>
-                <td>Finish date</td>
-                <td></td>
+                <td>Mean</td>
+                <td>Layer</td>
               </tr>
               {result}
             </tbody>
