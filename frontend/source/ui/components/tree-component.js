@@ -18,12 +18,12 @@ export class TreeComponent extends React.Component {
 
   onDragOver(e, node, type){
     var altered = null
-    if(node!=e.draggableNode && this.props.isEdit==true){
+    if(node!=this.state.draggableNode && this.props.isEdit==true){
       if(type=='replace'){
-        altered = replaceDraggableUtil(this.props.nodes, null, node, e.draggableNode, this.state.cache)
+        altered = replaceDraggableUtil(this.props.nodes, null, node, this.state.draggableNode, this.state.cache)
       }
       if(type=='addchild'){
-        altered = addAsChildDraggableUtil(this.props.nodes, node, e.draggableNode, this.state.cache)
+        altered = addAsChildDraggableUtil(this.props.nodes, node, this.state.draggableNode, this.state.cache)
       }
       if(this.state.altered==null){
         this.setState({altered: altered})
@@ -80,7 +80,7 @@ const nodeUI = function(component, node, level){
 const draggableWrapper = function(component, node, content){
     return <div style={{display:'inline-block'}}
                     draggable='true'
-                    onDragStart={(e)=>{e.draggableNode = node; if(component.props.onDragStartCallback!=null) component.props.onDragStartCallback(node, e)}}
+                    onDragStart={(e)=>{component.state.draggableNode = node; if(component.props.onDragStartCallback!=null) component.props.onDragStartCallback(node, e)}}
                     onDragOver={(e)=>{e.preventDefault(); component.onDragOver(e, node, 'replace')}}>
                 {content}
               </div>
