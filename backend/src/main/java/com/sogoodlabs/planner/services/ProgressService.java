@@ -59,27 +59,32 @@ public class ProgressService {
         taskMapper.setFinishDay(dayDao.findByDate(finishDate));
         taskMappersDAO.save(taskMapper);
 
-        if(plan!=null) {
-            List<Repetition> repetitions = new ArrayList<>();
-            for (int step : plan.getPlan()) {
-                Repetition repetition = new Repetition();
-                repetition.setId(UUID.randomUUID().toString());
-                repetition.setRepetitionPlan(plan);
-                repetition.setTask(task);
-
-                Date planDate = plan.getDayStep() ? DateUtils.addDays(finishDate, step) : DateUtils.addWeeks(finishDate, step);
-                Day planDay = dayDao.findByDate(planDate);
-                if(planDay==null){
-                    //TODO generate days and try again
-                    throw new RuntimeException("Day not found " + DateUtils.fromDate(planDate));
-                }
-
-                repetition.setPlanDay(planDay);
-                repetitions.add(repetition);
-            }
-            log.info("Setting repetitions for task {}, repetition plan {}", task.getId(), plan.getId());
-            repDAO.saveAll(repetitions);
+        if(plan == null){
+            return;
         }
+
+        List<Repetition> repetitions = new ArrayList<>();
+
+        for (int step : plan.getPlan()) {
+            Repetition repetition = new Repetition();
+            repetition.setId(UUID.randomUUID().toString());
+            repetition.setRepetitionPlan(plan);
+            repetition.setTask(task);
+
+            Date planDate = plan.getDayStep() ? DateUtils.addDays(finishDate, step) : DateUtils.addWeeks(finishDate, step);
+            Day planDay = dayDao.findByDate(planDate);
+
+            if (planDay == null) {
+                //TODO generate days and try again
+                throw new RuntimeException("Day not found " + DateUtils.fromDate(planDate));
+            }
+
+            repetition.setPlanDay(planDay);
+            repetitions.add(repetition);
+        }
+
+        log.info("Setting repetitions for task {}, repetition plan {}", task.getId(), plan.getId());
+        repDAO.saveAll(repetitions);
     }
 
     public void finishRepetition(Repetition repetition){

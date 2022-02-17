@@ -56,6 +56,7 @@ public class GracefulDeleteService {
         for(Target target : targetsDAO.getChildren(targetToDelete)){
             this.deleteTarget(target.getId());
         }
+
         targetsDAO.delete(targetToDelete);
     }
 
@@ -70,10 +71,12 @@ public class GracefulDeleteService {
     private void handlePrevForDeleting(Target target){
         Target prevTarget = targetsDAO.getPrevTarget(target);
 
-        if(prevTarget!=null ){
-            prevTarget.setNext(target.getNext());
-            targetsDAO.save(prevTarget);
+        if(prevTarget == null){
+            return;
         }
+
+        prevTarget.setNext(target.getNext());
+        targetsDAO.save(prevTarget);
     }
 
     public void deleteMean(String id) {
@@ -82,6 +85,7 @@ public class GracefulDeleteService {
 
     public void delete(Mean mean){
         Mean prevMean = meansDAO.getPrevMean(mean);
+
         if(prevMean!=null){
             if(mean.getNext()!=null){
                 prevMean.setNext(mean.getNext());
@@ -90,6 +94,7 @@ public class GracefulDeleteService {
             }
             meansDAO.save(prevMean);
         }
+
         meansDAO.getChildren(mean).forEach(this::delete);
         layerDAO.findByMean(mean).forEach(this::delete);
         meansDAO.delete(mean);
