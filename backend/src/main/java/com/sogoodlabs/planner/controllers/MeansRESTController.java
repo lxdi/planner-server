@@ -64,11 +64,6 @@ public class MeansRESTController {
         return meansDAO.findAll().stream().map(commonMapper::mapToDto).collect(Collectors.toList());
     }
 
-    private Map<String, Object> fillAndMapToDto(Mean mean){
-        meanFillerService.fill(mean);
-        return commonMapper.mapToDto(mean);
-    }
-
     @PutMapping
     public Map<String, Object> createTarget(@RequestBody Map<String, Object> meanDto) {
         Mean mean = meansService.createMean(commonMapper.mapToEntity(meanDto, new Mean()));
@@ -99,6 +94,11 @@ public class MeansRESTController {
         repositionService.repositionMeans(meanDtoList.stream()
                 .map(mean -> commonMapper.mapToEntity(mean, new Mean()))
                 .collect(Collectors.toList()));
+    }
+
+    private Map<String, Object> fillAndMapToDto(Mean mean){
+        meanFillerService.fill(mean);
+        return commonMapper.mapToDto(mean);
     }
 
 }

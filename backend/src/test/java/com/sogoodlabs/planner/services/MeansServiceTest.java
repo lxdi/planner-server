@@ -2,14 +2,8 @@ package com.sogoodlabs.planner.services;
 
 
 import com.sogoodlabs.planner.SpringTestConfig;
-import com.sogoodlabs.planner.model.dao.ILayerDAO;
-import com.sogoodlabs.planner.model.dao.IMeansDAO;
-import com.sogoodlabs.planner.model.dao.ITaskTestingDAO;
-import com.sogoodlabs.planner.model.dao.ITasksDAO;
-import com.sogoodlabs.planner.model.entities.Layer;
-import com.sogoodlabs.planner.model.entities.Mean;
-import com.sogoodlabs.planner.model.entities.Task;
-import com.sogoodlabs.planner.model.entities.TaskTesting;
+import com.sogoodlabs.planner.model.dao.*;
+import com.sogoodlabs.planner.model.entities.*;
 import org.hibernate.Session;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
@@ -44,8 +39,12 @@ public class MeansServiceTest extends SpringTestConfig {
     @Autowired
     private ITaskTestingDAO taskTestingDAO;
 
+    @Autowired
+    private IRealmDAO realmDAO;
+
     Mean mean;
     Layer layer1;
+    Layer layer2;
     Task task;
     Task task2;
     TaskTesting taskTesting;
@@ -88,10 +87,51 @@ public class MeansServiceTest extends SpringTestConfig {
         assertEquals(taskTesting.getId(), taskTestingDAO.findByTask(task).get(0).getId());
     }
 
+    @Test
+    public void modifyLayersWithPriorities(){
+        var realm = createRealm();
+        mean = createMean("some title mean", realm);
+        layer1 = createLayer(1, mean);
+        layer2 = createLayer(2, mean);
+
+        layer2.setPriority(MeansService.PRIORITY_SET);
+
+        mean.setLayers(List.of(layer1, layer2));
+
+        cleanContext();
+
+        meansService.modify(mean);
+
+        cleanContext();
+
+        assertEquals(1, layerDAO.findById(layer2.getId()).get().getPriority());
+
+        layer1.setPriority(MeansService.PRIORITY_SET);
+
+        meansService.modify(mean);
+
+        cleanContext();
+
+        assertEquals(2, layerDAO.findById(layer1.getId()).get().getPriority());
+
+    }
+
+    private Realm createRealm(){
+        var realm = new Realm();
+        realm.setId(UUID.randomUUID().toString());
+        realmDAO.save(realm);
+        return realm;
+    }
+
     private Mean createMean(String title){
+        return createMean(title, null);
+    }
+
+    private Mean createMean(String title, Realm realm){
         Mean mean = new Mean();
         mean.setId(UUID.randomUUID().toString());
         mean.setTitle(title);
+        mean.setRealm(realm);
         meansDAO.save(mean);
         return mean;
     }

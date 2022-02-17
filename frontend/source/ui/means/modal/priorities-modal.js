@@ -51,7 +51,7 @@ const getConent = function(comp){
       .forEach(layer => {
         result.push( <tr id={layer.id}>
                       <td>{mean.title}</td>
-                      <td>{layer.depth}</td>
+                      <td>Layer {layer.depth}</td>
                       <td>{layer.priority}</td>
                     </tr>)
     })

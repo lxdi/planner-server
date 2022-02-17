@@ -5,6 +5,7 @@ import com.sogoodlabs.planner.model.entities.*;
 import com.sogoodlabs.planner.util.HibernateUtils;
 import com.sogoodlabs.planner.util.IdUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -12,6 +13,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class MeansService {
+
+    public static final int PRIORITY_SET = 9999;
 
     @Autowired
     private IMeansDAO meansDAO;
@@ -42,16 +45,30 @@ public class MeansService {
     public Mean modify(Mean mean){
         save(mean);
 
-        if(mean.getLayers()!=null && !mean.getLayers().isEmpty()){
-            Set<String> ids = mean.getLayers().stream()
-                    .peek(layer -> modify(layer, mean))
-                    .map(Layer::getId)
-                    .collect(Collectors.toSet());
-
-            layerDAO.findByMean(mean).stream()
-                    .filter(layer -> !ids.contains(layer.getId()))
-                    .forEach(gracefulDeleteService::delete);
+        if (mean.getLayers() == null || mean.getLayers().isEmpty()) {
+            return mean;
         }
+
+        List<Layer> topPriorityLayer = layerDAO.findByRealmOrderByPriority(mean.getRealm(), PageRequest.of(0,1));
+        int maxPriority = topPriorityLayer.size()>0? topPriorityLayer.get(0).getPriority(): 0;
+
+        for(Layer layer : mean.getLayers()){
+
+            if (layer.getPriority() != PRIORITY_SET){
+                continue;
+            }
+
+            layer.setPriority(++maxPriority);
+        }
+
+        Set<String> ids = mean.getLayers().stream()
+                .peek(layer -> modify(layer, mean))
+                .map(Layer::getId)
+                .collect(Collectors.toSet());
+
+        layerDAO.findByMean(mean).stream()
+                .filter(layer -> !ids.contains(layer.getId()))
+                .forEach(gracefulDeleteService::delete);
 
         return mean;
     }
