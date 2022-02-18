@@ -35,49 +35,15 @@ export const createRep = function(repName, baseUrl, callback){
   cleaning(repName, callback)
 }
 
-export const basicListReceiving = function(repName, baseUrl, urlOffset, eventNameRequest, eventNameResponse, spanName, defaultParams, callback){
-
-  registerEvent(repName, eventNameRequest, function(stateSetter, paramsMap){
-
-      sendGet(baseUrl+urlOffset+paramMapToUrl(paramsMap, defaultParams), function(data) {
-                var objectsArr = typeof data == 'string'? JSON.parse(data): data
-                const objMap = {}
-                objectsArr.forEach(obj => objMap[obj.id]=obj)
-                stateSetter(OBJ_MAP_NAME, objMap)
-
-                if(callback!=null){
-                  callback(stateSetter, spanName, objectsArr)
-                }
-
-                fireEvent(repName, eventNameResponse, [objMap])
-              })
-  })
-  registerEvent(repName, eventNameResponse, (stSetter, objMap)=>objMap)
-}
-
 const getAllEvents = function(repName, baseUrl, callback){
   basicListReceiving(repName, baseUrl, '/all', 'all-request', 'all-response', GET_ALL_SPAN, null, callback)
 }
 
 const getEvents = function(repName, baseUrl, callback){
+
   registerEvent(repName, 'get', function(stateSetter, id, paramsMap){
-
     sendGet(baseUrl + '/' + id+paramMapToUrl(paramsMap), function(data) {
-      var receivedData = typeof data == 'string'? JSON.parse(data): data
-      var objMap = chkSt(repName, OBJ_MAP_NAME)
-
-      if(objMap==null){
-        objMap = {}
-        stSetter(OBJ_MAP_NAME, objMap)
-      }
-
-      objMap[receivedData.id] = receivedData
-
-      if(callback!=null){
-        callback(stateSetter, GET_SPAN, receivedData)
-      }
-
-      fireEvent(repName, 'got', [obj])
+      importObj(stateSetter, data, repName, 'got', GET_SPAN, callback)
     })
   })
 
@@ -86,26 +52,8 @@ const getEvents = function(repName, baseUrl, callback){
 
 const getFullEvents = function(repName, baseUrl, callback){
   registerEvent(repName, 'get-full', function(stateSetter, obj, paramsMap){
-
     sendGet(baseUrl + '/' + obj.id + '/full'+paramMapToUrl(paramsMap), function(data) {
-
-      var receivedData = typeof data == 'string'? JSON.parse(data): data
-      chkSt(repName, OBJ_MAP_NAME)[""+receivedData.id] = receivedData
-
-      if(receivedData.id != obj.id){
-        console.log(repName, obj, receivedData)
-        throw "Get full: objects ids are not the same"
-      }
-
-      //const lazyObj = chkSt(repName, OBJ_MAP_NAME)[""+obj.id]
-      Object.assign(obj, receivedData)
-      obj['isFull'] = true
-
-      if(callback!=null){
-        callback(stateSetter, GET_FULL_SPAN, obj)
-      }
-
-      fireEvent(repName, 'got-full', [obj])
+      importObj(stateSetter, data, repName, 'got-full', GET_SPAN, callback, obj => {obj['isFull'] = true})
     })
   })
 
@@ -114,16 +62,8 @@ const getFullEvents = function(repName, baseUrl, callback){
 
 const putEvents = function(repName, baseUrl, callback){
   registerEvent(repName, 'create', function(stateSetter, obj, paramsMap){
-
     sendPut(baseUrl+paramMapToUrl(paramsMap), JSON.stringify(obj), function(data) {
-      var receivedData = typeof data == 'string'? JSON.parse(data): data
-      chkSt(repName, OBJ_MAP_NAME)[""+receivedData.id] = receivedData
-
-      if(callback!=null){
-        callback(stateSetter, PUT_SPAN, receivedData)
-      }
-
-      fireEvent(repName, 'created', [receivedData])
+      importObj(stateSetter, data, repName, 'created', PUT_SPAN, callback)
     })
   })
 
@@ -149,39 +89,17 @@ const deleteEvents = function(repName, baseUrl, callback){
 
 const updateEvents = function(repName, baseUrl, callback){
 
-  const afterResponseCallback = function(stateSetter, data) {
-    var receivedData = typeof data == 'string'? JSON.parse(data): data
-    chkSt(repName, OBJ_MAP_NAME)[""+receivedData.id] = receivedData
+  registerEvent(repName, 'update', (stateSetter, obj) => {
+    sendPost(baseUrl, JSON.stringify(obj), (data) => importObj(stateSetter, data, repName, 'updated', POST_SPAN, callback))
+  })
 
-    if(callback!=null){
-      callback(stateSetter, POST_SPAN, receivedData)
-    }
-
-    fireEvent(repName, 'updated', [receivedData])
-  }
-
-  const eventCallback = function(stateSetter, obj) {
-    sendPost(baseUrl, JSON.stringify(obj), (data) => afterResponseCallback(stateSetter, data))
-  }
-
-  registerEvent(repName, 'update', (stateSetter, obj) => eventCallback(stateSetter, obj))
   registerEvent(repName, 'updated', (stateSetter, obj) => obj)
 }
 
 const updateListEvents = function(repName, baseUrl, callback){
   registerEvent(repName, 'update-list', (stateSetter, objList, paramsMap) => {
-
     sendPost(baseUrl+'/list'+ paramMapToUrl(paramsMap), JSON.stringify(objList), (data) => {
-
-      var receivedData = typeof data == 'string'? JSON.parse(data): data
-      var objMap = chkSt(repName, OBJ_MAP_NAME)
-      receivedData.forEach(obj => chkSt(repName, OBJ_MAP_NAME)[obj.id] = obj)
-
-      if(callback!=null){
-        callback(stateSetter, POST_LIST_SPAN, receivedData)
-      }
-
-      fireEvent(repName, 'updated', [receivedData])
+      importObjList(stateSetter, data, repName, 'updated-list', POST_LIST_SPAN, callback)
     })
   })
 
@@ -197,6 +115,57 @@ const cleaning = function(repName, callback){
         callback(stateSetter, CLEAN_SPAN)
       }
   })
+}
+
+export const basicListReceiving = function(repName, baseUrl, urlOffset, eventNameRequest, eventNameResponse, spanName, defaultParams, callback){
+
+  registerEvent(repName, eventNameRequest, function(stSetter, paramsMap){
+      sendGet(baseUrl+urlOffset+paramMapToUrl(paramsMap, defaultParams), function(data) {
+              importObjList(stSetter, data, repName, eventNameResponse, spanName, callback)
+          })
+  })
+
+  registerEvent(repName, eventNameResponse, (stSetter, objMap)=>objMap)
+}
+
+const importObjList = function(stSetter, data, repName, rsEvent, spanName, callback){
+  var objMap = chkSt(repName, OBJ_MAP_NAME)
+
+  if(objMap==null){
+    objMap = {}
+    stSetter(OBJ_MAP_NAME, objMap)
+  }
+
+  var objectsArr = typeof data == 'string'? JSON.parse(data): data
+  objectsArr.forEach(obj => objMap[obj.id]=obj)
+
+  if(callback!=null){
+    callback(stSetter, spanName, objectsArr)
+  }
+
+  fireEvent(repName, rsEvent, [objectsArr])
+}
+
+const importObj = function(stSetter, data, repName, rsEvent, spanName, callback, decoratorCallback){
+  var obj = typeof data == 'string'? JSON.parse(data): data
+  var objMap = chkSt(repName, OBJ_MAP_NAME)
+
+  if(objMap==null){
+    objMap = {}
+    stSetter(OBJ_MAP_NAME, objMap)
+  }
+
+  objMap[obj.id] = obj
+
+  if(decoratorCallback!=null){
+    decoratorCallback(obj)
+  }
+
+  if(callback!=null){
+    callback(stSetter, spanName, obj)
+  }
+
+  fireEvent(repName, rsEvent, [obj])
 }
 
 const paramMapToUrl = function(paramsMap, defaultParams){

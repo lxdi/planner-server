@@ -43,7 +43,7 @@ export class MeanModal extends React.Component {
 
     registerEvent('mean-modal', 'remove-target')
     registerReaction('means-modal', 'mean-rep', ['deleted', 'updated', 'created'], ()=>this.setState(defaultState))
-    registerReaction('means-modal', 'mean-rep', ['got-full'], ()=>{postactionsHandle(this.state); this.setState({})})
+    registerReaction('means-modal', 'mean-rep', ['got-full'], ()=>{afterGetFull(this.state); this.setState({})})
     registerReaction('mean-modal', 'task-modal', 'close', ()=>this.setState({}))
 
   }
@@ -156,6 +156,11 @@ const showAlerts = function(alerts){
     }
     return <Alert bsStyle="danger">{result}</Alert>
   }
+}
+
+const afterGetFull = function(state) {
+  state.currentMean = chkSt('mean-rep', 'objects')[state.currentMean.id]
+  postactionsHandle(state)
 }
 
 const postactionsHandle = function(state){
