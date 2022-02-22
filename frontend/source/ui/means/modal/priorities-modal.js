@@ -148,7 +148,7 @@ const swapPriorities = function(layers, layer, move) {
     return
   }
 
-  if(layer.priority == layers.length-1 && move == 1){
+  if(layer.priority >= layers.length-1 && move == 1){
     return
   }
 
