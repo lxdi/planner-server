@@ -14,6 +14,10 @@ export class PrioritiesModal extends React.Component {
 
     registerReaction('priorities-modal', 'mean-rep', ['got-with-priority'], ()=>this.setState({}))
 
+    registerReaction('priorities-modal', 'layer-rep', ['partial-updated', 'partial-updated-list'], ()=>{
+      fireEvent('mean-rep', 'get-with-priority')
+    })
+
   }
 
   render(){
@@ -56,7 +60,7 @@ const getConent = function(comp){
   const tabs = []
 
   for (const [k, v] of Object.entries(realmIdToMeans)) {
-    tabs.push(<Tab eventKey={k} title={realms[k].title}>{meansUI(v)}</Tab>)
+    tabs.push(<Tab eventKey={k} title={realms[k].title}>{meansTabUI(v)}</Tab>)
   }
 
   return <div>
@@ -71,25 +75,23 @@ const handleSelectTab = function(comp, e){
   comp.setState({currentRealmId: e})
 }
 
-const meansUI = function(means) {
+const meansTabUI = function(means) {
 
-  const result = []
   var layers = []
 
   means
     .filter(mean => mean.layers != null)
     .forEach(mean => layers = layers.concat(mean.layers))
 
+  const result = []
+
+  layers = layers.filter(l => l.priority>0)
+
   layers
-    .filter(l => l.priority>0)
     .sort((l1, l2) => l1.priority - l2.priority)
     .forEach(layer => {
-        result.push( <tr id={layer.id}>
-                      <td>{means.filter(m => m.id == layer.meanid)[0].title}</td>
-                      <td>Layer {layer.depth}</td>
-                      <td>{layer.priority}</td>
-                    </tr>)
-                    })
+        const meanTitle = means.filter(m => m.id == layer.meanid)[0].title
+        result.push(layerTrUI(meanTitle, layers, layer))})
 
 
   return  <Table striped bordered condensed hover >
@@ -98,8 +100,64 @@ const meansUI = function(means) {
                 <td>Mean</td>
                 <td>Layer</td>
                 <td></td>
+                <td></td>
               </tr>
               {result}
             </tbody>
             </Table>
+}
+
+const layerTrUI = function(meanTitle, layers, layer){
+  return <tr id={layer.id}>
+                <td>{meanTitle}</td>
+                <td>Layer {layer.depth}</td>
+                <td>{layer.priority}</td>
+                <td>{layerControlsUI(layers, layer)}</td>
+              </tr>
+}
+
+const layerControlsUI = function(layers, layer){
+  return <div>
+            <a href='#' onClick={()=>changePosition(layers, layer, -1)}>Up</a>/
+            <a href='#' onClick={()=>changePosition(layers, layer, 1)}>Down</a>/
+            <a href='#' onClick={()=>deleteFromPriority(layers, layer)}>Delete</a>
+        </div>
+}
+
+const deleteFromPriority = function(layers, layer){
+  layer.priority = 0
+  rePrioritize(layers, layer)
+  fireEvent('layer-rep', 'partial-update-list', [layers])
+}
+
+const changePosition = function(layers, layer, move){
+  swapPriorities(layers, layer, move)
+  fireEvent('layer-rep', 'partial-update-list', [layers])
+}
+
+const rePrioritize = function(layersSorted, layer) {
+  var curPrior = 1
+
+  layersSorted
+    .filter(l => l.id != layer.id)
+    .forEach(l => l.priority = curPrior++)
+}
+
+const swapPriorities = function(layers, layer, move) {
+  if(layer.priority == 1 && move == -1){
+    return
+  }
+
+  if(layer.priority == layers.length-1 && move == 1){
+    return
+  }
+
+  layer.priority = layer.priority + move
+
+  for(var idx in layers){
+    if(layer.id == layers[idx].id){
+      const curLayer = layers[parseInt(idx)+move]
+      curLayer.priority = curLayer.priority + ((-1)*move)
+    }
+  }
 }

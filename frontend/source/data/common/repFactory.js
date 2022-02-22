@@ -1,8 +1,7 @@
-import {sendGet, sendPost, sendPut, sendDelete} from '../postoffice'
+import {sendGet, sendPost, sendPut, sendDelete, sendPatch} from '../postoffice'
 import {registerObject, registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
 
 
-//TODO should be
 // entities-rep -> state {objects: {id: object}}
 // GET /entities/all
 // GET /entities/{id}
@@ -10,6 +9,8 @@ import {registerObject, registerEvent, registerReaction, fireEvent, chkSt} from 
 // PUT /entities
 // POST /entities
 // POST /entities/list
+// PATCH /entities TODO
+// PATCH /entities/list
 // DELETE /entities
 
 const REP_OFFSET = '-rep'
@@ -20,7 +21,9 @@ const GET_SPAN = 'getSpan'
 const PUT_SPAN = 'creationSpan'
 const DELETE_SPAN = 'deleteSpan'
 const POST_SPAN = 'updateSpan'
+const PATCH_SPAN = 'patchSpan'
 const POST_LIST_SPAN = 'updateListSpan'
+const PATCH_LIST_SPAN = 'patchListSpan'
 const GET_FULL_SPAN = 'getFullSpan'
 const CLEAN_SPAN = 'cleanSpan'
 
@@ -31,6 +34,8 @@ export const createRep = function(repName, baseUrl, callback){
   deleteEvents(repName, baseUrl, callback)
   updateEvents(repName, baseUrl, callback)
   updateListEvents(repName, baseUrl, callback)
+  partialUpdateEvents(repName, baseUrl, callback)
+  partialUpdateListEvents(repName, baseUrl, callback)
   getFullEvents(repName, baseUrl, callback)
   cleaning(repName, callback)
 }
@@ -96,6 +101,15 @@ const updateEvents = function(repName, baseUrl, callback){
   registerEvent(repName, 'updated', (stateSetter, obj) => obj)
 }
 
+const partialUpdateEvents = function(repName, baseUrl, callback){
+
+  registerEvent(repName, 'partial-update', (stateSetter, obj) => {
+    sendPatch(baseUrl, JSON.stringify(obj), (data) => importObj(stateSetter, data, repName, 'partial-updated', PATCH_SPAN, callback))
+  })
+
+  registerEvent(repName, 'partial-updated', (stateSetter, obj) => obj)
+}
+
 const updateListEvents = function(repName, baseUrl, callback){
   registerEvent(repName, 'update-list', (stateSetter, objList, paramsMap) => {
     sendPost(baseUrl+'/list'+ paramMapToUrl(paramsMap), JSON.stringify(objList), (data) => {
@@ -106,6 +120,16 @@ const updateListEvents = function(repName, baseUrl, callback){
   registerEvent(repName, 'updated-list', (stateSetter, obj) => obj)
 }
 
+const partialUpdateListEvents = function(repName, baseUrl, callback){
+  registerEvent(repName, 'partial-update-list', (stateSetter, objList, paramsMap) => {
+    sendPatch(baseUrl+'/list'+ paramMapToUrl(paramsMap), JSON.stringify(objList), (data) => {
+      importObjList(stateSetter, data, repName, 'partial-updated-list', PATCH_LIST_SPAN, callback)
+    })
+  })
+
+  registerEvent(repName, 'partial-updated-list', (stateSetter, obj) => obj)
+}
+
 
 const cleaning = function(repName, callback){
   registerEvent(repName, 'clean', function(stateSetter){
@@ -114,7 +138,11 @@ const cleaning = function(repName, callback){
       if(callback!=null){
         callback(stateSetter, CLEAN_SPAN)
       }
+
+      fireEvent(repName, 'cleaned')
   })
+
+  registerEvent(repName, 'cleaned', (stateSetter) => {})
 }
 
 export const basicListReceiving = function(repName, baseUrl, urlOffset, eventNameRequest, eventNameResponse, spanName, defaultParams, callback){

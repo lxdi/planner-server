@@ -32,6 +32,10 @@ const callback = function(stSetter, spanName, arg){
     stSetter(INDEX_BY_REALM, null)
     stSetter(INDEX_WITH_PRIORITIES, null)
   }
+  if(spanName == 'cleanSpan'){
+    stSetter(INDEX_BY_REALM, null)
+    stSetter(INDEX_WITH_PRIORITIES, null)
+  }
   if(spanName == 'updateSpan'){
     const meansObjMap = chkSt(REP_NAME, 'objects')
     stSetter(INDEX_BY_REALM, createIndex(meansObjMap, 'realmid'))

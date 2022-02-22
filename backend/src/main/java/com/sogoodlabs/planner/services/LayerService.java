@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class LayerService {
@@ -24,19 +25,23 @@ public class LayerService {
         var result = new ArrayList<Layer>();
 
         for(Layer layerFrom : layers){
-            var layerOriginal = layerDAO.findById(layerFrom.getId()).orElse(null);
-
-            if(layerOriginal == null){
-                log.warn("Layer {} hasn't been updated", layerFrom.getId());
-                continue;
-            }
-
-            BeanUtils.copyPropertiesNullIgnore(layerOriginal, layerFrom);
-            layerDAO.save(layerOriginal);
-            result.add(layerOriginal);
+            Optional.ofNullable(patch(layerFrom)).ifPresent(result::add);
         }
 
         return result;
+    }
+
+    public Layer patch(Layer layerFrom){
+        var layerOriginal = layerDAO.findById(layerFrom.getId()).orElse(null);
+
+        if(layerOriginal == null){
+            log.warn("Layer {} hasn't been updated", layerFrom.getId());
+            return null;
+        }
+
+        BeanUtils.copyPropertiesNullIgnore(layerOriginal, layerFrom);
+        layerDAO.save(layerOriginal);
+        return layerOriginal;
     }
 
 }

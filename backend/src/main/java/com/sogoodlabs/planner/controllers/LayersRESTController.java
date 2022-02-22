@@ -47,6 +47,12 @@ public class LayersRESTController {
         return commonMapper.mapToDto(layer);
     }
 
+    @PatchMapping
+    public Map<String, Object> patch(@RequestBody Map<String, Object> dto){
+        var layer = commonMapper.mapToEntity(dto, new Layer());
+        return commonMapper.mapToDto(layerService.patch(layer));
+    }
+
     @PatchMapping("/list")
     public List<Map<String, Object>> patchList(@RequestBody List<Map<String, Object>> dtoList){
         var layers = dtoList.stream().map(dto -> commonMapper.mapToEntity(dto, new Layer())).collect(Collectors.toList());
