@@ -41,6 +41,7 @@ const getCreateLayerButton = function(component, mean){
 
 const listLayersGroupContent = function(comp, mean, isEdit){
     const result = []
+    mean.layers.sort((l1, l2) => l1.depth - l2.depth)
 
     for(var id in mean.layers){
       const layer = mean.layers[id]
@@ -56,6 +57,10 @@ const listLayersGroupContent = function(comp, mean, isEdit){
 }
 
 const layerTitleUI = function(comp, layer){
+  if(comp.props.isEdit != true){
+    return
+  }
+
   return <div>
                 <span style={{fontWeight:'bold', fontSize:'12pt'}}>Layer {layer.depth} </span>
                 {layer.priority==0? <a href='#' onClick={()=>{layer.priority=PRIORITY_SET; comp.setState({})}}>Prioritize</a>: ''}

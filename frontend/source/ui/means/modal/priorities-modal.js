@@ -18,6 +18,11 @@ export class PrioritiesModal extends React.Component {
       fireEvent('mean-rep', 'get-with-priority')
     })
 
+    registerReaction('priorities-modal', 'mean-rep', ['updated'], ()=>{
+      fireEvent('mean-rep', 'clean')
+      this.setState({})
+    })
+
   }
 
   render(){
@@ -98,7 +103,6 @@ const meansTabUI = function(means) {
             <tbody>
               <tr>
                 <td>Mean</td>
-                <td>Layer</td>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -110,8 +114,12 @@ const meansTabUI = function(means) {
 
 const layerTrUI = function(meanTitle, layers, layer){
   return <tr id={layer.id}>
-                <td>{meanTitle}</td>
-                <td>Layer {layer.depth}</td>
+                <td>
+                  <a href = '#' onClick={()=>fireEvent('mean-modal', 'open', [layer.meanid])}>
+                    {meanTitle}
+                  </a>
+                  (Layer {layer.depth})
+                </td>
                 <td>{layer.priority}</td>
                 <td>{currentProgressTd(layer)}</td>
                 <td>{layerControlsUI(layers, layer)}</td>
@@ -166,7 +174,7 @@ const swapPriorities = function(layers, layer, move) {
     return
   }
 
-  if(layer.priority >= layers.length-1 && move == 1){
+  if(layer.priority >= layers.length && move == 1){
     return
   }
 

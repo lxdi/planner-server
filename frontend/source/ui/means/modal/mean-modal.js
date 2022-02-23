@@ -22,6 +22,11 @@ export class MeanModal extends React.Component {
     this.handleNameVal = this.handleNameVal.bind(this);
 
     registerEvent('mean-modal', 'open', (stateSetter, currentMean) => {
+
+      if(typeof currentMean == 'string'){
+        currentMean = {id: currentMean}
+      }
+
       this.setState({isOpen:true, mode:{isStatic: currentMean.id==NEW_ID, isEdit: currentMean.id==NEW_ID}, currentMean: currentMean})
     })
 
