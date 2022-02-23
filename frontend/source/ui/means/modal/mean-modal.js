@@ -11,6 +11,8 @@ import {CommonModal} from './../../common/common-modal'
 import {CommonCrudeTemplate} from './../../common/common-crud-template'
 import {isValidMean} from '../../../utils/mean-validator'
 
+const NEW_ID = 'new'
+
 export class MeanModal extends React.Component {
   constructor(props){
     super(props)
@@ -20,13 +22,13 @@ export class MeanModal extends React.Component {
     this.handleNameVal = this.handleNameVal.bind(this);
 
     registerEvent('mean-modal', 'open', (stateSetter, currentMean) => {
-      this.setState({isOpen:true, mode:{isStatic: currentMean.id=='new', isEdit: currentMean.id=='new'}, currentMean: currentMean})
+      this.setState({isOpen:true, mode:{isStatic: currentMean.id==NEW_ID, isEdit: currentMean.id==NEW_ID}, currentMean: currentMean})
     })
 
     registerEvent('mean-modal', 'open-with-task', (stateSetter, currentMean, taskId, highlightId) => {
       this.setState({
         isOpen:true,
-        mode:{isStatic: currentMean.id=='new', isEdit: currentMean.id=='new'},
+        mode:{isStatic: false, isEdit: false},
         currentMean: currentMean,
         postactions: {open:{task:{id: taskId, highlightId: highlightId}}}
       })
@@ -49,7 +51,7 @@ export class MeanModal extends React.Component {
   }
 
   okHandler(){
-    if(this.state.currentMean.id=='new'){
+    if(this.state.currentMean.id==NEW_ID){
       fireEvent('mean-rep', 'create', [this.state.currentMean])
     } else {
       fireEvent('mean-rep', 'update', [this.state.currentMean])
@@ -82,7 +84,7 @@ const renderUI = function(component){
 }
 
 const getTitle = function(state){
-  if(state.currentMean!=null && state.currentMean.id != 'new'){
+  if(state.currentMean!=null && state.currentMean.id != NEW_ID){
     return state.currentMean.title
   }
   return 'Create new Mean'
@@ -129,7 +131,7 @@ const modalBody = function(component){
 }
 
 const prepareMean = function(mean){
-  if(mean.id=='new'){
+  if(mean.id==NEW_ID){
     return true
   }
 

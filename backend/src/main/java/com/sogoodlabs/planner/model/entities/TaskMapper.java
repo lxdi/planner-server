@@ -1,10 +1,8 @@
 package com.sogoodlabs.planner.model.entities;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.sogoodlabs.common_mapper.annotations.IncludeInDto;
 
 import javax.persistence.*;
-import java.sql.Date;
 
 @Entity
 public class TaskMapper {
@@ -39,7 +37,6 @@ public class TaskMapper {
     public Day getPlanDay() {
         return planDay;
     }
-
     public void setPlanDay(Day planDay) {
         this.planDay = planDay;
     }
@@ -48,18 +45,10 @@ public class TaskMapper {
     public Day getFinishDay() {
         return finishDay;
     }
-
     public void setFinishDay(Day finishDay) {
         this.finishDay = finishDay;
     }
 
-
-    @IncludeInDto
-    public Task getTaskSelf(){
-        return this.task;
-    }
-
-    @IncludeInDto
     public Mean getMean(){
         if(this.task==null){
             return null;
@@ -68,5 +57,10 @@ public class TaskMapper {
             return null;
         }
         return task.getLayer().getMean();
+    }
+
+    @IncludeInDto
+    public String getTaskFullPath(){
+        return getTask().getFullPath();
     }
 }

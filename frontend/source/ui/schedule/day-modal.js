@@ -90,12 +90,12 @@ const mappersTableUI = function(mappers){
     const style = {} // task.repetition != null && task.repetition.id == rep.id? {fontWeight:'bold'}:{}
     result.push( <tr id={mapper.id} style={style}>
                     <td>
-                      <a href='#' onClick={()=>fireEvent("mean-modal", 'open-with-task', [mapper.mean, mapper.taskSelf.id])}>{mapper.taskSelf.fullPath}</a>
+                      <a href='#' onClick={()=>fireEvent("mean-modal", 'open-with-task', [{id: mapper.meanid}, mapper.taskid])}>{mapper.taskFullPath}</a>
                     </td>
                     <td>{mapper.planDay!=null? formatDate(mapper.planDay.date):''}</td>
                     <td>{mapper.finishDay!=null? formatDate(mapper.finishDay.date):''}</td>
                     <td>
-                      {mapper.finishDay==null? <Button bsStyle="success" bsSize='xsmall' onClick={() => fireEvent(DataConstants.progressRep, 'finish-rep', [mapper, mapper.taskSelf])}>Complete</Button>: null}
+                      {mapper.finishDay==null? <Button bsStyle="success" bsSize='xsmall' onClick={() => fireEvent(DataConstants.progressRep, 'finish-rep', [mapper, mapper.taskid])}>Complete</Button>: null}
                     </td>
                   </tr>)
   })
@@ -122,12 +122,12 @@ const repetitionsTableUI = function(repetitions){
     const style = {} // task.repetition != null && task.repetition.id == rep.id? {fontWeight:'bold'}:{}
     result.push( <tr id={rep.id} style={style}>
                     <td>
-                      <a href='#' onClick={()=>fireEvent('mean-modal', 'open-with-task', [rep.mean, rep.taskSelf.id, rep.id])}>{rep.taskSelf.fullPath}</a>
+                      <a href='#' onClick={()=>fireEvent('mean-modal', 'open-with-task', [{id: rep.meanid}, rep.taskid, rep.id])}>{rep.taskFullPath}</a>
                     </td>
                     <td>{rep.planDay!=null? formatDate(rep.planDay.date):''}</td>
                     <td>{rep.factDay!=null? formatDate(rep.factDay.date):''}</td>
                     <td>
-                      {rep.factDay==null? <Button bsStyle="success" bsSize='xsmall' onClick={() => fireEvent(DataConstants.progressRep, 'finish-rep', [rep, rep.taskSelf])}>Complete</Button>: null}
+                      {rep.factDay==null? <Button bsStyle="success" bsSize='xsmall' onClick={() => fireEvent(DataConstants.progressRep, 'finish-rep', [rep, rep.taskid])}>Complete</Button>: null}
                     </td>
                   </tr>)
   })

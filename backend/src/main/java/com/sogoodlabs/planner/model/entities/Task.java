@@ -2,6 +2,7 @@ package com.sogoodlabs.planner.model.entities;
 
 import com.sogoodlabs.common_mapper.annotations.IncludeInDto;
 import com.sogoodlabs.common_mapper.annotations.MapToClass;
+import com.sogoodlabs.planner.controllers.dto.TaskProgressDto;
 import com.sogoodlabs.planner.model.IEntity;
 
 import javax.persistence.*;
@@ -32,6 +33,9 @@ public class Task implements IEntity {
 
     @Transient
     private String progressStatus;
+
+    @Transient
+    private TaskProgressDto progress;
 
     @Override
     public String getId() {
@@ -87,6 +91,14 @@ public class Task implements IEntity {
     }
     public void setProgressStatus(String progressStatus) {
         this.progressStatus = progressStatus;
+    }
+
+    @IncludeInDto
+    public TaskProgressDto getProgress() {
+        return progress;
+    }
+    public void setProgress(TaskProgressDto progress) {
+        this.progress = progress;
     }
 
     @IncludeInDto

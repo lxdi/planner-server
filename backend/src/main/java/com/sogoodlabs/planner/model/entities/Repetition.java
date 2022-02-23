@@ -5,6 +5,9 @@ import com.sogoodlabs.common_mapper.annotations.IncludeInDto;
 
 import javax.persistence.*;
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 @Entity
 public class Repetition {
@@ -66,14 +69,8 @@ public class Repetition {
     public Task getTask() {
         return task;
     }
-
     public void setTask(Task task) {
         this.task = task;
-    }
-
-    @IncludeInDto
-    public Task getTaskSelf(){
-        return this.task;
     }
 
     @IncludeInDto
@@ -85,7 +82,6 @@ public class Repetition {
         return this.repetitionPlan.getDayStep();
     }
 
-    @IncludeInDto
     public Mean getMean(){
         if(this.task==null){
             return null;
@@ -94,5 +90,10 @@ public class Repetition {
             return null;
         }
         return task.getLayer().getMean();
+    }
+
+    @IncludeInDto
+    public String getTaskFullPath(){
+        return getTask().getFullPath();
     }
 }

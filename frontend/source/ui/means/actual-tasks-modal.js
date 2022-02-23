@@ -53,16 +53,16 @@ const outdatedCurrenttasks = function(){
   return 'TODO' //tasksUI(chkSt('tasks-dao', 'actual-tasks')[99], 'Outdated tasks')
 }
 
-const tasksUI = function(tasks, title){
-  const result = []
-  for(var i in tasks){
-    result.push(taskLink(tasks[i], true))
-  }
-  return <div>
-            <div>{title}</div>
-            {result}
-          </div>
-}
+// const tasksUI = function(tasks, title){
+//   const result = []
+//   for(var i in tasks){
+//     result.push(taskLink(tasks[i], true))
+//   }
+//   return <div>
+//             <div>{title}</div>
+//             {result}
+//           </div>
+// }
 
 const spacedRepetitionsUI = function(reactcomp, actual){
   const tdStyle = {padding:'5px'}
@@ -104,23 +104,23 @@ const tasksMemoListUI = function(reps){
 
   reps
     .filter(rep => filterMemoRepToShow(rep))
-    .forEach(rep => result.push(taskLink(rep.taskSelf, rep)))
+    .forEach(rep => result.push(taskLink(rep)))
 
   return <div>{result}</div>
 }
 
 const tasksListUI = function(reps){
   const result = []
-  reps.forEach(rep => result.push(taskLink(rep.taskSelf, rep)))
+  reps.forEach(rep => result.push(taskLink(rep)))
   return <div> {result}</div>
 }
 
-const taskLink = function(task, rep){
-  return <div key={task.id} style={{border:'1px solid lightgrey', borderRadius:'3px', padding:'3px'}}
-                      onMouseEnter={()=>fireEvent('overlay-info', 'show', [task.fullPath])}
+const taskLink = function(rep){
+  return <div key={rep.taskid} style={{border:'1px solid lightgrey', borderRadius:'3px', padding:'3px'}}
+                      onMouseEnter={()=>fireEvent('overlay-info', 'show', [rep.fullPath])}
   										onMouseOver={(e)=>fireEvent('overlay-info', 'update-pos', [e.nativeEvent.clientX+15, e.nativeEvent.clientY-10])}
   										onMouseLeave={()=>fireEvent('overlay-info', 'hide')}>
-            <a href='#' onClick={()=>fireEvent('task-modal', 'open-view-only', [null, task, rep.id])}>{task.title}</a>
+            <a href='#' onClick={()=>fireEvent('mean-modal', 'open-with-task', [{id: rep.meanid}, rep.taskid, rep.id])}>{rep.taskFullPath}</a>
             <div style={{fontSize:'9px', fontColor:'lightGrey', marginLeft: '5px', display: 'inline-block'}}>{getIncomingTag(rep)}</div>
       </div>
 }
