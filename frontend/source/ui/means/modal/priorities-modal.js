@@ -101,8 +101,10 @@ const meansTabUI = function(means) {
         progress[layer.id] = layerProgress(layer)
         result.push(layerTrUI(meanTitle, layers, layer, progress[layer.id]))})
 
+  const progressOverall = mergeProgresses(progress)
 
-  return  <Table striped bordered condensed hover >
+  return  <div>
+          <Table striped bordered condensed hover >
             <tbody>
               <tr>
                 <td></td>
@@ -113,6 +115,8 @@ const meansTabUI = function(means) {
               {result}
             </tbody>
             </Table>
+            Tasks: {progressOverall.tasksFinished}/{progressOverall.tasksAll}, Repetitions: {progressOverall.repsFinished}/{progressOverall.repsAll}
+          </div>
 }
 
 const layerTrUI = function(meanTitle, layers, layer, progress){
@@ -126,7 +130,7 @@ const layerTrUI = function(meanTitle, layers, layer, progress){
                 </td>
                 <td>
                   <div>
-                      <div>Tasks: {progress.tasksFinished}/{progress.tasksFinished}, Repetitions: {progress.repsFinished}/{progress.repsAll}</div>
+                      <div>Tasks: {progress.tasksFinished}/{progress.tasksAll}, Repetitions: {progress.repsFinished}/{progress.repsAll}</div>
                   </div>
                 </td>
                 <td>{layerControlsUI(layers, layer)}</td>
@@ -160,6 +164,19 @@ const layerProgress = function(layer){
   })
 
   return {tasksFinished: tasksFinished, tasksAll: layer.tasks.length, repsFinished: repsFinished, repsAll: repsAll}
+}
+
+const mergeProgresses = function(progresses){
+  const result = {tasksFinished: 0, tasksAll: 0, repsFinished: 0, repsAll: 0}
+
+  for (const [layerId, progress] of Object.entries(progresses)) {
+    result.tasksFinished = result.tasksFinished + progress.tasksFinished
+    result.tasksAll = result.tasksAll + progress.tasksAll
+    result.repsFinished = result.repsFinished + progress.repsFinished
+    result.repsAll = result.repsAll + progress.repsAll
+  }
+
+  return result
 }
 
 const taskRepStat = function(arr, fieldName) {
