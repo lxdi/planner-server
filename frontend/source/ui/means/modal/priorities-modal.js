@@ -32,7 +32,7 @@ export class PrioritiesModal extends React.Component {
       content = getConent(this)
     }
 
-    return <CommonModal isOpen = {this.state.isOpen} cancelHandler={()=>fireEvent('priorities-modal', 'close')} title={"Priorities"} >
+    return <CommonModal isOpen = {this.state.isOpen} cancelHandler={()=>fireEvent('priorities-modal', 'close')} title={"Priorities"} styleClass='priorities-modal-style'>
           {content}
       </CommonModal>
   }
@@ -92,17 +92,20 @@ const meansTabUI = function(means) {
 
   layers = layers.filter(l => l.priority>0)
 
+  var progress = {}
+
   layers
     .sort((l1, l2) => l1.priority - l2.priority)
     .forEach(layer => {
         const meanTitle = means.filter(m => m.id == layer.meanid)[0].title
-        result.push(layerTrUI(meanTitle, layers, layer))})
+        progress[layer.id] = layerProgress(layer)
+        result.push(layerTrUI(meanTitle, layers, layer, progress[layer.id]))})
 
 
   return  <Table striped bordered condensed hover >
             <tbody>
               <tr>
-                <td>Mean</td>
+                <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -112,16 +115,20 @@ const meansTabUI = function(means) {
             </Table>
 }
 
-const layerTrUI = function(meanTitle, layers, layer){
+const layerTrUI = function(meanTitle, layers, layer, progress){
   return <tr id={layer.id}>
+                <td>{layer.priority}</td>
                 <td>
                   <a href = '#' onClick={()=>fireEvent('mean-modal', 'open', [layer.meanid])}>
-                    {meanTitle}
+                    {meanTitle}/
                   </a>
-                  (Layer {layer.depth})
+                  Layer {layer.depth}
                 </td>
-                <td>{layer.priority}</td>
-                <td>{currentProgressTd(layer)}</td>
+                <td>
+                  <div>
+                      <div>Tasks: {progress.tasksFinished}/{progress.tasksFinished}, Repetitions: {progress.repsFinished}/{progress.repsAll}</div>
+                  </div>
+                </td>
                 <td>{layerControlsUI(layers, layer)}</td>
               </tr>
 }
@@ -134,20 +141,33 @@ const layerControlsUI = function(layers, layer){
         </div>
 }
 
-const currentProgressTd = function(layer){
+const layerProgress = function(layer){
   if(layer.tasks == null){
     return ''
   }
 
-  var mappers = 0
-  var reps = 0
+  var tasksFinished = 0
+  var repsAll = 0
+  var repsFinished = 0
 
   layer.tasks.forEach(task => {
-    mappers = mappers + (task.progress.taskMappers!=null? task.progress.taskMappers.length: 0)
-    reps = reps + (task.progress.repetitions!=null? task.progress.repetitions.length: 0)
+    tasksFinished = tasksFinished + taskRepStat(task.progress.taskMappers, 'finishDay').done
+
+    const repStat = taskRepStat(task.progress.repetitions, 'factDay')
+    repsAll = repsAll + repStat.all
+    repsFinished = repsFinished + repStat.done
+
   })
 
-  return mappers + '/' + reps
+  return {tasksFinished: tasksFinished, tasksAll: layer.tasks.length, repsFinished: repsFinished, repsAll: repsAll}
+}
+
+const taskRepStat = function(arr, fieldName) {
+  if(arr == null){
+    return {done: 0, all: 0}
+  }
+
+  return {done: arr.filter(p => p[fieldName]!=null).length, all: arr.length}
 }
 
 const deleteFromPriority = function(layers, layer){
