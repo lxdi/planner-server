@@ -101,6 +101,7 @@ const meansTabUI = function(means) {
                 <td>Layer</td>
                 <td></td>
                 <td></td>
+                <td></td>
               </tr>
               {result}
             </tbody>
@@ -112,6 +113,7 @@ const layerTrUI = function(meanTitle, layers, layer){
                 <td>{meanTitle}</td>
                 <td>Layer {layer.depth}</td>
                 <td>{layer.priority}</td>
+                <td>{currentProgressTd(layer)}</td>
                 <td>{layerControlsUI(layers, layer)}</td>
               </tr>
 }
@@ -122,6 +124,22 @@ const layerControlsUI = function(layers, layer){
             <a href='#' onClick={()=>changePosition(layers, layer, 1)}>Down</a>/
             <a href='#' onClick={()=>deleteFromPriority(layers, layer)}>Delete</a>
         </div>
+}
+
+const currentProgressTd = function(layer){
+  if(layer.tasks == null){
+    return ''
+  }
+
+  var mappers = 0
+  var reps = 0
+
+  layer.tasks.forEach(task => {
+    mappers = mappers + (task.progress.taskMappers!=null? task.progress.taskMappers.length: 0)
+    reps = reps + (task.progress.repetitions!=null? task.progress.repetitions.length: 0)
+  })
+
+  return mappers + '/' + reps
 }
 
 const deleteFromPriority = function(layers, layer){
