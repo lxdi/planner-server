@@ -15,18 +15,18 @@ registerEvent(REP_NAME, 'get-by-task', (stSetter, taskId)=>{
 })
 registerEvent(REP_NAME, 'got-by-task', (stSetter, progress)=>progress)
 
-registerEvent(REP_NAME, 'finish-task', (stSetter, taskId)=>{
-  sendPost('/' + NAME + '/finished?task-id=' + taskId, null, (data)=>{
+registerEvent(REP_NAME, 'finish-task', (stSetter, task)=>{
+  sendPost('/' + NAME + '/finished?task-id=' + task.id, null, (data)=>{
       const progress = typeof data == 'string'? JSON.parse(data): data
-      updateProgress(progress, taskId, stSetter)
+      updateProgress(progress, task.id, stSetter)
       fireEvent(REP_NAME, 'got-by-task', [progress])
   })
 })
 
-registerEvent(REP_NAME, 'finish-task-sp', (stSetter, taskId, repPlan)=>{
-  sendPost('/' + NAME + '/finished?task-id='+ taskId + '&plan-id='+repPlan.id, null, (data)=>{
+registerEvent(REP_NAME, 'finish-task-sp', (stSetter, task, repPlan)=>{
+  sendPost('/' + NAME + '/finished?task-id='+ task.id + '&plan-id='+repPlan.id, null, (data)=>{
       const progress = typeof data == 'string'? JSON.parse(data): data
-      updateProgress(progress, taskId, stSetter)
+      updateProgress(progress, task.id, stSetter)
       fireEvent(REP_NAME, 'got-by-task', [progress])
   })
 })
