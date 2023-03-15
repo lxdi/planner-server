@@ -1,6 +1,6 @@
 package com.sogoodlabs.planner.util;
 
-import com.sogoodlabs.planner.model.entities.Target;
+import com.sogoodlabs.planner.model.entities.Mean;
 import org.junit.Test;
 import java.lang.reflect.InvocationTargetException;
 
@@ -11,15 +11,15 @@ public class BeanUtilsTest {
     @Test
     public void test() throws InvocationTargetException, IllegalAccessException {
 
-        var target = new Target();
-        target.setDefinitionOfDone("test");
+        var mean = new Mean();
+        mean.setCriteria("test");
 
-        var source = new Target();
+        var source = new Mean();
         source.setTitle("title");
 
-        BeanUtils.copyPropertiesNullIgnore(target, source);
+        BeanUtils.copyPropertiesNullIgnore(mean, source);
 
-        assertNotNull(target.getDefinitionOfDone());
+        assertNotNull(mean.getCriteria());
 
     }
 }

@@ -20,9 +20,6 @@ public class EntityByIdImpl implements IEntityById<String> {
     ITaskTestingDAO testingDAO;
 
     @Autowired
-    ITargetsDAO targetsDAO;
-
-    @Autowired
     IMeansDAO meansDAO;
 
     @Autowired
@@ -54,9 +51,6 @@ public class EntityByIdImpl implements IEntityById<String> {
         Object result = null;
         if(aClass == Realm.class){
             result = realmDAO.findById(id).orElseThrow(()-> new RuntimeException(aClass.getName() + " not found by " + id));
-        }
-        if(aClass == Target.class){
-            result = targetsDAO.findById(id).orElseThrow(()-> new RuntimeException(aClass.getName() + " not found by " + id));
         }
         if(aClass == Mean.class){
             result = meansDAO.findById(id).orElseThrow(()-> new RuntimeException(aClass.getName() + " not found by " + id));

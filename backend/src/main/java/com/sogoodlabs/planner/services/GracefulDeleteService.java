@@ -18,9 +18,6 @@ public class GracefulDeleteService {
     Logger log = LoggerFactory.getLogger(GracefulDeleteService.class);
 
     @Autowired
-    private ITargetsDAO targetsDAO;
-
-    @Autowired
     private IMeansDAO meansDAO;
 
     @Autowired
@@ -40,44 +37,6 @@ public class GracefulDeleteService {
 
     @Autowired
     private ITaskMappersDAO taskMappersDAO;
-
-
-    public void deleteTarget(String id){
-        deleteTarget(targetsDAO.getOne(id));
-    }
-
-    public void deleteTarget(Target targetToDelete) {
-
-        log.info("deleting target {}", targetToDelete.getId());
-
-        unassignMeans(targetToDelete);
-        handlePrevForDeleting(targetToDelete);
-
-        for(Target target : targetsDAO.getChildren(targetToDelete)){
-            this.deleteTarget(target.getId());
-        }
-
-        targetsDAO.delete(targetToDelete);
-    }
-
-    private void unassignMeans(Target target) {
-        meansDAO.meansAssignedToTarget(target).forEach(mean -> {
-            log.info("unassign mean {} from target {}", mean.getId(), target.getId());
-            mean.getTargets().removeIf(curTarget -> curTarget.getId().equals(target.getId()));
-            meansDAO.save(mean);
-        });
-    }
-
-    private void handlePrevForDeleting(Target target){
-        Target prevTarget = targetsDAO.getPrevTarget(target);
-
-        if(prevTarget == null){
-            return;
-        }
-
-        prevTarget.setNext(target.getNext());
-        targetsDAO.save(prevTarget);
-    }
 
     public void deleteMean(String id) {
         delete(meansDAO.findById(id).orElseThrow(() -> new RuntimeException("Mean not found by " + id)));

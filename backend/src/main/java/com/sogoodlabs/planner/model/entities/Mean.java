@@ -2,9 +2,6 @@ package com.sogoodlabs.planner.model.entities;
 
 import com.sogoodlabs.common_mapper.annotations.IncludeInDto;
 import com.sogoodlabs.common_mapper.annotations.MapToClass;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,15 +20,6 @@ public class Mean {
 
     @OneToOne(fetch = FetchType.LAZY)
     Mean next;
-
-    @Fetch(FetchMode.SUBSELECT) // TODO duplicates was added in targets
-    @ManyToMany(fetch = FetchType.LAZY)//(cascade = CascadeType.PERSIST)
-    @JoinTable(
-            name = "mean_target",
-            joinColumns = @JoinColumn(name = "mean_id"),
-            inverseJoinColumns = @JoinColumn(name = "target_id")
-    )
-    List<Target> targets = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     Mean parent;
@@ -94,13 +82,6 @@ public class Mean {
     }
     public void setCriteria(String criteria) {
         this.criteria = criteria;
-    }
-
-    public List<Target> getTargets() {
-        return targets;
-    }
-    public void setTargets(List<Target> targets) {
-        this.targets = targets;
     }
 
     @IncludeInDto
