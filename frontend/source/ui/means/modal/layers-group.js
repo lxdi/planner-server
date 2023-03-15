@@ -41,6 +41,11 @@ const getCreateLayerButton = function(component, mean){
 
 const listLayersGroupContent = function(comp, mean, isEdit){
     const result = []
+
+    if (mean.layers == null) {
+        mean.layers = []
+    }
+
     mean.layers.sort((l1, l2) => l1.depth - l2.depth)
 
     for(var id in mean.layers){

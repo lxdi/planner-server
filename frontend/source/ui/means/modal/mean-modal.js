@@ -166,7 +166,9 @@ const showAlerts = function(alerts){
 }
 
 const afterGetFull = function(state) {
-  state.currentMean = chkSt('mean-rep', 'objects')[state.currentMean.id]
+  if (state.currentMean != null) {
+    state.currentMean = chkSt('mean-rep', 'objects')[state.currentMean.id]
+  }
   postactionsHandle(state)
 }
 

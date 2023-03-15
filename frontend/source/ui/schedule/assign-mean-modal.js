@@ -17,7 +17,7 @@ export class AssignMeanModal extends React.Component{
     registerEvent('assign-mean-modal', 'open', (stateSetter, dayTo, mean)=>this.setState({isOpen:true, dayTo:dayTo, mean: mean, dto:{startDayId: dayTo.id, tasksPerWeek: 0}}))
     registerEvent('assign-mean-modal', 'close', (stateSetter)=>this.setState(defaultState))
 
-    registerReaction('assign-mean-modal', 'mean-rep', ['got-full'], ()=>this.setState({}))
+    registerReaction('assign-mean-modal', 'mean-rep', ['got-full'], (stateSetter, obj)=>this.setState({mean: obj}))
     registerReaction('assign-mean-modal', 'week-rep', ['assign-mean-done'], ()=>this.setState(defaultState))
   }
 
