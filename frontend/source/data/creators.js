@@ -1,13 +1,4 @@
 
-export var CreateTarget =  function(id, title, realmid, parentid){
-  return {
-    id: id,
-    title: title,
-    realmid: realmid,
-    parentid: parentid
-  }
-}
-
 export var CreateMean = function(id, title, realmid, parentid){
   var newMean = {
     id: id,

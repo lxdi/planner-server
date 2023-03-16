@@ -1,4 +1,4 @@
-import {targetModalHeaderTitle, deleteButton, editButton, viewButtonTitle} from './../../titles'
+import {deleteButton, editButton, viewButtonTitle} from './../../titles'
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {CommonModal} from './../common/common-modal'

@@ -5,8 +5,8 @@ import {registerEvent, registerReaction, fireEvent, chkSt, registerReactionCombo
 import {iterateLLfull, iterateTree} from 'js-utils'
 
 import {LayersGroup} from './layers-group'
-import {CreateMean, CreateTarget, CreateLayer, CreateTask} from './../../../data/creators'
-import {meanModalHeaderTitle, targetsDropDownTitle} from './../../../titles'
+import {CreateMean, CreateLayer, CreateTask} from './../../../data/creators'
+import {meanModalHeaderTitle} from './../../../titles'
 import {CommonModal} from './../../common/common-modal'
 import {CommonCrudeTemplate} from './../../common/common-crud-template'
 import {isValidMean} from '../../../utils/mean-validator'
@@ -48,7 +48,6 @@ export class MeanModal extends React.Component {
       this.setState(defaultState)
     })
 
-    registerEvent('mean-modal', 'remove-target')
     registerReaction('means-modal', 'mean-rep', ['deleted', 'updated', 'created'], ()=>this.setState(defaultState))
     registerReaction('means-modal', 'mean-rep', ['got-full'], ()=>{afterGetFull(this.state); this.setState({})})
     registerReaction('mean-modal', 'task-modal', 'close', ()=>this.setState({}))

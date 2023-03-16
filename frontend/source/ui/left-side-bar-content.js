@@ -57,7 +57,6 @@ const content = function(reactcomp){
                 {viewModeButtonLabel()}
                 </button>
               </div>
-              {getSwitchButton()}
             </div>
 }
 
@@ -75,16 +74,6 @@ const getStatSquare = function(num, percents, color, span){
                   <div style = {{fontSize:'8pt'}}>{num}</div>
                   <div style = {{fontSize:'8pt'}}>{percents}%</div>
             </div>
-}
-
-const getSwitchButton = function(){
-  if(!chkSt('main-ui', 'three-frames')){
-    return <div style={{margin:'2px', width:'45px', height:'45px'}}>
-                    <button class="left-bar-button-switch" style={{fontSize:'8pt'}} onClick={()=>fireEvent('main-ui', 'switch-curr-state')}>Switch</button>
-                  </div>
-  } else {
-    return <div></div>
-  }
 }
 
 const viewModeButtonLabel = function(){

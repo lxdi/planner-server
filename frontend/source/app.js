@@ -16,7 +16,6 @@ import {ConfirmModal} from './ui/common/confirm-modal'
 import {OverlayInfo} from './ui/overlay'
 
 import {createRealmRep} from './data/realms-dao'
-import {createTargetRep} from './data/targets-dao'
 import {createMeanRep} from './data/means-dao'
 import {createLayerRep} from './data/layers-dao'
 import {createTaskRep} from './data/tasks-topics-testings-dao'
@@ -29,7 +28,6 @@ import './data/external-tasks-dao'
 import './data/drag-n-drop'
 
 createRealmRep()
-createTargetRep()
 createMeanRep()
 createLayerRep()
 createTaskRep()
