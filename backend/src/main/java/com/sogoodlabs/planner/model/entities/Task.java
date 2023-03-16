@@ -16,6 +16,11 @@ import java.util.stream.Collectors;
 @Entity
 public class Task implements IEntity {
 
+    public enum TaskStatus {
+        CREATED, COMPLETED
+    }
+
+
     @Id
     String id;
     String title;
@@ -25,6 +30,14 @@ public class Task implements IEntity {
 
     int position;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    private RepetitionPlan repetitionPlan;
+
+    @Enumerated(EnumType.STRING)
+    private TaskStatus status = TaskStatus.CREATED;
+
+
+    //---------------------
     @Transient
     private List<Topic> topics;
 
@@ -64,6 +77,22 @@ public class Task implements IEntity {
     }
     public void setPosition(int position) {
         this.position = position;
+    }
+
+    public RepetitionPlan getRepetitionPlan() {
+        return repetitionPlan;
+    }
+
+    public void setRepetitionPlan(RepetitionPlan repetitionPlan) {
+        this.repetitionPlan = repetitionPlan;
+    }
+
+    public TaskStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(TaskStatus status) {
+        this.status = status;
     }
 
     @IncludeInDto
@@ -115,4 +144,6 @@ public class Task implements IEntity {
         Collections.reverse(result);
         return String.join("/", result);
     }
+
+
 }

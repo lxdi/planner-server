@@ -68,7 +68,6 @@ public class ProgressService {
         for (int step : plan.getPlan()) {
             Repetition repetition = new Repetition();
             repetition.setId(UUID.randomUUID().toString());
-            repetition.setRepetitionPlan(plan);
             repetition.setTask(task);
 
             Date planDate = plan.getDayStep() ? DateUtils.addDays(finishDate, step) : DateUtils.addWeeks(finishDate, step);

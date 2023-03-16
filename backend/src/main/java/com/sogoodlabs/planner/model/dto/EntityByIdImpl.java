@@ -43,6 +43,9 @@ public class EntityByIdImpl implements IEntityById<String> {
     @Autowired
     private IExternalTaskDao externalTaskDao;
 
+    @Autowired
+    private ISlotDAO slotDAO;
+
     @Override
     public Object get(String id, Class aClass) {
         if(id==null || aClass == null){
@@ -90,6 +93,10 @@ public class EntityByIdImpl implements IEntityById<String> {
         }
         if(aClass == ExternalTask.class){
             result = externalTaskDao.findById(id).orElseThrow(()-> new RuntimeException(aClass.getName() + " not found by " + id));
+        }
+
+        if(aClass == Slot.class){
+            result = slotDAO.findById(id).orElseThrow(()-> new RuntimeException(aClass.getName() + " not found by " + id));
         }
 
         if(result ==null){

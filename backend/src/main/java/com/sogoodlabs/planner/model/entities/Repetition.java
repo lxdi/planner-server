@@ -16,9 +16,6 @@ public class Repetition {
     String id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    RepetitionPlan repetitionPlan;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     Task task;
 
     @OneToOne(fetch = FetchType.LAZY)
@@ -34,13 +31,6 @@ public class Repetition {
     }
     public void setId(String id) {
         this.id = id;
-    }
-
-    public RepetitionPlan getRepetitionPlan() {
-        return repetitionPlan;
-    }
-    public void setRepetitionPlan(RepetitionPlan repetitionPlan) {
-        this.repetitionPlan = repetitionPlan;
     }
 
     @IncludeInDto
@@ -75,11 +65,11 @@ public class Repetition {
 
     @IncludeInDto
     public boolean getIsMemo(){
-        if(this.repetitionPlan==null){
+        if(this.getTask().getRepetitionPlan()==null){
             return false;
         }
 
-        return this.repetitionPlan.getDayStep();
+        return this.getTask().getRepetitionPlan().getDayStep();
     }
 
     public Mean getMean(){

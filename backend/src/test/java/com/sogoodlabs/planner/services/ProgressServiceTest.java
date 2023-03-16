@@ -112,7 +112,6 @@ public class ProgressServiceTest extends SpringTestConfig {
         rep.setTask(task);
         rep.setPlanDay(planDay!=null? dayDao.findByDate(DateUtils.toDate(planDay)):null);
         rep.setFactDay(factDay!=null? dayDao.findByDate(DateUtils.toDate(factDay)):null);
-        rep.setRepetitionPlan(repPlan);
         return repDAO.save(rep);
     }
 

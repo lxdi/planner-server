@@ -58,8 +58,8 @@ public class MoveRepetitionsServiceTest extends SpringTestConfig {
 
     private void moveTest(String targetDate, String rep1planExpected, String rep2planExpected){
 
-        Task task = createTask();
         RepetitionPlan repetitionPlan = createRepPlan();
+        Task task = createTask(repetitionPlan);
 
         Date planDate = DateUtils.toDate("2021-07-26");
         List<Week> weekList = weekService.getWeeksOnDate(planDate); //generate days and weeks
@@ -102,13 +102,13 @@ public class MoveRepetitionsServiceTest extends SpringTestConfig {
         repetition.setPlanDay(planDay);
         repetition.setTask(task);
         repetition.setFactDay(factDay);
-        repetition.setRepetitionPlan(repPlan);
         repDAO.save(repetition);
         return repetition;
     }
 
-    private Task createTask(){
+    private Task createTask(RepetitionPlan repetitionPlan){
         Task task = new Task();
+        task.setRepetitionPlan(repetitionPlan);
         task.setId(UUID.randomUUID().toString());
         tasksDAO.save(task);
         return task;
