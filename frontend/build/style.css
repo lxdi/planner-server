@@ -37,6 +37,18 @@
   padding:2px;
 }
 
+.frame-td-means {
+  vertical-align: top;
+  width:40%;
+  padding:2px;
+}
+
+.frame-td-schedule {
+  vertical-align: top;
+  width:60%;
+  padding:2px;
+}
+
 .frame{
     float: left;
     /* display: inline-block; */
@@ -121,10 +133,6 @@
 
 .actual-tasks-modal-style {
   width:70%;
-}
-
-#Targets {
-  border: 1px solid green;
 }
 
 #Means {
