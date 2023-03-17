@@ -51,12 +51,6 @@ const content = function(reactcomp){
                   {getSquare('P', 'blue')}
                 </div>
               </a>
-              {divisor()}
-              <div style={{margin:'2px', width:'45px', height:'45px', fontSize:'10pt'}}>
-                <button class="left-bar-button" onClick = {()=>fireEvent('main-ui', 'switch-mode')}>
-                {viewModeButtonLabel()}
-                </button>
-              </div>
             </div>
 }
 
@@ -74,16 +68,4 @@ const getStatSquare = function(num, percents, color, span){
                   <div style = {{fontSize:'8pt'}}>{num}</div>
                   <div style = {{fontSize:'8pt'}}>{percents}%</div>
             </div>
-}
-
-const viewModeButtonLabel = function(){
-  if(!chkSt('main-ui', 'three-frames')){
-    return ' |  | '
-  } else {
-    return <div>
-                 <span style={{color:'green'}}> | </span>
-                 <span style={{color:'blue'}}> | </span>
-                 <span style={{color:'orange'}}> | </span>
-            </div>
-  }
 }

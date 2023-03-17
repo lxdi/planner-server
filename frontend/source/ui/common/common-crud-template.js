@@ -16,22 +16,15 @@ const defaultState = function(){
 export class CommonCrudeTemplate extends React.Component {
   constructor(props){
     super(props)
-    this.state = defaultState();
-    this.editAbilityHandler = this.editAbilityHandler.bind(this);
-  }
-
-  editAbilityHandler(){
-    this.props.editing.isEdit = !this.props.editing.isEdit
-    this.setState({})
-    this.props.changeEditHandler()
+    this.state = defaultState()
   }
 
   render(){
     return (
         <div>
           {!this.props.editing.isStatic?
-            <Button bsSize="xsmall" onClick={this.editAbilityHandler}>
-              {this.props.editing.isEdit? 'View': 'Edit'}
+            <Button bsSize="xsmall" onClick={() => editAbilityHandler(this)}>
+              {this.props.editing.isEdit? 'Save': 'Edit'}
             </Button>
           : null}
 
@@ -45,4 +38,10 @@ export class CommonCrudeTemplate extends React.Component {
       </div>
     )
   }
+}
+
+const editAbilityHandler = function(comp){
+  comp.props.editing.isEdit = !comp.props.editing.isEdit
+  comp.setState({})
+  comp.props.changeEditHandler()
 }

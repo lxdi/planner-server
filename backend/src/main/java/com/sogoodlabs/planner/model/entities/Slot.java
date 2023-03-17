@@ -1,9 +1,8 @@
 package com.sogoodlabs.planner.model.entities;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import com.sun.istack.NotNull;
+
+import javax.persistence.*;
 
 @Entity
 public class Slot {
@@ -13,9 +12,11 @@ public class Slot {
 
     private int hours;
 
+    @NotNull
     private DaysOfWeek dayOfWeek;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false)
     private Realm realm;
 
     public String getId() {

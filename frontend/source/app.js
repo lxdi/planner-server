@@ -8,6 +8,7 @@ import {TaskFinishModal} from './ui/means/modal/task-finish-modal'
 import {ActualTasksModal} from './ui/means/actual-tasks-modal'
 import {TestingModal} from './ui/means/modal/testing-modal'
 import {PrioritiesModal} from './ui/means/modal/priorities-modal'
+import {SlotsModal} from './ui/means/modal/slots-modal'
 import {DayModal} from './ui/schedule/day-modal'
 import {ShiftPlansModal} from './ui/schedule/shift-plans-modal'
 import {ExternalTaskModal} from './ui/schedule/external-task-modal'
@@ -19,6 +20,7 @@ import {createRealmRep} from './data/realms-dao'
 import {createMeanRep} from './data/means-dao'
 import {createLayerRep} from './data/layers-dao'
 import {createTaskRep} from './data/tasks-topics-testings-dao'
+import {createSlotsRep} from './data/slots-dao'
 
 import './data/rep-plans-dao'
 import './data/weeks-dao'
@@ -31,6 +33,8 @@ createRealmRep()
 createMeanRep()
 createLayerRep()
 createTaskRep()
+createSlotsRep()
+
 
 ReactDOM.render(<div id="app" />, document.body);
 const app = document.getElementById("app");
@@ -65,6 +69,7 @@ const getModals = function(){
 						<ConfirmModal/>
 						<OverlayInfo />
 						<PrioritiesModal />
+						<SlotsModal />
 					</div>
 }
 

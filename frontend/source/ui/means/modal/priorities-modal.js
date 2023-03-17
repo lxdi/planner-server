@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {Table, Tabs, Tab} from 'react-bootstrap'
+import {Table, Tabs, Tab, Button} from 'react-bootstrap'
 import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
 import {CommonModal} from './../../common/common-modal'
 
@@ -33,7 +33,8 @@ export class PrioritiesModal extends React.Component {
     }
 
     return <CommonModal isOpen = {this.state.isOpen} cancelHandler={()=>fireEvent('priorities-modal', 'close')} title={"Priorities"} styleClass='priorities-modal-style'>
-          {content}
+          <div><Button onClick={() => fireEvent('slots-modal', 'open')}>Slots</Button></div>
+          <div>{content}</div>
       </CommonModal>
   }
 }
