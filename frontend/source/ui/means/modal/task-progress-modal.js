@@ -57,7 +57,7 @@ const getContent = function(component){
             <div>
               <div>Finishes</div>
               {mappersTableUI(progress.taskMappers, component.state.highlightId)}
-              <Button bsStyle="default" onClick={() => fireEvent('task-finish-modal', 'open', [task, progress.plans])}>Finish</Button>
+              <Button bsStyle="default" onClick={() => finishTask(task)}>Finish</Button>
             </div>
             <div style = {{borderBottom: '1px solid grey', padding: '3px'}}  />
             <div>
@@ -65,6 +65,14 @@ const getContent = function(component){
               {repetitionsTableUI(progress.repetitions, task, component.state.highlightId)}
             </div>
           </div>
+}
+
+const finishTask = function(task) {
+  if(task.repetitionPlanid == null){
+    fireEvent('progress-rep', 'finish-task', [task])
+  } else {
+    fireEvent('progress-rep', 'finish-task-sp', [task, chkSt('repPlan-rep', 'objects')[task.repetitionPlanid]])
+  }
 }
 
 //-------------------------Mappers--------------------------------

@@ -4,7 +4,6 @@ import ReactDOM from 'react-dom';
 import {Main} from './ui/main'
 import {LeftSideBarContent} from './ui/left-side-bar-content'
 import {TaskProgressModal} from './ui/means/modal/task-progress-modal'
-import {TaskFinishModal} from './ui/means/modal/task-finish-modal'
 import {ActualTasksModal} from './ui/means/actual-tasks-modal'
 import {TestingModal} from './ui/means/modal/testing-modal'
 import {PrioritiesModal} from './ui/means/modal/priorities-modal'
@@ -62,7 +61,6 @@ const getModals = function(){
 	return <div>
 						<TestingModal/>
 						<TaskProgressModal/>
-						<TaskFinishModal/>
 						<ActualTasksModal/>
 						<DayModal/>
 						<ShiftPlansModal/>
