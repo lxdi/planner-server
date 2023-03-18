@@ -55,7 +55,7 @@ public class Layer implements IEntity {
         return tasks;
     }
 
-    @MapToClass(value = Task.class)
+    @MapToClass(value = Task.class, parentField = "layer")
     public void setTasks(List<Task> tasks) {
         this.tasks = tasks;
     }

@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(path = "/repetition/plans")
+@RequestMapping(path = "/repetition/plan")
 public class RepPlansController {
 
     @Autowired

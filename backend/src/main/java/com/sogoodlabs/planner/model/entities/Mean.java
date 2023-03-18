@@ -89,7 +89,7 @@ public class Mean {
         return layers;
     }
 
-    @MapToClass(value = Layer.class)
+    @MapToClass(value = Layer.class, parentField = "mean")
     public void setLayers(List<Layer> layers) {
         this.layers = layers;
     }

@@ -21,6 +21,7 @@ import {createMeanRep} from './data/means-dao'
 import {createLayerRep} from './data/layers-dao'
 import {createTaskRep} from './data/tasks-topics-testings-dao'
 import {createSlotsRep} from './data/slots-dao'
+import {createRepPlanRep} from './data/rep-plans-dao'
 
 import './data/rep-plans-dao'
 import './data/weeks-dao'
@@ -34,6 +35,7 @@ createMeanRep()
 createLayerRep()
 createTaskRep()
 createSlotsRep()
+createRepPlanRep()
 
 
 ReactDOM.render(<div id="app" />, document.body);

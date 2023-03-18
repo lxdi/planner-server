@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {FormGroup, ControlLabel, FormControl, Button} from 'react-bootstrap'
+import {FormGroup, ControlLabel, FormControl, Button, ButtonToolbar, DropdownButton, MenuItem} from 'react-bootstrap'
 import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
 
 import {CommonModal} from './../../common/common-modal'
@@ -36,6 +36,7 @@ export class TaskModal extends React.Component {
     registerReaction('task-modal', DataConstants.taskRep, 'task-finished', (stateSetter)=>this.setState({}))
 
     registerReaction('task-modal', 'testing-modal', ['close'], (stateSetter)=>this.setState({}))
+    registerReaction('task-modal', 'repPlan-rep', ['all-response'], (stateSetter)=>this.setState({}))
   }
 
   render(){
@@ -92,6 +93,8 @@ const modalContent = function(component){
                         <StatefulTextField obj={component.state.task} valName={'title'} isEdit={component.state.mode.isEdit} onInput={()=>component.setState({})}/>
                       </div>
 
+                      <div>{repPlanChooserUI(component, component.state.task)}</div>
+
                       <TopicsList task={component.state.task} isEdit={component.state.mode.isEdit} />
                       {getTestingsUI(component)}
                     </FormGroup>
@@ -122,4 +125,34 @@ const progressButton = function(component){
 
 const isProgressButtonDisabled = function(component){
   return component.state.task.id == null || component.state.task.id == DataConstants.newId
+}
+
+const repPlanChooserUI = function(reactcomp, task){
+  const plans = chkSt('repPlan-rep', 'objects')
+
+  if(plans == null) {
+    fireEvent('repPlan-rep', 'all-request')
+    return 'Loading...'
+  }
+
+  const divStyle = task.repetitionPlanid==null?{display:'inline-block', border:'1px solid red'}:null
+  return <div>
+              <div style={divStyle}>
+                <ButtonToolbar>
+                  <DropdownButton bsSize="small"
+                          title={task.repetitionPlanid!=null?plans[task.repetitionPlanid].title:'Select Repetition plan'}
+                          id="dropdown-size-small" onSelect={(chosenPlan)=>{task.repetitionPlanid = chosenPlan.id; reactcomp.setState({})}}>
+                    {availableRepPlans(Object.values(plans))}
+                  </DropdownButton>
+                </ButtonToolbar>
+              </div>
+          </div>
+}
+
+const availableRepPlans = function(repPlans){
+  const result = []
+  for(var i in repPlans){
+    result.push(<MenuItem eventKey={repPlans[i]}>{repPlans[i].title}</MenuItem>)
+  }
+  return result
 }
