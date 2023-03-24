@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Date;
 import java.util.*;
+import java.util.function.BiConsumer;
 
 @Service
 public class ForecastService {
@@ -43,12 +44,13 @@ public class ForecastService {
         var hoursPerWeek = getSlotsHours();
         var validReps = new HashSet<>(repDAO.findAllActiveAfterDate(today.getDate()));
         var tasks = getTasks();
-        return forecast(currentWeek, hoursPerWeek, 0, validReps, tasks);
+        return forecast(currentWeek, hoursPerWeek, 0, validReps, tasks, null);
     }
 
     private Date forecast(Week currentWeek, int hoursTotal, int hoursOccupiedByTasks,
                           Set<Repetition> validReps,
-                          Map<Realm, Deque<Task>> tasks) {
+                          Map<Realm, Deque<Task>> tasks,
+                          BiConsumer<Task, Week> taskAssignedCallback) {
 
         var isTasksRanOut = true;
 
@@ -69,7 +71,7 @@ public class ForecastService {
         var hoursAvail = hoursTotal - hoursOccupiedByTasks - repsInCurrentWeek.size();
 
         if (hoursAvail < 2) {
-            forecast(currentWeek.getNext(), hoursTotal, 0, validReps, tasks);
+            forecast(currentWeek.getNext(), hoursTotal, 0, validReps, tasks, taskAssignedCallback);
         }
 
         var mondayOfCurrentWeek = dayDao.findByWeek(currentWeek).stream()
@@ -77,6 +79,8 @@ public class ForecastService {
                 .findFirst().get();
 
         Date bestDate = null;
+        Task chosenTask = null;
+        Set<Repetition> chosenTaskReps = null;
 
         for(var entry : tasks.entrySet()) {
 
@@ -98,7 +102,7 @@ public class ForecastService {
                 }
             }
 
-            var localRes = forecast(currentWeek, hoursTotal, hoursOccupiedByTasks + 2, validReps, tasks);
+            var localRes = forecast(currentWeek, hoursTotal, hoursOccupiedByTasks + 2, validReps, tasks, taskAssignedCallback);
 
             if (localRes==null) {
                 localRes = mondayOfCurrentWeek.getDate();
@@ -106,10 +110,16 @@ public class ForecastService {
 
             if (bestDate == null || localRes.before(bestDate)) {
                 bestDate = localRes;
+                chosenTask = curTask;
+                chosenTaskReps = potReps;
             }
 
             entry.getValue().addFirst(curTask);
             validReps.removeAll(potReps);
+        }
+
+        if (taskAssignedCallback != null) {
+            taskAssignedCallback.accept(chosenTask, currentWeek); //TODO pass reps as well
         }
 
         return bestDate;
