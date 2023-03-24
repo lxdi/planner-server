@@ -63,6 +63,11 @@ public class ProgressService {
             return;
         }
 
+        log.info("Setting repetitions for task {}, repetition plan {}", task.getId(), plan.getId());
+        repDAO.saveAll(generateRepetitions(plan, finishDate, task));
+    }
+
+    public List<Repetition> generateRepetitions(RepetitionPlan plan, Date finishDate, Task task) {
         List<Repetition> repetitions = new ArrayList<>();
 
         for (int step : plan.getPlan()) {
@@ -82,8 +87,7 @@ public class ProgressService {
             repetitions.add(repetition);
         }
 
-        log.info("Setting repetitions for task {}, repetition plan {}", task.getId(), plan.getId());
-        repDAO.saveAll(repetitions);
+        return repetitions;
     }
 
     public void finishRepetition(Repetition repetition){
