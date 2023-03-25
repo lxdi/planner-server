@@ -64,15 +64,7 @@ public class ForecastService {
                                       Map<Realm, Deque<Task>> tasks,
                                       BiConsumer<Task, Week> taskAssignedCallback) {
 
-        var isTasksRanOut = true;
-
-        for(var entry : tasks.entrySet()) {
-            if(entry.getValue().size()>0) {
-                isTasksRanOut = false;
-            }
-        }
-
-        if (isTasksRanOut) {
+        if (isTasksRanOut(tasks)) {
             return null;
         }
 
@@ -109,72 +101,12 @@ public class ForecastService {
         return res;
     }
 
-    private Task chooseTask(Map<Realm, Deque<Task>> tasks, Set<Realm> realmsChosen,
-                            Set<Repetition> validReps, int hoursTotal, Week currentWeek) {
-
-        Task res = doChooseTask(tasks, realmsChosen, validReps, hoursTotal, currentWeek);
-
-        if(res == null) {
-            realmsChosen.clear();
-            res = doChooseTask(tasks, realmsChosen, validReps, hoursTotal, currentWeek);
-        }
-
-        return res;
-    }
-
-    private Task doChooseTask(Map<Realm, Deque<Task>> tasks, Set<Realm> realmsChosen,
-                              Set<Repetition> validReps, int hoursTotal, Week currentWeek) {
-
-        var wedOfCurrentWeek = dayDao.findByWeek(currentWeek).stream()
-                .filter(day -> day.getWeekDay() == DaysOfWeek.wed)
-                .findFirst().get();
-
-        for(var entry : tasks.entrySet()) {
-
-            if (entry.getValue().size() < 1) {
-                continue;
-            }
-
-            if(realmsChosen != null && realmsChosen.contains(entry.getKey())) {
-                continue;
-            }
-
-            var curTask = entry.getValue().pop();
-
-            if (curTask.getRepetitionPlan() != null) {
-                var potReps = new HashSet<Repetition>();
-                potReps.addAll(progressService.generateRepetitions(curTask.getRepetitionPlan(), wedOfCurrentWeek.getDate(), curTask));
-                validReps.addAll(potReps);
-
-                if (!checkRepsAccommodate(currentWeek.getNext(), hoursTotal, validReps)) {
-                    entry.getValue().addFirst(curTask);
-                    validReps.removeAll(potReps);
-                    continue;
-                }
-            }
-
-            realmsChosen.add(entry.getKey());
-            return curTask;
-        }
-
-        return null;
-    }
-
-
     private Date forecastBacktracking(Week currentWeek, int hoursTotal, int hoursOccupiedByTasks,
                                       Set<Repetition> validReps,
                                       Map<Realm, Deque<Task>> tasks,
                                       BiConsumer<Task, Week> taskAssignedCallback) {
 
-        var isTasksRanOut = true;
-
-        for(var entry : tasks.entrySet()) {
-            if(entry.getValue().size()>0) {
-                isTasksRanOut = false;
-            }
-        }
-
-        if (isTasksRanOut) {
+        if (isTasksRanOut(tasks)) {
             return null;
         }
 
@@ -238,6 +170,69 @@ public class ForecastService {
 
         return bestDate;
 
+    }
+
+    private boolean isTasksRanOut(Map<Realm, Deque<Task>> tasks) {
+        var isTasksRanOut = true;
+
+        for(var entry : tasks.entrySet()) {
+            if(entry.getValue().size()>0) {
+                isTasksRanOut = false;
+            }
+        }
+
+        return isTasksRanOut;
+    }
+
+    private Task chooseTask(Map<Realm, Deque<Task>> tasks, Set<Realm> realmsChosen,
+                            Set<Repetition> validReps, int hoursTotal, Week currentWeek) {
+
+        Task res = doChooseTask(tasks, realmsChosen, validReps, hoursTotal, currentWeek);
+
+        if(res == null) {
+            realmsChosen.clear();
+            res = doChooseTask(tasks, realmsChosen, validReps, hoursTotal, currentWeek);
+        }
+
+        return res;
+    }
+
+    private Task doChooseTask(Map<Realm, Deque<Task>> tasks, Set<Realm> realmsChosen,
+                              Set<Repetition> validReps, int hoursTotal, Week currentWeek) {
+
+        var wedOfCurrentWeek = dayDao.findByWeek(currentWeek).stream()
+                .filter(day -> day.getWeekDay() == DaysOfWeek.wed)
+                .findFirst().get();
+
+        for(var entry : tasks.entrySet()) {
+
+            if (entry.getValue().size() < 1) {
+                continue;
+            }
+
+            if(realmsChosen != null && realmsChosen.contains(entry.getKey())) {
+                continue;
+            }
+
+            var curTask = entry.getValue().pop();
+
+            if (curTask.getRepetitionPlan() != null) {
+                var potReps = new HashSet<Repetition>();
+                potReps.addAll(progressService.generateRepetitions(curTask.getRepetitionPlan(), wedOfCurrentWeek.getDate(), curTask));
+                validReps.addAll(potReps);
+
+                if (!checkRepsAccommodate(currentWeek.getNext(), hoursTotal, validReps)) {
+                    entry.getValue().addFirst(curTask);
+                    validReps.removeAll(potReps);
+                    continue;
+                }
+            }
+
+            realmsChosen.add(entry.getKey());
+            return curTask;
+        }
+
+        return null;
     }
 
     private boolean checkRepsAccommodate(Week currentWeek,  int hoursPerWeek, Set<Repetition> reps) {
