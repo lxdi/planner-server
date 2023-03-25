@@ -2,6 +2,7 @@ package com.sogoodlabs.planner.services;
 
 
 import com.sogoodlabs.planner.SpringTestConfig;
+import com.sogoodlabs.planner.TestCreators;
 import com.sogoodlabs.planner.model.dao.*;
 import com.sogoodlabs.planner.model.entities.*;
 import org.hibernate.Session;
@@ -25,10 +26,10 @@ public class MeansServiceTest extends SpringTestConfig {
     private EntityManager entityManager;
 
     @Autowired
-    private MeansService meansService;
+    private TestCreators testCreators;
 
     @Autowired
-    private IMeansDAO meansDAO;
+    private MeansService meansService;
 
     @Autowired
     private ILayerDAO layerDAO;
@@ -39,8 +40,6 @@ public class MeansServiceTest extends SpringTestConfig {
     @Autowired
     private ITaskTestingDAO taskTestingDAO;
 
-    @Autowired
-    private IRealmDAO realmDAO;
 
     Mean mean;
     Layer layer1;
@@ -55,14 +54,14 @@ public class MeansServiceTest extends SpringTestConfig {
     public void init(){
         super.init();
 
-        mean = createMean("some title mean");
-        layer1 = createLayer(1, mean);
-        task = createTask("some title task", layer1);
-        task2 = createTask("some title task", layer1);
-        taskTesting = createTesting("some question", task);
-        taskTesting2 = createTesting("some question 2", task);
+        mean = testCreators.createMean("some title mean");
+        layer1 = testCreators.createLayer(1, mean);
+        task = testCreators.createTask("some title task", layer1);
+        task2 = testCreators.createTask("some title task", layer1);
+        taskTesting = testCreators.createTesting("some question", task);
+        taskTesting2 = testCreators.createTesting("some question 2", task);
 
-        layerToRemove = createLayer(2, mean);
+        layerToRemove = testCreators.createLayer(2, mean);
 
         Session session = entityManager.unwrap(Session.class);
         session.flush();
@@ -89,10 +88,10 @@ public class MeansServiceTest extends SpringTestConfig {
 
     @Test
     public void modifyLayersWithPriorities(){
-        var realm = createRealm();
-        mean = createMean("some title mean", realm);
-        layer1 = createLayer(1, mean);
-        layer2 = createLayer(2, mean);
+        var realm = testCreators.createRealm();
+        mean = testCreators.createMean("some title mean", realm);
+        layer1 = testCreators.createLayer(1, mean);
+        layer2 = testCreators.createLayer(2, mean);
 
         layer2.setPriority(MeansService.PRIORITY_SET);
 
@@ -114,53 +113,6 @@ public class MeansServiceTest extends SpringTestConfig {
 
         assertEquals(2, layerDAO.findById(layer1.getId()).get().getPriority());
 
-    }
-
-    private Realm createRealm(){
-        var realm = new Realm();
-        realm.setId(UUID.randomUUID().toString());
-        realmDAO.save(realm);
-        return realm;
-    }
-
-    private Mean createMean(String title){
-        return createMean(title, null);
-    }
-
-    private Mean createMean(String title, Realm realm){
-        Mean mean = new Mean();
-        mean.setId(UUID.randomUUID().toString());
-        mean.setTitle(title);
-        mean.setRealm(realm);
-        meansDAO.save(mean);
-        return mean;
-    }
-
-    private Layer createLayer(int depth, Mean mean){
-        Layer layer = new Layer();
-        layer.setId(UUID.randomUUID().toString());
-        layer.setDepth(depth);
-        layer.setMean(mean);
-        layerDAO.save(layer);
-        return layer;
-    }
-
-    private Task createTask(String title, Layer layer){
-        Task task = new Task();
-        task.setId(UUID.randomUUID().toString());
-        task.setTitle(title);
-        task.setLayer(layer);
-        tasksDAO.save(task);
-        return task;
-    }
-
-    private TaskTesting createTesting(String question, Task task){
-        TaskTesting testing = new TaskTesting();
-        testing.setId(UUID.randomUUID().toString());
-        testing.setQuestion(question);
-        testing.setTask(task);
-        taskTestingDAO.save(testing);
-        return testing;
     }
 
 }
