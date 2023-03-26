@@ -47,7 +47,7 @@ public class ForecastService {
     @Transactional
     public Date forecast(Date fromDate, boolean isBacktracking) {
         var today = dayDao.findByDate(fromDate);
-        var currentWeek = today.getWeek();
+        var nextWeek = today.getWeek().getNext();
         var hoursPerWeek = getSlotsHours();
         var validReps = new HashSet<>(repDAO.findAllActiveAfterDate(today.getDate()));
         var tasks = getTasks();
@@ -57,9 +57,9 @@ public class ForecastService {
         }
 
         if (isBacktracking) {
-            return forecastBacktracking(currentWeek, hoursPerWeek, 0, validReps, tasks, null);
+            return forecastBacktracking(nextWeek, hoursPerWeek, 0, validReps, tasks, null);
         } else {
-            return forecast(currentWeek, hoursPerWeek, 0, validReps, tasks, null);
+            return forecast(nextWeek, hoursPerWeek, 0, validReps, tasks, null);
         }
     }
 
@@ -84,6 +84,10 @@ public class ForecastService {
 
             for (int i = 0; i < hoursAvail; i = i + 2) {
                 Task curTask = chooseTask(tasks, realmsChosen, validReps, hoursTotal, currentWeek);
+
+                if (taskAssignedCallback != null) {
+                    taskAssignedCallback.accept(curTask, currentWeek); //TODO pass reps as well
+                }
 
                 if (curTask == null) {
                     break;
