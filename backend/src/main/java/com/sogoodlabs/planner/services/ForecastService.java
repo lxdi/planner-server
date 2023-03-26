@@ -4,6 +4,7 @@ import com.sogoodlabs.planner.model.dao.*;
 import com.sogoodlabs.planner.model.entities.*;
 import com.sogoodlabs.planner.util.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +14,9 @@ import java.util.function.BiConsumer;
 
 @Service
 public class ForecastService {
+
+    @Value("${forecast.type:backtracking}")
+    private String forecastType;
 
     @Autowired
     private IRealmDAO realmDAO;
@@ -37,7 +41,7 @@ public class ForecastService {
 
     @Transactional
     public Date forecast() {
-        return forecast(DateUtils.currentDate(), false);
+        return forecast(DateUtils.currentDate(), forecastType.equals("backtracking"));
     }
 
     @Transactional
