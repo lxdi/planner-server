@@ -1,13 +1,12 @@
 package com.sogoodlabs.planner.services;
 
 import com.sogoodlabs.planner.SpringTestConfig;
-import com.sogoodlabs.planner.controllers.dto.AssignLayerDto;
-import com.sogoodlabs.planner.controllers.dto.AssignMeanDto;
+import com.sogoodlabs.planner.dto.AssignLayerDto;
+import com.sogoodlabs.planner.dto.AssignMeanDto;
 import com.sogoodlabs.planner.model.dao.IDayDao;
 import com.sogoodlabs.planner.model.dao.ILayerDAO;
 import com.sogoodlabs.planner.model.dao.ITaskMappersDAO;
 import com.sogoodlabs.planner.model.dao.ITasksDAO;
-import com.sogoodlabs.planner.model.entities.Day;
 import com.sogoodlabs.planner.model.entities.Layer;
 import com.sogoodlabs.planner.model.entities.Task;
 import com.sogoodlabs.planner.model.entities.TaskMapper;
@@ -16,8 +15,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.UUID;

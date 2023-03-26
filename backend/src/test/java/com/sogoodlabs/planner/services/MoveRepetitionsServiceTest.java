@@ -1,7 +1,6 @@
 package com.sogoodlabs.planner.services;
 
 import com.sogoodlabs.planner.SpringTestConfig;
-import com.sogoodlabs.planner.controllers.dto.MovingPlansDto;
 import com.sogoodlabs.planner.model.dao.IDayDao;
 import com.sogoodlabs.planner.model.dao.IRepDAO;
 import com.sogoodlabs.planner.model.dao.IRepPlanDAO;

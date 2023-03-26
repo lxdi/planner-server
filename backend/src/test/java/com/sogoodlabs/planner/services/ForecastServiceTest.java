@@ -41,7 +41,7 @@ public class ForecastServiceTest extends SpringTestConfig {
     public void forecastTest_noReps() {
         initData(null);
 
-        var res = forecastService.forecast(DateUtils.toDate("2023-03-25"), false);
+        var res = forecastService.forecast(DateUtils.toDate("2023-03-25"), true);
 
         assertEquals("2023-04-23", res.toString());
 
@@ -54,9 +54,9 @@ public class ForecastServiceTest extends SpringTestConfig {
 
         initData(repPlan);
 
-        var res = forecastService.forecast(DateUtils.toDate("2023-03-25"), false);
+        var res = forecastService.forecast(DateUtils.toDate("2023-03-25"), true);
 
-        assertEquals("2023-05-28", res.toString());
+        assertEquals("2023-05-21", res.toString());
 
     }
 

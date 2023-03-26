@@ -1,17 +1,18 @@
-package com.sogoodlabs.planner.controllers.dto;
+package com.sogoodlabs.planner.dto;
 
 import com.sogoodlabs.common_mapper.annotations.IncludeInDto;
+import com.sogoodlabs.planner.model.entities.Day;
+import com.sogoodlabs.planner.model.entities.ExternalTask;
 import com.sogoodlabs.planner.model.entities.Repetition;
-import com.sogoodlabs.planner.model.entities.RepetitionPlan;
 import com.sogoodlabs.planner.model.entities.TaskMapper;
 
 import java.util.List;
 
-public class TaskProgressDto {
+public class ScheduledDayDto {
 
-    List<TaskMapper> taskMappers;
-    List<Repetition> repetitions;
-    List<RepetitionPlan> plans;
+    private List<TaskMapper> taskMappers;
+    private List<Repetition> repetitions;
+    private List<ExternalTask> externalTasks;
 
     @IncludeInDto
     public List<TaskMapper> getTaskMappers() {
@@ -30,10 +31,10 @@ public class TaskProgressDto {
     }
 
     @IncludeInDto
-    public List<RepetitionPlan> getPlans() {
-        return plans;
+    public List<ExternalTask> getExternalTasks() {
+        return externalTasks;
     }
-    public void setPlans(List<RepetitionPlan> plans) {
-        this.plans = plans;
+    public void setExternalTasks(List<ExternalTask> externalTasks) {
+        this.externalTasks = externalTasks;
     }
 }

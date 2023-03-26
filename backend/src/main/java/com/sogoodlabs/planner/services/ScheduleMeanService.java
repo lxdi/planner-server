@@ -1,17 +1,15 @@
 package com.sogoodlabs.planner.services;
 
-import com.sogoodlabs.planner.controllers.dto.AssignLayerDto;
-import com.sogoodlabs.planner.controllers.dto.AssignMeanDto;
+import com.sogoodlabs.planner.dto.AssignLayerDto;
+import com.sogoodlabs.planner.dto.AssignMeanDto;
 import com.sogoodlabs.planner.model.dao.*;
 import com.sogoodlabs.planner.model.entities.*;
-import com.sogoodlabs.planner.util.IdUtils;
 import com.sogoodlabs.planner.util.SortUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.DayOfWeek;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;

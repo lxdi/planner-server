@@ -1,6 +1,6 @@
 package com.sogoodlabs.planner.services;
 
-import com.sogoodlabs.planner.controllers.dto.TaskProgressDto;
+import com.sogoodlabs.planner.dto.TaskProgressDto;
 import com.sogoodlabs.planner.model.dao.*;
 import com.sogoodlabs.planner.model.entities.*;
 import com.sogoodlabs.planner.util.DateUtils;

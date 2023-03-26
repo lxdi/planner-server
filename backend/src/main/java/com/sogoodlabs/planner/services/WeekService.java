@@ -1,21 +1,17 @@
 package com.sogoodlabs.planner.services;
 
-import com.sogoodlabs.planner.controllers.dto.MovingPlansDto;
-import com.sogoodlabs.planner.controllers.dto.ScheduledDayDto;
+import com.sogoodlabs.planner.dto.MovingPlansDto;
+import com.sogoodlabs.planner.dto.ScheduledDayDto;
 import com.sogoodlabs.planner.model.dao.*;
 import com.sogoodlabs.planner.model.entities.Day;
-import com.sogoodlabs.planner.model.entities.Repetition;
 import com.sogoodlabs.planner.model.entities.TaskMapper;
 import com.sogoodlabs.planner.model.entities.Week;
 import com.sogoodlabs.planner.util.DateUtils;
 import com.sogoodlabs.planner.util.HibernateUtils;
-import org.hibernate.Hibernate;
-import org.hibernate.proxy.HibernateProxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.sql.Date;
 import java.util.ArrayList;

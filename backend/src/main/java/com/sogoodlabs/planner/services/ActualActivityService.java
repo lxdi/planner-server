@@ -1,6 +1,6 @@
 package com.sogoodlabs.planner.services;
 
-import com.sogoodlabs.planner.controllers.dto.ActualActivityDto;
+import com.sogoodlabs.planner.dto.ActualActivityDto;
 import com.sogoodlabs.planner.model.dao.IDayDao;
 import com.sogoodlabs.planner.model.dao.IRepDAO;
 import com.sogoodlabs.planner.model.entities.Day;

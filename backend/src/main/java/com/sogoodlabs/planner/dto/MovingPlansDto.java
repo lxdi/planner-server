@@ -1,4 +1,4 @@
-package com.sogoodlabs.planner.controllers.dto;
+package com.sogoodlabs.planner.dto;
 
 import java.util.List;
 
