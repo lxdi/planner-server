@@ -1,8 +1,10 @@
 package com.sogoodlabs.planner.services;
 
 import com.sogoodlabs.planner.model.dao.*;
+import com.sogoodlabs.planner.model.dto.ForecastReport;
 import com.sogoodlabs.planner.model.entities.*;
 import com.sogoodlabs.planner.util.DateUtils;
+import com.sogoodlabs.planner.util.function.TriConsumer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -39,34 +41,45 @@ public class ForecastService {
     @Autowired
     private ProgressService progressService;
 
+    @Autowired
+    private ForecastReportService forecastReportService;
+
     @Transactional
-    public Date forecast() {
+    public ForecastReport forecast() {
         return forecast(DateUtils.currentDate(), forecastType.equals("backtracking"));
     }
 
     @Transactional
-    public Date forecast(Date fromDate, boolean isBacktracking) {
+    public ForecastReport forecast(Date fromDate, boolean isBacktracking) {
         var today = dayDao.findByDate(fromDate);
         var nextWeek = today.getWeek().getNext();
         var hoursPerWeek = getSlotsHours();
         var validReps = new HashSet<>(repDAO.findAllActiveAfterDate(today.getDate()));
         var tasks = getTasks();
+        var report = new ForecastReport();
 
         if (hoursPerWeek < 2) {
             throw new RuntimeException("Not enough slots capacity " + hoursPerWeek);
         }
 
+        Date lastTaskCompleted;
+
         if (isBacktracking) {
-            return forecastBacktracking(nextWeek, hoursPerWeek, 0, validReps, tasks, null);
+            lastTaskCompleted = forecastBacktracking(nextWeek, hoursPerWeek, 0, validReps, tasks,
+                    (week, task, reps) -> forecastReportService.enrichReport(report, week, task, reps));
         } else {
-            return forecast(nextWeek, hoursPerWeek, 0, validReps, tasks, null);
+            lastTaskCompleted = forecast(nextWeek, hoursPerWeek, 0, validReps, tasks,
+                    (week, task, reps) -> forecastReportService.enrichReport(report, week, task, reps));
         }
+
+        forecastReportService.finishReport(report, lastTaskCompleted, validReps);
+        return report;
     }
 
     private Date forecast(Week currentWeek, int hoursTotal, int hoursOccupiedByTasks,
                                       Set<Repetition> validReps,
                                       Map<Realm, Deque<Task>> tasks,
-                                      BiConsumer<Task, Week> taskAssignedCallback) {
+                                      TriConsumer<Week, Task, Set<Repetition>> taskAssignedCallback) {
 
         if (isTasksRanOut(tasks)) {
             return null;
@@ -83,10 +96,10 @@ public class ForecastService {
             var realmsChosen = new HashSet<Realm>();
 
             for (int i = 0; i < hoursAvail; i = i + 2) {
-                Task curTask = chooseTask(tasks, realmsChosen, validReps, hoursTotal, currentWeek);
+                var curTask = chooseTask(tasks, realmsChosen, validReps, hoursTotal, currentWeek);
 
                 if (taskAssignedCallback != null) {
-                    taskAssignedCallback.accept(curTask, currentWeek); //TODO pass reps as well
+                    taskAssignedCallback.accept(currentWeek, curTask.task, curTask.reps);
                 }
 
                 if (curTask == null) {
@@ -112,7 +125,7 @@ public class ForecastService {
     private Date forecastBacktracking(Week currentWeek, int hoursTotal, int hoursOccupiedByTasks,
                                       Set<Repetition> validReps,
                                       Map<Realm, Deque<Task>> tasks,
-                                      BiConsumer<Task, Week> taskAssignedCallback) {
+                                      TriConsumer<Week, Task, Set<Repetition>> taskAssignedCallback) {
 
         if (isTasksRanOut(tasks)) {
             return null;
@@ -173,7 +186,7 @@ public class ForecastService {
         }
 
         if (taskAssignedCallback != null) {
-            taskAssignedCallback.accept(chosenTask, currentWeek); //TODO pass reps as well
+            taskAssignedCallback.accept(currentWeek, chosenTask, chosenTaskReps);
         }
 
         return bestDate;
@@ -192,10 +205,20 @@ public class ForecastService {
         return isTasksRanOut;
     }
 
-    private Task chooseTask(Map<Realm, Deque<Task>> tasks, Set<Realm> realmsChosen,
+    static class ChosenTask {
+        private Task task;
+        private Set<Repetition> reps;
+
+        public ChosenTask(Task task, Set<Repetition> reps) {
+            this.task = task;
+            this.reps = reps;
+        }
+    }
+
+    private ChosenTask chooseTask(Map<Realm, Deque<Task>> tasks, Set<Realm> realmsChosen,
                             Set<Repetition> validReps, int hoursTotal, Week currentWeek) {
 
-        Task res = doChooseTask(tasks, realmsChosen, validReps, hoursTotal, currentWeek);
+        ChosenTask res = doChooseTask(tasks, realmsChosen, validReps, hoursTotal, currentWeek);
 
         if(res == null) {
             realmsChosen.clear();
@@ -205,7 +228,7 @@ public class ForecastService {
         return res;
     }
 
-    private Task doChooseTask(Map<Realm, Deque<Task>> tasks, Set<Realm> realmsChosen,
+    private ChosenTask doChooseTask(Map<Realm, Deque<Task>> tasks, Set<Realm> realmsChosen,
                               Set<Repetition> validReps, int hoursTotal, Week currentWeek) {
 
         var wedOfCurrentWeek = dayDao.findByWeek(currentWeek).stream()
@@ -223,9 +246,9 @@ public class ForecastService {
             }
 
             var curTask = entry.getValue().pop();
+            var potReps = new HashSet<Repetition>();
 
             if (curTask.getRepetitionPlan() != null) {
-                var potReps = new HashSet<Repetition>();
                 potReps.addAll(progressService.generateRepetitions(curTask.getRepetitionPlan(), wedOfCurrentWeek.getDate(), curTask));
                 validReps.addAll(potReps);
 
@@ -237,7 +260,7 @@ public class ForecastService {
             }
 
             realmsChosen.add(entry.getKey());
-            return curTask;
+            return new ChosenTask(curTask, potReps);
         }
 
         return null;
@@ -248,6 +271,7 @@ public class ForecastService {
         var lastWeek = getMostDistantWeek(reps);
         var week = currentWeek;
 
+        //TODO handle week == null because hasn't been generated
         while(!week.getPrev().getId().equals(lastWeek.getId())) {
 
             var repsTotal = repsPerWeek(week, reps);
