@@ -1,7 +1,7 @@
 package com.sogoodlabs.planner.services;
 
-import com.sogoodlabs.planner.dto.MovingPlansDto;
-import com.sogoodlabs.planner.dto.ScheduledDayDto;
+import com.sogoodlabs.planner.model.dto.MovingPlansDto;
+import com.sogoodlabs.planner.model.dto.ScheduledDayDto;
 import com.sogoodlabs.planner.model.dao.*;
 import com.sogoodlabs.planner.model.entities.Day;
 import com.sogoodlabs.planner.model.entities.TaskMapper;

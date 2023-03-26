@@ -1,8 +1,8 @@
 package com.sogoodlabs.planner.services;
 
 import com.sogoodlabs.planner.SpringTestConfig;
-import com.sogoodlabs.planner.dto.AssignLayerDto;
-import com.sogoodlabs.planner.dto.AssignMeanDto;
+import com.sogoodlabs.planner.model.dto.AssignLayerDto;
+import com.sogoodlabs.planner.model.dto.AssignMeanDto;
 import com.sogoodlabs.planner.model.dao.IDayDao;
 import com.sogoodlabs.planner.model.dao.ILayerDAO;
 import com.sogoodlabs.planner.model.dao.ITaskMappersDAO;

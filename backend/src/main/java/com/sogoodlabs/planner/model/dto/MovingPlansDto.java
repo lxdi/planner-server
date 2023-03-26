@@ -1,4 +1,4 @@
-package com.sogoodlabs.planner.dto;
+package com.sogoodlabs.planner.model.dto;
 
 import java.util.List;
 

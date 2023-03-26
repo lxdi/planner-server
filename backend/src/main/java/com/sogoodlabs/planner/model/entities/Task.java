@@ -2,7 +2,7 @@ package com.sogoodlabs.planner.model.entities;
 
 import com.sogoodlabs.common_mapper.annotations.IncludeInDto;
 import com.sogoodlabs.common_mapper.annotations.MapToClass;
-import com.sogoodlabs.planner.dto.TaskProgressDto;
+import com.sogoodlabs.planner.model.dto.TaskProgressDto;
 import com.sogoodlabs.planner.model.IEntity;
 
 import javax.persistence.*;

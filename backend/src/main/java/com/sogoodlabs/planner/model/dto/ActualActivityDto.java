@@ -1,4 +1,4 @@
-package com.sogoodlabs.planner.dto;
+package com.sogoodlabs.planner.model.dto;
 
 import com.sogoodlabs.common_mapper.annotations.IncludeInDto;
 import com.sogoodlabs.planner.model.entities.Repetition;

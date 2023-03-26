@@ -1,7 +1,7 @@
 package com.sogoodlabs.planner.services;
 
-import com.sogoodlabs.planner.dto.AssignLayerDto;
-import com.sogoodlabs.planner.dto.AssignMeanDto;
+import com.sogoodlabs.planner.model.dto.AssignLayerDto;
+import com.sogoodlabs.planner.model.dto.AssignMeanDto;
 import com.sogoodlabs.planner.model.dao.*;
 import com.sogoodlabs.planner.model.entities.*;
 import com.sogoodlabs.planner.util.SortUtils;

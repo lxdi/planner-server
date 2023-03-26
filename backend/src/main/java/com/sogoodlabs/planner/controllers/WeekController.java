@@ -2,8 +2,8 @@ package com.sogoodlabs.planner.controllers;
 
 
 import com.sogoodlabs.common_mapper.CommonMapper;
-import com.sogoodlabs.planner.dto.AssignMeanDto;
-import com.sogoodlabs.planner.dto.MovingPlansDto;
+import com.sogoodlabs.planner.model.dto.AssignMeanDto;
+import com.sogoodlabs.planner.model.dto.MovingPlansDto;
 import com.sogoodlabs.planner.model.dao.IDayDao;
 import com.sogoodlabs.planner.model.entities.Day;
 import com.sogoodlabs.planner.model.entities.Week;
