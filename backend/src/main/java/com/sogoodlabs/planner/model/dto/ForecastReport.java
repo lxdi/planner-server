@@ -1,10 +1,11 @@
 package com.sogoodlabs.planner.model.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ForecastReport {
 
-    private List<ForecastLayerReport> layerReports;
+    private List<ForecastLayerReport> layerReports = new ArrayList<>();
     private ForecastLayerReport allReport;
 
     public List<ForecastLayerReport> getLayerReports() {

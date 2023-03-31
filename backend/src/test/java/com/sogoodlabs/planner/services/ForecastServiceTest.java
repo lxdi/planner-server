@@ -42,9 +42,10 @@ public class ForecastServiceTest extends SpringTestConfig {
     public void forecastTest_noReps() {
         initData(null);
 
-        var res = forecastService.forecast(DateUtils.toDate("2023-03-25"), false);
+        var report = forecastService.forecast(DateUtils.toDate("2023-03-25"), false);
 
-        assertEquals("2023-04-23", res.getAllReport().getFinishAllTasksDate().toString());
+        assertEquals("2023-04-23", report.getAllReport().getFinishAllTasksDate().toString());
+        assertEquals(3, report.getLayerReports().size());
 
     }
 
@@ -71,7 +72,7 @@ public class ForecastServiceTest extends SpringTestConfig {
             testCreators.createTask("test task", layer1, repPlan);
         }
 
-        Layer layer12 = testCreators.createLayer(1, mean1, 3);
+        Layer layer12 = testCreators.createLayer(1, mean1, 2);
 
         for (int i = 0; i< 3; i++) {
             testCreators.createTask("test task", layer12, null);
@@ -79,7 +80,7 @@ public class ForecastServiceTest extends SpringTestConfig {
 
         Realm realm2 = testCreators.createRealm();
         Mean mean2 = testCreators.createMean("test1", realm2);
-        Layer layer21 = testCreators.createLayer(1, mean2, 2);
+        Layer layer21 = testCreators.createLayer(1, mean2, 1);
 
         for (int i = 0; i< 4; i++) {
             testCreators.createTask("test task", layer21, repPlan);

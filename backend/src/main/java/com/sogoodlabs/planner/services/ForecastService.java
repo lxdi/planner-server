@@ -68,7 +68,7 @@ public class ForecastService {
             lastTaskCompleted = forecastBacktracking(nextWeek, hoursPerWeek, 0, validReps, tasks,
                     (week, task, reps) -> forecastReportService.enrichReport(report, week, task, reps));
         } else {
-            lastTaskCompleted = forecast(nextWeek, hoursPerWeek, 0, validReps, tasks,
+            lastTaskCompleted = forecast(nextWeek, hoursPerWeek, validReps, tasks,
                     (week, task, reps) -> forecastReportService.enrichReport(report, week, task, reps));
         }
 
@@ -76,7 +76,7 @@ public class ForecastService {
         return report;
     }
 
-    private Date forecast(Week currentWeek, int hoursTotal, int hoursOccupiedByTasks,
+    private Date forecast(Week currentWeek, int hoursTotal,
                                       Set<Repetition> validReps,
                                       Map<Realm, Deque<Task>> tasks,
                                       TriConsumer<Week, Task, Set<Repetition>> taskAssignedCallback) {
@@ -89,7 +89,7 @@ public class ForecastService {
                 .filter(rep -> rep.getPlanDay().getWeek().getId().equals(currentWeek.getId()))
                 .toList();
 
-        var hoursAvail = hoursTotal - hoursOccupiedByTasks - repsInCurrentWeek.size();
+        var hoursAvail = hoursTotal - repsInCurrentWeek.size();
 
         if (hoursAvail >= 2) {
 
@@ -98,18 +98,18 @@ public class ForecastService {
             for (int i = 0; i < hoursAvail; i = i + 2) {
                 var curTask = chooseTask(tasks, realmsChosen, validReps, hoursTotal, currentWeek);
 
-                if (taskAssignedCallback != null) {
-                    taskAssignedCallback.accept(currentWeek, curTask.task, curTask.reps);
-                }
-
                 if (curTask == null) {
                     break;
+                }
+
+                if (taskAssignedCallback != null) {
+                    taskAssignedCallback.accept(currentWeek, curTask.task, curTask.reps);
                 }
             }
 
         }
 
-        var res = forecast(currentWeek.getNext(), hoursTotal, 0, validReps, tasks, taskAssignedCallback);
+        var res = forecast(currentWeek.getNext(), hoursTotal, validReps, tasks, taskAssignedCallback);
 
         if (res == null) {
             var sundayOfcurrentWeek = dayDao.findByWeek(currentWeek).stream()
