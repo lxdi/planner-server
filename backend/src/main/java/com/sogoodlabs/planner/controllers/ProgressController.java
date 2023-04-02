@@ -54,6 +54,8 @@ public class ProgressController {
     @PostMapping(value = "/finished", params = {"task-id", "plan-id"})
     public Map<String, Object> finishTaskWithSP(@RequestParam("task-id") String taskId, @RequestParam("plan-id") String planId){
         Task task = tasksDAO.findById(taskId).orElseThrow(() -> new RuntimeException("Task not found "+ taskId));
+
+        //TODO take repPlan from task
         RepetitionPlan plan = repPlanDAO.findById(planId).orElseThrow(() -> new RuntimeException("RepPlan not found "+ repPlanDAO));
         progressService.finishTask(task, plan, DateUtils.currentDate());
         return commonMapper.mapToDto(progressService.getByTask(task));

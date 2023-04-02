@@ -30,7 +30,7 @@ const tasksUI = function(layer, isEdit){
 
     for(var taskPos in layer.tasks){
       const task = layer.tasks[taskPos]
-      const progressStatusChecked = convertProgressStatusToBoolean(task)
+      const isCompleted = task.status == 'COMPLETED'
       tasksHTML.push(<div key={'layer_'+layer.depth+'_task_'+taskPos}
                           style={taskCssStyle}
                           draggable={isEdit?"true":"false"}
@@ -41,7 +41,7 @@ const tasksUI = function(layer, isEdit){
                             <div>
                               <a href='#' onClick={()=>fireEvent('task-modal', 'open', [layer, task])}>{task.title}</a>
                               <span style={{marginLeft:'3px'}}>
-                                {progressStatusChecked!=null?<input type='checkbox' checked={progressStatusChecked} disabled='true'/>: null}
+                                {isCompleted?<input type='checkbox' checked={isCompleted} disabled='true'/>: null}
                               </span>
                             </div>
                       </div>)
@@ -65,11 +65,4 @@ const tasksUI = function(layer, isEdit){
   }
 
   return tasksHTML
-}
-
-const convertProgressStatusToBoolean = function(task){
-  if(task.progressStatus==null){
-    return null
-  }
-  return task.progressStatus == 'completed'
 }

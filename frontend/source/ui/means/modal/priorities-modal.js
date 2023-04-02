@@ -23,6 +23,8 @@ export class PrioritiesModal extends React.Component {
       this.setState({})
     })
 
+    registerReaction('priorities-modal', 'forecast-rep', ['all-response'], ()=>this.setState({}))
+
   }
 
   render(){
@@ -73,6 +75,7 @@ const getConent = function(comp){
             <Tabs activeKey={comp.state.currentRealmId} onSelect={(e)=>handleSelectTab(comp, e)}>
                 {tabs}
               </Tabs>
+              {overallForecast()}
         </div>
 
 }
@@ -146,6 +149,19 @@ const layerControlsUI = function(layers, layer){
         </div>
 }
 
+const overallForecast = function(){
+  var reports = chkSt('forecast-rep', 'objects')
+
+  if(reports == null) {
+    fireEvent('forecast-rep', 'all-request')
+    return 'Loading...'
+  }
+
+  var allReport = reports['all']
+  return allReport.finishAllTasksDate
+
+}
+
 const layerProgress = function(layer){
   if(layer.tasks == null){
     return ''
@@ -156,7 +172,10 @@ const layerProgress = function(layer){
   var repsFinished = 0
 
   layer.tasks.forEach(task => {
-    tasksFinished = tasksFinished + taskRepStat(task.progress.taskMappers, 'finishDay').done
+
+    if (task.status == 'COMPLETED') {
+      tasksFinished++
+    }
 
     const repStat = taskRepStat(task.progress.repetitions, 'factDay')
     repsAll = repsAll + repStat.all

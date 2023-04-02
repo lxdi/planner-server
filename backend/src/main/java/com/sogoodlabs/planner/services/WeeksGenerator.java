@@ -5,6 +5,7 @@ import com.sogoodlabs.planner.model.dao.IWeekDAO;
 import com.sogoodlabs.planner.model.entities.Day;
 import com.sogoodlabs.planner.model.entities.DaysOfWeek;
 import com.sogoodlabs.planner.model.entities.Week;
+import com.sogoodlabs.planner.util.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -110,7 +111,14 @@ public class WeeksGenerator {
     }
 
     private Day getOrCreateDay(Date date, Week week, int num, DaysOfWeek dayOfWeek){
-        Day day = dayDao.findByDate(date);
+        var days = dayDao.findAllByDate(date);
+
+        if (days.size()>1) {
+            throw new RuntimeException("Found more than 1 day by date " + DateUtils.fromDate(date));
+        }
+
+        var day = days.size() == 0? null: days.get(0);
+
         if(day==null){
             day = new Day();
             day.setId(UUID.randomUUID().toString());

@@ -142,7 +142,7 @@ const repetitionsTableUI = function(repetitions, task, highlightId){
 }
 
 const removeUnfinishedRepsButton = function(task){
-  const action = ()=>fireEvent('progress-rep', 'delete-unfinished-reps', [task.rep])
+  const action = ()=>fireEvent('progress-rep', 'delete-unfinished-reps', [task.id])
   const message = 'Are sure you want to remove all unfinished repetitions for this Task?'
   return <Button bsStyle="default" bsSize="xsmall" onClick={()=> fireEvent('confirm-modal', 'open', [message, action])}>
           Remove unfinished

@@ -271,7 +271,7 @@ public class ForecastService {
         var lastWeek = getMostDistantWeek(reps);
         var week = currentWeek;
 
-        //TODO handle week == null because hasn't been generated
+        //TODO handle week == null 'cause week couldn't have been generated
         while(!week.getPrev().getId().equals(lastWeek.getId())) {
 
             var repsTotal = repsPerWeek(week, reps);
@@ -327,7 +327,9 @@ public class ForecastService {
         layers.sort(Comparator.comparing(Layer::getPriority)); //TODO check sort
 
         for(var layer : layers) {
-            var tasks = tasksDAO.findByLayer(layer);
+            var tasks = tasksDAO.findByLayer(layer).stream()
+                    .filter(t -> !t.getStatus().equals(Task.TaskStatus.COMPLETED))
+                    .sorted(Comparator.comparing(Task::getPosition)).toList();
 
             if (tasks.size() == 0){
                 continue;
@@ -335,9 +337,7 @@ public class ForecastService {
 
             var realm = layer.getMean().getRealm();
             result.computeIfAbsent(realm, k -> new LinkedList<>());
-            tasks.sort(Comparator.comparing(Task::getPosition)); //TODO check sort
             result.get(realm).addAll(tasks);
-
         }
 
         return result;
