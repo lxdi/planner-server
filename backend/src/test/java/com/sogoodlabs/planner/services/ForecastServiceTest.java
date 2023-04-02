@@ -3,20 +3,12 @@ package com.sogoodlabs.planner.services;
 import com.sogoodlabs.planner.SpringTestConfig;
 import com.sogoodlabs.planner.TestCreators;
 import com.sogoodlabs.planner.configuration.main.DefaultRepPlanCreationJob;
-import com.sogoodlabs.planner.model.dao.ILayerDAO;
-import com.sogoodlabs.planner.model.dao.IRealmDAO;
-import com.sogoodlabs.planner.model.dao.IRepDAO;
 import com.sogoodlabs.planner.model.dao.IRepPlanDAO;
 import com.sogoodlabs.planner.model.entities.*;
 import com.sogoodlabs.planner.util.DateUtils;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.UUID;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 public class ForecastServiceTest extends SpringTestConfig {
 
@@ -46,6 +38,7 @@ public class ForecastServiceTest extends SpringTestConfig {
 
         assertEquals("2023-04-23", report.getAllReport().getFinishAllTasksDate().toString());
         assertEquals(3, report.getLayerReports().size());
+        assertNull(report.getAllReport().getMostRepsDoneDate());
 
     }
 
@@ -56,9 +49,14 @@ public class ForecastServiceTest extends SpringTestConfig {
 
         initData(repPlan);
 
-        var res = forecastService.forecast(DateUtils.toDate("2023-03-25"), false);
+        var report = forecastService.forecast(DateUtils.toDate("2023-03-25"), false);
 
-        assertEquals("2023-05-28", res.getAllReport().getFinishAllTasksDate().toString());
+        assertEquals("2023-05-28", report.getAllReport().getFinishAllTasksDate().toString());
+        assertNotNull(report.getAllReport().getMostRepsDoneDate());
+
+//        for (var layerReport : report.getLayerReports()) {
+//            assertNotNull(layerReport.getMostRepsDoneDate());
+//        }
 
     }
 

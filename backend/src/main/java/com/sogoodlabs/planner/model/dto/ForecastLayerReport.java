@@ -8,7 +8,7 @@ public class ForecastLayerReport {
 
     private Layer layer;
     private Date finishAllTasksDate;
-    private Date finish70percentReps;
+    private Date mostRepsDoneDate;
 
 
     public Layer getLayer() {
@@ -27,11 +27,11 @@ public class ForecastLayerReport {
         this.finishAllTasksDate = finishAllTasksDate;
     }
 
-    public Date getFinish70percentReps() {
-        return finish70percentReps;
+    public Date getMostRepsDoneDate() {
+        return mostRepsDoneDate;
     }
 
-    public void setFinish70percentReps(Date finish70percentReps) {
-        this.finish70percentReps = finish70percentReps;
+    public void setMostRepsDoneDate(Date mostRepsDoneDate) {
+        this.mostRepsDoneDate = mostRepsDoneDate;
     }
 }
