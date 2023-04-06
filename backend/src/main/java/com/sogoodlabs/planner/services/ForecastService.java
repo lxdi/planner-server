@@ -5,6 +5,8 @@ import com.sogoodlabs.planner.model.dto.ForecastReport;
 import com.sogoodlabs.planner.model.entities.*;
 import com.sogoodlabs.planner.util.DateUtils;
 import com.sogoodlabs.planner.util.function.TriConsumer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -17,7 +19,9 @@ import java.util.function.BiConsumer;
 @Service
 public class ForecastService {
 
-    @Value("${forecast.type:backtracking}")
+    Logger log = LoggerFactory.getLogger(ForecastService.class);
+
+    @Value("${forecast.type:straight}")
     private String forecastType;
 
     @Autowired
@@ -59,7 +63,8 @@ public class ForecastService {
         var report = new ForecastReport();
 
         if (hoursPerWeek < 2) {
-            throw new RuntimeException("Not enough slots capacity " + hoursPerWeek);
+            log.warn("Not enough slots capacity " + hoursPerWeek);
+            return report;
         }
 
         Date lastTaskCompleted;
