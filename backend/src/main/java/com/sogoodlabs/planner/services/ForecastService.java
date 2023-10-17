@@ -4,6 +4,7 @@ import com.sogoodlabs.planner.model.dao.*;
 import com.sogoodlabs.planner.model.dto.ForecastReport;
 import com.sogoodlabs.planner.model.entities.*;
 import com.sogoodlabs.planner.util.DateUtils;
+import com.sogoodlabs.planner.util.ForecastUtils;
 import com.sogoodlabs.planner.util.function.TriConsumer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -44,6 +45,9 @@ public class ForecastService {
     @Autowired
     private ForecastReportService forecastReportService;
 
+    @Autowired
+    private ForecastBacktrackingService forecastBacktrackingService;
+
     @Transactional
     public ForecastReport forecast() {
         return forecast(DateUtils.currentDate(), forecastType.equals("backtracking"));
@@ -65,7 +69,7 @@ public class ForecastService {
         Date lastTaskCompleted;
 
         if (isBacktracking) {
-            lastTaskCompleted = forecastBacktracking(nextWeek, hoursPerWeek, 0, validReps, tasks,
+            lastTaskCompleted = forecastBacktrackingService.forecastBacktracking(nextWeek, hoursPerWeek, 0, validReps, tasks,
                     (week, task, reps) -> forecastReportService.enrichReport(report, week, task, reps));
         } else {
             lastTaskCompleted = forecast(nextWeek, hoursPerWeek, validReps, tasks,
@@ -81,7 +85,7 @@ public class ForecastService {
                                       Map<Realm, Deque<Task>> tasks,
                                       TriConsumer<Week, Task, Set<Repetition>> taskAssignedCallback) {
 
-        if (isTasksRanOut(tasks)) {
+        if (ForecastUtils.isTasksRanOut(tasks)) {
             return null;
         }
 
@@ -120,89 +124,6 @@ public class ForecastService {
         }
 
         return res;
-    }
-
-    private Date forecastBacktracking(Week currentWeek, int hoursTotal, int hoursOccupiedByTasks,
-                                      Set<Repetition> validReps,
-                                      Map<Realm, Deque<Task>> tasks,
-                                      TriConsumer<Week, Task, Set<Repetition>> taskAssignedCallback) {
-
-        if (isTasksRanOut(tasks)) {
-            return null;
-        }
-
-        var repsInCurrentWeek = validReps.stream()
-                .filter(rep -> rep.getPlanDay().getWeek().getId().equals(currentWeek.getId()))
-                .toList();
-
-        var hoursAvail = hoursTotal - hoursOccupiedByTasks - repsInCurrentWeek.size();
-
-        if (hoursAvail < 2) {
-            return forecastBacktracking(currentWeek.getNext(), hoursTotal, 0, validReps, tasks, taskAssignedCallback);
-        }
-
-        var sundayOfCurrentWeek = dayDao.findByWeek(currentWeek).stream()
-                .filter(day -> day.getWeekDay() == DaysOfWeek.sun)
-                .findFirst().get();
-
-        Date bestDate = null;
-        Task chosenTask = null;
-        Set<Repetition> chosenTaskReps = null;
-
-        for(var entry : tasks.entrySet()) {
-
-            if(entry.getValue().size()<1) {
-                continue;
-            }
-
-            var curTask = entry.getValue().pop();
-            var potReps = new HashSet<Repetition>();
-
-            if (curTask.getRepetitionPlan() != null) {
-                potReps.addAll(progressService.generateRepetitions(curTask.getRepetitionPlan(), sundayOfCurrentWeek.getDate(), curTask));
-                validReps.addAll(potReps);
-
-                if (!checkRepsAccommodate(currentWeek.getNext(), hoursTotal, validReps)) {
-                    entry.getValue().addFirst(curTask);
-                    validReps.removeAll(potReps);
-                    continue;
-                }
-            }
-
-            var localRes = forecastBacktracking(currentWeek, hoursTotal, hoursOccupiedByTasks + 2, validReps, tasks, taskAssignedCallback);
-
-            if (localRes==null) {
-                localRes = sundayOfCurrentWeek.getDate();
-            }
-
-            if (bestDate == null || localRes.before(bestDate)) {
-                bestDate = localRes;
-                chosenTask = curTask;
-                chosenTaskReps = potReps;
-            }
-
-            entry.getValue().addFirst(curTask);
-            validReps.removeAll(potReps);
-        }
-
-        if (taskAssignedCallback != null) {
-            taskAssignedCallback.accept(currentWeek, chosenTask, chosenTaskReps);
-        }
-
-        return bestDate;
-
-    }
-
-    private boolean isTasksRanOut(Map<Realm, Deque<Task>> tasks) {
-        var isTasksRanOut = true;
-
-        for(var entry : tasks.entrySet()) {
-            if(entry.getValue().size()>0) {
-                isTasksRanOut = false;
-            }
-        }
-
-        return isTasksRanOut;
     }
 
     static class ChosenTask {
@@ -252,7 +173,7 @@ public class ForecastService {
                 potReps.addAll(progressService.generateRepetitions(curTask.getRepetitionPlan(), wedOfCurrentWeek.getDate(), curTask));
                 validReps.addAll(potReps);
 
-                if (!checkRepsAccommodate(currentWeek.getNext(), hoursTotal, validReps)) {
+                if (!ForecastUtils.checkRepsAccommodate(currentWeek.getNext(), hoursTotal, validReps)) {
                     entry.getValue().addFirst(curTask);
                     validReps.removeAll(potReps);
                     continue;
@@ -265,49 +186,6 @@ public class ForecastService {
 
         return null;
     }
-
-    private boolean checkRepsAccommodate(Week currentWeek,  int hoursPerWeek, Set<Repetition> reps) {
-
-        var lastWeek = getMostDistantWeek(reps);
-        var week = currentWeek;
-
-        //TODO handle week == null because hasn't been generated
-        while(!week.getPrev().getId().equals(lastWeek.getId())) {
-
-            var repsTotal = repsPerWeek(week, reps);
-
-            if (repsTotal > hoursPerWeek) {
-                return false;
-            }
-
-            week = week.getNext();
-        }
-
-        return true;
-    }
-
-    private int repsPerWeek(Week week, Set<Repetition> reps) {
-        var res = 0;
-
-        res = res + reps.stream()
-                .filter(rep -> rep.getPlanDay().getWeek().getId().equals(week.getId())).toList().size();
-
-        return res;
-    }
-
-    private Week getMostDistantWeek(Set<Repetition> reps) {
-        Repetition res = null;
-
-        for(var rep : reps) {
-            if(res == null || res.getPlanDay().getDate().before(rep.getPlanDay().getDate())) {
-                res = rep;
-            }
-        }
-
-        return res.getPlanDay().getWeek();
-
-    }
-
 
     private int getSlotsHours() {
         // TODO optimize using SQL SUM on hours column
