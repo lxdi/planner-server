@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import {Table, Tabs, Tab, Button} from 'react-bootstrap'
 import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
 import {CommonModal} from './../../common/common-modal'
+import {formatDate} from '../../../utils/date-utils'
 
 export class PrioritiesModal extends React.Component {
   constructor(props){
@@ -22,6 +23,8 @@ export class PrioritiesModal extends React.Component {
       fireEvent('mean-rep', 'clean')
       this.setState({})
     })
+
+    registerReaction('priorities-modal', 'forecast-rep', ['all-response'], ()=>this.setState({}))
 
   }
 
@@ -73,6 +76,8 @@ const getConent = function(comp){
             <Tabs activeKey={comp.state.currentRealmId} onSelect={(e)=>handleSelectTab(comp, e)}>
                 {tabs}
               </Tabs>
+              {divisor()}
+              {overallForecast()}
         </div>
 
 }
@@ -112,6 +117,8 @@ const meansTabUI = function(means) {
                 <td></td>
                 <td></td>
                 <td></td>
+                <td></td>
+                <td></td>
               </tr>
               {result}
             </tbody>
@@ -121,6 +128,21 @@ const meansTabUI = function(means) {
 }
 
 const layerTrUI = function(meanTitle, layers, layer, progress){
+  var reports = chkSt('forecast-rep', 'objects')
+  var report = null
+
+  if(reports != null) {
+     report = reports[layer.id]
+  }
+
+  var allTasksFinishDay = 'Loading...'
+  var mostRepsDoneDate = 'Loading...'
+
+  if(reports != null && reports[layer.id] != null) {
+     allTasksFinishDay = formatDate(reports[layer.id].finishAllTasksDate)
+     mostRepsDoneDate = formatDate(reports[layer.id].mostRepsDoneDate)
+  }
+
   return <tr id={layer.id}>
                 <td>{layer.priority}</td>
                 <td>
@@ -134,6 +156,12 @@ const layerTrUI = function(meanTitle, layers, layer, progress){
                       <div>Tasks: {progress.tasksFinished}/{progress.tasksAll}, Repetitions: {progress.repsFinished}/{progress.repsAll}</div>
                   </div>
                 </td>
+                <td>
+                  <div>{allTasksFinishDay}</div>
+                </td>
+                <td>
+                  <div>{mostRepsDoneDate}</div>
+                </td>
                 <td>{layerControlsUI(layers, layer)}</td>
               </tr>
 }
@@ -146,6 +174,25 @@ const layerControlsUI = function(layers, layer){
         </div>
 }
 
+const overallForecast = function(){
+  var reports = chkSt('forecast-rep', 'objects')
+
+  if(reports == null) {
+    fireEvent('forecast-rep', 'all-request')
+    return 'Loading...'
+  }
+
+  var allReport = reports['all']
+  var allTasksFinished =  formatDate(allReport.finishAllTasksDate)
+  var almostDone =  formatDate(allReport.mostRepsDoneDate)
+
+  return <div>
+            <div>All tasks finished: {allTasksFinished}</div>
+            <div>All tasks finished and almost all repetitions: {almostDone}</div>
+        </div>
+
+}
+
 const layerProgress = function(layer){
   if(layer.tasks == null){
     return ''
@@ -156,7 +203,10 @@ const layerProgress = function(layer){
   var repsFinished = 0
 
   layer.tasks.forEach(task => {
-    tasksFinished = tasksFinished + taskRepStat(task.progress.taskMappers, 'finishDay').done
+
+    if (task.status == 'COMPLETED') {
+      tasksFinished++
+    }
 
     const repStat = taskRepStat(task.progress.repetitions, 'factDay')
     repsAll = repsAll + repStat.all
@@ -224,4 +274,8 @@ const swapPriorities = function(layers, layer, move) {
       curLayer.priority = curLayer.priority + ((-1)*move)
     }
   }
+}
+
+const divisor = function(){
+  return <div style={{backgroundColor:'lightgrey', width:'100%', height:'1px', marginLeft:'2px', marginRight:'2px', marginTop:'5px', marginBottom:'5px'}}></div>
 }

@@ -53,6 +53,9 @@ public class ProgressService {
 
         log.info("Finishing task {}", task.getId());
 
+        task.setStatus(Task.TaskStatus.COMPLETED);
+        tasksDAO.save(task);
+
         TaskMapper taskMapper = new TaskMapper();
         taskMapper.setId(UUID.randomUUID().toString());
         taskMapper.setTask(task);

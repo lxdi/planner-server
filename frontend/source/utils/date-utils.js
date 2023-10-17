@@ -2,6 +2,10 @@
 const oneDayMs =  24 * 60 * 60 * 1000
 
 export const formatDate = function(dateString){
+  if (dateString == null) {
+    return ''
+  }
+
   const date = new Date(dateString)
   return formatDateNumber(date.getDate()) + '.' + formatDateNumber(date.getMonth()+1) + '.' + date.getFullYear()
 }

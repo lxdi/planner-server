@@ -47,6 +47,7 @@ public class ForecastReportService {
 
     public void finishReport(ForecastReport report, Date date, Set<Repetition> reps) {
         var allReport = new ForecastLayerReport();
+        allReport.setId("all");
         allReport.setFinishAllTasksDate(date);
         var mostRepsDoneDay = calculateMostRepsDoneDate(reps);
 
@@ -61,12 +62,13 @@ public class ForecastReportService {
         var layerReports = report.getLayerReports().stream().filter(r -> r.getLayer().getId().equals(layer.getId())).toList();
 
         if(layerReports.size() > 1) {
-            throw new RuntimeException("Too many layer reports found");
+            throw new RuntimeException("Too many layer reports found for layer " + layer.getId());
         }
 
         if (layerReports.size() == 0){
             var layerReport = new ForecastLayerReport();
             layerReport.setLayer(layer);
+            layerReport.setId(layer.getId());
             report.getLayerReports().add(layerReport);
             return layerReport;
         }

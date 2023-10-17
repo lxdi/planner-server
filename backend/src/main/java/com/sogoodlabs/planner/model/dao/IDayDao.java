@@ -16,6 +16,8 @@ public interface IDayDao extends JpaRepository<Day, String> {
     Day findByDate(Date date);
     List<Day> findByWeek(Week week);
 
+    List<Day> findAllByDate(Date date);
+
     @Query("from Day where date >= :from and date <= :to")
     List<Day> findInRange(@Param("from") Date from, @Param("to") Date to);
 

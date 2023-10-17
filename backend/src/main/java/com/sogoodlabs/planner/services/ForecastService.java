@@ -6,6 +6,8 @@ import com.sogoodlabs.planner.model.entities.*;
 import com.sogoodlabs.planner.util.DateUtils;
 import com.sogoodlabs.planner.util.ForecastUtils;
 import com.sogoodlabs.planner.util.function.TriConsumer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -18,7 +20,9 @@ import java.util.function.BiConsumer;
 @Service
 public class ForecastService {
 
-    @Value("${forecast.type:backtracking}")
+    Logger log = LoggerFactory.getLogger(ForecastService.class);
+
+    @Value("${forecast.type:straight}")
     private String forecastType;
 
     @Autowired
@@ -63,7 +67,8 @@ public class ForecastService {
         var report = new ForecastReport();
 
         if (hoursPerWeek < 2) {
-            throw new RuntimeException("Not enough slots capacity " + hoursPerWeek);
+            log.warn("Not enough slots capacity " + hoursPerWeek);
+            return report;
         }
 
         Date lastTaskCompleted;
@@ -205,7 +210,9 @@ public class ForecastService {
         layers.sort(Comparator.comparing(Layer::getPriority)); //TODO check sort
 
         for(var layer : layers) {
-            var tasks = tasksDAO.findByLayer(layer);
+            var tasks = tasksDAO.findByLayer(layer).stream()
+                    .filter(t -> !t.getStatus().equals(Task.TaskStatus.COMPLETED))
+                    .sorted(Comparator.comparing(Task::getPosition)).toList();
 
             if (tasks.size() == 0){
                 continue;
@@ -213,9 +220,7 @@ public class ForecastService {
 
             var realm = layer.getMean().getRealm();
             result.computeIfAbsent(realm, k -> new LinkedList<>());
-            tasks.sort(Comparator.comparing(Task::getPosition)); //TODO check sort
             result.get(realm).addAll(tasks);
-
         }
 
         return result;
