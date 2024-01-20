@@ -2,7 +2,7 @@ package com.sogoodlabs.planner.model.entities;
 
 import com.sogoodlabs.common_mapper.annotations.IncludeInDto;
 import com.sogoodlabs.common_mapper.annotations.MapToClass;
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +11,7 @@ import java.util.List;
  */
 
 @Entity
+@Table(name = "means")
 public class Mean {
 
     @Id
@@ -19,17 +20,20 @@ public class Mean {
     String criteria;
 
     @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "next")
     Mean next;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent")
     Mean parent;
 //    @OneToMany(mappedBy = "parent")
 //    List<Mean> children;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "realm")
     Realm realm;
 
-    @Column(name = "hidechildren")
+    @Column(name = "hide_children")
     boolean hideChildren = false;
 
     @Transient

@@ -3,11 +3,12 @@ package com.sogoodlabs.planner.model.entities;
 import com.sogoodlabs.common_mapper.annotations.IncludeInDto;
 import com.sogoodlabs.common_mapper.annotations.MapToClass;
 import com.sogoodlabs.planner.model.IEntity;
+import jakarta.persistence.*;
 
-import javax.persistence.*;
 import java.util.List;
 
 @Entity
+@Table(name = "layers")
 public class Layer implements IEntity {
 
     @Id
@@ -17,6 +18,7 @@ public class Layer implements IEntity {
     int depth;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "mean")
     Mean mean;
 
     @Transient

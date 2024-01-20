@@ -9,11 +9,10 @@ spring.jpa.hibernate.naming.physical-strategy: org.hibernate.boot.model.naming.P
 spring:
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
-    hibernate.ddl-auto: update
+    hibernate.ddl-auto: validate
+
   datasource:
     url: jdbc:postgresql://postgres:5432/planner
     username: postgres
     password: postgres
   liquibase.change-log: classpath:liquibase/changelog.xml
-
-

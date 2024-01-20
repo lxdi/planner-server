@@ -3,19 +3,22 @@ package com.sogoodlabs.planner.model.entities;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.sql.Date;
 
 @Entity
+@Table(name = "days")
 public class Day {
 
     @Id
     private String id;
 
     @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "week")
     private Week week;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "week_day")
     private DaysOfWeek weekDay;
 
     @Basic

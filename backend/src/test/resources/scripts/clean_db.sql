@@ -1,18 +1,18 @@
 
 SET REFERENTIAL_INTEGRITY FALSE;
 
-delete from repetition;
+delete from repetitions;
 --delete from repetitionplan;
-delete from taskmapper;
+delete from task_mappers;
 
-delete from topic;
-delete from tasktesting;
-delete from task;
-delete from layer;
-delete from mean;
-delete from realm;
-delete from week;
-delete from day;
+delete from topics;
+delete from task_testings;
+delete from tasks;
+delete from layers;
+delete from means;
+delete from realms;
+delete from weeks;
+delete from days;
 
 SET REFERENTIAL_INTEGRITY TRUE;
 --

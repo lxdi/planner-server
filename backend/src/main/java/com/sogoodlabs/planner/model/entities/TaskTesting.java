@@ -1,20 +1,24 @@
 package com.sogoodlabs.planner.model.entities;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
+@Table(name = "task_testings")
 public class TaskTesting {
 
     @Id
     String id;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "task")
     Task task;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent")
     private TaskTesting parent;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "next")
     private TaskTesting next;
 
     String question;

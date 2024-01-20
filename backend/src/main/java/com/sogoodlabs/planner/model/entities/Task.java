@@ -4,9 +4,8 @@ import com.sogoodlabs.common_mapper.annotations.IncludeInDto;
 import com.sogoodlabs.common_mapper.annotations.MapToClass;
 import com.sogoodlabs.planner.model.dto.TaskProgressDto;
 import com.sogoodlabs.planner.model.IEntity;
-import com.sun.istack.NotNull;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.*;
 
 /**
@@ -14,6 +13,7 @@ import java.util.*;
  */
 
 @Entity
+@Table(name = "tasks")
 public class Task implements IEntity {
 
     public enum TaskStatus {
@@ -30,14 +30,15 @@ public class Task implements IEntity {
     String title;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "layer")
     Layer layer;
 
     int position;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "repetition_plan")
     private RepetitionPlan repetitionPlan;
 
-    @NotNull
     @Enumerated(EnumType.STRING)
     private TaskStatus status = TaskStatus.CREATED;
 

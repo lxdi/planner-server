@@ -1,0 +1,178 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="0_20240120-1" author="user">
+
+        <createTable tableName="realms">
+            <column name="id" type="varchar"><constraints primaryKey="true" nullable="false" /></column>
+            <column name="priority" type="integer" />
+            <column name="title" type="varchar" />
+            <column name="current" type="boolean" />
+        </createTable>
+
+        <createTable tableName="means">
+            <column name="id" type="varchar"><constraints primaryKey="true" nullable="false" /></column>
+            <column name="title" type="varchar" />
+            <column name="criteria" type="varchar" />
+            <column name="next" type="varchar" />
+            <column name="parent" type="varchar" />
+            <column name="realm" type="varchar" />
+            <column name="hide_children" type="boolean" />
+        </createTable>
+
+        <addForeignKeyConstraint constraintName="fk_mean_to_mean_next" baseColumnNames="next"
+                baseTableName="means" referencedColumnNames="id" referencedTableName="means"/>
+
+        <addForeignKeyConstraint constraintName="fk_mean_to_parent" baseColumnNames="parent"
+                                 baseTableName="means" referencedColumnNames="id" referencedTableName="means"/>
+
+        <addForeignKeyConstraint constraintName="fk_mean_to_realm" baseColumnNames="realm"
+                                 baseTableName="means" referencedColumnNames="id" referencedTableName="realms"/>
+
+        <createTable tableName="layers">
+            <column name="id" type="varchar"><constraints primaryKey="true" nullable="false" /></column>
+            <column name="priority" type="integer" />
+            <column name="depth" type="integer" />
+            <column name="mean" type="varchar" />
+        </createTable>
+
+        <addForeignKeyConstraint constraintName="fk_layer_to_mean" baseColumnNames="mean"
+                                 baseTableName="layers" referencedColumnNames="id" referencedTableName="means"/>
+
+        <createTable tableName="weeks">
+            <column name="id" type="varchar"><constraints primaryKey="true" nullable="false" /></column>
+            <column name="year_of_week" type="integer" />
+            <column name="num" type="integer" />
+            <column name="prev" type="varchar" />
+            <column name="next" type="varchar" />
+        </createTable>
+
+        <addForeignKeyConstraint constraintName="fk_week_to_week_prev" baseColumnNames="prev"
+                                 baseTableName="weeks" referencedColumnNames="id" referencedTableName="weeks"/>
+
+        <addForeignKeyConstraint constraintName="fk_week_to_week_next" baseColumnNames="next"
+                                 baseTableName="weeks" referencedColumnNames="id" referencedTableName="weeks"/>
+
+        <createTable tableName="days">
+            <column name="id" type="varchar"><constraints primaryKey="true" nullable="false" /></column>
+            <column name="week" type="varchar" />
+            <column name="week_day" type="varchar" />
+            <column name="date" type="date" />
+            <column name="num" type="integer" />
+        </createTable>
+
+        <addForeignKeyConstraint constraintName="fk_day_to_week" baseColumnNames="week"
+                                 baseTableName="days" referencedColumnNames="id" referencedTableName="weeks"/>
+
+
+        <createTable tableName="repetition_plans">
+            <column name="id" type="varchar"><constraints primaryKey="true" nullable="false" /></column>
+            <column name="title" type="varchar" />
+            <column name="plan" type="integer array[50]" />
+            <column name="day_step" type="boolean" />
+        </createTable>
+
+<!--        <sql endDelimiter="\">-->
+<!--            ALTER TABLE repetition_plans ADD COLUMN plan integer array[50];-->
+<!--            \-->
+<!--        </sql>-->
+
+
+        <createTable tableName="tasks">
+            <column name="id" type="varchar"><constraints primaryKey="true" nullable="false" /></column>
+            <column name="title" type="varchar" />
+            <column name="layer" type="varchar" />
+            <column name="position" type="integer" />
+            <column name="repetition_plan" type="varchar" />
+            <column name="status" type="varchar" />
+        </createTable>
+
+        <addForeignKeyConstraint constraintName="fk_task_to_rep_plan" baseColumnNames="repetition_plan"
+                                 baseTableName="tasks" referencedColumnNames="id" referencedTableName="repetition_plans"/>
+
+        <createTable tableName="external_tasks">
+            <column name="id" type="varchar"><constraints primaryKey="true" nullable="false" /></column>
+            <column name="description" type="varchar" />
+            <column name="hours" type="integer" />
+            <column name="day" type="varchar" />
+        </createTable>
+
+
+        <addForeignKeyConstraint constraintName="fk_ex_task_to_day" baseColumnNames="day"
+                                 baseTableName="external_tasks" referencedColumnNames="id" referencedTableName="days"/>
+
+
+        <createTable tableName="repetitions">
+            <column name="id" type="varchar"><constraints primaryKey="true" nullable="false" /></column>
+            <column name="task" type="varchar" />
+            <column name="plan_day" type="varchar" />
+            <column name="fact_day" type="varchar" />
+            <column name="is_repetition_only" type="boolean" />
+        </createTable>
+
+        <addForeignKeyConstraint constraintName="fk_repetition_to_task" baseColumnNames="task"
+                                 baseTableName="repetitions" referencedColumnNames="id" referencedTableName="tasks"/>
+
+        <addForeignKeyConstraint constraintName="fk_repetition_to_fact_day" baseColumnNames="fact_day"
+                                 baseTableName="repetitions" referencedColumnNames="id" referencedTableName="days"/>
+
+        <addForeignKeyConstraint constraintName="fk_repetition_to_plan_day" baseColumnNames="plan_day"
+                                 baseTableName="repetitions" referencedColumnNames="id" referencedTableName="days"/>
+
+
+        <createTable tableName="slots">
+            <column name="id" type="varchar"><constraints primaryKey="true" nullable="false" /></column>
+            <column name="hours" type="integer" />
+            <column name="day_of_week" type="varchar" />
+            <column name="realm" type="varchar" />
+        </createTable>
+
+        <addForeignKeyConstraint constraintName="fk_slot_to_realm" baseColumnNames="realm"
+                                 baseTableName="slots" referencedColumnNames="id" referencedTableName="realms"/>
+
+
+        <createTable tableName="task_mappers">
+            <column name="id" type="varchar"><constraints primaryKey="true" nullable="false" /></column>
+            <column name="task" type="varchar" />
+            <column name="plan_day" type="varchar" />
+            <column name="finish_day" type="varchar" />
+        </createTable>
+
+        <addForeignKeyConstraint constraintName="fk_task_mapper_to_task" baseColumnNames="task"
+                                 baseTableName="task_mappers" referencedColumnNames="id" referencedTableName="tasks"/>
+
+        <addForeignKeyConstraint constraintName="fk_task_mapper_to_plan_day" baseColumnNames="plan_day"
+                                 baseTableName="task_mappers" referencedColumnNames="id" referencedTableName="days"/>
+
+        <addForeignKeyConstraint constraintName="fk_task_mapper_to_finish_day" baseColumnNames="finish_day"
+                                 baseTableName="task_mappers" referencedColumnNames="id" referencedTableName="days"/>
+
+        <createTable tableName="task_testings">
+            <column name="id" type="varchar"><constraints primaryKey="true" nullable="false" /></column>
+            <column name="task" type="varchar" />
+            <column name="parent" type="varchar" />
+            <column name="next" type="varchar" />
+            <column name="question" type="varchar" />
+        </createTable>
+
+        <addForeignKeyConstraint constraintName="fk_task_testing_to_task" baseColumnNames="task"
+                                 baseTableName="task_testings" referencedColumnNames="id" referencedTableName="tasks"/>
+
+        <addForeignKeyConstraint constraintName="fk_task_testing_to_parent" baseColumnNames="parent"
+                                 baseTableName="task_testings" referencedColumnNames="id" referencedTableName="task_testings"/>
+
+        <addForeignKeyConstraint constraintName="fk_task_testing_to_next" baseColumnNames="next"
+                                 baseTableName="task_testings" referencedColumnNames="id" referencedTableName="task_testings"/>
+
+        <createTable tableName="topics">
+            <column name="id" type="varchar"><constraints primaryKey="true" nullable="false" /></column>
+            <column name="task" type="varchar" />
+            <column name="title" type="varchar" />
+            <column name="source" type="varchar" />
+        </createTable>
+
+        <addForeignKeyConstraint constraintName="fk_topic_to_task" baseColumnNames="task"
+                                 baseTableName="topics" referencedColumnNames="id" referencedTableName="tasks"/>
+
+    </changeSet>
+
+</databaseChangeLog>

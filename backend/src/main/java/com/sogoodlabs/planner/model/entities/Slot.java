@@ -1,10 +1,10 @@
 package com.sogoodlabs.planner.model.entities;
 
-import com.sun.istack.NotNull;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
+@Table(name = "slots")
 public class Slot {
 
     @Id
@@ -12,11 +12,12 @@ public class Slot {
 
     private int hours;
 
-    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(name = "day_of_week")
     private DaysOfWeek dayOfWeek;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false)
+    @JoinColumn(name= "realm", nullable = false)
     private Realm realm;
 
     public String getId() {

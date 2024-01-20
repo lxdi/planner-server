@@ -1,11 +1,9 @@
 package com.sogoodlabs.planner.model.entities;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import jakarta.persistence.*;
 
 @Entity
+@Table(name = "repetition_plans")
 public class RepetitionPlan {
 
     @Id
@@ -15,6 +13,7 @@ public class RepetitionPlan {
 
     int[] plan;
 
+    @Column(name = "day_step")
     boolean dayStep;
 
     public String getId() {

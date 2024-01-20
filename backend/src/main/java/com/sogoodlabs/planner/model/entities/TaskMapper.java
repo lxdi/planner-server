@@ -2,21 +2,25 @@ package com.sogoodlabs.planner.model.entities;
 
 import com.sogoodlabs.common_mapper.annotations.IncludeInDto;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
+@Table(name = "task_mappers")
 public class TaskMapper {
 
     @Id
     String id;
 
     @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "task")
     Task task;
 
     @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "plan_day")
     Day planDay;
 
     @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "finish_day")
     Day finishDay;
 
     public String getId() {

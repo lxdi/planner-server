@@ -3,27 +3,32 @@ package com.sogoodlabs.planner.model.entities;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.sogoodlabs.common_mapper.annotations.IncludeInDto;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 @Entity
+@Table(name = "repetitions")
 public class Repetition {
 
     @Id
     String id;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "task")
     Task task;
 
     @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "plan_day")
     Day planDay;
 
     @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "fact_day")
     Day factDay;
 
+    @Column(name = "is_repetition_only")
     private boolean isRepetitionOnly = false;
 
     public String getId() {

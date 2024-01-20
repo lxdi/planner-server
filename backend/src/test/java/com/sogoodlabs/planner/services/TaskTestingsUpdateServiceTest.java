@@ -8,7 +8,7 @@ import com.sogoodlabs.planner.model.entities.TaskTesting;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 import java.util.*;
 
 import static org.junit.Assert.assertEquals;
