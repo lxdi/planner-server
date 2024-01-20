@@ -20,6 +20,8 @@ HELP.md
 *.ipr
 out/
 
+.vscode
+
 frontend/build/bundle.js
 frontend/node_modules/
 frontend/package-lock.json

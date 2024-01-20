@@ -175,6 +175,7 @@ const layerControlsUI = function(layers, layer){
 }
 
 const overallForecast = function(){
+
   var reports = chkSt('forecast-rep', 'objects')
 
   if(reports == null) {
@@ -183,12 +184,10 @@ const overallForecast = function(){
   }
 
   var allReport = reports['all']
-  var allTasksFinished =  formatDate(allReport.finishAllTasksDate)
-  var almostDone =  formatDate(allReport.mostRepsDoneDate)
 
   return <div>
-            <div>All tasks finished: {allTasksFinished}</div>
-            <div>All tasks finished and almost all repetitions: {almostDone}</div>
+            <div>All tasks finished: {allReport == null? '-' : formatDate(allReport.finishAllTasksDate)}</div>
+            <div>All tasks finished and almost all repetitions: { allReport == null? '-' : formatDate(allReport.mostRepsDoneDate)}</div>
         </div>
 
 }
