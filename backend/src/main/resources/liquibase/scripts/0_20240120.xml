@@ -67,14 +67,9 @@
         <createTable tableName="repetition_plans">
             <column name="id" type="varchar"><constraints primaryKey="true" nullable="false" /></column>
             <column name="title" type="varchar" />
-            <column name="plan" type="integer array[50]" />
+<!--            <column name="plan" type="integer array[50]" />-->
             <column name="day_step" type="boolean" />
         </createTable>
-
-<!--        <sql endDelimiter="\">-->
-<!--            ALTER TABLE repetition_plans ADD COLUMN plan integer array[50];-->
-<!--            \-->
-<!--        </sql>-->
 
 
         <createTable tableName="tasks">
@@ -174,5 +169,30 @@
                                  baseTableName="topics" referencedColumnNames="id" referencedTableName="tasks"/>
 
     </changeSet>
+
+    <changeSet id="0_20240120-2" author="user">
+
+        <preConditions  onFail="MARK_RAN">
+            <dbms  type="postgresql"  />
+        </preConditions>
+
+        <sql endDelimiter="\">
+            ALTER TABLE repetition_plans ADD COLUMN plan integer[];
+            \
+        </sql>
+    </changeSet>
+
+    <changeSet id="0_20240120-3" author="user">
+
+        <preConditions  onFail="MARK_RAN">
+            <dbms  type="h2"  />
+        </preConditions>
+
+        <sql endDelimiter="\">
+            ALTER TABLE repetition_plans ADD COLUMN plan integer array[50];
+            \
+        </sql>
+    </changeSet>
+
 
 </databaseChangeLog>
