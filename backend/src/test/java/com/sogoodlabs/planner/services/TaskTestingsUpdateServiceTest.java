@@ -5,13 +5,14 @@ import com.sogoodlabs.planner.model.dao.ITaskTestingDAO;
 import com.sogoodlabs.planner.model.dao.ITasksDAO;
 import com.sogoodlabs.planner.model.entities.Task;
 import com.sogoodlabs.planner.model.entities.TaskTesting;
-import org.junit.Test;
+
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import jakarta.transaction.Transactional;
 import java.util.*;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
 public class TaskTestingsUpdateServiceTest extends SpringTestConfig {

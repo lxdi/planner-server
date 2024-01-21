@@ -11,8 +11,9 @@ import com.sogoodlabs.planner.model.entities.RepetitionPlan;
 import com.sogoodlabs.planner.model.entities.Task;
 import com.sogoodlabs.planner.util.DateUtils;
 import com.sogoodlabs.planner.util.IdUtils;
-import org.junit.Before;
-import org.junit.Test;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,7 +21,7 @@ import java.sql.Date;
 import java.util.List;
 import java.util.UUID;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
 public class ProgressServiceTest extends SpringTestConfig {
@@ -48,7 +49,7 @@ public class ProgressServiceTest extends SpringTestConfig {
     private RepetitionPlan dayRepetitionPlan;
     private Date finishDate;
 
-    @Before
+    @BeforeEach
     public void init(){
         super.init();
 
@@ -72,9 +73,9 @@ public class ProgressServiceTest extends SpringTestConfig {
 
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test
     public void progressServiceTest_weeksNotGenerated(){
-        progressService.finishTask(task, repetitionPlan, finishDate);
+        assertThrows( RuntimeException.class, () -> progressService.finishTask(task, repetitionPlan, finishDate));
     }
 
     @Test

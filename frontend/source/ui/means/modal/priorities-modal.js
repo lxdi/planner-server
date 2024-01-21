@@ -131,16 +131,19 @@ const layerTrUI = function(meanTitle, layers, layer, progress){
   var reports = chkSt('forecast-rep', 'objects')
   var report = null
 
+  var allTasksFinishDay = 'Loading...'
+  var mostRepsDoneDate = 'Loading...'
+
   if(reports != null) {
      report = reports[layer.id]
   }
 
-  var allTasksFinishDay = 'Loading...'
-  var mostRepsDoneDate = 'Loading...'
-
-  if(reports != null && reports[layer.id] != null) {
+  if(report != null) {
      allTasksFinishDay = formatDate(reports[layer.id].finishAllTasksDate)
      mostRepsDoneDate = formatDate(reports[layer.id].mostRepsDoneDate)
+  } else {
+    var allTasksFinishDay = 'No slots'
+    var mostRepsDoneDate = 'No slots'
   }
 
   return <tr id={layer.id}>

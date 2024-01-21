@@ -26,14 +26,11 @@ dependencies {
 
     runtimeOnly "org.postgresql:postgresql:42.5.1"
 
+    //testImplementation 'org.junit.jupiter:junit-jupiter-engine'
+    testImplementation('org.junit.jupiter:junit-jupiter')
     testImplementation "org.mockito:mockito-all:1.10.19"
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'com.h2database:h2'
-
-    //TODO remove after refactoring tests
-    testImplementation ('org.junit.vintage:junit-vintage-engine') {
-        exclude group: 'org.hamcrest', module: 'hamcrest-core'
-    }
 }
 
 task copyFront(type: Copy) {
@@ -50,4 +47,8 @@ clean.dependsOn fullClean
 
 bootJar {
     archiveFileName = 'ROOT.jar'
+}
+
+test {
+    useJUnitPlatform()
 }

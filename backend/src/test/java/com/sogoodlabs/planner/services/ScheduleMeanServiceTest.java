@@ -11,15 +11,16 @@ import com.sogoodlabs.planner.model.entities.Layer;
 import com.sogoodlabs.planner.model.entities.Task;
 import com.sogoodlabs.planner.model.entities.TaskMapper;
 import com.sogoodlabs.planner.util.DateUtils;
-import org.junit.Before;
-import org.junit.Test;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.UUID;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
 public class ScheduleMeanServiceTest extends SpringTestConfig {
@@ -42,7 +43,7 @@ public class ScheduleMeanServiceTest extends SpringTestConfig {
     @Autowired
     private ITaskMappersDAO taskMappersDAO;
 
-    @Before
+    @BeforeEach
     public void init(){
         super.init();
         weeksGenerator.generateYear(2021);

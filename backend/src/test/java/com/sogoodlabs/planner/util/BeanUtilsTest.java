@@ -1,10 +1,11 @@
 package com.sogoodlabs.planner.util;
 
 import com.sogoodlabs.planner.model.entities.Mean;
-import org.junit.Test;
 import java.lang.reflect.InvocationTargetException;
 
-import static org.junit.Assert.assertNotNull;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class BeanUtilsTest {
 

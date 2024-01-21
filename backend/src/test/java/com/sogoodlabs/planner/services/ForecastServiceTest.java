@@ -6,9 +6,12 @@ import com.sogoodlabs.planner.configuration.main.DefaultRepPlanCreationJob;
 import com.sogoodlabs.planner.model.dao.IRepPlanDAO;
 import com.sogoodlabs.planner.model.entities.*;
 import com.sogoodlabs.planner.util.DateUtils;
-import org.junit.Test;
+
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
-import static org.junit.Assert.*;
 
 public class ForecastServiceTest extends SpringTestConfig {
 
@@ -25,6 +28,7 @@ public class ForecastServiceTest extends SpringTestConfig {
     private IRepPlanDAO repPlanDAO;
 
 
+    @BeforeEach
     public void init() {
         weeksGenerator.generateYear(2023);
         //weeksGenerator.generateYear(2024);

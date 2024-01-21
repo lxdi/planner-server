@@ -1,9 +1,10 @@
 package com.sogoodlabs.planner.util;
 
 import com.sogoodlabs.planner.util.BitUtils;
-import org.junit.Test;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.Test;
 
 public class BitUtilsTests {
 
