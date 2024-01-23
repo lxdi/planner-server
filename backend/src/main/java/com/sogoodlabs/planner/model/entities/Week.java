@@ -3,7 +3,10 @@ package com.sogoodlabs.planner.model.entities;
 
 import com.sogoodlabs.common_mapper.annotations.IncludeInDto;
 
+import com.sogoodlabs.planner.util.DateUtils;
 import jakarta.persistence.*;
+
+import java.sql.Date;
 import java.util.List;
 
 /**

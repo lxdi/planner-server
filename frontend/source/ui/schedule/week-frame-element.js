@@ -25,6 +25,7 @@ export class WeekElement extends React.Component {
   constructor(props){
     super(props)
     this.state = {full: this.props.full}
+
     if(this.state.full==null){
       this.state.full = true
     }
@@ -35,21 +36,20 @@ export class WeekElement extends React.Component {
       return 'Loading...'
     }
 
-    const days = []
+    const daysUIcells = []
+    var currentDay = getCurrentDay(this.props.week.days)
+
     this.props.week.days.forEach(day => {
-      days.push(<td>{getDayCellUI(day, this.state.full)}</td>)
+      daysUIcells.push(<td>{getDayCellUI(day, currentDay==day, currentDay!=null, this.state.full)}</td>)
     })
 
-    var weekStyleVar = weekStyle
-    // if(this.state.full){
-    //   weekStyleVar = isCurrentWeek(this.props.week)?weekCurrentStyle: weekStyle
-    // }
+    var weekStyleVar = weekStyle //currentDay==null? weekStyle: weekCurrentStyle
 
     return <div key = {this.props.week.id} style={weekStyleVar}>
             {yearLabel(this.props.week)}
             <table style={{borderCollapse:'collapse', width:'100%', tableLayout: 'fixed'}}>
                   <tr>
-                    {days}
+                    {daysUIcells}
                   </tr>
             </table>
           </div>
@@ -64,21 +64,15 @@ const yearLabel = function(week){
 }
 
 
-const getDayCellUI = function(day, isFull){
-  var style = null
-
-  if(isCurrentDay(day)){
-    style = todayCellStyle
-  } else {
-    style = dayCellStyle
-  }
+const getDayCellUI = function(day, isCurrent, isCurrentWeek, isFull){
+  var style = isCurrent? todayCellStyle: dayCellStyle
 
   return <div style={style}>
-          {isFull? getDayContentFull(day): <div style={{fontWeight: 'bold'}}>{day.weekDay}</div>}
+          {isFull? getDayContentFull(day, isCurrentWeek): <div style={{fontWeight: 'bold'}}>{day.weekDay}</div>}
         </div>
 }
 
-const getDayContentFull = function(day){
+const getDayContentFull = function(day, isCurrentWeek){
   const dayCal = formatDate(day.date, 'day')
   const month = formatDate(day.date, 'month')
   const style = JSON.parse(JSON.stringify(getFillmentStyle(day)))
@@ -94,7 +88,7 @@ const getDayContentFull = function(day){
       onDragOver={e => e.preventDefault()}
       onDrop={e => onDrop(e, day)}>
 
-        <div style = {getUrgencyStyle(day)}>
+        <div style = {isCurrentWeek? Object.assign({height: '100px'}, getUrgencyStyle(day)): getUrgencyStyle(day)}>
           <div style = {{verticalAlign: 'top', fontSize:'9px', display:'inline-block'}}>
             <div style = {{color: 'grey'}}>{dayCal}</div>
             <div style = {{color: 'red'}}>{dayCal=='01'? month: null}</div>
@@ -153,10 +147,13 @@ const zeroToDash = function(num){
   return num
 }
 
-const isCurrentWeek = function(week){
-  var result = false
-  week.days.filter(day => isCurrentDay(day)).forEach(day => result = true)
-  return result
+const getCurrentDay = function(days) {
+  for (var i in days) {
+    if (isCurrentDay(days[i])) {
+      return days[i]
+    }
+  }
+  return null
 }
 
 const isCurrentDay = function(day){
