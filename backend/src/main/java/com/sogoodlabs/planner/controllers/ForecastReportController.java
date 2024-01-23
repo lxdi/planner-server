@@ -1,8 +1,7 @@
 package com.sogoodlabs.planner.controllers;
 
 import com.sogoodlabs.common_mapper.CommonMapper;
-import com.sogoodlabs.planner.services.ForecastReportService;
-import com.sogoodlabs.planner.services.ForecastService;
+import com.sogoodlabs.planner.services.forecast.ForecastService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

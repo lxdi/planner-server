@@ -1,7 +1,8 @@
-package com.sogoodlabs.planner.services;
+package com.sogoodlabs.planner.services.forecast;
 
 import com.sogoodlabs.planner.model.dao.IDayDao;
 import com.sogoodlabs.planner.model.entities.*;
+import com.sogoodlabs.planner.services.ProgressService;
 import com.sogoodlabs.planner.util.function.TriConsumer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

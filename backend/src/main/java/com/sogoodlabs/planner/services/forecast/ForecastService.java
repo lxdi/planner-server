@@ -1,8 +1,9 @@
-package com.sogoodlabs.planner.services;
+package com.sogoodlabs.planner.services.forecast;
 
 import com.sogoodlabs.planner.model.dao.*;
 import com.sogoodlabs.planner.model.dto.ForecastReport;
 import com.sogoodlabs.planner.model.entities.*;
+import com.sogoodlabs.planner.services.ProgressService;
 import com.sogoodlabs.planner.util.DateUtils;
 import com.sogoodlabs.planner.util.ForecastUtils;
 import com.sogoodlabs.planner.util.function.TriConsumer;
@@ -15,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Date;
 import java.util.*;
-import java.util.function.BiConsumer;
 
 @Service
 public class ForecastService {

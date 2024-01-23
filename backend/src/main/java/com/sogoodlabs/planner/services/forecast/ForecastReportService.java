@@ -1,4 +1,4 @@
-package com.sogoodlabs.planner.services;
+package com.sogoodlabs.planner.services.forecast;
 
 import com.sogoodlabs.planner.model.dao.IDayDao;
 import com.sogoodlabs.planner.model.dto.ForecastLayerReport;

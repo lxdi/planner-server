@@ -7,7 +7,6 @@ public class AssignMeanDto {
 
     private List<AssignLayerDto> layers = new ArrayList<>();
     private String startDayId;
-    private int tasksPerWeek;
 
     public List<AssignLayerDto> getLayers() {
         return layers;
@@ -25,11 +24,4 @@ public class AssignMeanDto {
         this.startDayId = startDayId;
     }
 
-    public int getTasksPerWeek() {
-        return tasksPerWeek;
-    }
-
-    public void setTasksPerWeek(int tasksPerWeek) {
-        this.tasksPerWeek = tasksPerWeek;
-    }
 }

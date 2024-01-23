@@ -36,6 +36,9 @@ public class ScheduleMeanService {
     @Autowired
     private ILayerDAO layerDAO;
 
+    @Autowired
+    private ISlotDAO slotDAO;
+
     public void schedule(AssignMeanDto assignMeanDto){
         if (assignMeanDto.getLayers() == null || assignMeanDto.getLayers().isEmpty()) {
             log.warn("No tasks to assign");
@@ -54,7 +57,7 @@ public class ScheduleMeanService {
         Day day = dayDao.findById(assignMeanDto.getStartDayId())
                 .orElseThrow(()->new RuntimeException("Day not found by id " + assignMeanDto.getStartDayId()));
 
-        schedule(tasks, day, assignMeanDto.getTasksPerWeek());
+        schedule(tasks, day);
     }
 
     private Stream<Task> getTasks(AssignLayerDto assignLayerDto){
@@ -85,38 +88,42 @@ public class ScheduleMeanService {
         return task;
     }
 
-    private void schedule(List<Task> tasks, Day startOn, int daysPerWeek){
+    private void schedule(List<Task> tasks, Day startOn){
         LinkedList<Task> taskStack = new LinkedList<>(tasks);
         Week currentWeek = startOn.getWeek();
-        schedule(taskStack, currentWeek, daysPerWeek, startOn.getWeekDay());
+        var slots  = slotDAO.findByRealm(taskStack.peek().getLayer().getMean().getRealm());
+
+        var daysOfWeek = slots.stream()
+                        .filter(slot -> slot.getHours() >= 2)
+                        .map(Slot::getDayOfWeek)
+                        .toList();
+
+        if (daysOfWeek.isEmpty()) {
+            log.info("No slots found to schedule");
+            return;
+        }
+
+        scheduleOneTask(taskStack, currentWeek, daysOfWeek, startOn.getWeekDay());
         currentWeek = currentWeek.getNext();
 
         while(!taskStack.isEmpty()){
-            schedule(taskStack, currentWeek, daysPerWeek);
+            scheduleOneTask(taskStack, currentWeek, daysOfWeek, null);
             currentWeek = currentWeek.getNext();
             //TODO handle nextWeek == null
         }
     }
 
-    private void schedule(LinkedList<Task> tasks, Week week, int slots){
-        schedule(tasks, week, slots, null);
-    }
+    private void scheduleOneTask(LinkedList<Task> tasks, Week week, List<DaysOfWeek> daysToSchedule, DaysOfWeek notBeforeDay){
 
-    private void schedule(LinkedList<Task> tasks, Week week, int slots, DaysOfWeek notBeforeDay){
-        List<Day> days = availableDaysToSchedule(week, notBeforeDay);
+        List<Day> days = availableDaysToSchedule(week, daysToSchedule, notBeforeDay);
 
         for(Day day : days){
-            if(slots<1){
-                break;
-            }
-
             Task task = tasks.pop();
             TaskMapper taskMapper = new TaskMapper();
             taskMapper.setId(UUID.randomUUID().toString());
             taskMapper.setTask(task);
             taskMapper.setPlanDay(day);
             taskMappersDAO.save(taskMapper);
-            slots--;
 
             if(tasks.isEmpty()){
                 break;
@@ -125,10 +132,11 @@ public class ScheduleMeanService {
     }
 
 
-    private List<Day> availableDaysToSchedule(Week week, DaysOfWeek notBeforeDay){
+    private List<Day> availableDaysToSchedule(Week week, List<DaysOfWeek> daysToSchedule, DaysOfWeek notBeforeDay){
         DaysOfWeek notBeforeDayFinal = notBeforeDay == null?DaysOfWeek.mon: notBeforeDay;
 
         List<Day> allDays =  dayDao.findByWeek(week).stream()
+                .filter(day -> daysToSchedule.contains(day.getWeekDay()))
                 .filter(day -> day.getWeekDay().getId()>=notBeforeDayFinal.getId())
                 .filter(this::isDayAvailableToSchedule)
                 .collect(Collectors.toList());

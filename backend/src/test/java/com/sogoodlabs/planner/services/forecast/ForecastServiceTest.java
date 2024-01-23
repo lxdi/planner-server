@@ -1,10 +1,12 @@
-package com.sogoodlabs.planner.services;
+package com.sogoodlabs.planner.services.forecast;
 
 import com.sogoodlabs.planner.SpringTestConfig;
 import com.sogoodlabs.planner.TestCreators;
 import com.sogoodlabs.planner.configuration.main.DefaultRepPlanCreationJob;
 import com.sogoodlabs.planner.model.dao.IRepPlanDAO;
 import com.sogoodlabs.planner.model.entities.*;
+import com.sogoodlabs.planner.services.WeeksGenerator;
+import com.sogoodlabs.planner.services.forecast.ForecastService;
 import com.sogoodlabs.planner.util.DateUtils;
 
 import org.junit.jupiter.api.Test;
