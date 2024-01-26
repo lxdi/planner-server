@@ -167,6 +167,7 @@ public class WeekService {
 
     public ScheduledDayDto getScheduledDayDto(Day day){
         ScheduledDayDto dto = new ScheduledDayDto();
+        dto.setDayId(day.getId());
         dto.setTaskMappers(taskMappersDAO.findByPlanDayOrFinishDay(day, day));
         dto.setRepetitions(repDAO.findByPlanDayOrFactDay(day));
         dto.setExternalTasks(externalTaskDao.findByDay(day));

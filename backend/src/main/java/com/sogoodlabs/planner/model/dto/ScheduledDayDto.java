@@ -10,9 +10,18 @@ import java.util.List;
 
 public class ScheduledDayDto {
 
+    private String dayId;
     private List<TaskMapper> taskMappers;
     private List<Repetition> repetitions;
     private List<ExternalTask> externalTasks;
+
+    public String getDayId() {
+        return dayId;
+    }
+
+    public void setDayId(String dayId) {
+        this.dayId = dayId;
+    }
 
     @IncludeInDto
     public List<TaskMapper> getTaskMappers() {
