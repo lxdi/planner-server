@@ -133,21 +133,29 @@ const getFullContentUi = function(fullDayDto) {
   var repsUi = fullDayDto.repetitions.map(rp => getFullContentElementUI(rp.taskFullPath))
   var externalTasksUI = fullDayDto.externalTasks.map(et => getFullContentElementUI(et.description))
 
-  return <div style={{fontSize: '9px'}}>
-            <div>{tasksUI}</div>
-            {divisor()}
-            <div>{repsUi}</div>
-            {divisor()}
-            <div>{externalTasksUI}</div>
+  return <div style={{fontSize: '7pt'}}>
+            <div style = {{color: 'green'}}>{tasksUI}</div>
+            <div style = {{color: 'DodgerBlue'}}>{repsUi}</div>
+            <div style = {{color: 'brown'}}>{externalTasksUI}</div>
+            <div style = {{color: 'DarkSlateGrey'}}>{formatSlotActivity(fullDayDto.slotActivity)}</div>
   </div>
 
 }
 
 const getFullContentElementUI = function(name) {
-  var maxLength = 25
+  var maxLength = 23
   var result = name.includes('/')? name.split('/').pop(): name
   result = result.length > maxLength? result.substring(0, maxLength-3)+'...': result
   return <div>- {result}</div>
+}
+
+const formatSlotActivity = function(value) {
+  if (value == null || value == '') {
+    return null
+  }
+
+  var splitted = value.split(';')
+  return splitted.map(sv => <div>{getFullContentElementUI(sv)}</div>)
 }
 
 const divisor = function(){

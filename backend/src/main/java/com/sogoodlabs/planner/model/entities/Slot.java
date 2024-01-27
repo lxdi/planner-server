@@ -12,12 +12,14 @@ public class Slot {
 
     private int hours;
 
+    private String description;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "day_of_week")
     private DaysOfWeek dayOfWeek;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name= "realm", nullable = false)
+    @JoinColumn(name= "realm")
     private Realm realm;
 
     public String getId() {
@@ -34,6 +36,14 @@ public class Slot {
 
     public void setHours(int hours) {
         this.hours = hours;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public DaysOfWeek getDayOfWeek() {

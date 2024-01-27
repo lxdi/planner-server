@@ -11,9 +11,12 @@ import java.util.List;
 public interface ISlotDAO extends JpaRepository<Slot, String> {
 
     List<Slot> findByRealm(Realm realm);
+    List<Slot> findByDayOfWeekAndRealm(DaysOfWeek daysOfWeek, Realm realm);
 
     @Query("select count(*) from Slot where realm = :realm")
     int findTotalByRealm(@Param("realm") Realm realm);
+
+
 
 
 

@@ -11,9 +11,18 @@ import java.util.List;
 public class ScheduledDayDto {
 
     private String dayId;
+    private String slotActivity;
     private List<TaskMapper> taskMappers;
     private List<Repetition> repetitions;
     private List<ExternalTask> externalTasks;
+
+
+    public String getSlotActivity() {
+        return slotActivity;
+    }
+    public void setSlotActivity(String slotActivity) {
+        this.slotActivity = slotActivity;
+    }
 
     public String getDayId() {
         return dayId;

@@ -1,10 +1,7 @@
 package com.sogoodlabs.planner.controllers;
 
 import com.sogoodlabs.common_mapper.CommonMapper;
-import com.sogoodlabs.planner.model.dao.IRealmDAO;
 import com.sogoodlabs.planner.model.dao.ISlotDAO;
-import com.sogoodlabs.planner.model.entities.Layer;
-import com.sogoodlabs.planner.model.entities.Realm;
 import com.sogoodlabs.planner.model.entities.Slot;
 import com.sogoodlabs.planner.services.SlotService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +43,7 @@ public class SlotsController {
     @PostMapping("/list")
     public List<Map<String, Object>> postList(@RequestBody List<Map<String, Object>> dtoList){
         return dtoList.stream()
-                .map(dto -> slotService.saveOrCreate(commonMapper.mapToEntity(dto, new Slot())))
+                .map(dto -> slotService.save(commonMapper.mapToEntity(dto, new Slot())))
                 .map(slot -> commonMapper.mapToDto(slot))
                 .collect(Collectors.toList());
     }

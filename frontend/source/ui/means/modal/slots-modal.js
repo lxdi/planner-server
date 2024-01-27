@@ -4,7 +4,7 @@ import {Table} from 'react-bootstrap'
 import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
 import {CommonModal} from './../../common/common-modal'
 import {CommonCrudeTemplate} from './../../common/common-crud-template'
-import {TextField} from './../../common/text-field'
+import {StatefulTextField} from '../../common/stateful-text-field'
 
 const NEW_PREFIX = 'new_'
 const getDefaultState = function() {return {isOpen:false, mode:{isStatic:false, isEdit:false}}}
@@ -71,6 +71,7 @@ const getContent = function(comp){
                 <td>Saturuday</td>
                 <td>Sunday</td>
               </tr>
+              {noRealmTr(comp)}
               {result}
             </tbody>
             </Table>
@@ -90,6 +91,19 @@ const realmTr = function(comp, realm) {
         </tr>
 }
 
+const noRealmTr = function(comp) {
+  return <tr>
+          <td>Commons</td>
+          {slotDescTd(comp, getOrCreateSlot(null, 'mon'))}
+          {slotDescTd(comp, getOrCreateSlot(null, 'tue'))}
+          {slotDescTd(comp, getOrCreateSlot(null, 'wed'))}
+          {slotDescTd(comp, getOrCreateSlot(null, 'thu'))}
+          {slotDescTd(comp, getOrCreateSlot(null, 'fri'))}
+          {slotDescTd(comp, getOrCreateSlot(null, 'sat'))}
+          {slotDescTd(comp, getOrCreateSlot(null, 'sun'))}
+        </tr>
+}
+
 const slotTd = function(comp, slot) {
 
   if (comp.state.mode.isEdit) {
@@ -100,6 +114,12 @@ const slotTd = function(comp, slot) {
           </td>
   } else 
     return <td>{slot.hours}</td> 
+}
+
+const slotDescTd = function(comp, slot) {
+  return <td> 
+            <StatefulTextField obj={slot} valName={'description'} isEdit={comp.state.mode.isEdit} onInput={()=>comp.setState({})}/>
+          </td>
 }
 
 const handleHours = function(comp, slot, adjustment) {

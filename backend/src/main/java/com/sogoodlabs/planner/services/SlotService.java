@@ -1,9 +1,7 @@
 package com.sogoodlabs.planner.services;
 
 import com.sogoodlabs.planner.model.dao.ISlotDAO;
-import com.sogoodlabs.planner.model.entities.Layer;
 import com.sogoodlabs.planner.model.entities.Slot;
-import com.sogoodlabs.planner.util.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,11 +15,11 @@ public class SlotService {
     @Autowired
     private ISlotDAO slotDAO;
 
-    public Slot saveOrCreate(Slot slot){
+    public Slot save(Slot slot){
 
         if (slot.getId() == null || slot.getId().startsWith(NEW_ID_PREFIX)) {
 
-            if(slotDAO.findTotalByRealm(slot.getRealm())>=7){
+            if(slot.getRealm() != null && slotDAO.findTotalByRealm(slot.getRealm())>=7){
                 throw new RuntimeException("Realm "+slot.getRealm()+" already has at least 7 slots");
             }
 

@@ -50,6 +50,9 @@ public class WeekService {
     @Autowired
     private MoveRepetitionsService moveRepetitionsService;
 
+    @Autowired
+    private ISlotDAO slotDAO;
+
     public Week fill(Week weekProxy){
         Week week = HibernateUtils.initializeAndUnproxy(weekProxy);
         week.setDays(new ArrayList<>());
@@ -168,6 +171,10 @@ public class WeekService {
     public ScheduledDayDto getScheduledDayDto(Day day){
         ScheduledDayDto dto = new ScheduledDayDto();
         dto.setDayId(day.getId());
+
+        var slot = slotDAO.findByDayOfWeekAndRealm(day.getWeekDay(), null).stream().findFirst().orElse(null);
+        dto.setSlotActivity(slot == null? null:  slot.getDescription());
+
         dto.setTaskMappers(taskMappersDAO.findByPlanDayOrFinishDay(day, day));
         dto.setRepetitions(repDAO.findByPlanDayOrFactDay(day));
         dto.setExternalTasks(externalTaskDao.findByDay(day));
