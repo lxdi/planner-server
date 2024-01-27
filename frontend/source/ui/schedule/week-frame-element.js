@@ -143,7 +143,7 @@ const getFullContentUi = function(fullDayDto) {
 }
 
 const getFullContentElementUI = function(name) {
-  var maxLength = 23
+  var maxLength = 25
   var result = name.includes('/')? name.split('/').pop(): name
   result = result.length > maxLength? result.substring(0, maxLength-3)+'...': result
   return <div>- {result}</div>
