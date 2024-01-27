@@ -91,7 +91,21 @@ const realmTr = function(comp, realm) {
 }
 
 const slotTd = function(comp, slot) {
-  return <td>{comp.state.mode.isEdit? <TextField obj={slot} valName={'hours'}/>: slot.hours}</td>
+
+  if (comp.state.mode.isEdit) {
+    return <td>
+            <a href="#" style = {{marginRight:'3px'}} onClick={()=>handleHours(comp, slot, 1)}>+</a>
+            {slot.hours}
+            <a href="#" style = {{marginLeft:'3px'}} onClick={()=>handleHours(comp, slot, -1)}>-</a>
+          </td>
+  } else 
+    return <td>{slot.hours}</td> 
+}
+
+const handleHours = function(comp, slot, adjustment) {
+  var adjust = slot.hours < 0 && adjustment < 0? 0: adjustment
+  slot.hours = slot.hours + adjust
+  comp.setState({})
 }
 
 const getSlotsByRealmId = function(realmId) {
