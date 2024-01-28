@@ -22,6 +22,13 @@ export const yesterdayDateString = function(divisor){
   return dateToString(new Date(new Date().getTime() - oneDayMs), divisor)
 }
 
+export const prevWeekDateString = function(divisor) {
+  return dateToString(new Date(new Date().getTime() - oneDayMs*7), divisor)
+}
+
+export const nextWeekDateString = function(divisor) {
+  return dateToString(new Date(new Date().getTime() + oneDayMs*7), divisor)
+}
 
 const dateToString = function(date, divisor){
   if(divisor==null){

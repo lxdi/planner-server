@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import {Button, Table, ButtonGroup} from 'react-bootstrap'
 import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
 
-import {currentDateString} from '../../utils/date-utils'
+import {currentDateString, nextWeekDateString, prevWeekDateString} from '../../utils/date-utils'
 
 const weekStyle = {marginBottom:'3px'}
 const weekCurrentStyle = {marginBottom:'3px', border: '2px solid lightblue', borderRadius:'10px'}
@@ -25,9 +25,12 @@ export class WeekElement extends React.Component {
   constructor(props){
     super(props)
 
-    if (getCurrentDay(this.props.week.days) != null) {
-      registerReaction('week-frame-current', 'day-rep', ['got-days-in-week'], ()=>this.setState({}))
+    var weekType = detectWeek(this.props.week.days)
+
+    if (weekType != null) {
+      registerReaction(weekType+'week-frame', 'day-rep', ['got-days-in-week'], ()=>this.setState({}))
     }
+
   }
 
   render(){
@@ -36,9 +39,10 @@ export class WeekElement extends React.Component {
     }
 
     var currentDay = getCurrentDay(this.props.week.days)
+    var isFullDaysView = detectWeek(this.props.week.days) != null
     var fullDays = null
 
-    if (currentDay != null) {
+    if (isFullDaysView) {
       var fullDaysByWeek = chkSt('day-rep', 'full-days-by-week')
 
       if (fullDaysByWeek == null || fullDaysByWeek[this.props.week.id] == null) {
@@ -52,7 +56,7 @@ export class WeekElement extends React.Component {
 
     this.props.week.days.forEach(day => {
       var dayFull = fullDays!=null? fullDays[day.id]: null
-      daysUIcells.push(<td>{getDayCellUI(day, currentDay==day, currentDay!=null, dayFull)}</td>)
+      daysUIcells.push(<td>{getDayCellUI(day, currentDay==day, isFullDaysView, dayFull)}</td>)
     })
 
     var weekStyleVar = weekStyle //currentDay==null? weekStyle: weekCurrentStyle
@@ -66,6 +70,22 @@ export class WeekElement extends React.Component {
             </table>
           </div>
   }
+}
+
+const detectWeek = function(days) {
+  if (getCurrentDay(days) != null) {
+    return 'current'
+  }
+
+  if (getNextWeekDay(days) != null) {
+    return 'next'
+  }
+
+  if (getPrevWeekDay(days) != null) {
+    return 'prev'
+  }
+
+  return null
 }
 
 const yearLabel = function(week){
@@ -211,16 +231,24 @@ const zeroToDash = function(num){
 }
 
 const getCurrentDay = function(days) {
+  return findDay(days, currentDateString('-'))
+}
+
+const getNextWeekDay = function(days) {
+  return findDay(days, nextWeekDateString('-'))
+}
+
+const getPrevWeekDay = function(days) {
+  return findDay(days, prevWeekDateString('-'))
+}
+
+const findDay = function(days, targetDay) {
   for (var i in days) {
-    if (isCurrentDay(days[i])) {
+    if (days[i].date == targetDay) {
       return days[i]
     }
   }
   return null
-}
-
-const isCurrentDay = function(day){
-  return currentDateString('-') == day.date
 }
 
 const formatDate = function(date, part){
