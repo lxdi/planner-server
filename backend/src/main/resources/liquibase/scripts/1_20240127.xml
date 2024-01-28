@@ -7,4 +7,11 @@
         </sql>
     </changeSet>
 
+    <changeSet id="0_20240127-2" author="user">
+        <sql endDelimiter="\">
+            ALTER TABLE external_tasks ADD COLUMN finished boolean default true;
+            \
+        </sql>
+    </changeSet>
+
 </databaseChangeLog>

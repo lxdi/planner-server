@@ -39,10 +39,10 @@ export class WeekElement extends React.Component {
     }
 
     var currentDay = getCurrentDay(this.props.week.days)
-    var isFullDaysView = detectWeek(this.props.week.days) != null
+    var weekType = detectWeek(this.props.week.days)
     var fullDays = null
 
-    if (isFullDaysView) {
+    if (weekType != null) {
       var fullDaysByWeek = chkSt('day-rep', 'full-days-by-week')
 
       if (fullDaysByWeek == null || fullDaysByWeek[this.props.week.id] == null) {
@@ -56,7 +56,7 @@ export class WeekElement extends React.Component {
 
     this.props.week.days.forEach(day => {
       var dayFull = fullDays!=null? fullDays[day.id]: null
-      daysUIcells.push(<td>{getDayCellUI(day, currentDay==day, isFullDaysView, dayFull)}</td>)
+      daysUIcells.push(<td>{getDayCellUI(day, currentDay==day, weekType, dayFull)}</td>)
     })
 
     var weekStyleVar = weekStyle //currentDay==null? weekStyle: weekCurrentStyle
@@ -95,16 +95,16 @@ const yearLabel = function(week){
   return <div style = {{borderBottom: '1px solid grey'}}> {week.year}</div>
 }
 
-const getDayCellUI = function(day, isCurrent, isCurrentWeek, dayFull){
+const getDayCellUI = function(day, isCurrent, weekType, dayFull){
   var style = isCurrent? todayCellStyle: dayCellStyle
   var isFull = day.id != null
 
   return <div style={style}>
-          {isFull? getDayContentFull(day, isCurrentWeek, dayFull): <div style={{fontWeight: 'bold'}}>{day.weekDay}</div>}
+          {isFull? getDayContentFull(day, weekType, dayFull): <div style={{fontWeight: 'bold'}}>{day.weekDay}</div>}
         </div>
 }
 
-const getDayContentFull = function(day, isCurrentWeek, dayFull){
+const getDayContentFull = function(day, weekType, dayFull){
 
   const dayCal = formatDate(day.date, 'day')
   const month = formatDate(day.date, 'month')
@@ -116,10 +116,18 @@ const getDayContentFull = function(day, isCurrentWeek, dayFull){
 
   var taskContent = null
   var dayNumStyle = null
+  var fullViewHeight = '120px'
+  var fullViewFontSize = '7pt'
 
-  if (isCurrentWeek) {
-    taskContent = <div style = {{marginLeft: '3px'}}>{getFullContentUi(dayFull)}</div>
+  // if (weekType == 'current') {
+  //   fullViewHeight = '120px'
+  //   fullViewFontSize = '7pt'
+  // }
+
+  if (weekType != null) {
+    taskContent = <div style = {{marginLeft: '3px'}}>{getFullContentUi(dayFull, fullViewFontSize)}</div>
     dayNumStyle = {verticalAlign: 'top', fontSize:'9px'}
+    //fullViewHeight =  countElements(dayFull) + 'px'
   } else {
     taskContent = <div style = {{display:'inline-block', marginLeft: '3px'}}>{getTotalMappersAndRepsUI(day)}</div>
     dayNumStyle = {verticalAlign: 'top', fontSize:'9px', display:'inline-block'}
@@ -132,7 +140,7 @@ const getDayContentFull = function(day, isCurrentWeek, dayFull){
           onDragOver={e => e.preventDefault()}
           onDrop={e => onDrop(e, day)}>
 
-        <div style = {isCurrentWeek? Object.assign({height: '120px'}, getUrgencyStyle(day)): getUrgencyStyle(day)}>
+        <div style = {weekType != null? Object.assign({height: fullViewHeight}, getUrgencyStyle(day)): getUrgencyStyle(day)}>
           <div style = {dayNumStyle}>
             <div style = {{color: 'grey'}}>{dayCal}</div>
             <div style = {{color: 'red'}}>{dayCal=='01'? month: null}</div>
@@ -143,30 +151,43 @@ const getDayContentFull = function(day, isCurrentWeek, dayFull){
   </a>
 }
 
-const getFullContentUi = function(fullDayDto) {
+const getFullContentUi = function(fullDayDto, fontSize) {
 
   if (fullDayDto == null) {
     return 'Loading...'
   }
 
-  var tasksUI = fullDayDto.taskMappers.map(tm => getFullContentElementUI(tm.taskFullPath))
-  var repsUi = fullDayDto.repetitions.map(rp => getFullContentElementUI(rp.taskFullPath))
-  var externalTasksUI = fullDayDto.externalTasks.map(et => getFullContentElementUI(et.description))
+  var tasksUI = fullDayDto.taskMappers.map(tm => getFullContentElementUI(tm.taskFullPath, tm.finishDay != null || tm.finishDayid != null))
+  var repsUi = fullDayDto.repetitions.map(rp => getFullContentElementUI(rp.taskFullPath, rp.factDay != null || rp.factDayid != null))
+  var externalTasksUI = fullDayDto.externalTasks.map(et => getFullContentElementUI(et.description, et.finished))
 
-  return <div style={{fontSize: '7pt'}}>
+  return <div style={{fontSize: fontSize}}>
             <div style = {{color: 'green'}}>{tasksUI}</div>
             <div style = {{color: 'DodgerBlue'}}>{repsUi}</div>
             <div style = {{color: 'brown'}}>{externalTasksUI}</div>
-            <div style = {{color: 'DarkSlateGrey'}}>{formatSlotActivity(fullDayDto.slotActivity)}</div>
+            <div style = {{color: 'lightGrey'}}>{formatSlotActivity(fullDayDto.slotActivity)}</div>
   </div>
 
 }
 
-const getFullContentElementUI = function(name) {
+// const countElements = function(fullDayDto) {
+//   if (fullDayDto == null) {
+//     return 0
+//   }
+//   return fullDayDto.taskMappers.length + fullDayDto.repetitions.length + fullDayDto.externalTasks.length
+// }
+
+const getFullContentElementUI = function(name, crossed) {
   var maxLength = 25
   var result = name.includes('/')? name.split('/').pop(): name
   result = result.length > maxLength? result.substring(0, maxLength-3)+'...': result
-  return <div>- {result}</div>
+
+  if (crossed == true) {
+    return <div><s>- {result}</s></div>
+  } else {
+    return <div>- {result}</div>
+  }
+  
 }
 
 const formatSlotActivity = function(value) {

@@ -10,6 +10,7 @@ public class ExternalTask {
     private String id;
     private String description;
     private int hours;
+    private boolean finished;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "day")
@@ -45,5 +46,12 @@ public class ExternalTask {
 
     public void setDay(Day day) {
         this.day = day;
+    }
+
+    public boolean getFinished() {
+        return finished;
+    }
+    public void setFinished(boolean finished) {
+        this.finished = finished;
     }
 }

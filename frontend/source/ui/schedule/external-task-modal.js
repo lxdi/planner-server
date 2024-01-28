@@ -9,6 +9,7 @@ import {CreateRealm} from './../../data/creators'
 import {DataConstants} from '../../data/data-constants'
 import {StatefulTextField} from '../common/stateful-text-field'
 import {TextFields} from '../common/text-fields'
+import { currentDateString } from '../../utils/date-utils';
 
 const newObjId = "new"
 const hoursDefault = 1
@@ -40,7 +41,8 @@ export class ExternalTaskModal extends React.Component {
       content = <CommonCrudeTemplate editing = {this.state.mode} changeEditHandler = {this.forceUpdate.bind(this)} deleteHandler={()=>console.log('TODO deleting externalTask')}>
                   <TextFields content={[
                       descriptionField(this.state.externalTask, this.state.mode.isEdit),
-                      hoursField(this.state.externalTask, this.state.mode.isEdit)]}/>
+                      hoursField(this.state.externalTask, this.state.mode.isEdit),
+                      finishedField(this, this.state.externalTask, this.state.mode.isEdit)]}/>
               </CommonCrudeTemplate>
     }
 
@@ -77,4 +79,27 @@ const hoursField = function(extTask, isEdit){
     label: <ControlLabel>Hours:</ControlLabel>,
     field: <StatefulTextField obj={extTask} valName={'hours'} isEdit={isEdit}/>
   }
+}
+
+const finishedField = function(comp, extTask, isEdit) {
+  var checkBox = null
+
+  if (!isEdit) {
+    checkBox = <input type="checkbox" checked={extTask.finished?'checked': null} onclick="return false;"/>
+  } else {
+    checkBox = <div>
+        <input type="checkbox" checked={extTask.finished?'checked': null} onClick={()=>checkBoxHandler(comp, extTask)}/>
+      </div>
+  }
+
+  return {
+    key: 'hours',
+    label: <ControlLabel>Finished:</ControlLabel>,
+    field: checkBox
+  }
+}
+
+const checkBoxHandler = function(comp, extTask) {
+  extTask.finished = !extTask.finished
+  comp.setState({})
 }
