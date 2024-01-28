@@ -4,15 +4,15 @@ import com.sogoodlabs.planner.model.entities.DaysOfWeek;
 import com.sogoodlabs.planner.model.entities.Layer;
 import com.sogoodlabs.planner.model.entities.Task;
 import com.sogoodlabs.planner.util.StringUtils;
-import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class StringUtilsTests {
 
@@ -43,7 +43,7 @@ public class StringUtilsTests {
         assertEquals(6564, (long) StringUtils.getValue(dtowrapper, "get('listofsomething').get(0).get('id')"));
 
         Layer layer = new Layer();
-        layer.setPriority(1);
+        layer.setDepth(1);
         layer.setId("543543");
 
         Task task = new Task();

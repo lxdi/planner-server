@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(path = "/topic")
+@RequestMapping(path = "/topics")
 public class TopicController {
 
     @Autowired
@@ -27,8 +27,8 @@ public class TopicController {
     @Autowired
     private CommonMapper commonMapper;
 
-    @GetMapping("/get/by/mean/{meanid}")
-    public List<Map<String, Object>> layersOfMean(@PathVariable("meanid") String meanid){
+    @GetMapping
+    public List<Map<String, Object>> layersOfMean(@PathVariable("mean-id") String meanid){
         Mean mean = meansDAO.findById(meanid).orElseThrow(() -> new RuntimeException("Mean not found by " + meanid));
 
         return topicDAO.findByMean(mean).stream()

@@ -85,7 +85,7 @@ const mappersTableUI = function(comp, mappers, movingDto){
     const style = {} // task.repetition != null && task.repetition.id == rep.id? {fontWeight:'bold'}:{}
     result.push( <tr id={mapper.id} style={style}>
                     <td>
-                      <a href='#' onClick={()=>fireEvent("task-modal", 'open', [null, mapper.taskSelf, true, false, mapper.id])}>{mapper.taskSelf.fullPath}</a>
+                      <a href='#' onClick={()=>fireEvent("task-modal", 'open', [null, mapper.taskid, true, false, mapper.id])}>{mapper.fullPath}</a>
                     </td>
                     <td>{mapper.planDay!=null? formatDate(mapper.planDay.date):''}</td>
                     <td>{mapper.finishDay!=null? formatDate(mapper.finishDay.date):''}</td>
@@ -117,7 +117,7 @@ const repetitionsTableUI = function(comp, repetitions, movingDto){
     const style = {} // task.repetition != null && task.repetition.id == rep.id? {fontWeight:'bold'}:{}
     result.push( <tr id={rep.id} style={style}>
                     <td>
-                      <a href='#' onClick={()=>fireEvent("task-modal", 'open', [null, rep.taskSelf, true, false, rep.id])}>{rep.taskSelf.fullPath}</a>
+                      <a href='#' onClick={()=>fireEvent("task-modal", 'open', [null, rep.taskid, true, false, rep.id])}>{rep.fullPath}</a>
                     </td>
                     <td>{rep.planDay!=null? formatDate(rep.planDay.date):''}</td>
                     <td>{rep.factDay!=null? formatDate(rep.factDay.date):''}</td>

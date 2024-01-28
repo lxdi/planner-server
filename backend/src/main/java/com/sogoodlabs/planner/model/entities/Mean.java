@@ -2,10 +2,7 @@ package com.sogoodlabs.planner.model.entities;
 
 import com.sogoodlabs.common_mapper.annotations.IncludeInDto;
 import com.sogoodlabs.common_mapper.annotations.MapToClass;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +11,7 @@ import java.util.List;
  */
 
 @Entity
+@Table(name = "means")
 public class Mean {
 
     @Id
@@ -22,26 +20,20 @@ public class Mean {
     String criteria;
 
     @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "next")
     Mean next;
 
-    @Fetch(FetchMode.SUBSELECT) // TODO duplicates was added in targets
-    @ManyToMany(fetch = FetchType.LAZY)//(cascade = CascadeType.PERSIST)
-    @JoinTable(
-            name = "mean_target",
-            joinColumns = @JoinColumn(name = "mean_id"),
-            inverseJoinColumns = @JoinColumn(name = "target_id")
-    )
-    List<Target> targets = new ArrayList<>();
-
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent")
     Mean parent;
 //    @OneToMany(mappedBy = "parent")
 //    List<Mean> children;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "realm")
     Realm realm;
 
-    @Column(name = "hidechildren")
+    @Column(name = "hide_children")
     boolean hideChildren = false;
 
     @Transient
@@ -96,19 +88,12 @@ public class Mean {
         this.criteria = criteria;
     }
 
-    public List<Target> getTargets() {
-        return targets;
-    }
-    public void setTargets(List<Target> targets) {
-        this.targets = targets;
-    }
-
     @IncludeInDto
     public List<Layer> getLayers() {
         return layers;
     }
 
-    @MapToClass(value = Layer.class)
+    @MapToClass(value = Layer.class, parentField = "mean")
     public void setLayers(List<Layer> layers) {
         this.layers = layers;
     }

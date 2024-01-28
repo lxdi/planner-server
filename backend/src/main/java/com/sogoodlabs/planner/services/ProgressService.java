@@ -1,6 +1,6 @@
 package com.sogoodlabs.planner.services;
 
-import com.sogoodlabs.planner.controllers.dto.TaskProgressDto;
+import com.sogoodlabs.planner.model.dto.TaskProgressDto;
 import com.sogoodlabs.planner.model.dao.*;
 import com.sogoodlabs.planner.model.entities.*;
 import com.sogoodlabs.planner.util.DateUtils;
@@ -53,33 +53,44 @@ public class ProgressService {
 
         log.info("Finishing task {}", task.getId());
 
+        task.setStatus(Task.TaskStatus.COMPLETED);
+        tasksDAO.save(task);
+
         TaskMapper taskMapper = new TaskMapper();
         taskMapper.setId(UUID.randomUUID().toString());
         taskMapper.setTask(task);
         taskMapper.setFinishDay(dayDao.findByDate(finishDate));
         taskMappersDAO.save(taskMapper);
 
-        if(plan!=null) {
-            List<Repetition> repetitions = new ArrayList<>();
-            for (int step : plan.getPlan()) {
-                Repetition repetition = new Repetition();
-                repetition.setId(UUID.randomUUID().toString());
-                repetition.setRepetitionPlan(plan);
-                repetition.setTask(task);
-
-                Date planDate = plan.getDayStep() ? DateUtils.addDays(finishDate, step) : DateUtils.addWeeks(finishDate, step);
-                Day planDay = dayDao.findByDate(planDate);
-                if(planDay==null){
-                    //TODO generate days and try again
-                    throw new RuntimeException("Day not found " + DateUtils.fromDate(planDate));
-                }
-
-                repetition.setPlanDay(planDay);
-                repetitions.add(repetition);
-            }
-            log.info("Setting repetitions for task {}, repetition plan {}", task.getId(), plan.getId());
-            repDAO.saveAll(repetitions);
+        if(plan == null){
+            return;
         }
+
+        log.info("Setting repetitions for task {}, repetition plan {}", task.getId(), plan.getId());
+        repDAO.saveAll(generateRepetitions(plan, finishDate, task));
+    }
+
+    public List<Repetition> generateRepetitions(RepetitionPlan plan, Date finishDate, Task task) {
+        List<Repetition> repetitions = new ArrayList<>();
+
+        for (int step : plan.getPlan()) {
+            Repetition repetition = new Repetition();
+            repetition.setId(UUID.randomUUID().toString());
+            repetition.setTask(task);
+
+            Date planDate = plan.getDayStep() ? DateUtils.addDays(finishDate, step) : DateUtils.addWeeks(finishDate, step);
+            Day planDay = dayDao.findByDate(planDate);
+
+            if (planDay == null) {
+                //TODO generate days and try again
+                throw new RuntimeException("Day not found " + DateUtils.fromDate(planDate));
+            }
+
+            repetition.setPlanDay(planDay);
+            repetitions.add(repetition);
+        }
+
+        return repetitions;
     }
 
     public void finishRepetition(Repetition repetition){

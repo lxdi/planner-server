@@ -4,18 +4,18 @@ import com.sogoodlabs.planner.SpringTestConfig;
 import com.sogoodlabs.planner.model.dao.IMeansDAO;
 import com.sogoodlabs.planner.model.entities.Mean;
 import org.hibernate.Session;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.util.Arrays;
 import java.util.UUID;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional(propagation = Propagation.REQUIRES_NEW)
 public class RepositionServiceTest extends SpringTestConfig {
@@ -36,7 +36,7 @@ public class RepositionServiceTest extends SpringTestConfig {
 
     private Mean meanChild1Child1;
 
-    @Before
+    @BeforeEach
     public void init(){
         meanParent = createAndSaveMean("meanParent", null, null);
 

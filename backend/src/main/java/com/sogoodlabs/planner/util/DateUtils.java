@@ -57,6 +57,10 @@ public class DateUtils {
         return new Date(new java.util.Date().getTime());
     }
 
+    public static String currentDateFormatted() {
+        return fromDate(currentDate());
+    }
+
     public static String currentDateString(){
         return fromDate(currentDate());
     }

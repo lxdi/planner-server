@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(path = "/external/task")
+@RequestMapping(path = "/external-task")
 public class ExternalTasksController {
 
     @Autowired
@@ -20,7 +20,7 @@ public class ExternalTasksController {
     @Autowired
     private IExternalTaskDao externalTaskDao;
 
-    @PostMapping("/update")
+    @PostMapping
     public void updateExternalTask(@RequestBody Map<String, Object> dto){
         ExternalTask externalTask = commonMapper.mapToEntity(dto, new ExternalTask());
 
@@ -31,7 +31,7 @@ public class ExternalTasksController {
         externalTaskDao.save(externalTask);
     }
 
-    @PutMapping("/create")
+    @PutMapping
     public void createExternalTask(@RequestBody Map<String, Object> dto){
         ExternalTask externalTask = commonMapper.mapToEntity(dto, new ExternalTask());
 

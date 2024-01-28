@@ -1,11 +1,12 @@
 package com.sogoodlabs.planner.util;
 
 import com.sogoodlabs.planner.util.DateUtils;
-import org.junit.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.sql.Date;
 
-import static org.junit.Assert.assertTrue;
+import org.junit.jupiter.api.Test;
 
 public class DateUtilsTests {
 

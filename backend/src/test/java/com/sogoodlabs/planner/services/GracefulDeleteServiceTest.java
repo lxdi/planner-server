@@ -3,20 +3,19 @@ package com.sogoodlabs.planner.services;
 import com.sogoodlabs.planner.model.dao.IRepDAO;
 import com.sogoodlabs.planner.model.entities.*;
 import com.sogoodlabs.planner.SpringTestConfig;
-import com.sogoodlabs.planner.util.DateUtils;
 import org.hibernate.Session;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 import java.util.List;
 import java.util.UUID;
 
-import static junit.framework.TestCase.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
 public class GracefulDeleteServiceTest extends SpringTestConfig {
@@ -41,7 +40,7 @@ public class GracefulDeleteServiceTest extends SpringTestConfig {
     private Repetition unfinishedRep;
 
 
-    @Before
+    @BeforeEach
     public void init(){
         super.init();
     }

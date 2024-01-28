@@ -12,6 +12,10 @@ export const sendPost = function(url, sendData, callback){
   sendWithData(url, sendData, callback, 'POST')
 }
 
+export const sendPatch = function(url, sendData, callback){
+  sendWithData(url, sendData, callback, 'PATCH')
+}
+
 export const sendDelete = function(url, callback){
   axios({
     method: 'DELETE',

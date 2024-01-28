@@ -21,7 +21,7 @@ public class RepPlansController {
     @Autowired
     private IRepPlanDAO repPlanDAO;
 
-    @GetMapping(path = "/get/all")
+    @GetMapping("/all")
     public List<Map<String, Object>> getAll(){
         return repPlanDAO.findAll().stream().map(commonMapper::mapToDto).collect(Collectors.toList());
     }

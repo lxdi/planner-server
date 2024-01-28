@@ -1,13 +1,4 @@
 
-export var CreateTarget =  function(id, title, realmid, parentid){
-  return {
-    id: id,
-    title: title,
-    realmid: realmid,
-    parentid: parentid
-  }
-}
-
 export var CreateMean = function(id, title, realmid, parentid){
   var newMean = {
     id: id,
@@ -18,10 +9,10 @@ export var CreateMean = function(id, title, realmid, parentid){
   return newMean
 }
 
-export var CreateLayer =  function(id, priority, meanid){
+export var CreateLayer =  function(id, depth, meanid){
   return {
     id: id,
-    priority: priority,
+    depth: depth,
     meanid: meanid
   }
 }

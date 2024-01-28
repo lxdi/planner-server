@@ -2,8 +2,9 @@ package com.sogoodlabs.planner.controllers;
 
 
 import com.sogoodlabs.common_mapper.CommonMapper;
-import com.sogoodlabs.planner.controllers.dto.AssignMeanDto;
-import com.sogoodlabs.planner.controllers.dto.MovingPlansDto;
+import com.sogoodlabs.planner.model.dao.IWeekDAO;
+import com.sogoodlabs.planner.model.dto.AssignMeanDto;
+import com.sogoodlabs.planner.model.dto.MovingPlansDto;
 import com.sogoodlabs.planner.model.dao.IDayDao;
 import com.sogoodlabs.planner.model.entities.Day;
 import com.sogoodlabs.planner.model.entities.Week;
@@ -18,7 +19,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(path = "/week")
+@RequestMapping(path = "/weeks")
 public class WeekController {
 
     @Autowired
@@ -36,8 +37,11 @@ public class WeekController {
     @Autowired
     private UnscheduleService unscheduleService;
 
+    @Autowired
+    private IWeekDAO weekDAO;
 
-    @GetMapping("/get/all/current/year")
+
+    @GetMapping("/current-year")
     public List<Map<String, Object>> current(){
         return weekService.getCurrent().stream()
                 .map(weekService::fill)
@@ -45,23 +49,35 @@ public class WeekController {
                 .collect(Collectors.toList());
     }
 
-    @GetMapping("/get/prev/{currentId}")
+    @GetMapping("/{currentId}/prev")
     public Map<String, Object> getPrev(@PathVariable("currentId") String currentId){
         Week week = weekService.fill(weekService.getPrev(currentId));
         return commonMapper.mapToDto(week);
     }
 
-    @GetMapping("/get/next/{currentId}")
+    @GetMapping("/{currentId}/next")
     public Map<String, Object> getNext(@PathVariable("currentId") String currentId){
         Week week = weekService.fill(weekService.getNext(currentId));
         return commonMapper.mapToDto(week);
     }
 
-    @GetMapping("/get/day/{dayId}")
+    @GetMapping("/days/{dayId}")
     public Map<String, Object> getDay(@PathVariable("dayId") String dayId){
         Day day = dayDao.findById(dayId).orElseThrow(() -> new RuntimeException("Day not found by id " + dayId));
         return commonMapper.mapToDto(weekService.getScheduledDayDto(day));
     }
+
+    @GetMapping("/days/by/week/{weekId}")
+    public List<Map<String, Object>> getDays(@PathVariable("weekId") String weekId){
+
+        var week = weekDAO.findById(weekId).orElseThrow(() -> new RuntimeException("Week not found by id " + weekId));
+
+        return dayDao.findByWeek(week).stream()
+                .map(day -> commonMapper.mapToDto(weekService.getScheduledDayDto(day)))
+                .toList();
+    }
+
+
 
     @PostMapping("/move/plans")
     public void movePlans(@RequestBody MovingPlansDto movingPlansDto){

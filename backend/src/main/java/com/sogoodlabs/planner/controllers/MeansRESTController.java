@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
  */
 
 @RestController
-@RequestMapping(path = "/mean")
+@RequestMapping(path = "/means")
 public class MeansRESTController {
 
     @Autowired
@@ -40,39 +40,49 @@ public class MeansRESTController {
     @Autowired
     private RepositionService repositionService;
 
-    @GetMapping("/get/all")
+    @GetMapping("/all")
     public List<Map<String, Object>> getAllTargets(){
         return meansDAO.findAll().stream()
                 .map(commonMapper::mapToDto)
                 .collect(Collectors.toList());
     }
 
-    @GetMapping("/get/full/{meanid}")
+    @GetMapping("/{meanid}/full")
     public Map<String, Object> getAllTargets(@PathVariable("meanid") String meanid){
         Mean mean =  meansDAO.findById(meanid).orElseThrow(() -> new RuntimeException("Mean not found by " + meanid));
         meanFillerService.fill(mean);
         return commonMapper.mapToDto(mean);
     }
 
-    @PutMapping("/create")
+    @GetMapping("/list")
+    public List<Map<String, Object>> getList(@RequestParam("with-priorities") Boolean isPriorities){
+
+        if(isPriorities){
+            return meansService.getPrioritized().stream().map(this::fillAndMapToDto).collect(Collectors.toList());
+        }
+
+        return meansDAO.findAll().stream().map(commonMapper::mapToDto).collect(Collectors.toList());
+    }
+
+    @PutMapping
     public Map<String, Object> createTarget(@RequestBody Map<String, Object> meanDto) {
         Mean mean = meansService.createMean(commonMapper.mapToEntity(meanDto, new Mean()));
         return commonMapper.mapToDto(mean);
     }
 
-    @DeleteMapping("/delete/{targetId}")
-    public void delete(@PathVariable("targetId") String id) {
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable("id") String id) {
         Mean mean = meansDAO.findById(id).orElseThrow(() -> new RuntimeException("Mean not found by " + id));
         gracefulDeleteService.delete(mean);
     }
 
-    @PostMapping("/update")
+    @PostMapping
     public Map<String, Object> update(@RequestBody Map<String, Object> meanDto) {
         Mean mean = meansService.updateMean(commonMapper.mapToEntity(meanDto, new Mean()));
         return commonMapper.mapToDto(mean);
     }
 
-    @PostMapping("/update/list")
+    @PostMapping("/list")
     public List<Map<String, Object>> updateList(@RequestBody List<Map<String, Object>> meanDtoList){
         return meanDtoList.stream()
                 .map(mean -> commonMapper.mapToDto(meansService.updateMean(commonMapper.mapToEntity(mean, new Mean()))))
@@ -84,6 +94,11 @@ public class MeansRESTController {
         repositionService.repositionMeans(meanDtoList.stream()
                 .map(mean -> commonMapper.mapToEntity(mean, new Mean()))
                 .collect(Collectors.toList()));
+    }
+
+    private Map<String, Object> fillAndMapToDto(Mean mean){
+        meanFillerService.fill(mean);
+        return commonMapper.mapToDto(mean);
     }
 
 }

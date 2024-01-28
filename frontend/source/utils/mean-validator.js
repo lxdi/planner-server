@@ -3,7 +3,7 @@ export const isValidMean = function(alerts, mean){
   if(mean==null){
     return false
   }
-  
+
   var result = true
   if(mean.title == null || mean.title==''){
     alerts.push('Title is not valid')
@@ -33,7 +33,7 @@ const isLayerValid = function(alerts, layer){
       }
   }
   if(tasksCount>12){
-    alerts.push('Layer ' + layer.priority + ' has more than 12 tasks')
+    alerts.push('Layer ' + layer.depth + ' has more than 12 tasks')
     return false
   }
   return true

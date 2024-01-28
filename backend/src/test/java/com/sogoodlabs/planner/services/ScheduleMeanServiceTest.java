@@ -1,28 +1,21 @@
 package com.sogoodlabs.planner.services;
 
 import com.sogoodlabs.planner.SpringTestConfig;
-import com.sogoodlabs.planner.controllers.dto.AssignLayerDto;
-import com.sogoodlabs.planner.controllers.dto.AssignMeanDto;
-import com.sogoodlabs.planner.model.dao.IDayDao;
-import com.sogoodlabs.planner.model.dao.ILayerDAO;
-import com.sogoodlabs.planner.model.dao.ITaskMappersDAO;
-import com.sogoodlabs.planner.model.dao.ITasksDAO;
-import com.sogoodlabs.planner.model.entities.Day;
-import com.sogoodlabs.planner.model.entities.Layer;
-import com.sogoodlabs.planner.model.entities.Task;
-import com.sogoodlabs.planner.model.entities.TaskMapper;
+import com.sogoodlabs.planner.model.dao.*;
+import com.sogoodlabs.planner.model.dto.AssignLayerDto;
+import com.sogoodlabs.planner.model.dto.AssignMeanDto;
+import com.sogoodlabs.planner.model.entities.*;
 import com.sogoodlabs.planner.util.DateUtils;
-import org.junit.Before;
-import org.junit.Test;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.UUID;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
 public class ScheduleMeanServiceTest extends SpringTestConfig {
@@ -45,7 +38,16 @@ public class ScheduleMeanServiceTest extends SpringTestConfig {
     @Autowired
     private ITaskMappersDAO taskMappersDAO;
 
-    @Before
+    @Autowired
+    private ISlotDAO slotDAO;
+
+    @Autowired
+    private IMeansDAO meansDAO;
+
+    @Autowired
+    private IRealmDAO realmDAO;
+
+    @BeforeEach
     public void init(){
         super.init();
         weeksGenerator.generateYear(2021);
@@ -53,13 +55,16 @@ public class ScheduleMeanServiceTest extends SpringTestConfig {
 
     @Test
     public void scheduleSingleTest(){
-        String dateString = "2021-03-11";
+        String dateString = "2021-03-11"; //thu
 
-        Layer layer = createLayer();
-        Task task1 = createTask(layer);
+        var realm = createRealm();
+        var mean = createMean(realm);
+        var layer = createLayer(mean);
+        var task1 = createTask(layer);
+        createSlot(realm, DaysOfWeek.fri, 2);
+
 
         AssignMeanDto assignMeanDto = new AssignMeanDto();
-        assignMeanDto.setTasksPerWeek(1);
         assignMeanDto.setStartDayId(dayDao.findByDate(DateUtils.toDate(dateString)).getId());
 
         AssignLayerDto assignLayerDto = new AssignLayerDto();
@@ -72,7 +77,7 @@ public class ScheduleMeanServiceTest extends SpringTestConfig {
 
         task1 = tasksDAO.findById(task1.getId()).get();
         TaskMapper taskMapper = taskMappersDAO.findByTask(task1).get(0);
-        assertEquals(dateString, DateUtils.fromDate(taskMapper.getPlanDay().getDate()));
+        assertEquals("2021-03-12", DateUtils.fromDate(taskMapper.getPlanDay().getDate()));
 
     }
 
@@ -80,11 +85,16 @@ public class ScheduleMeanServiceTest extends SpringTestConfig {
     public void scheduleWithPlaceholdersTest(){
         String dateString = "2021-03-11";
 
-        Layer layer = createLayer();
-        Task task1 = createTask(layer);
+        var realm = createRealm();
+        var mean = createMean(realm);
+        var layer = createLayer(mean);
+        var task1 = createTask(layer);
+
+        createSlot(realm, DaysOfWeek.thu, 2);
+        createSlot(realm, DaysOfWeek.sat, 2);
+        createSlot(realm, DaysOfWeek.mon, 2);
 
         AssignMeanDto assignMeanDto = new AssignMeanDto();
-        assignMeanDto.setTasksPerWeek(3);
         assignMeanDto.setStartDayId(dayDao.findByDate(DateUtils.toDate(dateString)).getId());
 
         AssignLayerDto assignLayerDto = new AssignLayerDto();
@@ -122,11 +132,16 @@ public class ScheduleMeanServiceTest extends SpringTestConfig {
         existingTaskTM.setPlanDay(dayDao.findByDate(DateUtils.toDate("2021-03-13")));
         taskMappersDAO.save(existingTaskTM);
 
-        Layer layer = createLayer();
-        Task task1 = createTask(layer);
+        var realm = createRealm();
+        var mean = createMean(realm);
+        var layer = createLayer(mean);
+        var task1 = createTask(layer);
+
+        createSlot(realm, DaysOfWeek.thu, 2);
+        createSlot(realm, DaysOfWeek.sat, 2);
+        createSlot(realm, DaysOfWeek.mon, 2);
 
         AssignMeanDto assignMeanDto = new AssignMeanDto();
-        assignMeanDto.setTasksPerWeek(3);
         assignMeanDto.setStartDayId(dayDao.findByDate(DateUtils.toDate(dateString)).getId());
 
         AssignLayerDto assignLayerDto = new AssignLayerDto();
@@ -143,9 +158,24 @@ public class ScheduleMeanServiceTest extends SpringTestConfig {
 
     }
 
-    private Layer createLayer(){
+    private Realm createRealm(){
+        var realm = new Realm();
+        realm.setId(UUID.randomUUID().toString());
+        realmDAO.save(realm);
+        return realm;
+    }
+
+    private Mean createMean(Realm realm){
+        var mean = new Mean();
+        mean.setId(UUID.randomUUID().toString());
+        mean.setRealm(realm);
+        meansDAO.save(mean);
+        return mean;
+    }
+    private Layer createLayer(Mean mean){
         Layer layer = new Layer();
         layer.setId(UUID.randomUUID().toString());
+        layer.setMean(mean);
         layerDAO.save(layer);
         return layer;
     }
@@ -156,5 +186,15 @@ public class ScheduleMeanServiceTest extends SpringTestConfig {
         task.setLayer(layer);
         tasksDAO.save(task);
         return task;
+    }
+
+    private Slot createSlot(Realm realm, DaysOfWeek daysOfWeek, int hours) {
+        var slot = new Slot();
+        slot.setId(UUID.randomUUID().toString());
+        slot.setHours(hours);
+        slot.setRealm(realm);
+        slot.setDayOfWeek(daysOfWeek);
+        slotDAO.save(slot);
+        return slot;
     }
 }

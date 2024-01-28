@@ -5,7 +5,6 @@ import {registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
 
 import {CommonModal} from './../../common/common-modal'
 import {formatDate} from '../../../utils/date-utils'
-import {DataConstants} from '../../../data/data-constants'
 
 export class TaskProgressModal extends React.Component {
   constructor(props){
@@ -16,7 +15,7 @@ export class TaskProgressModal extends React.Component {
     registerEvent('task-progress-modal', 'open', (stateSetter, task, highlightId)=>this.setState({isOpen:true, task:task, highlightId: highlightId}))
     registerEvent('task-progress-modal', 'close', (stateSetter)=>this.setState(defaultState))
 
-    registerReaction('task-progress-modal', DataConstants.progressRep, ['got-by-task', 'deleted-unfinished-reps'], ()=>this.setState({}))
+    registerReaction('task-progress-modal', 'progress-rep', ['got-by-task', 'deleted-unfinished-reps'], ()=>this.setState({}))
 
   }
 
@@ -45,10 +44,10 @@ const getContent = function(component){
     return null
   }
 
-  var progressByTask = chkSt(DataConstants.progressRep, DataConstants.objMap)
+  var progressByTask = chkSt('progress-rep', 'objects')
 
   if(progressByTask == null || progressByTask[task.id] == null){
-    fireEvent(DataConstants.progressRep, 'get-by-task', [task])
+    fireEvent('progress-rep', 'get-by-task', [task.id])
     return 'Loading...'
   }
 
@@ -58,7 +57,7 @@ const getContent = function(component){
             <div>
               <div>Finishes</div>
               {mappersTableUI(progress.taskMappers, component.state.highlightId)}
-              <Button bsStyle="default" onClick={() => fireEvent('task-finish-modal', 'open', [task, progress.plans])}>Finish</Button>
+              <Button bsStyle="default" onClick={() => finishTask(task)}>Finish</Button>
             </div>
             <div style = {{borderBottom: '1px solid grey', padding: '3px'}}  />
             <div>
@@ -66,6 +65,14 @@ const getContent = function(component){
               {repetitionsTableUI(progress.repetitions, task, component.state.highlightId)}
             </div>
           </div>
+}
+
+const finishTask = function(task) {
+  if(task.repetitionPlanid == null){
+    fireEvent('progress-rep', 'finish-task', [task])
+  } else {
+    fireEvent('progress-rep', 'finish-task-sp', [task, chkSt('repPlan-rep', 'objects')[task.repetitionPlanid]])
+  }
 }
 
 //-------------------------Mappers--------------------------------
@@ -111,7 +118,7 @@ const repetitionsTableUI = function(repetitions, task, highlightId){
                     <td>{rep.planDay!=null? formatDate(rep.planDay.date):''}</td>
                     <td>{rep.factDay!=null? formatDate(rep.factDay.date):''}</td>
                     <td>
-                      {rep.factDay==null && rep.id == highlightId? <Button bsStyle="success" bsSize='xsmall' onClick={() => fireEvent(DataConstants.progressRep, 'finish-rep', [rep, task])}>Complete</Button>: null}
+                      {rep.factDay==null && rep.id == highlightId? <Button bsStyle="success" bsSize='xsmall' onClick={() => fireEvent('progress-rep', 'finish-rep', [rep, task.id])}>Complete</Button>: null}
                     </td>
                   </tr>)
   })
@@ -135,7 +142,7 @@ const repetitionsTableUI = function(repetitions, task, highlightId){
 }
 
 const removeUnfinishedRepsButton = function(task){
-  const action = ()=>fireEvent('progress-rep', 'delete-unfinished-reps', [task])
+  const action = ()=>fireEvent('progress-rep', 'delete-unfinished-reps', [task.id])
   const message = 'Are sure you want to remove all unfinished repetitions for this Task?'
   return <Button bsStyle="default" bsSize="xsmall" onClick={()=> fireEvent('confirm-modal', 'open', [message, action])}>
           Remove unfinished

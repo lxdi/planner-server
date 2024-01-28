@@ -17,14 +17,14 @@ export class AssignMeanModal extends React.Component{
     registerEvent('assign-mean-modal', 'open', (stateSetter, dayTo, mean)=>this.setState({isOpen:true, dayTo:dayTo, mean: mean, dto:{startDayId: dayTo.id, tasksPerWeek: 0}}))
     registerEvent('assign-mean-modal', 'close', (stateSetter)=>this.setState(defaultState))
 
-    registerReaction('assign-mean-modal', 'mean-rep', ['got-full'], ()=>this.setState({}))
+    registerReaction('assign-mean-modal', 'mean-rep', ['got-full'], (stateSetter, obj)=>this.setState({mean: obj}))
     registerReaction('assign-mean-modal', 'week-rep', ['assign-mean-done'], ()=>this.setState(defaultState))
   }
 
   render(){
     return <CommonModal
                     isOpen = {this.state.isOpen}
-                    okHandler={this.state.dto!=null && this.state.dto.tasksPerWeek>0?()=>okHandler(this):null}
+                    okHandler={this.state.dto!=null?()=>okHandler(this):null}
                     cancelHandler = {()=>fireEvent('assign-mean-modal', 'close')}
                     title={getTitle(this)}>
                     {getContent(this)}
@@ -60,11 +60,6 @@ const getContent = function(comp){
 
   const style = {border:'1px solid lightgrey', margin: '3px', padding: '3px', borderRadius: '10px'}
   return <div>
-            <div id='choose per week' style={style}>
-              <div id='1 per week'>{radioUI('1 per week', comp.state.dto.tasksPerWeek==1, ()=>{comp.state.dto.tasksPerWeek=1; comp.setState({}); return true})}</div>
-              <div id='2 per week'>{radioUI('2 per week', comp.state.dto.tasksPerWeek==2, ()=>{comp.state.dto.tasksPerWeek=2; comp.setState({}); return true})}</div>
-              <div id='3 per week'>{radioUI('3 per week', comp.state.dto.tasksPerWeek==3, ()=>{comp.state.dto.tasksPerWeek=3; comp.setState({}); return true})}</div>
-            </div>
             <div style={style}>
               {layersUI(comp, mean)}
             </div>
@@ -78,7 +73,7 @@ const layersUI = function(comp, mean){
     mean.layers.forEach(layer => {
       result.push(
         <div>
-          {checkBoxUI('Layer ' + layer.priority, isLayerChecked(comp.state.dto, layer), ()=>checkLayer(comp, comp.state.dto, layer))}
+          {checkBoxUI('Layer ' + layer.depth, isLayerChecked(comp.state.dto, layer), ()=>checkLayer(comp, comp.state.dto, layer))}
           <div style={{marginLeft:'10px'}}>{tasksUI(comp, layer)}</div>
           <div style={{marginLeft:'10px'}}>
             <a href='#' style={{marginRight: '2px'}} onClick={()=>getPlaceholdersCountForLayer(comp, comp.state.dto, layer, -1)}>-</a>
@@ -120,10 +115,6 @@ const convertProgressStatusToBoolean = function(task){
 
 const checkBoxUI = function(title, isChecked, checkCallback){
   return inputCheckUI(title, isChecked, checkCallback, 'checkbox')
-}
-
-const radioUI = function(title, isChecked, checkCallback){
-  return inputCheckUI(title, isChecked, checkCallback, 'radio')
 }
 
 const inputCheckUI = function(title, isChecked, checkCallback, type){

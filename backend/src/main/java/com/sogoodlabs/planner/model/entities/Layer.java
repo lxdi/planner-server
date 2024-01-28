@@ -3,19 +3,22 @@ package com.sogoodlabs.planner.model.entities;
 import com.sogoodlabs.common_mapper.annotations.IncludeInDto;
 import com.sogoodlabs.common_mapper.annotations.MapToClass;
 import com.sogoodlabs.planner.model.IEntity;
+import jakarta.persistence.*;
 
-import javax.persistence.*;
 import java.util.List;
 
 @Entity
+@Table(name = "layers")
 public class Layer implements IEntity {
 
     @Id
     private String id;
 
     int priority;
+    int depth;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "mean")
     Mean mean;
 
     @Transient
@@ -35,6 +38,13 @@ public class Layer implements IEntity {
         this.priority = priority;
     }
 
+    public int getDepth() {
+        return depth;
+    }
+    public void setDepth(int depth) {
+        this.depth = depth;
+    }
+
     public Mean getMean() {
         return mean;
     }
@@ -47,7 +57,7 @@ public class Layer implements IEntity {
         return tasks;
     }
 
-    @MapToClass(value = Task.class)
+    @MapToClass(value = Task.class, parentField = "layer")
     public void setTasks(List<Task> tasks) {
         this.tasks = tasks;
     }

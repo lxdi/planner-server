@@ -24,9 +24,9 @@ const urgency2WeeksLateStyle = {border: '2px solid peachpuff'}
 export class WeekElement extends React.Component {
   constructor(props){
     super(props)
-    this.state = {full: this.props.full}
-    if(this.state.full==null){
-      this.state.full = true
+
+    if (getCurrentDay(this.props.week.days) != null) {
+      registerReaction('week-frame-current', 'day-rep', ['got-days-in-week'], ()=>this.setState({}))
     }
   }
 
@@ -35,21 +35,33 @@ export class WeekElement extends React.Component {
       return 'Loading...'
     }
 
-    const days = []
+    var currentDay = getCurrentDay(this.props.week.days)
+    var fullDays = null
+
+    if (currentDay != null) {
+      var fullDaysByWeek = chkSt('day-rep', 'full-days-by-week')
+
+      if (fullDaysByWeek == null || fullDaysByWeek[this.props.week.id] == null) {
+        fireEvent('day-rep', 'get-days-in-week', [this.props.week.id])
+      } else {
+        fullDays = fullDaysByWeek[this.props.week.id]
+      }
+    }
+
+    const daysUIcells = []
+
     this.props.week.days.forEach(day => {
-      days.push(<td>{getDayCellUI(day, this.state.full)}</td>)
+      var dayFull = fullDays!=null? fullDays[day.id]: null
+      daysUIcells.push(<td>{getDayCellUI(day, currentDay==day, currentDay!=null, dayFull)}</td>)
     })
 
-    var weekStyleVar = weekStyle
-    // if(this.state.full){
-    //   weekStyleVar = isCurrentWeek(this.props.week)?weekCurrentStyle: weekStyle
-    // }
+    var weekStyleVar = weekStyle //currentDay==null? weekStyle: weekCurrentStyle
 
     return <div key = {this.props.week.id} style={weekStyleVar}>
             {yearLabel(this.props.week)}
             <table style={{borderCollapse:'collapse', width:'100%', tableLayout: 'fixed'}}>
                   <tr>
-                    {days}
+                    {daysUIcells}
                   </tr>
             </table>
           </div>
@@ -63,22 +75,17 @@ const yearLabel = function(week){
   return <div style = {{borderBottom: '1px solid grey'}}> {week.year}</div>
 }
 
-
-const getDayCellUI = function(day, isFull){
-  var style = null
-
-  if(isCurrentDay(day)){
-    style = todayCellStyle
-  } else {
-    style = dayCellStyle
-  }
+const getDayCellUI = function(day, isCurrent, isCurrentWeek, dayFull){
+  var style = isCurrent? todayCellStyle: dayCellStyle
+  var isFull = day.id != null
 
   return <div style={style}>
-          {isFull? getDayContentFull(day): <div style={{fontWeight: 'bold'}}>{day.weekDay}</div>}
+          {isFull? getDayContentFull(day, isCurrentWeek, dayFull): <div style={{fontWeight: 'bold'}}>{day.weekDay}</div>}
         </div>
 }
 
-const getDayContentFull = function(day){
+const getDayContentFull = function(day, isCurrentWeek, dayFull){
+
   const dayCal = formatDate(day.date, 'day')
   const month = formatDate(day.date, 'month')
   const style = JSON.parse(JSON.stringify(getFillmentStyle(day)))
@@ -87,22 +94,72 @@ const getDayContentFull = function(day){
     Object.assign(style, {fontWeight: 'bold'})
   }
 
+  var taskContent = null
+  var dayNumStyle = null
+
+  if (isCurrentWeek) {
+    taskContent = <div style = {{marginLeft: '3px'}}>{getFullContentUi(dayFull)}</div>
+    dayNumStyle = {verticalAlign: 'top', fontSize:'9px'}
+  } else {
+    taskContent = <div style = {{display:'inline-block', marginLeft: '3px'}}>{getTotalMappersAndRepsUI(day)}</div>
+    dayNumStyle = {verticalAlign: 'top', fontSize:'9px', display:'inline-block'}
+  }
+
   return <a key = {day.id} href='#' onClick = {()=>fireEvent('day-modal', 'open', [day])}>
       <div style = {style}
-      draggable='true'
-      onDragStart={e => onDragStart(e, day)}
-      onDragOver={e => e.preventDefault()}
-      onDrop={e => onDrop(e, day)}>
+          draggable='true'
+          onDragStart={e => onDragStart(e, day)}
+          onDragOver={e => e.preventDefault()}
+          onDrop={e => onDrop(e, day)}>
 
-        <div style = {getUrgencyStyle(day)}>
-          <div style = {{verticalAlign: 'top', fontSize:'9px', display:'inline-block'}}>
+        <div style = {isCurrentWeek? Object.assign({height: '120px'}, getUrgencyStyle(day)): getUrgencyStyle(day)}>
+          <div style = {dayNumStyle}>
             <div style = {{color: 'grey'}}>{dayCal}</div>
             <div style = {{color: 'red'}}>{dayCal=='01'? month: null}</div>
           </div>
-          <div style = {{display:'inline-block', marginLeft: '3px'}}>{getTotalMappersAndRepsUI(day)}</div>
+          {taskContent}
         </div>
       </div>
   </a>
+}
+
+const getFullContentUi = function(fullDayDto) {
+
+  if (fullDayDto == null) {
+    return 'Loading...'
+  }
+
+  var tasksUI = fullDayDto.taskMappers.map(tm => getFullContentElementUI(tm.taskFullPath))
+  var repsUi = fullDayDto.repetitions.map(rp => getFullContentElementUI(rp.taskFullPath))
+  var externalTasksUI = fullDayDto.externalTasks.map(et => getFullContentElementUI(et.description))
+
+  return <div style={{fontSize: '7pt'}}>
+            <div style = {{color: 'green'}}>{tasksUI}</div>
+            <div style = {{color: 'DodgerBlue'}}>{repsUi}</div>
+            <div style = {{color: 'brown'}}>{externalTasksUI}</div>
+            <div style = {{color: 'DarkSlateGrey'}}>{formatSlotActivity(fullDayDto.slotActivity)}</div>
+  </div>
+
+}
+
+const getFullContentElementUI = function(name) {
+  var maxLength = 25
+  var result = name.includes('/')? name.split('/').pop(): name
+  result = result.length > maxLength? result.substring(0, maxLength-3)+'...': result
+  return <div>- {result}</div>
+}
+
+const formatSlotActivity = function(value) {
+  if (value == null || value == '') {
+    return null
+  }
+
+  var splitted = value.split(';')
+  return splitted.map(sv => <div>{getFullContentElementUI(sv)}</div>)
+}
+
+const divisor = function(){
+  return <div style={{backgroundColor:'lightgrey', width:'100%', height:'1px', marginLeft:'2px', marginRight:'2px', marginTop:'1px', marginBottom:'1px'}}></div>
 }
 
 const getUrgencyStyle = function(day){
@@ -153,10 +210,13 @@ const zeroToDash = function(num){
   return num
 }
 
-const isCurrentWeek = function(week){
-  var result = false
-  week.days.filter(day => isCurrentDay(day)).forEach(day => result = true)
-  return result
+const getCurrentDay = function(days) {
+  for (var i in days) {
+    if (isCurrentDay(days[i])) {
+      return days[i]
+    }
+  }
+  return null
 }
 
 const isCurrentDay = function(day){
@@ -175,16 +235,22 @@ const formatDate = function(date, part){
 }
 
 const onDragStart = function(e, dayFrom){
-  e.draggableDay = dayFrom
-  e.eventType = 'moving'
+  fireEvent('drag-n-drop', 'put', ['moving', dayFrom])
 }
 
 const onDrop = function(e, dayTo){
-  if(e.eventType == 'moving'){
-    fireEvent('shift-plans-modal', 'open', [e.draggableDay, dayTo])
+  const type = chkSt('drag-n-drop','type')
+
+  if(type == 'moving'){
+    const dayFrom = chkSt('drag-n-drop','data')
+    fireEvent('shift-plans-modal', 'open', [dayFrom, dayTo])
   }
-  if(e.eventType == 'assign mean'){
-    fireEvent('assign-mean-modal', 'open', [dayTo, e.mean])
+
+  if(type == 'assign-mean'){
+    const mean = chkSt('drag-n-drop','data')
+    fireEvent('assign-mean-modal', 'open', [dayTo, mean])
     e.mean = null
   }
+
+  fireEvent('drag-n-drop', 'clean')
 }

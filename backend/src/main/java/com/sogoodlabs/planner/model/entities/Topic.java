@@ -1,8 +1,9 @@
 package com.sogoodlabs.planner.model.entities;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
+@Table(name = "topics")
 public class Topic {
 
     @Id
@@ -12,6 +13,7 @@ public class Topic {
     String source;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "task")
     Task task;
 
     public String getId() {

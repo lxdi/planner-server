@@ -16,7 +16,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(path = "/realm")
+@RequestMapping(path = "/realms")
 public class RealmsRESTController {
 
     @Autowired
@@ -31,14 +31,14 @@ public class RealmsRESTController {
         this.realmDAO = realmDAO;
     }
 
-    @GetMapping("/get/all")
+    @GetMapping("/all")
     public List<Map<String, Object>> getAllTargets(){
        return realmDAO.findAll()
                 .stream().map(commonMapper::mapToDto)
                 .collect(Collectors.toList());
     }
 
-    @PutMapping("/create")
+    @PutMapping
     public Map<String, Object> createRealm(@RequestBody Map<String, Object> realmDto){
         Realm realm = commonMapper.mapToEntity(realmDto, new Realm());
         realm.setId(UUID.randomUUID().toString());
@@ -46,7 +46,7 @@ public class RealmsRESTController {
         return commonMapper.mapToDto(realm);
     }
 
-    @PostMapping(path = "/setcurrent/{realmid}")
+    @PostMapping("/current/{realmid}")
     public void setCurrent(@PathVariable("realmid") String realmId){
         Realm realm = realmDAO.findById(realmId).orElseThrow(() -> new RuntimeException("Realm not found by " + realmId));
         realmDAO.clearCurrent(realm);

@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 import java.sql.Date;
 import java.util.List;
 
@@ -19,28 +19,31 @@ public interface IRepDAO extends JpaRepository<Repetition, String> {
     @Query("from Repetition where task = :task and factDay is null")
     List<Repetition> findAllActiveByTask(@Param("task") Task task);
 
-    @Query("from Repetition where task = :task and repetitionPlan.dayStep is false and factDay is null")
-    List<Repetition> findByTaskActive(@Param("task") Task task);
+    @Query("from Repetition where factDay is null and factDay.date >= :date")
+    List<Repetition> findAllActiveAfterDate(@Param("date") Date date);
 
-    @Query("from Repetition where planDay = :planDay and repetitionPlan.dayStep is false")
+    @Query("from Repetition where task = :task and task.repetitionPlan.dayStep = false and factDay is null")
+    List<Repetition> findByTaskActive(Task task);
+
+    @Query("from Repetition where planDay = :planDay and task.repetitionPlan.dayStep = false")
     List<Repetition> findByPlanDay(@Param("planDay") Day planDay);
 
-    @Query("from Repetition where (planDay = :day or factDay = :day) and repetitionPlan.dayStep is false")
+    @Query("from Repetition where (planDay = :day or factDay = :day) and task.repetitionPlan.dayStep = false")
     List<Repetition> findByPlanDayOrFactDay(@Param("day") Day day);
 
-    @Query("from Repetition where planDay in :days and factDay is null and repetitionPlan.dayStep is false")
+    @Query("from Repetition where planDay in :days and factDay is null and task.repetitionPlan.dayStep = false")
     List<Repetition> findByPlanDaysUnfinished(@Param("days") List<Day> planDays);
 
-    @Query("from Repetition where planDay in :days and factDay is null and repetitionPlan.dayStep is true")
+    @Query("from Repetition where planDay in :days and factDay is null and task.repetitionPlan.dayStep = true")
     List<Repetition> findByPlanDaysUnfinishedMemo(@Param("days") List<Day> planDays);
 
-    @Query("select count(*) from Repetition where planDay = :day and repetitionPlan.dayStep is false")
+    @Query("select count(*) from Repetition where planDay = :day and task.repetitionPlan.dayStep = false")
     int findTotalByPlanDay(@Param("day") Day day);
 
-    @Query("select count(*) from Repetition where factDay = :day and repetitionPlan.dayStep is false")
+    @Query("select count(*) from Repetition where factDay = :day and task.repetitionPlan.dayStep = false")
     int findTotalByFactDay(@Param("day") Day day);
 
-    @Query("select count(*) from Repetition where planDay = :day and factDay is null and repetitionPlan.dayStep is false")
+    @Query("select count(*) from Repetition where planDay = :day and factDay is null and task.repetitionPlan.dayStep = false")
     int findTotalByPlanDayUnfinished(@Param("day") Day day);
 
     @Query("select count(*) from Repetition where factDay.date >= :date")

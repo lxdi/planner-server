@@ -1,14 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {TargetsFrame} from './targets/targets-frame';
 import {MeansFrame} from './means/means-frame';
 import {ScheduleFrame} from './schedule/schedule-frame';
 
 export class Frame extends React.Component {
   render(){
     var frameContent;
-    if(this.props.name=="Targets")
-      frameContent = <TargetsFrame />;
     if(this.props.name=="Schedule")
       frameContent = <ScheduleFrame />
     if(this.props.name=="Means")

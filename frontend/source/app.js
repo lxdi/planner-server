@@ -4,9 +4,10 @@ import ReactDOM from 'react-dom';
 import {Main} from './ui/main'
 import {LeftSideBarContent} from './ui/left-side-bar-content'
 import {TaskProgressModal} from './ui/means/modal/task-progress-modal'
-import {TaskFinishModal} from './ui/means/modal/task-finish-modal'
 import {ActualTasksModal} from './ui/means/actual-tasks-modal'
 import {TestingModal} from './ui/means/modal/testing-modal'
+import {PrioritiesModal} from './ui/means/modal/priorities-modal'
+import {SlotsModal} from './ui/means/modal/slots-modal'
 import {DayModal} from './ui/schedule/day-modal'
 import {ShiftPlansModal} from './ui/schedule/shift-plans-modal'
 import {ExternalTaskModal} from './ui/schedule/external-task-modal'
@@ -15,22 +16,28 @@ import {ConfirmModal} from './ui/common/confirm-modal'
 import {OverlayInfo} from './ui/overlay'
 
 import {createRealmRep} from './data/realms-dao'
-import {createTargetRep} from './data/targets-dao'
 import {createMeanRep} from './data/means-dao'
 import {createLayerRep} from './data/layers-dao'
 import {createTaskRep} from './data/tasks-topics-testings-dao'
+import {createSlotsRep} from './data/slots-dao'
+import {createForecastRep} from './data/forecast-report-dao'
+import {createRepPlanRep} from './data/rep-plans-dao'
 
 import './data/rep-plans-dao'
 import './data/weeks-dao'
 import './data/days-dao'
 import './data/progress-dao'
 import './data/external-tasks-dao'
+import './data/drag-n-drop'
 
 createRealmRep()
-createTargetRep()
 createMeanRep()
 createLayerRep()
 createTaskRep()
+createSlotsRep()
+createRepPlanRep()
+createForecastRep()
+
 
 ReactDOM.render(<div id="app" />, document.body);
 const app = document.getElementById("app");
@@ -56,7 +63,6 @@ const getModals = function(){
 	return <div>
 						<TestingModal/>
 						<TaskProgressModal/>
-						<TaskFinishModal/>
 						<ActualTasksModal/>
 						<DayModal/>
 						<ShiftPlansModal/>
@@ -64,6 +70,8 @@ const getModals = function(){
 						<AssignMeanModal/>
 						<ConfirmModal/>
 						<OverlayInfo />
+						<PrioritiesModal />
+						<SlotsModal />
 					</div>
 }
 

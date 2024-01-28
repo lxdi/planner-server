@@ -1,20 +1,17 @@
 package com.sogoodlabs.planner.services;
 
-import com.sogoodlabs.planner.controllers.dto.MovingPlansDto;
-import com.sogoodlabs.planner.controllers.dto.ScheduledDayDto;
+import com.sogoodlabs.planner.model.dto.MovingPlansDto;
+import com.sogoodlabs.planner.model.dto.ScheduledDayDto;
 import com.sogoodlabs.planner.model.dao.*;
 import com.sogoodlabs.planner.model.entities.Day;
-import com.sogoodlabs.planner.model.entities.Repetition;
 import com.sogoodlabs.planner.model.entities.TaskMapper;
 import com.sogoodlabs.planner.model.entities.Week;
 import com.sogoodlabs.planner.util.DateUtils;
-import org.hibernate.Hibernate;
-import org.hibernate.proxy.HibernateProxy;
+import com.sogoodlabs.planner.util.HibernateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.sql.Date;
 import java.util.ArrayList;
@@ -53,8 +50,11 @@ public class WeekService {
     @Autowired
     private MoveRepetitionsService moveRepetitionsService;
 
+    @Autowired
+    private ISlotDAO slotDAO;
+
     public Week fill(Week weekProxy){
-        Week week = initializeAndUnproxy(weekProxy);
+        Week week = HibernateUtils.initializeAndUnproxy(weekProxy);
         week.setDays(new ArrayList<>());
 
         dayDao.findByWeek(week).stream()
@@ -170,6 +170,11 @@ public class WeekService {
 
     public ScheduledDayDto getScheduledDayDto(Day day){
         ScheduledDayDto dto = new ScheduledDayDto();
+        dto.setDayId(day.getId());
+
+        var slot = slotDAO.findByDayOfWeekAndRealm(day.getWeekDay(), null).stream().findFirst().orElse(null);
+        dto.setSlotActivity(slot == null? null:  slot.getDescription());
+
         dto.setTaskMappers(taskMappersDAO.findByPlanDayOrFinishDay(day, day));
         dto.setRepetitions(repDAO.findByPlanDayOrFactDay(day));
         dto.setExternalTasks(externalTaskDao.findByDay(day));
@@ -194,19 +199,6 @@ public class WeekService {
                     .map(repId -> repDAO.findById(repId).orElseThrow(() -> new RuntimeException("Repetition not found " + repId)))
                     .collect(Collectors.toList()), day);
         }
-    }
-
-    public static <T> T initializeAndUnproxy(T entity) {
-        if (entity == null) {
-            throw new
-                    NullPointerException("Entity passed for initialization is null");
-        }
-
-        Hibernate.initialize(entity);
-        if (entity instanceof HibernateProxy) {
-            entity = (T) ((HibernateProxy) entity).getHibernateLazyInitializer().getImplementation();
-        }
-        return entity;
     }
 
 }

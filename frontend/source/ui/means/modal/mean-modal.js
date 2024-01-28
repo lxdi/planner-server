@@ -4,23 +4,14 @@ import {Button, ButtonToolbar,  DropdownButton, MenuItem,  FormGroup, ControlLab
 import {registerEvent, registerReaction, fireEvent, chkSt, registerReactionCombo} from 'absevents'
 import {iterateLLfull, iterateTree} from 'js-utils'
 
-import {DataConstants} from '../../../data/data-constants'
 import {LayersGroup} from './layers-group'
-import {CreateMean, CreateTarget, CreateLayer, CreateTask} from './../../../data/creators'
-import {meanModalHeaderTitle, targetsDropDownTitle} from './../../../titles'
+import {CreateMean, CreateLayer, CreateTask} from './../../../data/creators'
+import {meanModalHeaderTitle} from './../../../titles'
 import {CommonModal} from './../../common/common-modal'
 import {CommonCrudeTemplate} from './../../common/common-crud-template'
 import {isValidMean} from '../../../utils/mean-validator'
-import {addNewLayerToMean} from '../../../data/mean-loader'
 
-const meanRep = 'mean-rep'
-const layerRep = 'layer-rep'
-const taskRep = 'task-rep'
-const objMapName = 'objects'
-const currentRealm = 'currentRealm'
-const indexByMean = 'index-by-mean'
-const byMeanRequest = 'by-mean-request'
-const byMeanResponse = 'by-mean-response'
+const NEW_ID = 'new'
 
 export class MeanModal extends React.Component {
   constructor(props){
@@ -31,13 +22,18 @@ export class MeanModal extends React.Component {
     this.handleNameVal = this.handleNameVal.bind(this);
 
     registerEvent('mean-modal', 'open', (stateSetter, currentMean) => {
-      this.setState({isOpen:true, mode:{isStatic: currentMean.id==DataConstants.newId, isEdit: currentMean.id==DataConstants.newId}, currentMean: currentMean})
+
+      if(typeof currentMean == 'string'){
+        currentMean = {id: currentMean}
+      }
+
+      this.setState({isOpen:true, mode:{isStatic: currentMean.id==NEW_ID, isEdit: currentMean.id==NEW_ID}, currentMean: currentMean})
     })
 
     registerEvent('mean-modal', 'open-with-task', (stateSetter, currentMean, taskId, highlightId) => {
       this.setState({
         isOpen:true,
-        mode:{isStatic: currentMean.id==DataConstants.newId, isEdit: currentMean.id==DataConstants.newId},
+        mode:{isStatic: false, isEdit: false},
         currentMean: currentMean,
         postactions: {open:{task:{id: taskId, highlightId: highlightId}}}
       })
@@ -45,25 +41,24 @@ export class MeanModal extends React.Component {
 
     registerEvent('mean-modal', 'close', ()=>{
       this.state.currentMean.isFull = false
-      fireEvent(layerRep, 'clean')
-      fireEvent(taskRep, 'clean')
-      fireEvent(DataConstants.topicRep, 'clean')
-      fireEvent(DataConstants.tasktestingRep, 'clean')
+      fireEvent('layer-rep', 'clean')
+      fireEvent('task-rep', 'clean')
+      fireEvent('topic-rep', 'clean')
+      fireEvent('task-testing-rep', 'clean')
       this.setState(defaultState)
     })
 
-    registerEvent('mean-modal', 'remove-target')
-    registerReaction('means-modal', meanRep, ['deleted', 'updated', 'created'], ()=>this.setState(defaultState))
-    registerReaction('means-modal', meanRep, ['got-full'], ()=>{postactionsHandle(this.state); this.setState({})})
+    registerReaction('means-modal', 'mean-rep', ['deleted', 'updated', 'created'], ()=>this.setState(defaultState))
+    registerReaction('means-modal', 'mean-rep', ['got-full'], ()=>{afterGetFull(this.state); this.setState({})})
     registerReaction('mean-modal', 'task-modal', 'close', ()=>this.setState({}))
 
   }
 
   okHandler(){
-    if(this.state.currentMean.id==DataConstants.newId){
-      fireEvent(meanRep, 'create', [this.state.currentMean])
+    if(this.state.currentMean.id==NEW_ID){
+      fireEvent('mean-rep', 'create', [this.state.currentMean])
     } else {
-      fireEvent(meanRep, 'update', [this.state.currentMean])
+      fireEvent('mean-rep', 'update', [this.state.currentMean])
     }
     this.state.currentMean.isFull=false
   }
@@ -93,7 +88,7 @@ const renderUI = function(component){
 }
 
 const getTitle = function(state){
-  if(state.currentMean!=null && state.currentMean.id != DataConstants.newId){
+  if(state.currentMean!=null && state.currentMean.id != NEW_ID){
     return state.currentMean.title
   }
   return 'Create new Mean'
@@ -110,7 +105,7 @@ const modalBody = function(component){
 
     return <CommonCrudeTemplate editing = {component.state.mode}
                   changeEditHandler = {component.forceUpdate.bind(component)}
-                  deleteHandler={()=>fireEvent(meanRep, 'delete', [component.state.currentMean])}>
+                  deleteHandler={()=>fireEvent('mean-rep', 'delete', [component.state.currentMean])}>
 
               {unscheduleButton(component)}
               {showAlerts(component.state.alerts)}
@@ -140,12 +135,12 @@ const modalBody = function(component){
 }
 
 const prepareMean = function(mean){
-  if(mean.id==DataConstants.newId){
+  if(mean.id==NEW_ID){
     return true
   }
 
   if(mean.isFull == null || !mean.isFull){
-    fireEvent(meanRep, 'get-full', [mean])
+    fireEvent('mean-rep', 'get-full', [mean])
     return false
   }
   return true
@@ -167,6 +162,13 @@ const showAlerts = function(alerts){
     }
     return <Alert bsStyle="danger">{result}</Alert>
   }
+}
+
+const afterGetFull = function(state) {
+  if (state.currentMean != null) {
+    state.currentMean = chkSt('mean-rep', 'objects')[state.currentMean.id]
+  }
+  postactionsHandle(state)
 }
 
 const postactionsHandle = function(state){

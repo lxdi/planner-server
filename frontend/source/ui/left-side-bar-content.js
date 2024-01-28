@@ -46,12 +46,11 @@ const content = function(reactcomp){
                 </div>
               </a>
               {divisor()}
-              <div style={{margin:'2px', width:'45px', height:'45px', fontSize:'10pt'}}>
-                <button class="left-bar-button" onClick = {()=>fireEvent('main-ui', 'switch-mode')}>
-                {viewModeButtonLabel()}
-                </button>
-              </div>
-              {getSwitchButton()}
+              <a href="#" style={{textDecoration:'none'}}>
+                <div onClick={()=>fireEvent('priorities-modal', 'open')} class="actual-tasks-indicators-group">
+                  {getSquare('P', 'blue')}
+                </div>
+              </a>
             </div>
 }
 
@@ -69,26 +68,4 @@ const getStatSquare = function(num, percents, color, span){
                   <div style = {{fontSize:'8pt'}}>{num}</div>
                   <div style = {{fontSize:'8pt'}}>{percents}%</div>
             </div>
-}
-
-const getSwitchButton = function(){
-  if(!chkSt('main-ui', 'three-frames')){
-    return <div style={{margin:'2px', width:'45px', height:'45px'}}>
-                    <button class="left-bar-button-switch" style={{fontSize:'8pt'}} onClick={()=>fireEvent('main-ui', 'switch-curr-state')}>Switch</button>
-                  </div>
-  } else {
-    return <div></div>
-  }
-}
-
-const viewModeButtonLabel = function(){
-  if(!chkSt('main-ui', 'three-frames')){
-    return ' |  | '
-  } else {
-    return <div>
-                 <span style={{color:'green'}}> | </span>
-                 <span style={{color:'blue'}}> | </span>
-                 <span style={{color:'orange'}}> | </span>
-            </div>
-  }
 }

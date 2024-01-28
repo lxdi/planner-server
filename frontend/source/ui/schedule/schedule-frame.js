@@ -32,7 +32,7 @@ export class ScheduleFrame extends React.Component{
 
   render(){
     return <div style={{height:'85vh', borderTop:'1px solid lightgrey', borderBottom:'1px solid lightgrey', marginTop:'3px'}}>
-              <div style={{paddingRight: '14px'}}> <WeekElement week = {fakeWeek} full = {false} /> </div>
+              <div style={{paddingRight: '14px'}}> <WeekElement week = {fakeWeek}/> </div>
               {getContent(this)}
             </div>
   }
@@ -50,7 +50,7 @@ const getContent = function(component){
   return <BidirectList firstNode={chkSt(DataConstants.weekRep, DataConstants.objList)[0]}
                         getNext = {(week, isExtend)=>getNextHandler(weeksMap, week, isExtend)}
                         getPrev = {(week)=>getPrevHandler(weeksMap, week)}
-                        nodeView = {(week)=><WeekElement week = {week}/>}
+                        nodeView = {(week)=><WeekElement id = {week.id} week = {week}/>}
                         loadPrev={true}
                         />
 }

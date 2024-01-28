@@ -1,9 +1,10 @@
 package com.sogoodlabs.planner.model.entities;
 
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
+@Table(name = "realms")
 public class Realm {
 
     @Id

@@ -37,6 +37,18 @@
   padding:2px;
 }
 
+.frame-td-means {
+  vertical-align: top;
+  width:30%;
+  padding:2px;
+}
+
+.frame-td-schedule {
+  vertical-align: top;
+  width:70%;
+  padding:2px;
+}
+
 .frame{
     float: left;
     /* display: inline-block; */
@@ -53,6 +65,14 @@
 
 .frame_content {
     margin: 10px;
+}
+
+.priorities-modal-style {
+  width:70%
+}
+
+.slots-modal-style {
+  width:85%
 }
 
 .mean-modal-style {
@@ -117,10 +137,6 @@
 
 .actual-tasks-modal-style {
   width:70%;
-}
-
-#Targets {
-  border: 1px solid green;
 }
 
 #Means {

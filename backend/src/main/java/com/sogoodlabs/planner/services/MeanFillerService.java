@@ -32,6 +32,9 @@ public class MeanFillerService {
     @Autowired
     private ITaskMappersDAO taskMappersDAO;
 
+    @Autowired
+    private ProgressService progressService;
+
     public void fill(Mean mean){
         List<Layer> layers = layerDAO.findByMean(mean);
         layers.forEach(this::fill);
@@ -48,6 +51,7 @@ public class MeanFillerService {
         task.setTopics(topicDAO.findByTask(task));
         task.setTaskTestings(taskTestingDAO.findByTask(task));
         task.setProgressStatus(getProgressStatus(task));
+        task.setProgress(progressService.getByTask(task));
     }
 
     private String getProgressStatus(Task task){

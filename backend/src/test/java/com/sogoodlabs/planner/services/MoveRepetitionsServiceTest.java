@@ -1,7 +1,6 @@
 package com.sogoodlabs.planner.services;
 
 import com.sogoodlabs.planner.SpringTestConfig;
-import com.sogoodlabs.planner.controllers.dto.MovingPlansDto;
 import com.sogoodlabs.planner.model.dao.IDayDao;
 import com.sogoodlabs.planner.model.dao.IRepDAO;
 import com.sogoodlabs.planner.model.dao.IRepPlanDAO;
@@ -9,18 +8,18 @@ import com.sogoodlabs.planner.model.dao.ITasksDAO;
 import com.sogoodlabs.planner.model.entities.*;
 import com.sogoodlabs.planner.util.DateUtils;
 import org.hibernate.Session;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.transaction.Transactional;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.Transactional;
 import java.sql.Date;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
 public class MoveRepetitionsServiceTest extends SpringTestConfig {
@@ -58,8 +57,8 @@ public class MoveRepetitionsServiceTest extends SpringTestConfig {
 
     private void moveTest(String targetDate, String rep1planExpected, String rep2planExpected){
 
-        Task task = createTask();
         RepetitionPlan repetitionPlan = createRepPlan();
+        Task task = createTask(repetitionPlan);
 
         Date planDate = DateUtils.toDate("2021-07-26");
         List<Week> weekList = weekService.getWeeksOnDate(planDate); //generate days and weeks
@@ -102,13 +101,13 @@ public class MoveRepetitionsServiceTest extends SpringTestConfig {
         repetition.setPlanDay(planDay);
         repetition.setTask(task);
         repetition.setFactDay(factDay);
-        repetition.setRepetitionPlan(repPlan);
         repDAO.save(repetition);
         return repetition;
     }
 
-    private Task createTask(){
+    private Task createTask(RepetitionPlan repetitionPlan){
         Task task = new Task();
+        task.setRepetitionPlan(repetitionPlan);
         task.setId(UUID.randomUUID().toString());
         tasksDAO.save(task);
         return task;

@@ -1,158 +1,213 @@
-import {sendGet, sendPost, sendPut, sendDelete} from '../postoffice'
+import {sendGet, sendPost, sendPut, sendDelete, sendPatch} from '../postoffice'
 import {registerObject, registerEvent, registerReaction, fireEvent, chkSt} from 'absevents'
 
 
-const repOffset = '-rep'
-const objMapName = 'objects'
+// entities-rep -> state {objects: {id: object}}
+// GET /entities/all
+// GET /entities/{id}
+// GET /entities/{id}/full
+// PUT /entities
+// POST /entities
+// POST /entities/list
+// PATCH /entities TODO
+// PATCH /entities/list
+// DELETE /entities
 
-const getAllName = 'getAllSpan'
-const allRequestEventName = 'all-request'
-const allRequestReceivedEventName = 'all-response'
-const allRequestUrlOffset = '/get/all'
+const REP_OFFSET = '-rep'
+const OBJ_MAP_NAME = 'objects'
 
-const creationName = 'creationSpan'
-const createEventName = 'create'
-const createCompleteEventName = 'created'
-const createUrlOffset = '/create'
+const GET_ALL_SPAN = 'getAllSpan'
+const GET_SPAN = 'getSpan'
+const PUT_SPAN = 'creationSpan'
+const DELETE_SPAN = 'deleteSpan'
+const POST_SPAN = 'updateSpan'
+const PATCH_SPAN = 'patchSpan'
+const POST_LIST_SPAN = 'updateListSpan'
+const PATCH_LIST_SPAN = 'patchListSpan'
+const GET_FULL_SPAN = 'getFullSpan'
+const CLEAN_SPAN = 'cleanSpan'
 
-const deleteName = 'deleteSpan'
-const deleteEventName = 'delete'
-const deleteCompleteEventName = 'deleted'
-const deleteUrlOffset = '/delete'
-
-const updateName = 'updateSpan'
-const updateEventName = 'update'
-const updateCompleteEventName = 'updated'
-const updateUrlOffset = '/update'
-
-const getFullName = 'getFullSpan'
-const getFullEventName = 'get-full'
-const getFullCompleteEventName = 'got-full'
-const getFullUrlOffset = '/get/full'
-const fullFieldIndicator = 'isFull'
-
-const cleanName = 'cleanSpan'
-const cleanEventName = 'clean'
-
-export const createRep = function(name, callback){
-  createGetAll(name, callback)
-  createCreation(name, callback)
-  createDeletion(name, callback)
-  updateCreation(name, callback)
-  createGetFull(name, callback)
-  cleaning(name, callback)
+export const createRep = function(repName, baseUrl, callback){
+  getAllEvents(repName, baseUrl, callback)
+  getEvents(repName, baseUrl, callback)
+  putEvents(repName, baseUrl, callback)
+  deleteEvents(repName, baseUrl, callback)
+  updateEvents(repName, baseUrl, callback)
+  updateListEvents(repName, baseUrl, callback)
+  partialUpdateEvents(repName, baseUrl, callback)
+  partialUpdateListEvents(repName, baseUrl, callback)
+  getFullEvents(repName, baseUrl, callback)
+  cleaning(repName, callback)
 }
 
-export const basicListReceiving = function(name, eventNameRequest, eventNameResponse, urlRequestOffset, spanName, callback){
-  const repName = name + repOffset
-  registerEvent(repName, eventNameRequest, function(stateSetter, pathVariable){
-      const pathVariableOffset = pathVariable!=null? '/' + pathVariable: ''
+const getAllEvents = function(repName, baseUrl, callback){
+  basicListReceiving(repName, baseUrl, '/all', 'all-request', 'all-response', GET_ALL_SPAN, null, callback)
+}
 
-      sendGet("/"+name+urlRequestOffset+pathVariableOffset, function(data) {
-                var objectsArr = typeof data == 'string'? JSON.parse(data): data
-                const objMap = {}
-                objectsArr.forEach(obj => objMap[obj.id]=obj)
-                stateSetter(objMapName, objMap)
+const getEvents = function(repName, baseUrl, callback){
 
-                if(callback!=null){
-                  callback(stateSetter, spanName, objMap, pathVariable)
-                }
-
-                fireEvent(repName, eventNameResponse, [objMap])
-              })
+  registerEvent(repName, 'get', function(stateSetter, id, paramsMap){
+    sendGet(baseUrl + '/' + id+paramMapToUrl(paramsMap), function(data) {
+      importObj(stateSetter, data, repName, 'got', GET_SPAN, callback)
+    })
   })
+
+  registerEvent(repName, 'got', (stateSetter, obj) => obj)
+}
+
+const getFullEvents = function(repName, baseUrl, callback){
+  registerEvent(repName, 'get-full', function(stateSetter, obj, paramsMap){
+    sendGet(baseUrl + '/' + obj.id + '/full'+paramMapToUrl(paramsMap), function(data) {
+      importObj(stateSetter, data, repName, 'got-full', GET_SPAN, callback, obj => {obj['isFull'] = true})
+    })
+  })
+
+  registerEvent(repName, 'got-full', (stateSetter, obj) => obj)
+}
+
+const putEvents = function(repName, baseUrl, callback){
+  registerEvent(repName, 'create', function(stateSetter, obj, paramsMap){
+    sendPut(baseUrl+paramMapToUrl(paramsMap), JSON.stringify(obj), function(data) {
+      importObj(stateSetter, data, repName, 'created', PUT_SPAN, callback)
+    })
+  })
+
+  registerEvent(repName, 'created', (stateSetter, obj) => obj)
+}
+
+const deleteEvents = function(repName, baseUrl, callback){
+  registerEvent(repName, 'delete', function(stateSetter, obj, paramsMap){
+
+    sendDelete(baseUrl + '/' + obj.id + paramMapToUrl(paramsMap), function() {
+      delete chkSt(repName, OBJ_MAP_NAME)[obj.id]
+
+      if(callback!=null){
+        callback(stateSetter, DELETE_SPAN, obj)
+      }
+
+      fireEvent(repName, 'deleted', [obj])
+    })
+  })
+
+  registerEvent(repName, 'deleted', (stateSetter, obj) => obj)
+}
+
+const updateEvents = function(repName, baseUrl, callback){
+
+  registerEvent(repName, 'update', (stateSetter, obj) => {
+    sendPost(baseUrl, JSON.stringify(obj), (data) => importObj(stateSetter, data, repName, 'updated', POST_SPAN, callback))
+  })
+
+  registerEvent(repName, 'updated', (stateSetter, obj) => obj)
+}
+
+const partialUpdateEvents = function(repName, baseUrl, callback){
+
+  registerEvent(repName, 'partial-update', (stateSetter, obj) => {
+    sendPatch(baseUrl, JSON.stringify(obj), (data) => importObj(stateSetter, data, repName, 'partial-updated', PATCH_SPAN, callback))
+  })
+
+  registerEvent(repName, 'partial-updated', (stateSetter, obj) => obj)
+}
+
+const updateListEvents = function(repName, baseUrl, callback){
+  registerEvent(repName, 'update-list', (stateSetter, objList, paramsMap) => {
+    sendPost(baseUrl+'/list'+ paramMapToUrl(paramsMap), JSON.stringify(objList), (data) => {
+      importObjList(stateSetter, data, repName, 'updated-list', POST_LIST_SPAN, callback)
+    })
+  })
+
+  registerEvent(repName, 'updated-list', (stateSetter, obj) => obj)
+}
+
+const partialUpdateListEvents = function(repName, baseUrl, callback){
+  registerEvent(repName, 'partial-update-list', (stateSetter, objList, paramsMap) => {
+    sendPatch(baseUrl+'/list'+ paramMapToUrl(paramsMap), JSON.stringify(objList), (data) => {
+      importObjList(stateSetter, data, repName, 'partial-updated-list', PATCH_LIST_SPAN, callback)
+    })
+  })
+
+  registerEvent(repName, 'partial-updated-list', (stateSetter, obj) => obj)
+}
+
+
+const cleaning = function(repName, callback){
+  registerEvent(repName, 'clean', function(stateSetter){
+      stateSetter(OBJ_MAP_NAME, null)
+
+      if(callback!=null){
+        callback(stateSetter, CLEAN_SPAN)
+      }
+
+      fireEvent(repName, 'cleaned')
+  })
+
+  registerEvent(repName, 'cleaned', (stateSetter) => {})
+}
+
+export const basicListReceiving = function(repName, baseUrl, urlOffset, eventNameRequest, eventNameResponse, spanName, defaultParams, callback){
+
+  registerEvent(repName, eventNameRequest, function(stSetter, paramsMap){
+      sendGet(baseUrl+urlOffset+paramMapToUrl(paramsMap, defaultParams), function(data) {
+              importObjList(stSetter, data, repName, eventNameResponse, spanName, callback)
+          })
+  })
+
   registerEvent(repName, eventNameResponse, (stSetter, objMap)=>objMap)
 }
 
-const createGetAll = function(name, callback){
-  basicListReceiving(name, allRequestEventName, allRequestReceivedEventName,
-          allRequestUrlOffset, getAllName, callback)
+const importObjList = function(stSetter, data, repName, rsEvent, spanName, callback){
+  var objMap = chkSt(repName, OBJ_MAP_NAME)
+
+  if(objMap==null){
+    objMap = {}
+    stSetter(OBJ_MAP_NAME, objMap)
+  }
+
+  var objectsArr = typeof data == 'string'? JSON.parse(data): data
+  objectsArr.forEach(obj => objMap[obj.id]=obj)
+
+  if(callback!=null){
+    callback(stSetter, spanName, objectsArr)
+  }
+
+  fireEvent(repName, rsEvent, [objectsArr])
 }
 
-const createCreation = function(name, callback){
-  const repName = name + repOffset
-  registerEvent(repName, createEventName, function(stateSetter, obj){
-    sendPut('/' + name + createUrlOffset, JSON.stringify(obj), function(data) {
-      var receivedData = typeof data == 'string'? JSON.parse(data): data
-      chkSt(repName, objMapName)[""+receivedData.id] = receivedData
+const importObj = function(stSetter, data, repName, rsEvent, spanName, callback, decoratorCallback){
+  var obj = typeof data == 'string'? JSON.parse(data): data
+  var objMap = chkSt(repName, OBJ_MAP_NAME)
 
-      if(callback!=null){
-        callback(stateSetter, creationName, receivedData)
-      }
+  if(objMap==null){
+    objMap = {}
+    stSetter(OBJ_MAP_NAME, objMap)
+  }
 
-      fireEvent(repName, createCompleteEventName, [receivedData])
-    })
-  })
-  registerEvent(repName, createCompleteEventName, (stateSetter, obj) => obj)
+  objMap[obj.id] = obj
+
+  if(decoratorCallback!=null){
+    decoratorCallback(obj)
+  }
+
+  if(callback!=null){
+    callback(stSetter, spanName, obj)
+  }
+
+  fireEvent(repName, rsEvent, [obj])
 }
 
-const createDeletion = function(name, callback){
-  const repName = name + repOffset
-  registerEvent(repName, deleteEventName, function(stateSetter, obj){
-    sendDelete('/' + name + deleteUrlOffset + '/' + obj.id, function() {
-      delete chkSt(repName, objMapName)[obj.id]
+const paramMapToUrl = function(paramsMap, defaultParams){
+  if(paramsMap == null && defaultParams == null){
+    return ''
+  }
 
-      if(callback!=null){
-        callback(stateSetter, deleteName, obj)
-      }
+  if(defaultParams == null){
+    return '?'+new URLSearchParams(paramsMap).toString()
+  }
 
-      fireEvent(repName, deleteCompleteEventName, [obj])
-    })
-  })
-  registerEvent(repName, deleteCompleteEventName, (stateSetter, obj) => obj)
-}
+  if(paramsMap == null){
+    return '?'+new URLSearchParams(defaultParams).toString()
+  }
 
-const updateCreation = function(name, callback){
-  const repName = name + repOffset
-  registerEvent(repName, updateEventName, function(stateSetter, obj){
-    sendPost('/' + name + updateUrlOffset, JSON.stringify(obj), function(data) {
-      var receivedData = typeof data == 'string'? JSON.parse(data): data
-      chkSt(repName, objMapName)[""+receivedData.id] = receivedData
-
-      if(callback!=null){
-        callback(stateSetter, updateName, receivedData)
-      }
-
-      fireEvent(repName, updateCompleteEventName, [receivedData])
-    })
-  })
-  registerEvent(repName, updateCompleteEventName, (stateSetter, obj) => obj)
-}
-
-const createGetFull = function(name, callback){
-  const repName = name + repOffset
-  registerEvent(repName, getFullEventName, function(stateSetter, obj){
-    sendGet('/' + name + getFullUrlOffset + '/' + obj.id, function(data) {
-      var receivedData = typeof data == 'string'? JSON.parse(data): data
-      chkSt(repName, objMapName)[""+receivedData.id] = receivedData
-
-      if(receivedData.id != obj.id){
-        console.log(repName, obj, receivedData)
-        throw "Get full: objects ids are not the same"
-      }
-
-      //const lazyObj = chkSt(repName, objMapName)[""+obj.id]
-      Object.assign(obj, receivedData)
-      obj[fullFieldIndicator] = true
-
-      if(callback!=null){
-        callback(stateSetter, getFullName, obj)
-      }
-
-      fireEvent(repName, getFullCompleteEventName, [obj])
-    })
-  })
-  registerEvent(repName, getFullCompleteEventName, (stateSetter, obj) => obj)
-}
-
-
-const cleaning = function(name, callback){
-  const repName = name + repOffset
-  registerEvent(repName, cleanEventName, function(stateSetter){
-      stateSetter(objMapName, null)
-
-      if(callback!=null){
-        callback(stateSetter, cleanName)
-      }
-  })
+  return '?'+ new URLSearchParams(defaultParams).toString() + '&' + new URLSearchParams(paramsMap).toString()
 }

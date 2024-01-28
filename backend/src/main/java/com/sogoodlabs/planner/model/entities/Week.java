@@ -3,7 +3,10 @@ package com.sogoodlabs.planner.model.entities;
 
 import com.sogoodlabs.common_mapper.annotations.IncludeInDto;
 
-import javax.persistence.*;
+import com.sogoodlabs.planner.util.DateUtils;
+import jakarta.persistence.*;
+
+import java.sql.Date;
 import java.util.List;
 
 /**
@@ -11,18 +14,22 @@ import java.util.List;
  */
 
 @Entity
+@Table(name = "weeks")
 public class Week {
 
     @Id
     private String id;
 
+    @Column(name = "year_of_week")
     private int year;
     private int num;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "prev")
     private Week prev;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "next")
     private Week next;
 
     @Transient
