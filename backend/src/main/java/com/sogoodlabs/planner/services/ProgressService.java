@@ -70,6 +70,12 @@ public class ProgressService {
         repDAO.saveAll(generateRepetitions(plan, finishDate, task));
     }
 
+    public void finishTask(TaskMapper taskMapper, Date date) {
+        taskMapper.setFinishDay(dayDao.findByDate(date));
+        taskMappersDAO.save(taskMapper);
+        log.info("Finished taskMapper " + taskMapper.getId());
+    }
+
     public List<Repetition> generateRepetitions(RepetitionPlan plan, Date finishDate, Task task) {
         List<Repetition> repetitions = new ArrayList<>();
 

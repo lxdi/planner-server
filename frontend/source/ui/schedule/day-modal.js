@@ -95,7 +95,7 @@ const mappersTableUI = function(mappers){
                     <td>{mapper.planDay!=null? formatDate(mapper.planDay.date):''}</td>
                     <td>{mapper.finishDay!=null? formatDate(mapper.finishDay.date):''}</td>
                     <td>
-                      {mapper.finishDay==null? <Button bsStyle="success" bsSize='xsmall' onClick={() => fireEvent(DataConstants.progressRep, 'finish-rep', [mapper, mapper.taskid])}>Complete</Button>: null}
+                      {mapper.finishDay==null? <Button bsStyle="success" bsSize='xsmall' onClick={() => fireEvent(DataConstants.progressRep, 'finish-task-tm', [mapper])}>Complete</Button>: null}
                     </td>
                   </tr>)
   })

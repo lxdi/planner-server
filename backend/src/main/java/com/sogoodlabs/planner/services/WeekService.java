@@ -175,7 +175,7 @@ public class WeekService {
         var slot = slotDAO.findByDayOfWeekAndRealm(day.getWeekDay(), null).stream().findFirst().orElse(null);
         dto.setSlotActivity(slot == null? null:  slot.getDescription());
 
-        dto.setTaskMappers(taskMappersDAO.findByPlanDayOrFinishDay(day, day));
+        dto.setTaskMappers(taskMappersDAO.findByEitherDay(day, day));
         dto.setRepetitions(repDAO.findByPlanDayOrFactDay(day));
         dto.setExternalTasks(externalTaskDao.findByDay(day));
         return dto;

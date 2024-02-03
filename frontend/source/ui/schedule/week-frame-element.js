@@ -165,7 +165,7 @@ const getFullContentUi = function(fullDayDto, fontSize) {
             <div style = {{color: 'green'}}>{tasksUI}</div>
             <div style = {{color: 'DodgerBlue'}}>{repsUi}</div>
             <div style = {{color: 'brown'}}>{externalTasksUI}</div>
-            <div style = {{color: 'lightGrey'}}>{formatSlotActivity(fullDayDto.slotActivity)}</div>
+            <div style = {{color: 'grey'}}>{formatSlotActivity(fullDayDto.slotActivity)}</div>
   </div>
 
 }

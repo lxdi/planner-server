@@ -4,6 +4,7 @@ package com.sogoodlabs.planner.controllers;
 import com.sogoodlabs.common_mapper.CommonMapper;
 import com.sogoodlabs.planner.model.dao.IRepDAO;
 import com.sogoodlabs.planner.model.dao.IRepPlanDAO;
+import com.sogoodlabs.planner.model.dao.ITaskMappersDAO;
 import com.sogoodlabs.planner.model.dao.ITasksDAO;
 import com.sogoodlabs.planner.model.entities.Repetition;
 import com.sogoodlabs.planner.model.entities.RepetitionPlan;
@@ -36,12 +37,22 @@ public class ProgressController {
     private IRepDAO repDAO;
 
     @Autowired
+    private ITaskMappersDAO taskMappersDAO;
+
+    @Autowired
     private ActualActivityService actualActivityService;
 
     @GetMapping
     public Map<String, Object> getForTask(@RequestParam("task-id") String taskId){
         Task task = tasksDAO.findById(taskId).orElseThrow(() -> new RuntimeException("Task not found " + taskId));
         return commonMapper.mapToDto(progressService.getByTask(task));
+    }
+
+    @PostMapping(value = "/finished", params = {"task-mapper"})
+    public Map<String, Object> finishTaskByMapper(@RequestParam("task-mapper") String taskMapperId){
+        var taskMapper = taskMappersDAO.findById(taskMapperId).orElseThrow(() -> new RuntimeException("TaskMapper not found "+ taskMapperId));
+        progressService.finishTask(taskMapper, DateUtils.currentDate());
+        return commonMapper.mapToDto(progressService.getByTask(taskMapper.getTask()));
     }
 
     @PostMapping(value = "/finished", params = {"task-id"})

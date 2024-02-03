@@ -23,6 +23,14 @@ registerEvent(REP_NAME, 'finish-task', (stSetter, task)=>{
   })
 })
 
+registerEvent(REP_NAME, 'finish-task-tm', (stSetter, taskMapper)=>{
+  sendPost('/' + NAME + '/finished?task-mapper=' + taskMapper.id, null, (data)=>{
+      const progress = typeof data == 'string'? JSON.parse(data): data
+      updateProgress(progress, taskMapper.taskid, stSetter)
+      fireEvent(REP_NAME, 'got-by-task', [progress])
+  })
+})
+
 registerEvent(REP_NAME, 'finish-task-sp', (stSetter, task, repPlan)=>{
   sendPost('/' + NAME + '/finished?task-id='+ task.id + '&plan-id='+repPlan.id, null, (data)=>{
       const progress = typeof data == 'string'? JSON.parse(data): data
