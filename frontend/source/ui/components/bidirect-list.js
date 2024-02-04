@@ -1,6 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+const scrollAdjust = 3
+
 //props(required): firstNode(id), getPrev(node), getNext(node), nodeView(node)
 //props (not required): loadPrev(bool) loadNext(bool) lastNode(id), compareNodes(node1, node2)
 export class BidirectList extends React.Component {
@@ -53,7 +55,7 @@ const onWheelHandler = function(e, component){
 }
 
 const isBarOnTheBottom = function(target){
-  return (target.clientHeight+target.scrollTop)>=target.scrollHeight
+  return (target.clientHeight+target.scrollTop)+scrollAdjust>=target.scrollHeight
 }
 
 const onScrollHandler = function(e){
