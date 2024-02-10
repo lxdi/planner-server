@@ -7,6 +7,7 @@ public class MovingPlansDto {
     private String targetDayId;
     private List<String> taskMappersIds;
     private List<String> repetitionIds;
+    private List<String> externalTasksIds;
 
     public String getTargetDayId() {
         return targetDayId;
@@ -30,5 +31,13 @@ public class MovingPlansDto {
 
     public void setRepetitionIds(List<String> repetitionIds) {
         this.repetitionIds = repetitionIds;
+    }
+
+    public List<String> getExternalTasksIds() {
+        return externalTasksIds;
+    }
+
+    public void setExternalTasksIds(List<String> externalTasksIds) {
+        this.externalTasksIds = externalTasksIds;
     }
 }

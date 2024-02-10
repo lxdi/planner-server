@@ -182,6 +182,7 @@ public class WeekService {
     }
 
     public void movePlans(MovingPlansDto movingPlansDto){
+
         Day day = dayDao.findById(movingPlansDto.getTargetDayId())
                 .orElseThrow(() -> new RuntimeException("Day no found " + movingPlansDto.getTargetDayId()));
 
@@ -198,6 +199,14 @@ public class WeekService {
             moveRepetitionsService.move(movingPlansDto.getRepetitionIds().stream()
                     .map(repId -> repDAO.findById(repId).orElseThrow(() -> new RuntimeException("Repetition not found " + repId)))
                     .collect(Collectors.toList()), day);
+        }
+
+        if (movingPlansDto.getExternalTasksIds() != null) {
+            movingPlansDto.getExternalTasksIds().forEach(exTaskId -> {
+                var extTask = externalTaskDao.findById(exTaskId).orElseThrow(() -> new RuntimeException("ExternalTask not found " + exTaskId));
+                extTask.setDay(day);
+                externalTaskDao.save(extTask);
+            });
         }
     }
 

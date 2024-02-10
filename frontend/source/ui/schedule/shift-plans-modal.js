@@ -11,7 +11,8 @@ const getMovingDto = function(day){
   return {
     targetDayId: day!=null? day.id: null,
     taskMappersIds: [],
-    repetitionIds: []
+    repetitionIds: [],
+    externalTasksIds: []
   }
 }
 
@@ -74,6 +75,12 @@ const getContent = function(comp){
             <div>
               {repetitionsTableUI(comp, comp.state.dayFrom.repetitions, comp.state.movingDto)}
             </div>
+            <div>
+              External Tasks
+            </div>
+            <div>
+              {exTasksTableUI(comp, comp.state.dayFrom.externalTasks, comp.state.movingDto)}
+            </div>
           </div>
 }
 
@@ -90,7 +97,7 @@ const mappersTableUI = function(comp, mappers, movingDto){
                     <td>{mapper.planDay!=null? formatDate(mapper.planDay.date):''}</td>
                     <td>{mapper.finishDay!=null? formatDate(mapper.finishDay.date):''}</td>
                     <td>
-                      <input type="checkbox" checked={movingDto.taskMappersIds.includes(mapper.id)?'checked': null} onClick={()=>onClickCheckBox(comp, movingDto, mapper.id, true)}/>
+                      <input type="checkbox" checked={movingDto.taskMappersIds.includes(mapper.id)?'checked': null} onClick={()=>onClickCheckBox(comp, movingDto, mapper.id, 'task mapper')}/>
                     </td>
                   </tr>)
   })
@@ -122,7 +129,7 @@ const repetitionsTableUI = function(comp, repetitions, movingDto){
                     <td>{rep.planDay!=null? formatDate(rep.planDay.date):''}</td>
                     <td>{rep.factDay!=null? formatDate(rep.factDay.date):''}</td>
                     <td>
-                      <input type="checkbox" checked={movingDto.repetitionIds.includes(rep.id)?'checked': null} onClick={()=>onClickCheckBox(comp, movingDto, rep.id, false)}/>
+                      <input type="checkbox" checked={movingDto.repetitionIds.includes(rep.id)?'checked': null} onClick={()=>onClickCheckBox(comp, movingDto, rep.id, 'repetition')}/>
                     </td>
                   </tr>)
   })
@@ -140,22 +147,59 @@ const repetitionsTableUI = function(comp, repetitions, movingDto){
           </Table>
 }
 
-const onClickCheckBox = function(comp, movingDto, id, isTaskMappers){
-  if(isTaskMappers){
-    if(movingDto.taskMappersIds.includes(id)){
-      removeByValue(movingDto.taskMappersIds, id)
-    } else {
-      movingDto.taskMappersIds.push(id)
-    }
-  } else {
-    if(movingDto.repetitionIds.includes(id)){
-      removeByValue(movingDto.repetitionIds, id)
-    } else {
-      movingDto.repetitionIds.push(id)
-    }
+//--------------------------ExternalTasks--------------------------------
+
+const exTasksTableUI = function(comp, tasks, movingDto){
+  const result = []
+  tasks.forEach(exTask => {
+    const style = {} // task.repetition != null && task.repetition.id == rep.id? {fontWeight:'bold'}:{}
+    result.push( <tr id={exTask.id} style={style}>
+                    <td>
+                      <a href='#' onClick={()=>fireEvent("external-task-modal", 'open', [exTask])}>{exTask.description}</a>
+                    </td>
+                    <td>{exTask.day!=null? formatDate(exTask.day.date):''}</td>
+                    <td>{exTask.finished? 'Finished':''}</td>
+                    <td>
+                      <input type="checkbox" checked={movingDto.externalTasksIds.includes(exTask.id)?'checked': null} onClick={()=>onClickCheckBox(comp, movingDto, exTask.id, 'external task')}/>
+                    </td>
+                  </tr>)
+  })
+
+  return <Table striped bordered condensed hover >
+          <tbody>
+            <tr>
+              <td>Task</td>
+              <td>Date</td>
+              <td>Status</td>
+              <td></td>
+            </tr>
+            {result}
+          </tbody>
+          </Table>
+}
+
+const onClickCheckBox = function(comp, movingDto, id, type){
+  if(type == 'task mapper'){
+    updateId(movingDto.taskMappersIds, id)
+  }
+
+  if (type == 'repetition') {
+    updateId(movingDto.repetitionIds, id)
+  }
+
+  if (type == 'external task') {
+    updateId(movingDto.externalTasksIds, id)
   }
 
   comp.setState({})
+}
+
+const updateId = function(arr, id) {
+  if(arr.includes(id)){
+    removeByValue(arr, id)
+  } else {
+    arr.push(id)
+  }
 }
 
 const removeByValue = function(array, item){

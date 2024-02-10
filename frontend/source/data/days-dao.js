@@ -20,6 +20,7 @@ registerEvent('day-rep', 'got-one', (stSetter, day)=>day)
 
 registerEvent('day-rep', 'clean-all', (stSetter)=>{
   stSetter('objects', null)
+  stSetter('full-days-by-week', null)
 })
 
 

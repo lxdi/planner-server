@@ -69,6 +69,7 @@ registerEvent(REP_NAME, 'unschedule-mean-done', (stSetter, meanId)=>meanId)
 
 
 const cleanRep = function(stSetter){
+  fireEvent('day-rep', 'clean-all')
   stSetter('objects', null)
   stSetter(OBJECTS_LIST, null)
 }
